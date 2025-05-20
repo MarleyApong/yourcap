@@ -1,7 +1,7 @@
 import { Text } from "react-native";
 
-export function Register() {
+export default function Register() {
   return (
-    <Text>Login</Text>
+    <Text>Register</Text>
   )
 }

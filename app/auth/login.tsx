@@ -1,6 +1,6 @@
 import { Text } from "react-native";
 
-export function Login() {
+export default function Login() {
   return (
     <Text>Login</Text>
   )

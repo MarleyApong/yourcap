@@ -1,18 +1,16 @@
 import { Stack } from "expo-router"
-// import "react-native-gesture-handler"
-import "../global.css"
 
-export default function RootLayout() {
+export default function AuthLayout() {
   return (
     <Stack>
       <Stack.Screen
-        name="index"
+        name="login"
         options={{
           headerShown: false,
         }}
       />
       <Stack.Screen
-        name="auth"
+        name="register"
         options={{
           headerShown: false,
         }}
