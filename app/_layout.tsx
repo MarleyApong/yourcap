@@ -1,5 +1,5 @@
 import { Stack } from "expo-router"
-import "react-native-gesture-handler"
+// import "react-native-gesture-handler"
 import "../global.css"
 
 export default function Layout() {
@@ -8,16 +8,18 @@ export default function Layout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "Accueil",
-          headerStyle: { backgroundColor: "#1e1e1e" },
-          headerTintColor: "#fff",
-          headerTitleAlign: "center",
+          headerShown: false,
+          // title: "Accueil",
+          // headerStyle: { backgroundColor: "#1e1e1e" },
+          // headerTintColor: "#fff",
+          // headerTitleAlign: "center",
+          // presentation: "formSheet",
         }}
       />
       <Stack.Screen
-        name="modal"
+        name="details"
         options={{
-          presentation: "modal",
+          presentation: "containedModal",
           title: "Modale",
         }}
       />
