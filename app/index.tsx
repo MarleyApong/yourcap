@@ -5,7 +5,7 @@ const { height: screenHeight } = Dimensions.get("window")
 
 export default function Index() {
   return (
-    <ImageBackground source={require("@/assets/images/bg/6986.jpg")} className="flex-1 justify-center items-center" resizeMode="cover">
+    <ImageBackground source={require("@/assets/images/bg/welcome.jpg")} className="flex-1 justify-center items-center" resizeMode="cover">
       {/* Overlay sombre */}
       <View className="absolute inset-0 bg-black/60" />
 
