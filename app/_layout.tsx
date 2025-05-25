@@ -1,8 +1,10 @@
 import { Stack } from "expo-router"
-// import "react-native-gesture-handler"
+import { useAuth } from "@/hooks/useAuth"
 import "../global.css"
 
 export default function RootLayout() {
+  const { user } = useAuth()
+
   return (
     <Stack>
       <Stack.Screen
@@ -17,12 +19,40 @@ export default function RootLayout() {
           headerShown: false,
         }}
       />
-       <Stack.Screen
-        name="(drawer)"
-        options={{
-          headerShown: false,
-        }}
-      />
+      {user ? (
+        <>
+          <Stack.Screen
+            name="(tabs)"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="add-debt"
+            options={{
+              title: "Add Debt",
+            }}
+          />
+          <Stack.Screen
+            name="debt-details/[id]"
+            options={{
+              title: "Debt Details",
+            }}
+          />
+          <Stack.Screen
+            name="history"
+            options={{
+              title: "History",
+            }}
+          />
+          <Stack.Screen
+            name="settings"
+            options={{
+              title: "Settings",
+            }}
+          />
+        </>
+      ) : null}
     </Stack>
   )
 }
