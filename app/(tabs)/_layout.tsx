@@ -10,6 +10,7 @@ export default function TabsLayout() {
       screenOptions={{
         tabBarActiveTintColor: twColor("text-primary"),
         tabBarInactiveTintColor: twColor("text-gray-500"),
+        headerShown: true,
         tabBarStyle: {
           backgroundColor: twColor("bg-white"),
           borderTopWidth: 1,

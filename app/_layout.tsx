@@ -1,6 +1,6 @@
 import { Stack } from "expo-router"
-import { useAuth } from "@/hooks/useAuth"
 import "../global.css"
+import { useAuth } from "@/hooks/useAuth"
 
 export default function RootLayout() {
   const { user } = useAuth()
@@ -10,13 +10,13 @@ export default function RootLayout() {
       <Stack.Screen
         name="index"
         options={{
-          headerShown: false,
+          headerShown: false
         }}
       />
       <Stack.Screen
         name="auth"
         options={{
-          headerShown: false,
+          headerShown: false
         }}
       />
       {user ? (
@@ -24,31 +24,21 @@ export default function RootLayout() {
           <Stack.Screen
             name="(tabs)"
             options={{
-              headerShown: false,
+              headerShown: false
             }}
           />
           <Stack.Screen
-            name="add-debt"
+            name="debt/add"
             options={{
               title: "Add Debt",
+              headerBackTitle: "Back" // Pour iOS
             }}
           />
           <Stack.Screen
-            name="debt-details/[id]"
+            name="debt/[id]"
             options={{
               title: "Debt Details",
-            }}
-          />
-          <Stack.Screen
-            name="history"
-            options={{
-              title: "History",
-            }}
-          />
-          <Stack.Screen
-            name="settings"
-            options={{
-              title: "Settings",
+              headerBackTitle: "Back"
             }}
           />
         </>
