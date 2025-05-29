@@ -1,11 +1,15 @@
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "expo-router"
-import { getAuthToken, clearAuthToken, setAuthToken } from "@/lib/auth"
+import { getAuthToken, setAuthToken, clearAuthToken } from "@/lib/auth"
+import { createUser, loginUser } from "@/services/userService"
+import { CreateUserInput } from "@/types/user"
 
 type User = {
   token: string
-  name?: string
-  email?: string
+  firstname: string
+  lastname: string
+  email: string
+  phone_number: string
 }
 
 export const useAuth = () => {
@@ -17,7 +21,8 @@ export const useAuth = () => {
     const checkAuth = async () => {
       const token = await getAuthToken()
       if (token) {
-        setUser({ token, name: "John Doe", email: "john@example.com" })
+        // Ici on pourrait décoder un JWT ou retrouver l'utilisateur via SQLite si besoin
+        setUser(JSON.parse(token))
       }
       setLoading(false)
     }
@@ -25,30 +30,51 @@ export const useAuth = () => {
     checkAuth()
   }, [])
 
-  const login = async (credentials: { email: string; password: string }) => {
-    // Simulation de connexion
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    const fakeToken = "fake-token-123"
-    await setAuthToken(fakeToken)
-    setUser({
-      token: fakeToken,
-      name: "John Doe",
-      email: credentials.email,
-    })
-    return true
+  const login = async (credentials: { identifier: string; password: string }) => {
+    try {
+      const result = await loginUser(credentials.identifier, credentials.password)
+      if (result) {
+        const authUser = {
+          token: JSON.stringify(result), // simulé ici comme un token
+          firstname: result.firstname,
+          lastname: result.lastname,
+          email: result.email,
+          phone_number: result.phone_number,
+        }
+        await setAuthToken(authUser.token)
+        setUser(authUser)
+        return true
+      } else {
+        return false
+      }
+    } catch (err) {
+      console.error("Login error:", err)
+      return false
+    }
   }
 
-  const register = async (credentials: { name: string; email: string; password: string }) => {
-    // Simulation d'inscription
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    const fakeToken = "fake-token-123"
-    await setAuthToken(fakeToken)
-    setUser({
-      token: fakeToken,
-      name: credentials.name,
-      email: credentials.email,
-    })
-    return true
+  const register = async (credentials: CreateUserInput & { confirmPassword: string }) => {
+    const { confirmPassword, ...rest } = credentials
+    if (rest.password !== confirmPassword) {
+      throw new Error("Passwords do not match")
+    }
+
+    try {
+      await createUser(rest)
+      const fakeToken = JSON.stringify(rest)
+      await setAuthToken(fakeToken)
+      setUser({
+        token: fakeToken,
+        firstname: rest.firstname,
+        lastname: rest.lastname,
+        email: rest.email,
+        phone_number: rest.phone_number,
+      })
+      return true
+    } catch (err) {
+      console.error("Register error:", err)
+      throw err
+    }
   }
 
   const logout = async () => {

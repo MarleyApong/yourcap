@@ -1,36 +1,37 @@
-import { Checkbox } from "@/components/ui/checkbox"
-import { FBackButton } from "@/components/ui/fback-button"
-import { PasswordInput } from "@/components/ui/password-input"
-import { useAuth } from "@/hooks/useAuth"
-import { useTwColors } from "@/lib/tw-colors"
-import { Feather } from "@expo/vector-icons"
-import { Link, useRouter } from "expo-router"
+// app/auth/login.tsx
 import { useState } from "react"
-import { Alert, Image, Pressable, Text, TextInput, View } from "react-native"
+import { View, Text, TextInput, Pressable, Alert, Image } from "react-native"
+import { Link, useRouter } from "expo-router"
+import { useAuth } from "@/hooks/useAuth"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Feather } from "@expo/vector-icons"
+import { PasswordInput } from "@/components/ui/password-input"
+import { useTwColors } from "@/lib/tw-colors"
+import { FBackButton } from "@/components/ui/fback-button"
 
 export default function Login() {
-  const [email, setEmail] = useState("")
+  const [identifier, setIdentifier] = useState("")
   const [password, setPassword] = useState("")
   const [agreed, setAgreed] = useState(false)
   const [loading, setLoading] = useState(false)
-  const { twColor } = useTwColors()
+
   const { login } = useAuth()
+  const { twColor } = useTwColors()
   const router = useRouter()
 
   const handleSubmit = async () => {
-    if (!email || !password) {
-      Alert.alert("Error", "Please fill all fields")
+    if (!identifier || !password) {
+      Alert.alert("Error", "Please enter both identifier and password")
       return
     }
 
     setLoading(true)
     try {
-      const success = await login({ email, password })
-      if (success) {
-        router.replace("/(tabs)/dashboard")
-      }
-    } catch (error) {
-      Alert.alert("Error", "Login failed. Please try again.")
+      const success = await login({ identifier, password })
+      if (success) router.replace("/(tabs)/dashboard")
+      else Alert.alert("Error", "Invalid credentials")
+    } catch (err) {
+      Alert.alert("Error", "Login failed")
     } finally {
       setLoading(false)
     }
@@ -48,7 +49,7 @@ export default function Login() {
         <View className="w-full mt-8 flex-col gap-4">
           <View className="bg-primary/10 rounded-md flex-row gap-2 items-center px-3 py-1">
             <Feather name="mail" size={24} color={twColor("text-primary")} />
-            <TextInput className="text-xl flex-1" placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
+            <TextInput className="text-xl flex-1" placeholder="Email" value={identifier} onChangeText={setIdentifier} keyboardType="email-address" autoCapitalize="none" />
           </View>
           <View className="bg-primary/10 rounded-md flex-row gap-2 items-center px-3 py-1">
             <Feather name="lock" size={24} color={twColor("text-primary")} />
