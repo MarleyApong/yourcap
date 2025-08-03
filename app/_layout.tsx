@@ -1,9 +1,10 @@
 import { initDb } from "@/db/db"
 import { useAuth } from "@/hooks/useAuth"
+import * as FileSystem from "expo-file-system"
 import { Stack } from "expo-router"
 import { useEffect } from "react"
-import * as FileSystem from "expo-file-system"
 import "react-native-get-random-values"
+import Toast from 'react-native-toast-message'
 import "../global.css"
 
 export default function RootLayout() {
@@ -53,6 +54,7 @@ export default function RootLayout() {
           />
         </>
       ) : null}
+      <Toast position="bottom"/>
     </Stack>
   )
 }

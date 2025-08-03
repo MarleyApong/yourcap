@@ -1,7 +1,6 @@
 export interface User {
   user_id: string
-  firstname: string
-  lastname: string
+  full_name: string
   email: string
   phone_number: string
   password: string
@@ -12,8 +11,7 @@ export interface User {
 }
 
 export interface CreateUserInput {
-  firstname: string
-  lastname: string
+  full_name: string
   email: string
   phone_number: string
   password: string
