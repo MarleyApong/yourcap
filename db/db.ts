@@ -15,28 +15,63 @@ export const initDb = async () => {
         updated_at TEXT,
         deleted_at TEXT
       );
+
+      CREATE TABLE IF NOT EXISTS debts (
+        debt_id TEXT PRIMARY KEY NOT NULL,
+        user_id TEXT NOT NULL,
+        contact_name TEXT NOT NULL,
+        contact_phone TEXT NOT NULL,
+        contact_email TEXT,
+        amount REAL NOT NULL,
+        description TEXT,
+        due_date TEXT NOT NULL,
+        status TEXT NOT NULL, -- 'PENDING', 'PAID', 'OVERDUE'
+        debt_type TEXT NOT NULL, -- 'OWED' (you owe), 'OWING' (owed to you)
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+      );
+
+      CREATE TABLE IF NOT EXISTS notifications (
+        notification_id TEXT PRIMARY KEY NOT NULL,
+        user_id TEXT NOT NULL,
+        debt_id TEXT,
+        title TEXT NOT NULL,
+        message TEXT NOT NULL,
+        is_read INTEGER DEFAULT 0,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(user_id),
+        FOREIGN KEY (debt_id) REFERENCES debts(debt_id)
+      );
+
+      CREATE TABLE IF NOT EXISTS settings (
+        user_id TEXT PRIMARY KEY NOT NULL,
+        notification_enabled INTEGER DEFAULT 1,
+        days_before_reminder INTEGER DEFAULT 3,
+        language TEXT DEFAULT 'en',
+        currency TEXT DEFAULT 'USD',
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+      );
     `)
 
     console.log("✅ DB initialized")
   } catch (error) {
     console.error("❌ Erreur init DB:", error)
-    throw error // On propage l'erreur pour la gérer plus haut
+    throw error
   }
 }
 
-// Fonction pour reset complètement la base de données
 export const resetDatabase = async () => {
   try {
-    // Supprime toutes les tables
     await db.execAsync(`
       DROP TABLE IF EXISTS users;
+      DROP TABLE IF EXISTS debts;
+      DROP TABLE IF EXISTS notifications;
+      DROP TABLE IF EXISTS settings;
     `)
 
     console.log("🗑️ Database tables dropped")
-
-    // Réinitialise la base avec les tables vides
     await initDb()
-
     console.log("🔄 Database reinitialized")
     return true
   } catch (error) {
@@ -44,7 +79,5 @@ export const resetDatabase = async () => {
     throw error
   }
 }
-
-// resetDatabase()
 
 export default db

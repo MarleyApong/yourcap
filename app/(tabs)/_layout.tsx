@@ -8,13 +8,18 @@ export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: twColor("text-primary"),
-        tabBarInactiveTintColor: twColor("text-gray-500"),
-        headerShown: true,
+        tabBarActiveTintColor: twColor("primary"),
+        tabBarInactiveTintColor: twColor("gray-500"),
         tabBarStyle: {
-          backgroundColor: twColor("bg-white"),
+          backgroundColor: twColor("white"),
           borderTopWidth: 1,
-          borderTopColor: twColor("border-gray-200"),
+          borderTopColor: twColor("gray-200"),
+          height: 60,
+          paddingBottom: 8,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "500",
         },
       }}
     >
@@ -23,13 +28,15 @@ export default function TabsLayout() {
         options={{
           title: "Dashboard",
           tabBarIcon: ({ color }) => <Feather name="home" size={24} color={color} />,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
         name="history"
         options={{
           title: "History",
-          tabBarIcon: ({ color }) => <Feather name="clock" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Feather name="list" size={24} color={color} />,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -37,6 +44,7 @@ export default function TabsLayout() {
         options={{
           title: "Settings",
           tabBarIcon: ({ color }) => <Feather name="settings" size={24} color={color} />,
+          headerShown: false,
         }}
       />
     </Tabs>
