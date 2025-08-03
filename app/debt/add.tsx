@@ -1,4 +1,3 @@
-import { FBackButton } from "@/components/ui/fback-button"
 import { TextInput } from "@/components/ui/text-input"
 import { useAuth } from "@/hooks/useAuth"
 import { useTwColors } from "@/lib/tw-colors"
@@ -82,14 +81,10 @@ export default function AddDebt() {
 
   return (
     <ScrollView className="flex-1 bg-gray-50" contentContainerStyle={{ paddingBottom: 40 }}>
-      <FBackButton />
-
       <View className="px-6 mt-4">
-        <Text className="text-3xl font-bold text-gray-900">Add New Debt</Text>
-
-        <View className="mt-8 space-y-6">
+        <View className="mt-8 gap-4">
           {/* Debt Type Toggle */}
-          <View className="flex-row justify-around bg-white p-1 rounded-xl">
+          <View className="flex-row justify-around bg-white p-1 rounded-xl border border-primary">
             <Pressable
               onPress={() => setForm({ ...form, debt_type: "OWING" })}
               className={`flex-1 items-center py-3 rounded-lg ${form.debt_type === "OWING" ? "bg-primary" : "bg-white"}`}
