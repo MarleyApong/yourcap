@@ -6,7 +6,7 @@ import { CreateUserInput } from "@/types/user"
 import Toast from "react-native-toast-message"
 
 type User = {
-  token: string
+  user_id: string
   full_name: string
   email: string
   phone_number: string
@@ -21,12 +21,10 @@ export const useAuth = () => {
     const checkAuth = async () => {
       const token = await getAuthToken()
       if (token) {
-        // Ici on pourrait décoder un JWT ou retrouver l'utilisateur via SQLite si besoin
         setUser(JSON.parse(token))
       }
       setLoading(false)
     }
-
     checkAuth()
   }, [])
 
@@ -35,12 +33,12 @@ export const useAuth = () => {
       const result = await loginUser(credentials.identifier, credentials.password)
       if (result) {
         const authUser = {
-          token: JSON.stringify(result),
+          user_id: result.user_id,
           full_name: result.full_name,
           email: result.email,
           phone_number: result.phone_number,
         }
-        await setAuthToken(authUser.token)
+        await setAuthToken(JSON.stringify(authUser))
         setUser(authUser)
         Toast.show({
           type: "success",
@@ -78,16 +76,16 @@ export const useAuth = () => {
     }
 
     try {
-      await createUser(rest)
-      const fakeToken = JSON.stringify(rest)
-      await setAuthToken(fakeToken)
-      const newUser = {
-        token: fakeToken,
+      // createUser devrait retourner le user_id créé
+      const user_id = await createUser(rest)
+      const authUser = {
+        user_id: user_id,
         full_name: rest.full_name,
         email: rest.email,
         phone_number: rest.phone_number,
       }
-      setUser(newUser)
+      await setAuthToken(JSON.stringify(authUser))
+      setUser(authUser)
       Toast.show({
         type: "success",
         text1: "Success",
@@ -104,7 +102,7 @@ export const useAuth = () => {
       throw err
     }
   }
-
+  
   const logout = async () => {
     await clearAuthToken()
     setUser(null)
@@ -116,6 +114,5 @@ export const useAuth = () => {
     router.replace("/")
   }
 
- 
   return { user, loading, login, register, logout }
 }

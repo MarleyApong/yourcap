@@ -4,13 +4,13 @@ import { v4 as uuidv4 } from "uuid"
 import { CreateUserInput, User } from "@/types/user"
 import Toast from "react-native-toast-message"
 
-export const createUser = async ({ full_name, email, phone_number, password }: CreateUserInput): Promise<void> => {
+export const createUser = async ({ full_name, email, phone_number, password }: CreateUserInput): Promise<string> => {
   const user_id = uuidv4()
   const now = new Date().toISOString()
   const hashedPassword = await bcrypt.hash(password, 10)
 
   try {
-    // Verify if exist already
+    // Vérification si l'utilisateur existe déjà
     const existing = await db.getFirstAsync(`SELECT * FROM users WHERE email = ? OR phone_number = ?`, [email, phone_number])
 
     if (existing) {
@@ -19,7 +19,7 @@ export const createUser = async ({ full_name, email, phone_number, password }: C
         text1: "Error",
         text2: "User already exists with this email or phone number.",
       })
-      return
+      throw new Error("User already exists")
     }
 
     // Insertion
@@ -29,6 +29,8 @@ export const createUser = async ({ full_name, email, phone_number, password }: C
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [user_id, full_name, email, phone_number, hashedPassword, "ACTIVE", now, now],
     )
+
+    return user_id // Retourne le user_id créé
   } catch (error) {
     Toast.show({
       type: "error",

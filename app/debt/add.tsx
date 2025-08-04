@@ -59,9 +59,9 @@ export default function AddDebt() {
     }
 
     setLoading(true)
-    try {
+    try {      
       await createDebt({
-        user_id: user!.token,
+        user_id: user!.user_id,
         contact_name: form.contact_name,
         contact_phone: form.contact_phone,
         contact_email: form.contact_email || undefined,
@@ -104,21 +104,22 @@ export default function AddDebt() {
 
           {/* Contact Info */}
           <View className="bg-white p-4 rounded-xl shadow-sm">
-            <Text className="text-lg font-semibold text-gray-900 mb-4">Contact Information</Text>
+            <Text className="text-2xl font-bold text-primary mb-4">Contact Information</Text>
 
-            <TextInput label="Full Name *" placeholder="xxx xxx" value={form.contact_name} onChangeText={(text) => handleChange("contact_name", text)} icon="user" />
+            <TextInput label="Full Name" required placeholder="xxx xxx" value={form.contact_name} onChangeText={(text) => handleChange("contact_name", text)} icon="user" />
 
             <TextInput
-              label="Phone Number *"
+              label="Phone Number"
               placeholder="x xx xx xx"
               value={form.contact_phone}
               onChangeText={(text) => handleChange("contact_phone", text)}
               keyboardType="phone-pad"
               icon="phone"
+              required
             />
 
             <TextInput
-              label="Email (optional)"
+              label="Email"
               placeholder="xx@xxx.xx"
               value={form.contact_email}
               onChangeText={(text) => handleChange("contact_email", text)}
@@ -131,29 +132,43 @@ export default function AddDebt() {
 
           {/* Debt Details */}
           <View className="bg-white p-4 rounded-xl shadow-sm">
-            <Text className="text-lg font-semibold text-gray-900 mb-4">Debt Details</Text>
+            <Text className="text-2xl font-bold text-primary mb-4">Debt Details</Text>
 
-            <TextInput label="Amount *" placeholder="1000" value={form.amount} onChangeText={(text) => handleChange("amount", text)} keyboardType="numeric" icon="dollar-sign" />
+            <TextInput
+              label="Amount"
+              required
+              placeholder="1000"
+              value={form.amount}
+              onChangeText={(text) => handleChange("amount", text)}
+              keyboardType="numeric"
+              icon="credit-card"
+            />
 
-            <Pressable onPress={() => setShowDatePicker(true)} className="mt-4 flex-row items-center justify-between bg-gray-100 p-3 rounded-lg">
-              <View className="flex-row items-center">
-                <Feather name="calendar" size={20} color={twColor("text-gray-500")} />
-                <Text className="ml-2 text-gray-700">{form.due_date ? format(form.due_date, "MMM dd, yyyy") : "Select due date"}</Text>
-              </View>
-              <Feather name="chevron-down" size={20} color={twColor("text-gray-500")} />
-            </Pressable>
+            <View className="mb-6">
+              <Text className="font-bold text-lg">
+                Date<Text className="text-red-600"> *</Text>
+              </Text>
+
+              <Pressable onPress={() => setShowDatePicker(true)} className="flex-row items-center justify-between border-b border-primary p-3">
+                <View className="flex-row items-center">
+                  <Feather name="calendar" size={20} color={twColor("text-primary")} />
+                  <Text className="ml-2 text-gray-700">{form.due_date ? format(form.due_date, "MMM dd, yyyy") : "Select due date"}</Text>
+                </View>
+                <Feather name="chevron-down" size={20} color={twColor("text-gray-500")} />
+              </Pressable>
+            </View>
 
             {showDatePicker && <DateTimePicker value={form.due_date} mode="date" display="default" onChange={handleDateChange} minimumDate={new Date()} />}
 
             <TextInput
-              label="Description (optional)"
+              label="Description"
               placeholder="Loan for car repair"
               value={form.description}
               onChangeText={(text) => handleChange("description", text)}
               multiline
               numberOfLines={3}
               icon="file-text"
-              className="mt-4"
+              containerClassName="mb-0"
             />
           </View>
 
