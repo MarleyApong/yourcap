@@ -9,13 +9,13 @@ interface Props extends TextInputProps {
   containerClassName?: string
 }
 
-export const TextInput = ({ label, icon, error, containerClassName = "", ...props }: Props) => {
+export const TextInput = ({ label, icon, error, containerClassName = "mb-6", ...props }: Props) => {
   const { twColor } = useTwColors()
 
   return (
     <View className={containerClassName}>
-      {label && <Text className="text-gray-500 text-sm mb-1">{label}</Text>}
-      <View className="bg-primary/10 rounded-md flex-row gap-2 items-center px-3 py-2">
+      {label && <Text className="text-primary font-bold text-lg">{label}</Text>}
+      <View className="border-b border-primary flex-row gap-2 items-center px-3 py-">
         {icon && <Feather name={icon as any} size={20} color={twColor("text-primary")} />}
         <RNTextInput className={`flex-1 text-lg ${props.className}`} placeholderTextColor={twColor("text-gray-400")} {...props} />
       </View>

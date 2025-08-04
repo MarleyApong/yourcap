@@ -106,27 +106,26 @@ export default function AddDebt() {
           <View className="bg-white p-4 rounded-xl shadow-sm">
             <Text className="text-lg font-semibold text-gray-900 mb-4">Contact Information</Text>
 
-            <TextInput label="Full Name *" placeholder="John Doe" value={form.contact_name} onChangeText={(text) => handleChange("contact_name", text)} icon="user" />
+            <TextInput label="Full Name *" placeholder="xxx xxx" value={form.contact_name} onChangeText={(text) => handleChange("contact_name", text)} icon="user" />
 
             <TextInput
               label="Phone Number *"
-              placeholder="612345678"
+              placeholder="x xx xx xx"
               value={form.contact_phone}
               onChangeText={(text) => handleChange("contact_phone", text)}
               keyboardType="phone-pad"
               icon="phone"
-              className="mt-4"
             />
 
             <TextInput
               label="Email (optional)"
-              placeholder="john@example.com"
+              placeholder="xx@xxx.xx"
               value={form.contact_email}
               onChangeText={(text) => handleChange("contact_email", text)}
               keyboardType="email-address"
               autoCapitalize="none"
               icon="mail"
-              className="mt-4"
+              containerClassName="mb-0"
             />
           </View>
 
