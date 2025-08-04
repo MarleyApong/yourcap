@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/feature/page-header"
 import { useAuth } from "@/hooks/useAuth"
 import { useTwColors } from "@/lib/tw-colors"
 import { formatCurrency } from "@/lib/utils"
@@ -54,9 +55,8 @@ export default function Dashboard() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      <View className="p-6">
-        <Text className="text-3xl font-bold text-gray-900">Dashboard</Text>
-
+      <PageHeader title="Dashboard" fbackButton={false} textAlign="left" backPath="/dashboard" />
+      <View className="px-6">
         {/* Summary Cards */}
         <View className="flex-row justify-between mt-6">
           <View className="bg-white p-4 rounded-xl shadow-sm w-[30%] items-center">
@@ -77,7 +77,7 @@ export default function Dashboard() {
       </View>
 
       {/* Quick Actions */}
-      <View className="flex-row justify-around px-6 py-4 bg-white mx-6 rounded-xl shadow-sm">
+      <View className="flex-row justify-around px-6 py-4 bg-white mx-6 mt-6 rounded-xl shadow-sm">
         <Pressable onPress={() => router.push("/debt/add")} className="items-center">
           <View className="bg-primary/10 p-3 rounded-full">
             <Feather name="plus" size={24} color={twColor("primary")} />

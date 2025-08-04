@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/feature/page-header"
 import { TextInput } from "@/components/ui/text-input"
 import { useAuth } from "@/hooks/useAuth"
 import { useTwColors } from "@/lib/tw-colors"
@@ -81,7 +82,9 @@ export default function AddDebt() {
 
   return (
     <ScrollView className="flex-1 bg-gray-50" contentContainerStyle={{ paddingBottom: 40 }}>
-      <View className="px-6 mt-4">
+      <PageHeader title="New debt" textPosition="center" textAlign="left" backPath="/dashboard" />
+
+      <View className="px-6">
         <View className="mt-8 gap-4">
           {/* Debt Type Toggle */}
           <View className="flex-row justify-around bg-white p-1 rounded-xl border border-primary">

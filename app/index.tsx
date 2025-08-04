@@ -1,9 +1,19 @@
-import { Link } from "expo-router"
+import { useAuth } from "@/hooks/useAuth"
+import { Link, useFocusEffect, useRouter } from "expo-router"
 import { Dimensions, ImageBackground, Text, View } from "react-native"
 
 const { height: screenHeight } = Dimensions.get("window")
 
 export default function Index() {
+  const { user } = useAuth()
+  const router = useRouter()
+
+  useFocusEffect(() => {
+    if (user) {
+      router.replace("/(tabs)/dashboard")
+    }
+  })
+
   return (
     <ImageBackground source={require("@/assets/images/bg/welcome.jpg")} className="flex-1 justify-center items-center" resizeMode="cover">
       {/* Overlay sombre */}

@@ -8,6 +8,7 @@ import { Feather } from "@expo/vector-icons"
 import { useTwColors } from "@/lib/tw-colors"
 import { DebtStatus, DebtType } from "@/types/debt"
 import Toast from "react-native-toast-message"
+import { PageHeader } from "@/components/feature/page-header"
 
 export default function History() {
   const { user } = useAuth()
@@ -71,9 +72,10 @@ export default function History() {
 
   return (
     <View className="flex-1 bg-gray-50">
+      <PageHeader title="History" textPosition="center" textAlign="left" backPath="/dashboard" />
+
       <View className="p-6">
-        <View className="flex-row justify-between items-center">
-          <Text className="text-3xl font-bold text-gray-900">History</Text>
+        <View className="flex-row justify-end">
           <Pressable onPress={() => router.push("/debt/add")} className="bg-primary p-2 rounded-full">
             <Feather name="plus" size={24} color="white" />
           </Pressable>
@@ -81,7 +83,7 @@ export default function History() {
 
         {/* Filters */}
         <View className="mt-6 flex-row justify-between">
-          <View className="bg-white p-1 rounded-lg">
+          <View className="bg-white p-1 rounded-lg border border-primary">
             <Pressable onPress={() => setFilter("ALL")} className={`px-3 py-1 rounded-md ${filter === "ALL" ? "bg-primary" : ""}`}>
               <Text className={filter === "ALL" ? "text-white" : "text-gray-700"}>All</Text>
             </Pressable>
@@ -93,7 +95,7 @@ export default function History() {
             </Pressable>
           </View>
 
-          <View className="bg-white p-1 rounded-lg">
+          <View className="bg-white p-1 rounded-lg  border border-primary">
             <Pressable onPress={() => setStatusFilter("ALL")} className={`px-3 py-1 rounded-md ${statusFilter === "ALL" ? "bg-primary" : ""}`}>
               <Text className={statusFilter === "ALL" ? "text-white" : "text-gray-700"}>All</Text>
             </Pressable>

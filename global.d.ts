@@ -6,3 +6,7 @@ declare module "*.jpeg"
 declare module "*.svg"
 
 declare const __APP_VERSION__: string
+
+declare module "@react-native-async-storage/async-storage" {
+  export default AsyncStorage
+}

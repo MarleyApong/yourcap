@@ -1,6 +1,6 @@
-import { Tabs } from "expo-router"
-import { Feather } from "@expo/vector-icons"
 import { useTwColors } from "@/lib/tw-colors"
+import { Feather } from "@expo/vector-icons"
+import { Tabs } from "expo-router"
 
 export default function TabsLayout() {
   const { twColor } = useTwColors()
@@ -27,6 +27,7 @@ export default function TabsLayout() {
         name="dashboard"
         options={{
           title: "Dashboard",
+          headerTitle: "Dashboard",
           tabBarIcon: ({ color }) => <Feather name="home" size={24} color={color} />,
           headerShown: false,
         }}
