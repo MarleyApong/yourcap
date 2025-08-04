@@ -1,7 +1,7 @@
 import { useAuth } from "@/hooks/useAuth"
-import { Link, useFocusEffect, useRouter } from "expo-router"
-import { Dimensions, ImageBackground, Text, View } from "react-native"
+import { Link, useRouter } from "expo-router"
 import { useEffect } from "react"
+import { Dimensions, ImageBackground, Text, View } from "react-native"
 
 const { height: screenHeight } = Dimensions.get("window")
 
@@ -12,6 +12,9 @@ export default function Index() {
   useEffect(() => {
     if (!loading && user) {
       router.replace("/(tabs)/dashboard")
+    }
+    else {
+      router.replace("/auth/login")
     }
   }, [user, loading])
 

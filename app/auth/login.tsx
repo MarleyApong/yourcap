@@ -1,4 +1,3 @@
-// app/auth/login.tsx
 import { useState } from "react"
 import { View, Text, TextInput, Pressable, Alert, Image } from "react-native"
 import { Link, useRouter } from "expo-router"
@@ -8,6 +7,7 @@ import { Feather } from "@expo/vector-icons"
 import { PasswordInput } from "@/components/ui/password-input"
 import { useTwColors } from "@/lib/tw-colors"
 import { FBackButton } from "@/components/ui/fback-button"
+import Toast from "react-native-toast-message"
 
 export default function Login() {
   const [identifier, setIdentifier] = useState("")
@@ -21,17 +21,32 @@ export default function Login() {
 
   const handleSubmit = async () => {
     if (!identifier || !password) {
-      Alert.alert("Error", "Please enter both identifier and password")
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Please enter both identifier and password",
+      })
       return
     }
 
     setLoading(true)
     try {
       const success = await login({ identifier, password })
-      if (success) router.replace("/(tabs)/dashboard")
-      else Alert.alert("Error", "Invalid credentials")
+      if (success) {
+        router.replace("/(tabs)/dashboard")
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Login failed. Please check your credentials.",
+        })
+      }
     } catch (err) {
-      Alert.alert("Error", "Login failed")
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "An unexpected error occurred. Please try again later.",
+      })
     } finally {
       setLoading(false)
     }

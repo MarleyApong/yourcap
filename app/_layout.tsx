@@ -1,23 +1,36 @@
+import { ActivityIndicator, View } from "react-native"
 import useInactivityTimeout from "@/hooks/useInactivityTimeout"
 import { Stack } from "expo-router"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { initDb } from "@/db/db"
 import "react-native-get-random-values"
 import "../global.css"
 
 export default function RootLayout() {
+  const [isReady, setIsReady] = useState(false)
+
   useEffect(() => {
     const initializeApp = async () => {
       try {
         await initDb()
+        setIsReady(true)
       } catch (error) {
         console.error("Database initialization failed:", error)
+        setIsReady(true) // Mettez quand même isReady à true pour afficher l'UI
       }
     }
     initializeApp()
   }, [])
 
   useInactivityTimeout()
+
+  if (!isReady) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    )
+  }
 
   return (
     <Stack>

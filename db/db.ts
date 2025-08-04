@@ -42,6 +42,8 @@ export const initDb = async () => {
         language TEXT DEFAULT 'en',
         currency TEXT DEFAULT 'USD',
         inactivity_timeout INTEGER DEFAULT 30,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(user_id)
       );
 

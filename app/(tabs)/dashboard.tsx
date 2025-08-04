@@ -28,6 +28,7 @@ export default function Dashboard() {
     try {
       setLoading(true)
       const [summaryData, debts] = await Promise.all([getDebtsSummary(user!.user_id), getUserDebts(user!.user_id)])
+// console.error("Dashboard load data:", { summaryData, debts });
 
       setSummary(summaryData)
       setRecentDebts(debts.slice(0, 5))

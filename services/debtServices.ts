@@ -11,8 +11,8 @@ export const createDebt = async (debt: DebtInput): Promise<Debt> => {
     await db.runAsync(
       `INSERT INTO debts 
       (debt_id, user_id, contact_name, contact_phone, contact_email, 
-       amount, description, due_date, status, debt_type, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       amount, description, loan_date, due_date, status, debt_type, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         debt_id,
         debt.user_id,
@@ -21,6 +21,7 @@ export const createDebt = async (debt: DebtInput): Promise<Debt> => {
         debt.contact_email || null,
         debt.amount,
         debt.description || null,
+        debt.loan_date, // Ajouté ici
         debt.due_date,
         debt.status || "PENDING",
         debt.debt_type,
