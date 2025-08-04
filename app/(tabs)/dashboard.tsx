@@ -19,7 +19,7 @@ export default function Dashboard() {
   const { twColor } = useTwColors()
 
   useEffect(() => {
-    if (user) {
+    if (user?.user_id) {
       loadData()
     }
   }, [user])
@@ -27,11 +27,12 @@ export default function Dashboard() {
   const loadData = async () => {
     try {
       setLoading(true)
-      const [summaryData, debts] = await Promise.all([getDebtsSummary(user!.token), getUserDebts(user!.token)])
+      const [summaryData, debts] = await Promise.all([getDebtsSummary(user!.user_id), getUserDebts(user!.user_id)])
 
       setSummary(summaryData)
       setRecentDebts(debts.slice(0, 5))
     } catch (error) {
+      // console.error("Dashboard load error:", error)
       Toast.show({
         type: "error",
         text1: "Error",

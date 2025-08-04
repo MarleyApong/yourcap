@@ -10,25 +10,27 @@ export const createDebt = async (debt: DebtInput): Promise<Debt> => {
   try {
     await db.runAsync(
       `INSERT INTO debts 
-      (debt_id, user_id, contact_name, contact_phone, contact_email, amount, description, due_date, status, debt_type, created_at, updated_at)
+      (debt_id, user_id, contact_name, contact_phone, contact_email, 
+       amount, description, due_date, status, debt_type, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         debt_id,
-        debt.user_id ?? null,
-        debt.contact_name ?? null,
-        debt.contact_phone ?? null,
-        debt.contact_email ?? null,
-        debt.amount ?? null,
-        debt.description ?? null,
-        debt.due_date ?? null,
-        debt.status ?? "PENDING",
-        debt.debt_type ?? null,
+        debt.user_id,
+        debt.contact_name,
+        debt.contact_phone,
+        debt.contact_email || null,
+        debt.amount,
+        debt.description || null,
+        debt.due_date,
+        debt.status || "PENDING",
+        debt.debt_type,
         now,
         now,
       ],
     )
 
-    const newDebt = await db.getFirstAsync<Debt>(`SELECT * FROM debts WHERE debt_id = ?`, [debt_id])
+    const newDebt = await getDebtById(debt_id)
+    if (!newDebt) throw new Error("Failed to retrieve created debt")
 
     Toast.show({
       type: "success",
@@ -36,8 +38,9 @@ export const createDebt = async (debt: DebtInput): Promise<Debt> => {
       text2: "Debt created successfully!",
     })
 
-    return newDebt!
+    return newDebt
   } catch (error) {
+    console.error("Create debt error:", error)
     Toast.show({
       type: "error",
       text1: "Error",
@@ -100,35 +103,66 @@ export const deleteDebt = async (debt_id: string): Promise<void> => {
 
 export const getDebtById = async (debt_id: string): Promise<Debt | null> => {
   try {
-    return await db.getFirstAsync<Debt>(`SELECT * FROM debts WHERE debt_id = ?`, [debt_id])
+    const debt = await db.getFirstAsync<Debt>(
+      `SELECT 
+        debt_id, user_id, contact_name, contact_phone, contact_email,
+        amount, description, due_date, status, debt_type,
+        created_at, updated_at
+       FROM debts 
+       WHERE debt_id = ?`,
+      [debt_id],
+    )
+    return debt || null
   } catch (error) {
-    console.error("Error fetching debt:", error)
+    console.error(`Error fetching debt ${debt_id}:`, error)
     return null
   }
 }
 
 export const getUserDebts = async (user_id: string): Promise<Debt[]> => {
   try {
-    return await db.getAllAsync<Debt>(`SELECT * FROM debts WHERE user_id = ? ORDER BY due_date ASC`, [user_id])
+    const debts = await db.getAllAsync<Debt>(
+      `SELECT 
+        debt_id, user_id, contact_name, contact_phone, contact_email,
+        amount, description, due_date, status, debt_type,
+        created_at, updated_at
+       FROM debts 
+       WHERE user_id = ? 
+       ORDER BY 
+         CASE WHEN status = 'PENDING' THEN 1 ELSE 2 END,
+         due_date ASC`,
+      [user_id],
+    )
+    return debts || []
   } catch (error) {
-    console.error("Error fetching debts:", error)
+    console.error(`Error fetching debts for user ${user_id}:`, error)
     return []
   }
 }
 
 export const getDebtsSummary = async (user_id: string) => {
   try {
-    const owing = await db.getFirstAsync<{ total: number }>(`SELECT SUM(amount) as total FROM debts WHERE user_id = ? AND debt_type = 'OWING' AND status = 'PENDING'`, [user_id])
-
-    const owed = await db.getFirstAsync<{ total: number }>(`SELECT SUM(amount) as total FROM debts WHERE user_id = ? AND debt_type = 'OWED' AND status = 'PENDING'`, [user_id])
+    const result = await db.getFirstAsync<{
+      owing: number
+      owed: number
+    }>(
+      `
+      SELECT 
+        COALESCE(SUM(CASE WHEN debt_type = 'OWING' AND status = 'PENDING' THEN amount ELSE 0 END), 0) as owing,
+        COALESCE(SUM(CASE WHEN debt_type = 'OWED' AND status = 'PENDING' THEN amount ELSE 0 END), 0) as owed
+      FROM debts
+      WHERE user_id = ?
+    `,
+      [user_id],
+    )
 
     return {
-      owing: owing?.total || 0,
-      owed: owed?.total || 0,
-      balance: (owing?.total || 0) - (owed?.total || 0),
+      owing: result?.owing || 0,
+      owed: result?.owed || 0,
+      balance: (result?.owing || 0) - (result?.owed || 0),
     }
   } catch (error) {
-    console.error("Error fetching debts summary:", error)
+    console.error(`Error fetching summary for user ${user_id}:`, error)
     return { owing: 0, owed: 0, balance: 0 }
   }
 }

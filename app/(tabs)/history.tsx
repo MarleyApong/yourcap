@@ -6,13 +6,13 @@ import { getUserDebts } from "@/services/debtServices"
 import { formatCurrency, formatDate } from "@/lib/utils"
 import { Feather } from "@expo/vector-icons"
 import { useTwColors } from "@/lib/tw-colors"
-import { DebtStatus, DebtType } from "@/types/debt"
+import { Debt, DebtStatus, DebtType } from "@/types/debt"
 import Toast from "react-native-toast-message"
 import { PageHeader } from "@/components/feature/page-header"
 
 export default function History() {
   const { user } = useAuth()
-  const [debts, setDebts] = useState<any[]>([])
+  const [debts, setDebts] = useState<Debt[]>([])
   const [filter, setFilter] = useState<"ALL" | DebtType>("ALL")
   const [statusFilter, setStatusFilter] = useState<"ALL" | DebtStatus>("ALL")
   const [loading, setLoading] = useState(true)
@@ -20,7 +20,8 @@ export default function History() {
   const { twColor } = useTwColors()
 
   useEffect(() => {
-    if (user) {
+    if (user?.user_id) {
+      // Vérifier user_id
       loadDebts()
     }
   }, [user, filter, statusFilter])
@@ -28,7 +29,7 @@ export default function History() {
   const loadDebts = async () => {
     try {
       setLoading(true)
-      let allDebts = await getUserDebts(user!.token)
+      let allDebts = await getUserDebts(user!.user_id) // Utiliser user_id
 
       // Apply filters
       if (filter !== "ALL") {
@@ -41,6 +42,7 @@ export default function History() {
 
       setDebts(allDebts)
     } catch (error) {
+      console.error("History load error:", error)
       Toast.show({
         type: "error",
         text1: "Error",
