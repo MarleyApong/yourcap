@@ -21,7 +21,6 @@ export default function History() {
 
   useEffect(() => {
     if (user?.user_id) {
-      // Vérifier user_id
       loadDebts()
     }
   }, [user, filter, statusFilter])
@@ -29,7 +28,7 @@ export default function History() {
   const loadDebts = async () => {
     try {
       setLoading(true)
-      let allDebts = await getUserDebts(user!.user_id) // Utiliser user_id
+      let allDebts = await getUserDebts(user!.user_id)
 
       // Apply filters
       if (filter !== "ALL") {
@@ -97,7 +96,7 @@ export default function History() {
             </Pressable>
           </View>
 
-          <View className="bg-white p-1 rounded-lg  border border-primary">
+          <View className="bg-white p-1 rounded-lg border border-primary">
             <Pressable onPress={() => setStatusFilter("ALL")} className={`px-3 py-1 rounded-md ${statusFilter === "ALL" ? "bg-primary" : ""}`}>
               <Text className={statusFilter === "ALL" ? "text-white" : "text-gray-700"}>All</Text>
             </Pressable>
@@ -132,9 +131,11 @@ export default function History() {
                 <View>
                   <Text className="font-semibold text-lg text-gray-900">{debt.contact_name}</Text>
                   <Text className={`font-medium ${getTypeColor(debt.debt_type)}`}>
-                    {getTypeText(debt.debt_type)} {formatCurrency(debt.amount)}
+                    {getTypeText(debt.debt_type)} {formatCurrency(debt.amount, debt.currency)}
                   </Text>
-                  <Text className="text-gray-500 text-sm mt-1">Due: {formatDate(debt.due_date)}</Text>
+                  <Text className="text-gray-500 text-sm mt-1">
+                    Loan: {formatDate(debt.loan_date)} | Due: {formatDate(debt.due_date)}
+                  </Text>
                 </View>
                 <View className="flex-row items-center">
                   <View className={`w-3 h-3 rounded-full ${getStatusColor(debt.status)} mr-2`} />

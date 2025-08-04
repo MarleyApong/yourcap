@@ -8,8 +8,11 @@ export interface Debt {
   contact_phone: string
   contact_email?: string
   amount: number
+  currency: string
   description?: string
+  loan_date: string
   due_date: string
+  repayment_date?: string
   status: DebtStatus
   debt_type: DebtType
   created_at: string
@@ -22,8 +25,11 @@ export interface DebtInput {
   contact_phone: string
   contact_email?: string
   amount: number
+  currency?: string
   description?: string
+  loan_date: string
   due_date: string
+  repayment_date?: string
   status?: DebtStatus
   debt_type: DebtType
 }

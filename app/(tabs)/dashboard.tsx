@@ -32,7 +32,7 @@ export default function Dashboard() {
       setSummary(summaryData)
       setRecentDebts(debts.slice(0, 5))
     } catch (error) {
-      // console.error("Dashboard load error:", error)
+      console.error("Dashboard load error:", error)
       Toast.show({
         type: "error",
         text1: "Error",
@@ -57,22 +57,25 @@ export default function Dashboard() {
   return (
     <View className="flex-1 bg-gray-50">
       <PageHeader title="Dashboard" fbackButton={false} textAlign="left" backPath="/dashboard" />
+
       <View className="px-6">
         {/* Summary Cards */}
         <View className="flex-row justify-between mt-6">
           <View className="bg-white p-4 rounded-xl shadow-sm w-[30%] items-center">
             <Text className="text-gray-500 text-sm">You Owe</Text>
-            <Text className="text-red-500 text-xl font-bold mt-1">{formatCurrency(summary.owed)}</Text>
+            <Text className="text-red-500 text-xl font-bold mt-1">{formatCurrency(summary.owed, user?.settings?.currency)}</Text>
           </View>
 
           <View className="bg-white p-4 rounded-xl shadow-sm w-[30%] items-center">
             <Text className="text-gray-500 text-sm">You're Owed</Text>
-            <Text className="text-green-500 text-xl font-bold mt-1">{formatCurrency(summary.owing)}</Text>
+            <Text className="text-green-500 text-xl font-bold mt-1">{formatCurrency(summary.owing, user?.settings?.currency)}</Text>
           </View>
 
           <View className="bg-white p-4 rounded-xl shadow-sm w-[30%] items-center">
             <Text className="text-gray-500 text-sm">Balance</Text>
-            <Text className={summary.balance >= 0 ? "text-green-500" : "text-red-500" + " text-xl font-bold mt-1"}>{formatCurrency(summary.balance)}</Text>
+            <Text className={`text-xl font-bold mt-1 ${summary.balance >= 0 ? "text-green-500" : "text-red-500"}`}>
+              {formatCurrency(summary.balance, user?.settings?.currency)}
+            </Text>
           </View>
         </View>
       </View>
@@ -130,7 +133,7 @@ export default function Dashboard() {
                   <View>
                     <Text className="font-semibold text-gray-900">{debt.contact_name}</Text>
                     <Text className="text-gray-500 text-sm mt-1">
-                      {debt.debt_type === "OWING" ? "Owes you" : "You owe"} {formatCurrency(debt.amount)}
+                      {debt.debt_type === "OWING" ? "Owes you" : "You owe"} {formatCurrency(debt.amount, debt.currency)}
                     </Text>
                   </View>
                   <View className="flex-row items-center">

@@ -22,20 +22,24 @@ export default function AddDebt() {
     contact_email: "",
     amount: "",
     description: "",
-    due_date: new Date(),
-    debt_type: "OWING", // 'OWING' or 'OWED'
+    loan_date: new Date(),
+    due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // +30 jours par défaut
+    debt_type: "OWING",
   })
-  const [showDatePicker, setShowDatePicker] = useState(false)
+  const [showLoanDatePicker, setShowLoanDatePicker] = useState(false)
+  const [showDueDatePicker, setShowDueDatePicker] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const handleChange = (field: string, value: string) => {
     setForm({ ...form, [field]: value })
   }
 
-  const handleDateChange = (event: any, selectedDate?: Date) => {
-    setShowDatePicker(false)
+  const handleDateChange = (field: "loan_date" | "due_date") => (event: any, selectedDate?: Date) => {
+    if (field === "loan_date") setShowLoanDatePicker(false)
+    if (field === "due_date") setShowDueDatePicker(false)
+
     if (selectedDate) {
-      setForm({ ...form, due_date: selectedDate })
+      setForm({ ...form, [field]: selectedDate })
     }
   }
 
@@ -59,7 +63,7 @@ export default function AddDebt() {
     }
 
     setLoading(true)
-    try {      
+    try {
       await createDebt({
         user_id: user!.user_id,
         contact_name: form.contact_name,
@@ -67,14 +71,26 @@ export default function AddDebt() {
         contact_email: form.contact_email || undefined,
         amount: Number(form.amount),
         description: form.description,
+        loan_date: form.loan_date.toISOString(),
         due_date: form.due_date.toISOString(),
         debt_type: form.debt_type as "OWING" | "OWED",
         status: "PENDING",
       })
 
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Debt created successfully",
+      })
+
       router.back()
     } catch (error) {
       console.error("Error creating debt:", error)
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to create debt",
+      })
     } finally {
       setLoading(false)
     }
@@ -106,11 +122,11 @@ export default function AddDebt() {
           <View className="bg-white p-4 rounded-xl shadow-sm">
             <Text className="text-2xl font-bold text-primary mb-4">Contact Information</Text>
 
-            <TextInput label="Full Name" required placeholder="xxx xxx" value={form.contact_name} onChangeText={(text) => handleChange("contact_name", text)} icon="user" />
+            <TextInput label="Full Name" required placeholder="John Doe" value={form.contact_name} onChangeText={(text) => handleChange("contact_name", text)} icon="user" />
 
             <TextInput
               label="Phone Number"
-              placeholder="x xx xx xx"
+              placeholder="123 456 7890"
               value={form.contact_phone}
               onChangeText={(text) => handleChange("contact_phone", text)}
               keyboardType="phone-pad"
@@ -120,7 +136,7 @@ export default function AddDebt() {
 
             <TextInput
               label="Email"
-              placeholder="xx@xxx.xx"
+              placeholder="john@example.com"
               value={form.contact_email}
               onChangeText={(text) => handleChange("contact_email", text)}
               keyboardType="email-address"
@@ -144,21 +160,31 @@ export default function AddDebt() {
               icon="credit-card"
             />
 
-            <View className="mb-6">
-              <Text className="font-bold text-lg">
-                Date<Text className="text-red-600"> *</Text>
-              </Text>
-
-              <Pressable onPress={() => setShowDatePicker(true)} className="flex-row items-center justify-between border-b border-primary p-3">
+            <View className="mb-4">
+              <Text className="font-bold text-lg">Loan Date</Text>
+              <Pressable onPress={() => setShowLoanDatePicker(true)} className="flex-row items-center justify-between border-b border-primary p-3">
                 <View className="flex-row items-center">
                   <Feather name="calendar" size={20} color={twColor("text-primary")} />
-                  <Text className="ml-2 text-gray-700">{form.due_date ? format(form.due_date, "MMM dd, yyyy") : "Select due date"}</Text>
+                  <Text className="ml-2 text-gray-700">{format(form.loan_date, "MMM dd, yyyy")}</Text>
                 </View>
                 <Feather name="chevron-down" size={20} color={twColor("text-gray-500")} />
               </Pressable>
             </View>
 
-            {showDatePicker && <DateTimePicker value={form.due_date} mode="date" display="default" onChange={handleDateChange} minimumDate={new Date()} />}
+            <View className="mb-6">
+              <Text className="font-bold text-lg">Due Date</Text>
+              <Pressable onPress={() => setShowDueDatePicker(true)} className="flex-row items-center justify-between border-b border-primary p-3">
+                <View className="flex-row items-center">
+                  <Feather name="calendar" size={20} color={twColor("text-primary")} />
+                  <Text className="ml-2 text-gray-700">{format(form.due_date, "MMM dd, yyyy")}</Text>
+                </View>
+                <Feather name="chevron-down" size={20} color={twColor("text-gray-500")} />
+              </Pressable>
+            </View>
+
+            {showLoanDatePicker && <DateTimePicker value={form.loan_date} mode="date" display="default" onChange={handleDateChange("loan_date")} />}
+
+            {showDueDatePicker && <DateTimePicker value={form.due_date} mode="date" display="default" onChange={handleDateChange("due_date")} minimumDate={new Date()} />}
 
             <TextInput
               label="Description"

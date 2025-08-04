@@ -5,28 +5,87 @@ import { Feather } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { useTwColors } from "@/lib/tw-colors"
 import Toast from "react-native-toast-message"
+import { PageHeader } from "@/components/feature/page-header"
+import { getSettings, updateSettings } from "@/services/settingsService"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export default function Settings() {
   const { user, logout } = useAuth()
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true)
-  const [daysBeforeReminder, setDaysBeforeReminder] = useState(3)
-  const [currency, setCurrency] = useState("USD")
-  const [inactivityTimeout, setInactivityTimeout] = useState(30) // 30 minutes par défaut
+  const [settings, setSettings] = useState({
+    notification_enabled: true,
+    days_before_reminder: 3,
+    currency: "USD",
+    inactivity_timeout: 30,
+  })
+  const [loading, setLoading] = useState(true)
 
   const router = useRouter()
   const { twColor } = useTwColors()
+
+  useEffect(() => {
+    const loadUserSettings = async () => {
+      if (user?.user_id) {
+        try {
+          const savedSettings = await getSettings(user.user_id)
+          if (savedSettings) {
+            setSettings({
+              notification_enabled: typeof savedSettings.notification_enabled === "boolean"
+                ? savedSettings.notification_enabled
+                : savedSettings.notification_enabled === 1,
+              days_before_reminder: savedSettings.days_before_reminder,
+              currency: savedSettings.currency,
+              inactivity_timeout: savedSettings.inactivity_timeout,
+            })
+          }
+        } catch (error) {
+          console.error("Failed to load settings:", error)
+        } finally {
+          setLoading(false)
+        }
+      }
+    }
+
+    loadUserSettings()
+  }, [user])
+
+  const handleSettingChange = async (field: string, value: any) => {
+    const newSettings = { ...settings, [field]: value }
+    setSettings(newSettings)
+
+    if (user?.user_id) {
+      try {
+        await updateSettings(user.user_id, {
+          [field]: value,
+        })
+
+        if (field === "inactivity_timeout") {
+          await AsyncStorage.setItem("inactivityTimeout", value.toString())
+        }
+      } catch (error) {
+        console.error("Failed to update setting:", error)
+      }
+    }
+  }
 
   const handleLogout = () => {
     logout()
     router.replace("/")
   }
 
+  if (loading) {
+    return (
+      <View className="flex-1 bg-gray-50 items-center justify-center">
+        <Text>Loading settings...</Text>
+      </View>
+    )
+  }
+
   return (
     <ScrollView className="flex-1 bg-gray-50" contentContainerStyle={{ paddingBottom: 40 }}>
-      <View className="p-6">
-        <Text className="text-3xl font-bold text-gray-900 mb-8">Settings</Text>
+      <PageHeader title="Settings" textPosition="center" textAlign="left" backPath="/dashboard" />
 
-        {/* User Profile */}
+      <View className="p-6">
+        {/* User Profile Section */}
         <View className="bg-white p-6 rounded-xl shadow-sm mb-6">
           <Text className="text-lg font-semibold text-gray-900 mb-4">Profile</Text>
 
@@ -51,26 +110,31 @@ export default function Settings() {
           </Pressable>
         </View>
 
-        {/* App Settings */}
+        {/* Notifications Section */}
         <View className="bg-white p-6 rounded-xl shadow-sm mb-6">
           <Text className="text-lg font-semibold text-gray-900 mb-4">Notifications</Text>
 
           <View className="flex-row items-center justify-between py-3">
             <Text className="text-gray-700">Enable Notifications</Text>
-            <Switch value={notificationsEnabled} onValueChange={setNotificationsEnabled} trackColor={{ false: twColor("gray-300"), true: twColor("primary") }} thumbColor="white" />
+            <Switch
+              value={settings.notification_enabled}
+              onValueChange={(val) => handleSettingChange("notification_enabled", val)}
+              trackColor={{ false: twColor("gray-300"), true: twColor("primary") }}
+              thumbColor="white"
+            />
           </View>
 
-          {notificationsEnabled && (
+          {settings.notification_enabled && (
             <View className="py-3 border-t border-gray-100">
               <Text className="text-gray-700 mb-2">Days Before Reminder</Text>
               <View className="flex-row justify-between">
                 {[1, 3, 5, 7].map((days) => (
                   <Pressable
                     key={days}
-                    onPress={() => setDaysBeforeReminder(days)}
-                    className={`px-4 py-2 rounded-full ${daysBeforeReminder === days ? "bg-primary" : "bg-gray-100"}`}
+                    onPress={() => handleSettingChange("days_before_reminder", days)}
+                    className={`px-4 py-2 rounded-full ${settings.days_before_reminder === days ? "bg-primary" : "bg-gray-100"}`}
                   >
-                    <Text className={daysBeforeReminder === days ? "text-white" : "text-gray-700"}>
+                    <Text className={settings.days_before_reminder === days ? "text-white" : "text-gray-700"}>
                       {days} day{days > 1 ? "s" : ""}
                     </Text>
                   </Pressable>
@@ -80,6 +144,7 @@ export default function Settings() {
           )}
         </View>
 
+        {/* Preferences Section */}
         <View className="bg-white p-6 rounded-xl shadow-sm mb-6">
           <Text className="text-lg font-semibold text-gray-900 mb-4">Preferences</Text>
 
@@ -87,14 +152,19 @@ export default function Settings() {
             <Text className="text-gray-700 mb-2">Currency</Text>
             <View className="flex-row flex-wrap gap-2">
               {["USD", "EUR", "XAF", "GBP"].map((curr) => (
-                <Pressable key={curr} onPress={() => setCurrency(curr)} className={`px-4 py-2 rounded-full ${currency === curr ? "bg-primary" : "bg-gray-100"}`}>
-                  <Text className={currency === curr ? "text-white" : "text-gray-700"}>{curr}</Text>
+                <Pressable
+                  key={curr}
+                  onPress={() => handleSettingChange("currency", curr)}
+                  className={`px-4 py-2 rounded-full ${settings.currency === curr ? "bg-primary" : "bg-gray-100"}`}
+                >
+                  <Text className={settings.currency === curr ? "text-white" : "text-gray-700"}>{curr}</Text>
                 </Pressable>
               ))}
             </View>
           </View>
         </View>
 
+        {/* Security Section */}
         <View className="bg-white p-6 rounded-xl shadow-sm mb-6">
           <Text className="text-lg font-semibold text-gray-900 mb-4">Security</Text>
 
@@ -104,20 +174,17 @@ export default function Settings() {
               {[15, 30, 60, 120].map((minutes) => (
                 <Pressable
                   key={minutes}
-                  onPress={() => {
-                    setInactivityTimeout(minutes)
-                    AsyncStorage.setItem("inactivityTimeout", minutes.toString())
-                  }}
-                  className={`px-4 py-2 rounded-full ${inactivityTimeout === minutes ? "bg-primary" : "bg-gray-100"}`}
+                  onPress={() => handleSettingChange("inactivity_timeout", minutes)}
+                  className={`px-4 py-2 rounded-full ${settings.inactivity_timeout === minutes ? "bg-primary" : "bg-gray-100"}`}
                 >
-                  <Text className={inactivityTimeout === minutes ? "text-white" : "text-gray-700"}>{minutes} min</Text>
+                  <Text className={settings.inactivity_timeout === minutes ? "text-white" : "text-gray-700"}>{minutes} min</Text>
                 </Pressable>
               ))}
             </View>
           </View>
         </View>
 
-        {/* App Info */}
+        {/* About Section */}
         <View className="bg-white p-6 rounded-xl shadow-sm mb-6">
           <Text className="text-lg font-semibold text-gray-900 mb-4">About</Text>
 

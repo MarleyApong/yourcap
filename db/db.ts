@@ -23,12 +23,25 @@ export const initDb = async () => {
         contact_phone TEXT NOT NULL,
         contact_email TEXT,
         amount REAL NOT NULL,
+        currency TEXT DEFAULT 'USD',
         description TEXT,
+        loan_date TEXT NOT NULL,
         due_date TEXT NOT NULL,
-        status TEXT NOT NULL, -- 'PENDING', 'PAID', 'OVERDUE'
-        debt_type TEXT NOT NULL, -- 'OWED' (you owe), 'OWING' (owed to you)
+        repayment_date TEXT,
+        status TEXT NOT NULL,
+        debt_type TEXT NOT NULL,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+      );
+
+      CREATE TABLE IF NOT EXISTS settings (
+        user_id TEXT PRIMARY KEY NOT NULL,
+        notification_enabled INTEGER DEFAULT 1,
+        days_before_reminder INTEGER DEFAULT 3,
+        language TEXT DEFAULT 'en',
+        currency TEXT DEFAULT 'USD',
+        inactivity_timeout INTEGER DEFAULT 30,
         FOREIGN KEY (user_id) REFERENCES users(user_id)
       );
 
@@ -42,15 +55,6 @@ export const initDb = async () => {
         created_at TEXT NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(user_id),
         FOREIGN KEY (debt_id) REFERENCES debts(debt_id)
-      );
-
-      CREATE TABLE IF NOT EXISTS settings (
-        user_id TEXT PRIMARY KEY NOT NULL,
-        notification_enabled INTEGER DEFAULT 1,
-        days_before_reminder INTEGER DEFAULT 3,
-        language TEXT DEFAULT 'en',
-        currency TEXT DEFAULT 'USD',
-        FOREIGN KEY (user_id) REFERENCES users(user_id)
       );
     `)
 
@@ -79,5 +83,7 @@ export const resetDatabase = async () => {
     throw error
   }
 }
+
+// resetDatabase()
 
 export default db
