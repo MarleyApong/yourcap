@@ -1,10 +1,9 @@
-import { getSettings } from "@/services/settingsService"
-
 export function cn(...classes: (string | undefined | null | false)[]) {
   return classes.filter(Boolean).join(" ")
 }
 
-export async function formatCurrency(amount: number, currency: string = "USD"): Promise<string> {
+// CHANGEMENT : Suppression d'async - formatCurrency est maintenant synchrone
+export function formatCurrency(amount: number, currency: string = "USD"): string {
   try {
     return new Intl.NumberFormat(undefined, {
       style: "currency",

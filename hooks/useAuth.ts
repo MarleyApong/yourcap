@@ -107,5 +107,5 @@ export const useAuth = () => {
     router.replace("/")
   }
 
-  return { user, loading, login, register, logout }
+  return { user, setUser, loading, login, register, logout }
 }

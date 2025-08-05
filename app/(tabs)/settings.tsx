@@ -1,71 +1,16 @@
-import { useEffect, useState } from "react"
 import { View, Text, ScrollView, Switch, Pressable } from "react-native"
 import { useAuth } from "@/hooks/useAuth"
 import { Feather } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { useTwColors } from "@/lib/tw-colors"
-import Toast from "react-native-toast-message"
 import { PageHeader } from "@/components/feature/page-header"
-import { getSettings, updateSettings } from "@/services/settingsService"
-import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useSettings } from "@/hooks/useSettings"
 
 export default function Settings() {
   const { user, logout } = useAuth()
-  const [settings, setSettings] = useState({
-    notification_enabled: true,
-    days_before_reminder: 3,
-    currency: "USD",
-    inactivity_timeout: 30,
-  })
-  const [loading, setLoading] = useState(true)
-
+  const { settings, loading, updateSetting } = useSettings()
   const router = useRouter()
   const { twColor } = useTwColors()
-
-  useEffect(() => {
-    const loadUserSettings = async () => {
-      if (user?.user_id) {
-        try {
-          const savedSettings = await getSettings(user.user_id)
-          if (savedSettings) {
-            setSettings({
-              notification_enabled: typeof savedSettings.notification_enabled === "boolean"
-                ? savedSettings.notification_enabled
-                : savedSettings.notification_enabled === 1,
-              days_before_reminder: savedSettings.days_before_reminder,
-              currency: savedSettings.currency,
-              inactivity_timeout: savedSettings.inactivity_timeout,
-            })
-          }
-        } catch (error) {
-          console.error("Failed to load settings:", error)
-        } finally {
-          setLoading(false)
-        }
-      }
-    }
-
-    loadUserSettings()
-  }, [user])
-
-  const handleSettingChange = async (field: string, value: any) => {
-    const newSettings = { ...settings, [field]: value }
-    setSettings(newSettings)
-
-    if (user?.user_id) {
-      try {
-        await updateSettings(user.user_id, {
-          [field]: value,
-        })
-
-        if (field === "inactivity_timeout") {
-          await AsyncStorage.setItem("inactivityTimeout", value.toString())
-        }
-      } catch (error) {
-        console.error("Failed to update setting:", error)
-      }
-    }
-  }
 
   const handleLogout = () => {
     logout()
@@ -118,7 +63,7 @@ export default function Settings() {
             <Text className="text-gray-700">Enable Notifications</Text>
             <Switch
               value={settings.notification_enabled}
-              onValueChange={(val) => handleSettingChange("notification_enabled", val)}
+              onValueChange={(val) => updateSetting("notification_enabled", val)}
               trackColor={{ false: twColor("gray-300"), true: twColor("primary") }}
               thumbColor="white"
             />
@@ -131,7 +76,7 @@ export default function Settings() {
                 {[1, 3, 5, 7].map((days) => (
                   <Pressable
                     key={days}
-                    onPress={() => handleSettingChange("days_before_reminder", days)}
+                    onPress={() => updateSetting("days_before_reminder", days)}
                     className={`px-4 py-2 rounded-full ${settings.days_before_reminder === days ? "bg-primary" : "bg-gray-100"}`}
                   >
                     <Text className={settings.days_before_reminder === days ? "text-white" : "text-gray-700"}>
@@ -154,7 +99,7 @@ export default function Settings() {
               {["USD", "EUR", "XAF", "GBP"].map((curr) => (
                 <Pressable
                   key={curr}
-                  onPress={() => handleSettingChange("currency", curr)}
+                  onPress={() => updateSetting("currency", curr)}
                   className={`px-4 py-2 rounded-full ${settings.currency === curr ? "bg-primary" : "bg-gray-100"}`}
                 >
                   <Text className={settings.currency === curr ? "text-white" : "text-gray-700"}>{curr}</Text>
@@ -174,7 +119,7 @@ export default function Settings() {
               {[15, 30, 60, 120].map((minutes) => (
                 <Pressable
                   key={minutes}
-                  onPress={() => handleSettingChange("inactivity_timeout", minutes)}
+                  onPress={() => updateSetting("inactivity_timeout", minutes)}
                   className={`px-4 py-2 rounded-full ${settings.inactivity_timeout === minutes ? "bg-primary" : "bg-gray-100"}`}
                 >
                   <Text className={settings.inactivity_timeout === minutes ? "text-white" : "text-gray-700"}>{minutes} min</Text>

@@ -6,9 +6,10 @@ import { getDebtsSummary, getUserDebts } from "@/services/debtServices"
 import { Debt } from "@/types/debt"
 import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
-import { useEffect, useState } from "react"
-import { Image, Pressable, ScrollView, Text, View } from "react-native"
+import { useCallback, useState } from "react"
+import { Alert, Image, Pressable, ScrollView, Text, View } from "react-native"
 import Toast from "react-native-toast-message"
+import { useFocusEffect } from "@react-navigation/core"
 
 export default function Dashboard() {
   const { user } = useAuth()
@@ -18,17 +19,15 @@ export default function Dashboard() {
   const router = useRouter()
   const { twColor } = useTwColors()
 
-  useEffect(() => {
-    if (user?.user_id) {
-      loadData()
-    }
-  }, [user])
+  const loadData = useCallback(async () => {
+    if (!user?.user_id) return
 
-  const loadData = async () => {
     try {
       setLoading(true)
-      const [summaryData, debts] = await Promise.all([getDebtsSummary(user!.user_id), getUserDebts(user!.user_id)])
-// console.error("Dashboard load data:", { summaryData, debts });
+      const [summaryData, debts] = await Promise.all([getDebtsSummary(user.user_id), getUserDebts(user.user_id)])
+
+      console.log("user", user);
+      
 
       setSummary(summaryData)
       setRecentDebts(debts.slice(0, 5))
@@ -42,7 +41,15 @@ export default function Dashboard() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user?.user_id])
+
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.user_id) {
+        loadData()
+      }
+    }, [loadData]),
+  )
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -134,7 +141,7 @@ export default function Dashboard() {
                   <View>
                     <Text className="font-semibold text-gray-900">{debt.contact_name}</Text>
                     <Text className="text-gray-500 text-sm mt-1">
-                      {debt.debt_type === "OWING" ? "Owes you" : "You owe"} {formatCurrency(debt.amount, debt.currency)}
+                      {debt.debt_type === "OWING" ? "Owes you" : "You owe"} {formatCurrency(debt.amount, user?.settings?.currency)}
                     </Text>
                   </View>
                   <View className="flex-row items-center">

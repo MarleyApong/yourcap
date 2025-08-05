@@ -21,7 +21,7 @@ export const createDebt = async (debt: DebtInput): Promise<Debt> => {
         debt.contact_email || null,
         debt.amount,
         debt.description || null,
-        debt.loan_date, // Ajouté ici
+        debt.loan_date,
         debt.due_date,
         debt.status || "PENDING",
         debt.debt_type,
@@ -107,7 +107,7 @@ export const getDebtById = async (debt_id: string): Promise<Debt | null> => {
     const debt = await db.getFirstAsync<Debt>(
       `SELECT 
         debt_id, user_id, contact_name, contact_phone, contact_email,
-        amount, description, due_date, status, debt_type,
+        amount, description, loan_date, due_date, status, debt_type,
         created_at, updated_at
        FROM debts 
        WHERE debt_id = ?`,
@@ -125,7 +125,7 @@ export const getUserDebts = async (user_id: string): Promise<Debt[]> => {
     const debts = await db.getAllAsync<Debt>(
       `SELECT 
         debt_id, user_id, contact_name, contact_phone, contact_email,
-        amount, description, due_date, status, debt_type,
+        amount, description, loan_date, due_date, status, debt_type,
         created_at, updated_at
        FROM debts 
        WHERE user_id = ? 

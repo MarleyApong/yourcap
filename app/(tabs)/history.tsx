@@ -131,7 +131,7 @@ export default function History() {
                 <View>
                   <Text className="font-semibold text-lg text-gray-900">{debt.contact_name}</Text>
                   <Text className={`font-medium ${getTypeColor(debt.debt_type)}`}>
-                    {getTypeText(debt.debt_type)} {formatCurrency(debt.amount, debt.currency)}
+                    {getTypeText(debt.debt_type)} {formatCurrency(debt.amount, user?.settings?.currency)}
                   </Text>
                   <Text className="text-gray-500 text-sm mt-1">
                     Loan: {formatDate(debt.loan_date)} | Due: {formatDate(debt.due_date)}

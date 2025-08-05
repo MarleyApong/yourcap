@@ -43,53 +43,94 @@ export default function AddDebt() {
     }
   }
 
-  const handleSubmit = async () => {
-    if (!form.contact_name || !form.contact_phone || !form.amount) {
+  const validateForm = () => {
+    if (!form.contact_name.trim()) {
       Toast.show({
         type: "error",
-        text1: "Error",
-        text2: "Please fill all required fields",
+        text1: "Validation Error",
+        text2: "Contact name is required",
       })
-      return
+      return false
     }
 
-    if (isNaN(Number(form.amount)) || Number(form.amount) <= 0) {
+    if (!form.contact_phone.trim()) {
       Toast.show({
         type: "error",
-        text1: "Error",
-        text2: "Please enter a valid amount",
+        text1: "Validation Error",
+        text2: "Phone number is required",
       })
-      return
+      return false
     }
+
+    if (!form.amount.trim()) {
+      Toast.show({
+        type: "error",
+        text1: "Validation Error",
+        text2: "Amount is required",
+      })
+      return false
+    }
+
+    const amount = Number(form.amount)
+    if (isNaN(amount) || amount <= 0) {
+      Toast.show({
+        type: "error",
+        text1: "Validation Error",
+        text2: "Please enter a valid amount greater than 0",
+      })
+      return false
+    }
+
+    if (form.due_date < form.loan_date) {
+      Toast.show({
+        type: "error",
+        text1: "Validation Error",
+        text2: "Due date cannot be before loan date",
+      })
+      return false
+    }
+
+    return true
+  }
+
+  const handleSubmit = async () => {
+    if (!validateForm()) return
 
     setLoading(true)
     try {
       await createDebt({
         user_id: user!.user_id,
-        contact_name: form.contact_name,
-        contact_phone: form.contact_phone,
-        contact_email: form.contact_email || undefined,
+        contact_name: form.contact_name.trim(),
+        contact_phone: form.contact_phone.trim(),
+        contact_email: form.contact_email.trim() || undefined,
         amount: Number(form.amount),
-        description: form.description,
+        description: form.description.trim() || undefined,
         loan_date: form.loan_date.toISOString(),
         due_date: form.due_date.toISOString(),
         debt_type: form.debt_type as "OWING" | "OWED",
         status: "PENDING",
       })
 
-      Toast.show({
-        type: "success",
-        text1: "Success",
-        text2: "Debt created successfully",
+      // Réinitialiser le formulaire après succès
+      setForm({
+        contact_name: "",
+        contact_phone: "",
+        contact_email: "",
+        amount: "",
+        description: "",
+        loan_date: new Date(),
+        due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        debt_type: "OWING",
       })
 
+      // Retourner au dashboard (qui se rafraîchira automatiquement avec useFocusEffect)
       router.back()
     } catch (error) {
       console.error("Error creating debt:", error)
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "Failed to create debt",
+        text2: "Failed to create debt. Please try again.",
       })
     } finally {
       setLoading(false)
@@ -182,9 +223,9 @@ export default function AddDebt() {
               </Pressable>
             </View>
 
-            {showLoanDatePicker && <DateTimePicker value={form.loan_date} mode="date" display="default" onChange={handleDateChange("loan_date")} />}
+            {showLoanDatePicker && <DateTimePicker value={form.loan_date} mode="date" display="default" onChange={handleDateChange("loan_date")} maximumDate={new Date()} />}
 
-            {showDueDatePicker && <DateTimePicker value={form.due_date} mode="date" display="default" onChange={handleDateChange("due_date")} minimumDate={new Date()} />}
+            {showDueDatePicker && <DateTimePicker value={form.due_date} mode="date" display="default" onChange={handleDateChange("due_date")} minimumDate={form.loan_date} />}
 
             <TextInput
               label="Description"
