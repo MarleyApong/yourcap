@@ -104,7 +104,7 @@ export default function Register() {
   }
 
   return (
-    <ScrollView className="h-full bg-white" contentContainerStyle={{ flexGrow: 1 }}>
+    <ScrollView className="h-full bg-primary-50" contentContainerStyle={{ flexGrow: 1 }}>
       {step === 1 ? (
         <FBackButton />
       ) : (
@@ -139,7 +139,7 @@ export default function Register() {
                 placeholder: "6xx xxx xxx or 2xx xxx xxx",
               },
             ].map(({ label, icon, field, keyboardType, placeholder }) => (
-              <View key={label} className="bg-primary/10 rounded-md flex-row gap-2 items-center px-3 py-1">
+              <View key={label} className="bg-primary-50 border border-primary rounded-md flex-row gap-2 items-center px-3 py-1">
                 <Feather name={icon as any} size={24} color={twColor("text-primary")} />
                 <TextInput
                   className="text-xl flex-1"
@@ -154,7 +154,7 @@ export default function Register() {
           </View>
         ) : (
           <View className="w-full mt-4 flex-col gap-4">
-            <View className="bg-primary/10 rounded-md flex-row gap-2 items-center px-3 py-1">
+            <View className="bg-primary-50 border border-primary rounded-lg flex-row gap-2 items-center px-3 py-1">
               <Feather name="lock" size={24} color={twColor("text-primary")} />
               <PasswordInput
                 className="text-xl"
@@ -165,7 +165,7 @@ export default function Register() {
               />
             </View>
 
-            <View className="bg-primary/10 rounded-md flex-row gap-2 items-center px-3 py-1">
+            <View className="bg-primary-50 border border-primary rounded-md flex-row gap-2 items-center px-3 py-1">
               <Feather name="lock" size={24} color={twColor("text-primary")} />
               <PasswordInput
                 className="text-xl"

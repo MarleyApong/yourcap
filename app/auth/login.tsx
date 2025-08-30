@@ -1,12 +1,12 @@
-import { useState } from "react"
-import { View, Text, TextInput, Pressable, Alert, Image } from "react-native"
-import { Link, useRouter } from "expo-router"
-import { useAuth } from "@/hooks/useAuth"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Feather } from "@expo/vector-icons"
-import { PasswordInput } from "@/components/ui/password-input"
-import { useTwColors } from "@/lib/tw-colors"
 import { FBackButton } from "@/components/ui/fback-button"
+import { PasswordInput } from "@/components/ui/password-input"
+import { useAuth } from "@/hooks/useAuth"
+import { useTwColors } from "@/lib/tw-colors"
+import { Feather } from "@expo/vector-icons"
+import { Link, useRouter } from "expo-router"
+import { useState } from "react"
+import { Image, Pressable, Text, TextInput, View } from "react-native"
 import Toast from "react-native-toast-message"
 
 export default function Login() {
@@ -54,7 +54,7 @@ export default function Login() {
   }
 
   return (
-    <View className="relative h-full">
+    <View className="relative h-full bg-primary-50">
       <FBackButton />
       <Image source={require("@/assets/images/bg/bg-login-2.png")} className="h-90 w-full" resizeMode="cover" />
 
@@ -63,11 +63,11 @@ export default function Login() {
         <Text className="text-2xl">Login to your account</Text>
 
         <View className="w-full mt-8 flex-col gap-4">
-          <View className="bg-primary/10 rounded-md flex-row gap-2 items-center px-3 py-1">
+          <View className="bg-primary-50 border border-primary rounded-md flex-row gap-2 items-center px-3 py-1">
             <Feather name="mail" size={24} color={twColor("text-primary")} />
             <TextInput className="text-xl flex-1" placeholder="Email" value={identifier} onChangeText={setIdentifier} keyboardType="email-address" autoCapitalize="none" />
           </View>
-          <View className="bg-primary/10 rounded-md flex-row gap-2 items-center px-3 py-1">
+          <View className="bg-primary-50 border border-primary rounded-md flex-row gap-2 items-center px-3 py-1">
             <Feather name="lock" size={24} color={twColor("text-primary")} />
             <PasswordInput className="text-xl" value={password} onChangeText={setPassword} iconColor={twColor("text-primary")} />
           </View>

@@ -9,7 +9,7 @@ export const Checkbox = ({ label, checked, onChange }: { label: string; checked:
 
   return (
     <TouchableOpacity className="flex-row items-center gap-2" onPress={() => onChange(!checked)} accessibilityRole="checkbox" accessibilityState={{ checked }}>
-      <View className={cn("w-5 h-5 rounded-md border-2 items-center justify-center  bg-primary/10", checked ? "border-primary" : "border-gray-400")}>
+      <View className={cn("w-5 h-5 rounded-md border items-center justify-center  bg-primary/10 border-primary", checked ? "border-2" : "")}>
         {checked && <Feather name="check" size={14} color={twColor("text-primary")} />}
       </View>
       <Text className="text-base text-gray-800">{label}</Text>
