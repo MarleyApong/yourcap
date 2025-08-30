@@ -124,7 +124,7 @@ export default function Login() {
               disabled={loading}
               className={`flex-row gap-2 justify-center items-center bg-primary p-4 rounded-xl w-full ${loading ? "opacity-70" : ""}`}
             >
-              <Feather name="book-open" size={24} color={twColor("text-white")} />
+              <Feather name="log-in" size={24} color={twColor("text-white")} />
               <Text className="text-center text-white font-semibold text-lg">{loading ? "Signing in..." : "Sign in"}</Text>
             </TouchableOpacity>
 

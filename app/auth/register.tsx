@@ -222,7 +222,8 @@ export default function Register() {
 
         {/* Boutons en bas */}
         <View className="w-full px-10 mt-8 mb-10 absolute bottom-0">
-          <Pressable onPress={step === 1 ? handleContinue : handleSubmit} disabled={loading} className={`bg-primary p-4 rounded-xl w-full ${loading ? "opacity-70" : ""}`}>
+          <Pressable onPress={step === 1 ? handleContinue : handleSubmit} disabled={loading} className={`flex-row gap-2 justify-center items-center bg-primary p-4 rounded-xl w-full ${loading ? "opacity-70" : ""}`}>
+            {step === 1 ? <Feather name="arrow-up-right" size={24} color={twColor("text-white")} /> :  <Feather name="send" size={24} color={twColor("text-white")} />}
             <Text className="text-center text-white font-semibold text-lg">{loading ? "Processing..." : step === 1 ? "Continue" : "Sign up"}</Text>
           </Pressable>
 
