@@ -1,6 +1,8 @@
-import { View, Text } from "react-native"
+import { View, Text, TouchableOpacity } from "react-native"
 import { FBackButton } from "@/components/ui/fback-button"
 import { useTwColors } from "@/lib/tw-colors"
+import { Feather } from "@expo/vector-icons"
+import { useRouter } from "expo-router"
 // import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 type PageHeaderProps = {
@@ -14,7 +16,16 @@ type PageHeaderProps = {
 }
 
 export const PageHeader = ({ title, backPath, fbackButton = true, textAlign = "center", textPosition = "bottom", className = "" }: PageHeaderProps) => {
+  const router = useRouter()
   const { twColor } = useTwColors()
+
+  const handlePress = () => {
+    if (backPath) {
+      router.push(backPath as any)
+    } else {
+      router.back()
+    }
+  }
   // const insets = useSafeAreaInsets()
 
   return (
@@ -23,7 +34,7 @@ export const PageHeader = ({ title, backPath, fbackButton = true, textAlign = "c
       style={{
         backgroundColor: twColor("background"),
         borderBottomWidth: 1,
-        borderColor: twColor("navigation-border"), 
+        borderColor: twColor("navigation-border"),
         shadowColor: twColor("navigation-shadow"),
         // paddingTop: insets.top - 20,
         paddingBottom: 10,
@@ -39,7 +50,14 @@ export const PageHeader = ({ title, backPath, fbackButton = true, textAlign = "c
       }}
     >
       <View className={`${textPosition === "center" ? "flex-row items-center" : "flex-col"} px-3 pb-0`} style={{ position: "relative" }}>
-        {fbackButton ? <FBackButton path={backPath} isAbsolute={false} /> : null }
+        {fbackButton ? (
+          <TouchableOpacity
+            className={`flex-row items-center justify-center w-14 p-2 bg-background/20 border border-primary z-10 rounded-full ${className}`}
+            onPress={handlePress}
+          >
+            <Feather name="chevron-left" size={24} color={twColor("primary")} />
+          </TouchableOpacity>
+        ) : null}
         <Text
           className={`text-2xl font-bold flex-1 mt-2 ${textAlign === "center" ? "text-center" : textAlign === "left" ? "text-left ml-4" : "text-right mr-4"}`}
           style={{ color: twColor("navigation-foreground") }}

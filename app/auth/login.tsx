@@ -20,21 +20,21 @@ export default function Login() {
   const router = useRouter()
 
   const handleSubmit = async () => {
-    // if (!identifier || !password) {
-    //   Toast.show({
-    //     type: "error",
-    //     text1: "Error",
-    //     text2: "Please enter both identifier and password",
-    //   })
-    //   return
-    // }
+    if (!identifier || !password) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Please enter both identifier and password",
+      })
+      return
+    }
     router.replace("/(tabs)/dashboard")
 
     setLoading(true)
     try {
       const success = await login({ identifier, password })
       if (success) {
-        // router.replace("/(tabs)/dashboard")
+        router.replace("/(tabs)/dashboard")
       } else {
         Toast.show({
           type: "error",
