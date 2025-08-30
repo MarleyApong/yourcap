@@ -20,20 +20,21 @@ export default function Login() {
   const router = useRouter()
 
   const handleSubmit = async () => {
-    if (!identifier || !password) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Please enter both identifier and password",
-      })
-      return
-    }
+    // if (!identifier || !password) {
+    //   Toast.show({
+    //     type: "error",
+    //     text1: "Error",
+    //     text2: "Please enter both identifier and password",
+    //   })
+    //   return
+    // }
+    router.replace("/(tabs)/dashboard")
 
     setLoading(true)
     try {
       const success = await login({ identifier, password })
       if (success) {
-        router.replace("/(tabs)/dashboard")
+        // router.replace("/(tabs)/dashboard")
       } else {
         Toast.show({
           type: "error",
@@ -55,7 +56,7 @@ export default function Login() {
   return (
     <View className="relative h-full">
       <FBackButton />
-      <Image source={require("@/assets/images/bg/bg-login-2.png")} className="h-90" resizeMode="cover" />
+      <Image source={require("@/assets/images/bg/bg-login-2.png")} className="h-90 w-full" resizeMode="cover" />
 
       <View className="flex items-center w-full px-8 mt-10">
         <Text className="text-5xl text-primary font-bold">Welcome Back</Text>

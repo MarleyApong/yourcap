@@ -138,7 +138,7 @@ export default function AddDebt() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-gray-50" contentContainerStyle={{ paddingBottom: 40 }}>
+    <ScrollView className="bg-primary/5" contentContainerStyle={{ paddingBottom: 40 }}>
       <PageHeader title="New debt" textPosition="center" textAlign="left" backPath="/dashboard" />
 
       <View className="px-6">

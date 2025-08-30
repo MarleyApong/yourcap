@@ -1,16 +1,18 @@
+// app/(tabs)/settings.tsx - Settings page using native header
 import { View, Text, ScrollView, Switch, Pressable } from "react-native"
 import { useAuth } from "@/hooks/useAuth"
 import { Feather } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { useTwColors } from "@/lib/tw-colors"
-import { PageHeader } from "@/components/feature/page-header"
 import { useSettings } from "@/hooks/useSettings"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function Settings() {
   const { user, logout } = useAuth()
   const { settings, loading, updateSetting } = useSettings()
   const router = useRouter()
   const { twColor } = useTwColors()
+  const insets = useSafeAreaInsets()
 
   const handleLogout = () => {
     logout()
@@ -26,9 +28,12 @@ export default function Settings() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-gray-50" contentContainerStyle={{ paddingBottom: 40 }}>
-      <PageHeader title="Settings" textPosition="center" textAlign="left" backPath="/dashboard" />
-
+    <ScrollView
+      className="flex-1 bg-gray-50"
+      contentContainerStyle={{
+        paddingBottom: Math.max(40, insets.bottom + 20),
+      }}
+    >
       <View className="p-6">
         {/* User Profile Section */}
         <View className="bg-white p-6 rounded-xl shadow-sm mb-6">
@@ -46,12 +51,12 @@ export default function Settings() {
 
           <Pressable onPress={() => router.push("/profile/edit")} className="flex-row items-center justify-between py-3 border-t border-gray-100">
             <Text className="text-gray-700">Edit Profile</Text>
-            <Feather name="chevron-right" size={20} color={twColor("text-gray-400")} />
+            <Feather name="chevron-right" size={20} color={twColor("gray-400")} />
           </Pressable>
 
           <Pressable onPress={() => router.push("/change-password")} className="flex-row items-center justify-between py-3 border-t border-gray-100">
             <Text className="text-gray-700">Change Password</Text>
-            <Feather name="chevron-right" size={20} color={twColor("text-gray-400")} />
+            <Feather name="chevron-right" size={20} color={twColor("gray-400")} />
           </Pressable>
         </View>
 
@@ -135,17 +140,17 @@ export default function Settings() {
 
           <Pressable onPress={() => router.push("/terms")} className="flex-row items-center justify-between py-3 border-t border-gray-100">
             <Text className="text-gray-700">Terms of Service</Text>
-            <Feather name="chevron-right" size={20} color={twColor("text-gray-400")} />
+            <Feather name="chevron-right" size={20} color={twColor("gray-400")} />
           </Pressable>
 
           <Pressable onPress={() => router.push("/privacy")} className="flex-row items-center justify-between py-3 border-t border-gray-100">
             <Text className="text-gray-700">Privacy Policy</Text>
-            <Feather name="chevron-right" size={20} color={twColor("text-gray-400")} />
+            <Feather name="chevron-right" size={20} color={twColor("gray-400")} />
           </Pressable>
 
           <Pressable onPress={() => router.push("/help")} className="flex-row items-center justify-between py-3 border-t border-gray-100">
             <Text className="text-gray-700">Help & Support</Text>
-            <Feather name="chevron-right" size={20} color={twColor("text-gray-400")} />
+            <Feather name="chevron-right" size={20} color={twColor("gray-400")} />
           </Pressable>
         </View>
 
@@ -155,12 +160,12 @@ export default function Settings() {
 
           <Pressable onPress={() => {}} className="flex-row items-center justify-between py-3 border-t border-red-100">
             <Text className="text-red-500">Export Data</Text>
-            <Feather name="chevron-right" size={20} color={twColor("text-red-400")} />
+            <Feather name="chevron-right" size={20} color={twColor("red-400")} />
           </Pressable>
 
           <Pressable onPress={() => {}} className="flex-row items-center justify-between py-3 border-t border-red-100">
             <Text className="text-red-500">Delete Account</Text>
-            <Feather name="chevron-right" size={20} color={twColor("text-red-400")} />
+            <Feather name="chevron-right" size={20} color={twColor("red-400")} />
           </Pressable>
 
           <Pressable onPress={handleLogout} className="flex-row items-center justify-center py-3 border-t border-red-100 mt-4">
