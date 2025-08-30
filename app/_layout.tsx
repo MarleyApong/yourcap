@@ -6,6 +6,7 @@ import { AppProvider } from "@/contexts/AppContext"
 import useInactivityTimeout from "@/hooks/useInactivityTimeout"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import "../global.css"
+import Toast from "react-native-toast-message"
 
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false)
@@ -49,6 +50,7 @@ export default function RootLayout() {
           <Stack.Screen name="debt" />
         </Stack>
       </AppProvider>
+      <Toast />
     </SafeAreaProvider>
   )
 }

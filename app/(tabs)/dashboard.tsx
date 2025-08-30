@@ -150,8 +150,6 @@ export default function Dashboard() {
         {/* Bottom spacing to avoid content being hidden by tab bar */}
         <View style={{ height: insets.bottom + 80 }} />
       </ScrollView>
-
-      <Toast />
     </View>
   )
 }

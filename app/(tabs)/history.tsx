@@ -213,8 +213,6 @@ export default function History() {
           ))}
         </ScrollView>
       )}
-
-      <Toast />
     </View>
   )
 }

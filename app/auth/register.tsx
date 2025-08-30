@@ -241,8 +241,6 @@ export default function Register() {
           </View>
         </View>
       </View>
-
-      <Toast />
     </KeyboardAwareScrollView>
   )
 }
