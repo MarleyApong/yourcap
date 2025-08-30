@@ -5,8 +5,27 @@ import { initDb } from "@/db/db"
 import { AppProvider } from "@/contexts/AppContext"
 import useInactivityTimeout from "@/hooks/useInactivityTimeout"
 import { SafeAreaProvider } from "react-native-safe-area-context"
+import Toast, { BaseToast, ErrorToast } from "react-native-toast-message"
 import "../global.css"
-import Toast from "react-native-toast-message"
+
+const toastConfig = {
+  error: (props: any) => (
+    <ErrorToast
+      {...props}
+      text1Style={{
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "red",
+      }}
+      text2Style={{
+        fontSize: 14,
+        // color: "red",
+      }}
+      style={{ borderLeftColor: "red" }}
+    />
+  ),
+  success: (props: any) => <BaseToast {...props} text1Style={{ fontSize: 18 }} text2Style={{ fontSize: 14 }} style={{ borderLeftColor: "green" }} />,
+}
 
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false)
@@ -50,7 +69,7 @@ export default function RootLayout() {
           <Stack.Screen name="debt" />
         </Stack>
       </AppProvider>
-      <Toast />
+      <Toast config={toastConfig} />
     </SafeAreaProvider>
   )
 }
