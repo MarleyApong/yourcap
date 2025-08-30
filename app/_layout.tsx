@@ -1,10 +1,10 @@
-import { ActivityIndicator, StatusBar, View } from "react-native"
+import { ActivityIndicator, View } from "react-native"
 import { Stack } from "expo-router"
 import { useEffect, useState } from "react"
 import { initDb } from "@/db/db"
 import { AppProvider } from "@/contexts/AppContext"
 import useInactivityTimeout from "@/hooks/useInactivityTimeout"
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context"
+import { SafeAreaProvider } from "react-native-safe-area-context"
 import "../global.css"
 
 export default function RootLayout() {
@@ -27,7 +27,6 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <AppProvider>
-        <StatusBar hidden />
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen
             name="index"

@@ -62,9 +62,14 @@ export default function Dashboard() {
   }
 
   return (
-    <View className="flex-1 bg-gray-50">
+    <View
+      className="flex-1"
+      style={{
+        backgroundColor: twColor("background"),
+      }}
+    >
       {/* Header fixe */}
-      {/* <PageHeader title="Dashboard" fbackButton={false} textPosition="center" textAlign="left" /> */}
+      <PageHeader title="Dashboard" fbackButton={false} textPosition="center" textAlign="left" />
 
       {/* Contenu scrollable avec padding-top pour éviter le header */}
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>

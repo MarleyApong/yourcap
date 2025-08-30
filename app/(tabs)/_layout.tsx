@@ -80,7 +80,7 @@ export default function TabsLayout() {
   return (
     <>
       {/* Status bar matches background */}
-      <StatusBar barStyle="dark-content" backgroundColor={twColor("background")} />
+      {/* <StatusBar barStyle="default" hidden backgroundColor={twColor("background")} /> */}
       <SafeAreaView
         style={{
           flex: 1,
