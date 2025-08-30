@@ -135,7 +135,7 @@ export default function TabsLayout() {
             options={{
               title: "Dashboard",
               tabBarIcon: ({ focused }) => <TabIcon focused={focused} iconName="home" title="Accueil" />,
-              headerShown: false, // Hide header for dashboard
+              headerShown: false,
             }}
           />
           <Tabs.Screen
@@ -143,20 +143,7 @@ export default function TabsLayout() {
             options={{
               title: "Historique",
               tabBarIcon: ({ focused }) => <TabIcon focused={focused} iconName="list" title="Historique" />,
-              headerLeft: (props) => (
-                <Pressable onPress={() => router.back()} style={{ paddingLeft: 15 }}>
-                  <Feather name="arrow-left" size={24} color={twColor("header-foreground")} />
-                </Pressable>
-              ),
-              headerStyle: {
-                backgroundColor: twColor("header-background"),
-                borderBottomWidth: 1,
-                borderBottomColor: twColor("header-border"),
-              },
-              headerTitleStyle: {
-                color: twColor("header-foreground"),
-                fontWeight: "600",
-              },
+              headerShown: false,
             }}
           />
           <Tabs.Screen
@@ -164,15 +151,7 @@ export default function TabsLayout() {
             options={{
               title: "Paramètres",
               tabBarIcon: ({ focused }) => <TabIcon focused={focused} iconName="settings" title="Paramètres" />,
-              headerStyle: {
-                backgroundColor: twColor("header-background"),
-                borderBottomWidth: 1,
-                borderBottomColor: twColor("header-border"),
-              },
-              headerTitleStyle: {
-                color: twColor("header-foreground"),
-                fontWeight: "600",
-              },
+              headerShown: false,
             }}
           />
         </Tabs>

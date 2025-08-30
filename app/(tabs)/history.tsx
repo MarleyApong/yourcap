@@ -9,6 +9,8 @@ import { useTwColors } from "@/lib/tw-colors"
 import { Debt, DebtStatus, DebtType } from "@/types/debt"
 import Toast from "react-native-toast-message"
 import { PageHeader } from "@/components/feature/page-header"
+import { LoadingState } from "@/components/feature/loading-state"
+import { EmptyState } from "@/components/feature/empty-state"
 
 export default function History() {
   const { user } = useAuth()
@@ -55,11 +57,11 @@ export default function History() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "PAID":
-        return "bg-green-500"
+        return twColor("success")
       case "OVERDUE":
-        return "bg-red-500"
+        return twColor("destructive")
       default:
-        return "bg-yellow-500"
+        return twColor("warning")
     }
   }
 
@@ -68,82 +70,142 @@ export default function History() {
   }
 
   const getTypeColor = (type: string) => {
-    return type === "OWING" ? "text-green-600" : "text-red-600"
+    return type === "OWING" ? twColor("success") : twColor("destructive")
   }
 
+  const FilterButton = ({ active, onPress, children }: { active: boolean; onPress: () => void; children: React.ReactNode }) => (
+    <Pressable
+      onPress={onPress}
+      style={{
+        backgroundColor: active ? twColor("primary") : "transparent",
+      }}
+      className="px-3 py-2 rounded-md"
+    >
+      <Text
+        style={{
+          color: active ? twColor("primary-foreground") : twColor("foreground"),
+        }}
+        className="text-sm font-medium"
+      >
+        {children}
+      </Text>
+    </Pressable>
+  )
+
   return (
-    <View className="flex-1 bg-gray-50">
-      {/* <PageHeader title="History" textPosition="center" textAlign="left" backPath="/dashboard" /> */}
+    <View
+      className="flex-1"
+      style={{
+        backgroundColor: twColor("background"),
+      }}
+    >
+      <PageHeader title="History" textPosition="center" textAlign="left" backPath="/dashboard" />
 
       <View className="p-6">
         <View className="flex-row justify-end">
-          <Pressable onPress={() => router.push("/debt/add")} className="bg-primary p-2 rounded-full">
-            <Feather name="plus" size={24} color="white" />
+          <Pressable
+            onPress={() => router.push("/debt/add")}
+            style={{
+              backgroundColor: twColor("primary"),
+            }}
+            className="p-3 rounded-full shadow-sm"
+          >
+            <Feather name="plus" size={24} color={twColor("primary-foreground")} />
           </Pressable>
         </View>
 
         {/* Filters */}
-        <View className="mt-6 flex-row justify-between">
-          <View className="bg-white p-1 rounded-lg border border-primary">
-            <Pressable onPress={() => setFilter("ALL")} className={`px-3 py-1 rounded-md ${filter === "ALL" ? "bg-primary" : ""}`}>
-              <Text className={filter === "ALL" ? "text-white" : "text-gray-700"}>All</Text>
-            </Pressable>
-            <Pressable onPress={() => setFilter("OWING")} className={`px-3 py-1 rounded-md ${filter === "OWING" ? "bg-primary" : ""}`}>
-              <Text className={filter === "OWING" ? "text-white" : "text-gray-700"}>Owed to me</Text>
-            </Pressable>
-            <Pressable onPress={() => setFilter("OWED")} className={`px-3 py-1 rounded-md ${filter === "OWED" ? "bg-primary" : ""}`}>
-              <Text className={filter === "OWED" ? "text-white" : "text-gray-700"}>I owe</Text>
-            </Pressable>
+        <View className="mt-6 flex-row justify-between gap-4">
+          <View
+            style={{
+              backgroundColor: twColor("card-background"),
+              borderColor: twColor("border"),
+            }}
+            className="flex-1 p-1 rounded-lg border shadow-sm"
+          >
+            <View className="flex-row">
+              <FilterButton active={filter === "ALL"} onPress={() => setFilter("ALL")}>
+                All
+              </FilterButton>
+              <FilterButton active={filter === "OWING"} onPress={() => setFilter("OWING")}>
+                Owed
+              </FilterButton>
+              <FilterButton active={filter === "OWED"} onPress={() => setFilter("OWED")}>
+                I owe
+              </FilterButton>
+            </View>
           </View>
 
-          <View className="bg-white p-1 rounded-lg border border-primary">
-            <Pressable onPress={() => setStatusFilter("ALL")} className={`px-3 py-1 rounded-md ${statusFilter === "ALL" ? "bg-primary" : ""}`}>
-              <Text className={statusFilter === "ALL" ? "text-white" : "text-gray-700"}>All</Text>
-            </Pressable>
-            <Pressable onPress={() => setStatusFilter("PENDING")} className={`px-3 py-1 rounded-md ${statusFilter === "PENDING" ? "bg-primary" : ""}`}>
-              <Text className={statusFilter === "PENDING" ? "text-white" : "text-gray-700"}>Pending</Text>
-            </Pressable>
-            <Pressable onPress={() => setStatusFilter("PAID")} className={`px-3 py-1 rounded-md ${statusFilter === "PAID" ? "bg-primary" : ""}`}>
-              <Text className={statusFilter === "PAID" ? "text-white" : "text-gray-700"}>Paid</Text>
-            </Pressable>
+          <View
+            style={{
+              backgroundColor: twColor("card-background"),
+              borderColor: twColor("border"),
+            }}
+            className="flex-1 p-1 rounded-lg border shadow-sm"
+          >
+            <View className="flex-row">
+              <FilterButton active={statusFilter === "ALL"} onPress={() => setStatusFilter("ALL")}>
+                All
+              </FilterButton>
+              <FilterButton active={statusFilter === "PENDING"} onPress={() => setStatusFilter("PENDING")}>
+                Pending
+              </FilterButton>
+              <FilterButton active={statusFilter === "PAID"} onPress={() => setStatusFilter("PAID")}>
+                Paid
+              </FilterButton>
+            </View>
           </View>
         </View>
       </View>
 
-      {/* Debts List */}
+      {/* Content */}
       {loading ? (
-        <View className="flex-1 items-center justify-center">
-          <Text>Loading...</Text>
+        <View className="flex-1 px-6">
+          <LoadingState message="Loading your debts..." />
         </View>
       ) : debts.length === 0 ? (
-        <View className="flex-1 items-center justify-center">
-          <Feather name="file-text" size={48} color={twColor("text-gray-300")} />
-          <Text className="text-gray-500 mt-4">No debts found</Text>
-          <Pressable onPress={() => router.push("/debt/add")} className="mt-4 bg-primary px-6 py-2 rounded-full">
-            <Text className="text-white">Add New Debt</Text>
-          </Pressable>
+        <View className="flex-1 px-6">
+          <EmptyState
+            title="No debts found"
+            description="Try adjusting your filters or add your first debt to get started."
+            buttonText="Add New Debt"
+            onButtonPress={() => router.push("/debt/add")}
+            image={require("@/assets/images/empty.png")}
+          />
         </View>
       ) : (
-        <ScrollView className="px-6 pb-20">
+        <ScrollView className="flex-1 px-6 pb-20">
           {debts.map((debt) => (
-            <Pressable key={debt.debt_id} onPress={() => router.push(`/debt/${debt.debt_id}`)} className="bg-white p-4 rounded-xl shadow-sm mb-3">
+            <Pressable
+              key={debt.debt_id}
+              onPress={() => router.push(`/debt/${debt.debt_id}`)}
+              style={{
+                backgroundColor: twColor("card-background"),
+                borderColor: twColor("border"),
+              }}
+              className="p-4 rounded-xl shadow-sm mb-3 border"
+            >
               <View className="flex-row justify-between items-start">
-                <View>
-                  <Text className="font-semibold text-lg text-gray-900">{debt.contact_name}</Text>
-                  <Text className={`font-medium ${getTypeColor(debt.debt_type)}`}>
+                <View className="flex-1">
+                  <Text style={{ color: twColor("foreground") }} className="font-semibold text-lg">
+                    {debt.contact_name}
+                  </Text>
+                  <Text style={{ color: getTypeColor(debt.debt_type) }} className="font-medium mt-1">
                     {getTypeText(debt.debt_type)} {formatCurrency(debt.amount, user?.settings?.currency)}
                   </Text>
-                  <Text className="text-gray-500 text-sm mt-1">
+                  <Text style={{ color: twColor("muted-foreground") }} className="text-sm mt-1">
                     Loan: {formatDate(debt.loan_date)} | Due: {formatDate(debt.due_date)}
                   </Text>
                 </View>
                 <View className="flex-row items-center">
-                  <View className={`w-3 h-3 rounded-full ${getStatusColor(debt.status)} mr-2`} />
-                  <Text className="text-gray-500 capitalize">{debt.status.toLowerCase()}</Text>
+                  <View style={{ backgroundColor: getStatusColor(debt.status) }} className="w-3 h-3 rounded-full mr-2" />
+                  <Text style={{ color: twColor("muted-foreground") }} className="capitalize text-sm">
+                    {debt.status.toLowerCase()}
+                  </Text>
                 </View>
               </View>
               {debt.description && (
-                <Text className="text-gray-500 mt-2" numberOfLines={2}>
+                <Text style={{ color: twColor("muted-foreground") }} className="mt-2 text-sm" numberOfLines={2}>
                   {debt.description}
                 </Text>
               )}
@@ -151,6 +213,8 @@ export default function History() {
           ))}
         </ScrollView>
       )}
+
+      <Toast />
     </View>
   )
 }
