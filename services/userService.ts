@@ -58,3 +58,48 @@ export const loginUser = async (identifier: string, password: string): Promise<U
     throw error
   }
 }
+
+export const resetPassword = async ({
+  identifier,
+  newPassword,
+}: {
+  identifier: string // email ou phone
+  newPassword: string
+}): Promise<boolean> => {
+  try {
+    const user = await db.getFirstAsync(`SELECT * FROM users WHERE email = ? OR phone_number = ?`, [identifier, identifier])
+    console.log("Moi", user)
+
+    if (!user) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "No user found with this email or phone number.",
+      })
+      return false
+    }
+
+    console.log("use", user)
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10)
+    const now = new Date().toISOString()
+
+    await db.runAsync(`UPDATE users SET password = ?, updated_at = ? WHERE user_id = ?`, [hashedPassword, now, (user as { user_id: string }).user_id])
+
+    Toast.show({
+      type: "success",
+      text1: "Success",
+      text2: "Password reset successfully!",
+    })
+
+    return true
+  } catch (error) {
+    console.error("resetPassword error:", error)
+    Toast.show({
+      type: "error",
+      text1: "Error",
+      text2: "Failed to reset password. Try again.",
+    })
+    return false
+  }
+}

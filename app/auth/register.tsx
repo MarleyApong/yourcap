@@ -94,6 +94,8 @@ export default function Register() {
       const success = await register(formData)
       if (success) router.replace("/(tabs)/dashboard")
     } catch (error) {
+  console.log("error", error);
+  
       Toast.show({
         type: "error",
         text1: "Error",

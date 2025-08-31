@@ -7,6 +7,7 @@ import useInactivityTimeout from "@/hooks/useInactivityTimeout"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message"
 import "../global.css"
+import "react-native-get-random-values"
 
 const toastConfig = {
   error: (props: any) => (
