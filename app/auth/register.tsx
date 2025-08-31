@@ -1,5 +1,4 @@
 import { FBackButton } from "@/components/ui/fback-button"
-import { useAuth } from "@/hooks/useAuth"
 import { useTwColors } from "@/lib/tw-colors"
 import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
@@ -9,6 +8,7 @@ import Toast from "react-native-toast-message"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { PasswordInput } from "@/components/ui/password-input"
 import { Loader } from "@/components/ui/loader"
+import { useAuthStore } from "@/stores/authStore"
 
 export default function Register() {
   const [step, setStep] = useState(1)
@@ -22,7 +22,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false)
 
   const { twColor } = useTwColors()
-  const { register } = useAuth()
+  const { register } = useAuthStore()
   const router = useRouter()
 
   // Refs pour navigation entre inputs

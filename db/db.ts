@@ -58,6 +58,12 @@ export const initDb = async () => {
         FOREIGN KEY (user_id) REFERENCES users(user_id),
         FOREIGN KEY (debt_id) REFERENCES debts(debt_id)
       );
+
+      CREATE INDEX IF NOT EXISTS idx_debts_user_id ON debts(user_id);
+      CREATE INDEX IF NOT EXISTS idx_debts_status ON debts(status);
+      CREATE INDEX IF NOT EXISTS idx_debts_due_date ON debts(due_date);
+      CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+      CREATE INDEX IF NOT EXISTS idx_users_phone ON users(phone_number);
     `)
 
     console.log("✅ DB initialized")

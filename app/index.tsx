@@ -1,4 +1,5 @@
-import { useAuth } from "@/hooks/useAuth"
+import { Loader } from "@/components/ui/loader"
+import { useAuthStore } from "@/stores/authStore"
 import { Link, useRouter } from "expo-router"
 import { useEffect } from "react"
 import { Dimensions, ImageBackground, Text, View } from "react-native"
@@ -6,8 +7,8 @@ import { Dimensions, ImageBackground, Text, View } from "react-native"
 const { height: screenHeight } = Dimensions.get("window")
 
 export default function Index() {
-  const { user, loading } = useAuth()
-  const router = useRouter()
+  const { user, loading } = useAuthStore()
+  const router = useRouter()  
 
   useEffect(() => {
     if (!loading && user) {
@@ -21,7 +22,7 @@ export default function Index() {
   if (loading || user) {
     return (
       <View className="flex-1 bg-gray-50 justify-center items-center">
-        <Text>Loading...</Text>
+        <Loader color="primary" size="large"/>
       </View>
     )
   }

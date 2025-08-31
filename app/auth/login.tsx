@@ -3,13 +3,13 @@ import { TextInput, TouchableOpacity, View, Text, Image, Platform } from "react-
 import { Checkbox } from "@/components/ui/checkbox"
 import { FBackButton } from "@/components/ui/fback-button"
 import { PasswordInput } from "@/components/ui/password-input"
-import { useAuth } from "@/hooks/useAuth"
 import { useTwColors } from "@/lib/tw-colors"
 import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
 import Toast from "react-native-toast-message"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { Loader } from "@/components/ui/loader"
+import { useAuthStore } from "@/stores/authStore"
 
 export default function Login() {
   const [identifier, setIdentifier] = useState("")
@@ -19,7 +19,7 @@ export default function Login() {
 
   const passwordRef = useRef<TextInput>(null)
 
-  const { login } = useAuth()
+  const { login } = useAuthStore()
   const { twColor } = useTwColors()
   const router = useRouter()
 
@@ -39,8 +39,6 @@ export default function Login() {
       if (success) {
         router.replace("/(tabs)/dashboard")
       } else {
-        console.log("jjjjj")
-
         Toast.show({
           type: "error",
           text1: "Error",

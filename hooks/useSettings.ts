@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react"
 import { getSettings, updateSettings } from "@/services/settingsService"
-import { useAuth } from "@/hooks/useAuth"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import Toast from "react-native-toast-message"
+import { useAuthStore } from "@/stores/authStore"
+import { User } from "@/types/user"
 
 export const useSettings = () => {
-  const { user, setUser } = useAuth() // Ajout de setUser
+  const { user, setUser } = useAuthStore()
   const [settings, setSettings] = useState({
     notification_enabled: true,
     days_before_reminder: 3,

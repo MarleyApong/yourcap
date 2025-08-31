@@ -4,6 +4,20 @@ import { v4 as uuidv4 } from "uuid"
 import { CreateUserInput, User } from "@/types/user"
 import Toast from "react-native-toast-message"
 
+export const getUserById = async (user_id: string): Promise<User | null> => {
+  try {
+    const user = await db.getFirstAsync<User>(
+      `SELECT user_id, full_name, email, phone_number, status, created_at, updated_at 
+       FROM users WHERE user_id = ? AND status = 'ACTIVE'`,
+      [user_id],
+    )
+    return user || null
+  } catch (error) {
+    console.error(`Error fetching user ${user_id}:`, error)
+    return null
+  }
+}
+
 export const createUser = async ({ full_name, email, phone_number, password }: CreateUserInput): Promise<string> => {
   const user_id = uuidv4()
   const now = new Date().toISOString()
@@ -41,14 +55,25 @@ export const createUser = async ({ full_name, email, phone_number, password }: C
   }
 }
 
-export const loginUser = async (identifier: string, password: string): Promise<User | null> => {
+export const loginUser = async (identifier: string, password: string): Promise<{ user_id: string; full_name: string; email: string; phone_number: string } | null> => {
   try {
-    const result = await db.getFirstAsync<User>(`SELECT * FROM users WHERE email = ? OR phone_number = ?`, [identifier, identifier])
+    const result = await db.getFirstAsync<User>(
+      `SELECT user_id, full_name, email, phone_number, password 
+       FROM users WHERE email = ? OR phone_number = ? AND status = 'ACTIVE'`,
+      [identifier, identifier],
+    )
 
     if (!result) return null
 
     const isValid = await bcrypt.compare(password, result.password)
-    return isValid ? result : null
+    if (!isValid) return null
+
+    return {
+      user_id: result.user_id,
+      full_name: result.full_name,
+      email: result.email,
+      phone_number: result.phone_number,
+    }
   } catch (error) {
     Toast.show({
       type: "error",

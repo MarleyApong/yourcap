@@ -1,6 +1,5 @@
 import { PageHeader } from "@/components/feature/page-header"
 import { TextInput } from "@/components/ui/text-input"
-import { useAuth } from "@/hooks/useAuth"
 import { useTwColors } from "@/lib/tw-colors"
 import { createDebt } from "@/services/debtServices"
 import { useRouter } from "expo-router"
@@ -11,9 +10,10 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { DateInput } from "@/components/ui/date-input"
 import { Feather } from "@expo/vector-icons"
 import { Loader } from "@/components/ui/loader"
+import { useAuthStore } from "@/stores/authStore"
 
 export default function AddDebt() {
-  const { user } = useAuth()
+  const { user } = useAuthStore()
   const router = useRouter()
   const { twColor } = useTwColors()
 

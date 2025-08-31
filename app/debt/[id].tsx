@@ -1,8 +1,8 @@
 import { FBackButton } from "@/components/ui/fback-button"
-import { useAuth } from "@/hooks/useAuth"
 import { useTwColors } from "@/lib/tw-colors"
 import { formatCurrency, formatDate } from "@/lib/utils"
 import { deleteDebt, getDebtById, updateDebt } from "@/services/debtServices"
+import { useAuthStore } from "@/stores/authStore"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useEffect, useState } from "react"
 import { Alert, Pressable, ScrollView, Text, View } from "react-native"
@@ -10,23 +10,37 @@ import Toast from "react-native-toast-message"
 
 export default function DebtDetails() {
   const { id } = useLocalSearchParams()
-  const { user } = useAuth()
+  const { user } = useAuthStore()
   const [debt, setDebt] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const { twColor } = useTwColors()
 
   useEffect(() => {
-    loadDebt()
-  }, [id])
+    console.log("user", user);
+    
+    if (user && user.user_id) {
+      loadDebt()
+    } else {
+      router.replace("/auth/login")
+    }
+  }, [id, user])
 
   const loadDebt = async () => {
+    if (!user) return
+
     try {
       setLoading(true)
       const debtData = await getDebtById(id as string)
-      if (debtData && debtData.user_id === user?.token) {
+
+      if (debtData && debtData.user_id === user.user_id) {
         setDebt(debtData)
       } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Debt not found or access denied",
+        })
         router.back()
       }
     } catch (error) {

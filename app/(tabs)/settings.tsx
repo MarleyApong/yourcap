@@ -1,15 +1,15 @@
 import { LoadingState } from "@/components/feature/loading-state"
 import { PageHeader } from "@/components/feature/page-header"
-import { useAuth } from "@/hooks/useAuth"
 import { useSettings } from "@/hooks/useSettings"
 import { useTwColors } from "@/lib/tw-colors"
+import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { Alert, Pressable, ScrollView, Switch, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function Settings() {
-  const { user, logout } = useAuth()
+  const { user, logout } = useAuthStore()
   const { settings, loading, updateSetting } = useSettings()
   const router = useRouter()
   const { twColor } = useTwColors()

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { View, Text, ScrollView, Pressable } from "react-native"
-import { Link, useRouter } from "expo-router"
-import { useAuth } from "@/hooks/useAuth"
+import { useRouter } from "expo-router"
 import { getUserDebts } from "@/services/debtServices"
 import { formatCurrency, formatDate } from "@/lib/utils"
 import { Feather } from "@expo/vector-icons"
@@ -11,9 +10,10 @@ import Toast from "react-native-toast-message"
 import { PageHeader } from "@/components/feature/page-header"
 import { LoadingState } from "@/components/feature/loading-state"
 import { EmptyState } from "@/components/feature/empty-state"
+import { useAuthStore } from "@/stores/authStore"
 
 export default function History() {
-  const { user } = useAuth()
+  const { user } = useAuthStore()
   const [debts, setDebts] = useState<Debt[]>([])
   const [filter, setFilter] = useState<"ALL" | DebtType>("ALL")
   const [statusFilter, setStatusFilter] = useState<"ALL" | DebtStatus>("ALL")

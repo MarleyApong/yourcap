@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/feature/page-header"
-import { useAuth } from "@/hooks/useAuth"
+import { useAuthStore } from "@/stores/authStore"
 import { useTwColors } from "@/lib/tw-colors"
 import { formatCurrency } from "@/lib/utils"
 import { getDebtsSummary, getUserDebts } from "@/services/debtServices"
@@ -17,7 +17,7 @@ import { EmptyState } from "@/components/feature/empty-state"
 import { DebtItem } from "@/components/feature/dashboard/debtItem"
 
 export default function Dashboard() {
-  const { user } = useAuth()
+  const { user } = useAuthStore()
   const [summary, setSummary] = useState({ owing: 0, owed: 0, balance: 0 })
   const [recentDebts, setRecentDebts] = useState<Debt[]>([])
   const [loading, setLoading] = useState(true)

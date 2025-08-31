@@ -2,10 +2,10 @@ import { useEffect } from "react"
 import { AppState } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useRouter } from "expo-router"
-import { useAuth } from "./useAuth"
+import { useAuthStore } from "@/stores/authStore"
 
-function useInactivityTimeout() {
-  const { logout } = useAuth()
+export default function useInactivityTimeout() {
+  const { logout } = useAuthStore()
   const router = useRouter()
 
   useEffect(() => {
@@ -38,5 +38,3 @@ function useInactivityTimeout() {
     return () => subscription.remove()
   }, [logout, router])
 }
-
-export default useInactivityTimeout
