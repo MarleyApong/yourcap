@@ -13,9 +13,9 @@ export default function Index() {
     if (!loading && user) {
       router.replace("/(tabs)/dashboard")
     }
-    else {
-      router.replace("/auth/login")
-    }
+    // else {
+    //   router.replace("/auth/login")
+    // }
   }, [user, loading])
 
   if (loading || user) {

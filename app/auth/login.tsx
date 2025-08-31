@@ -9,6 +9,7 @@ import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
 import Toast from "react-native-toast-message"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+import { Loader } from "@/components/ui/loader"
 
 export default function Login() {
   const [identifier, setIdentifier] = useState("")
@@ -38,8 +39,8 @@ export default function Login() {
       if (success) {
         router.replace("/(tabs)/dashboard")
       } else {
-        console.log("jjjjj");
-        
+        console.log("jjjjj")
+
         Toast.show({
           type: "error",
           text1: "Error",
@@ -66,7 +67,7 @@ export default function Login() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ flexGrow: 1 }}
       >
-        <FBackButton />
+        <FBackButton path="/" />
 
         <View className="relative">
           <Image source={require("@/assets/images/bg/bg-login-2.png")} className="h-90 w-full" resizeMode="cover" />
@@ -124,7 +125,7 @@ export default function Login() {
               disabled={loading}
               className={`flex-row gap-2 justify-center items-center bg-primary p-4 rounded-xl w-full ${loading ? "opacity-70" : ""}`}
             >
-              <Feather name="log-in" size={24} color={twColor("text-white")} />
+              {loading ? <Loader /> : <Feather name="log-in" size={18} color={twColor("text-white")} />}
               <Text className="text-center text-white font-semibold text-lg">{loading ? "Signing in..." : "Sign in"}</Text>
             </TouchableOpacity>
 

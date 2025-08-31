@@ -8,6 +8,7 @@ import { Pressable, Text, TextInput, View, Platform } from "react-native"
 import Toast from "react-native-toast-message"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { PasswordInput } from "@/components/ui/password-input"
+import { Loader } from "@/components/ui/loader"
 
 export default function Register() {
   const [step, setStep] = useState(1)
@@ -94,8 +95,8 @@ export default function Register() {
       const success = await register(formData)
       if (success) router.replace("/(tabs)/dashboard")
     } catch (error) {
-  console.log("error", error);
-  
+      console.log("error", error)
+
       Toast.show({
         type: "error",
         text1: "Error",
@@ -224,8 +225,18 @@ export default function Register() {
 
         {/* Boutons en bas */}
         <View className="w-full px-10 mt-8 mb-10 absolute bottom-0">
-          <Pressable onPress={step === 1 ? handleContinue : handleSubmit} disabled={loading} className={`flex-row gap-2 justify-center items-center bg-primary p-4 rounded-xl w-full ${loading ? "opacity-70" : ""}`}>
-            {step === 1 ? <Feather name="arrow-up-right" size={24} color={twColor("text-white")} /> :  <Feather name="send" size={24} color={twColor("text-white")} />}
+          <Pressable
+            onPress={step === 1 ? handleContinue : handleSubmit}
+            disabled={loading}
+            className={`flex-row gap-2 justify-center items-center bg-primary p-4 rounded-xl w-full ${loading ? "opacity-70" : ""}`}
+          >
+            {loading ? (
+              <Loader />
+            ) : step === 1 ? (
+              <Feather name="arrow-up-right" size={18} color={twColor("text-white")} />
+            ) : (
+              <Feather name="send" size={18} color={twColor("text-white")} />
+            )}
             <Text className="text-center text-white font-semibold text-lg">{loading ? "Processing..." : step === 1 ? "Continue" : "Sign up"}</Text>
           </Pressable>
 

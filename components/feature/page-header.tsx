@@ -1,13 +1,12 @@
 import { View, Text, TouchableOpacity } from "react-native"
-import { FBackButton } from "@/components/ui/fback-button"
 import { useTwColors } from "@/lib/tw-colors"
 import { Feather } from "@expo/vector-icons"
-import { useRouter } from "expo-router"
+import { Href, useRouter } from "expo-router"
 // import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 type PageHeaderProps = {
   title: string
-  backPath?: string
+  backPath?: Href
   fbackButton?: boolean
   textAlign?: "center" | "left" | "right"
   textPosition?: "bottom" | "center"
@@ -21,7 +20,7 @@ export const PageHeader = ({ title, backPath, fbackButton = true, textAlign = "c
 
   const handlePress = () => {
     if (backPath) {
-      router.push(backPath as any)
+      router.push(backPath)
     } else {
       router.back()
     }

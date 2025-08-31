@@ -1,10 +1,11 @@
 import { useTwColors } from "@/lib/tw-colors"
 import { Feather } from "@expo/vector-icons"
+import { Href } from "expo-router"
 import { useRouter } from "expo-router"
 import { TouchableOpacity } from "react-native"
 
 type FBackButtonProps = {
-  path?: string
+  path?: Href
   isAbsolute?: boolean
   className?: string
   color?: string
@@ -16,9 +17,13 @@ export const FBackButton = ({ path, isAbsolute = true, className, color = "white
 
   const handlePress = () => {
     if (path) {
-      router.push(path as any)
+      router.replace(path)
     } else {
-      router.back()
+      if (router.canGoBack()) {
+        router.back()
+      } else {
+        router.replace("/")
+      }
     }
   }
 
