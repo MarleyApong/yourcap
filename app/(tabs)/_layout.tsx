@@ -1,7 +1,7 @@
 import { useTwColors } from "@/lib/tw-colors"
 import { Feather } from "@expo/vector-icons"
 import { Tabs, useRouter } from "expo-router"
-import { Pressable, StatusBar, Text, View } from "react-native"
+import { Text, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 
 const TabIcon = ({ focused, iconName, title }: { focused: boolean; iconName: string; title: string }) => {
@@ -11,7 +11,7 @@ const TabIcon = ({ focused, iconName, title }: { focused: boolean; iconName: str
     return (
       <View
         style={{
-          backgroundColor: twColor("navigation-active-background"), // Active nav background
+          backgroundColor: twColor("navigation-active-background"),
           borderRadius: 12,
           paddingHorizontal: 12,
           paddingVertical: 8,
@@ -21,7 +21,7 @@ const TabIcon = ({ focused, iconName, title }: { focused: boolean; iconName: str
           justifyContent: "center",
           minWidth: 110,
           minHeight: 65,
-          shadowColor: twColor("navigation-shadow"), // Navigation shadow
+          shadowColor: twColor("navigation-shadow"),
           shadowOffset: {
             width: 0,
             height: 2,
@@ -34,11 +34,11 @@ const TabIcon = ({ focused, iconName, title }: { focused: boolean; iconName: str
         <Feather
           name={iconName as any}
           size={22}
-          color={twColor("navigation-active-foreground")} // Active icon color
+          color={twColor("navigation-active-foreground")}
         />
         <Text
           style={{
-            color: twColor("navigation-active-foreground"), // Active text color
+            color: twColor("navigation-active-foreground"), 
             fontSize: 12,
             fontWeight: "600",
             marginTop: 4,
@@ -56,11 +56,11 @@ const TabIcon = ({ focused, iconName, title }: { focused: boolean; iconName: str
       <Feather
         name={iconName as any}
         size={24}
-        color={twColor("navigation-inactive-foreground")} // Inactive icon color
+        color={twColor("navigation-inactive-foreground")}
       />
       {/* <Text
         style={{
-          color: twColor("navigation-inactive-foreground"), // Inactive text color
+          color: twColor("navigation-inactive-foreground"),
           fontSize: 11,
           fontWeight: "500",
           marginTop: 2,
@@ -84,7 +84,7 @@ export default function TabsLayout() {
       <SafeAreaView
         style={{
           flex: 1,
-          backgroundColor: twColor("background"), // Main background
+          backgroundColor: twColor("background"),
         }}
       >
         <Tabs
@@ -106,8 +106,8 @@ export default function TabsLayout() {
               position: "absolute",
               overflow: "visible", // Allow shadows to be visible
               borderWidth: 1,
-              borderColor: twColor("navigation-border"), // Navigation border
-              shadowColor: twColor("navigation-shadow"), // Navigation shadow
+              borderColor: twColor("navigation-border"),
+              shadowColor: twColor("navigation-shadow"),
               shadowOffset: {
                 width: 0,
                 height: 6,
@@ -121,7 +121,7 @@ export default function TabsLayout() {
             // Header styles for consistency
             headerStyle: {
               backgroundColor: twColor("header-background"),
-              shadowColor: twColor("header-shadow"),
+              // shadowColor: twColor("header-shadow"),
             },
             headerTintColor: twColor("header-foreground"),
             headerTitleStyle: {

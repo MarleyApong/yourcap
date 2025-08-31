@@ -50,20 +50,17 @@ export const PageHeader = ({ title, backPath, fbackButton = true, textAlign = "c
     >
       <View className={`${textPosition === "center" ? "flex-row items-center" : "flex-col"} px-3 pb-0`} style={{ position: "relative" }}>
         {fbackButton ? (
-          <TouchableOpacity
-            className={`flex-row items-center justify-center w-14 p-2 bg-background/20 border border-primary z-10 rounded-full ${className}`}
-            onPress={handlePress}
-          >
-            <Feather name="chevron-left" size={24} color={twColor("primary")} />
+          <TouchableOpacity className={`flex-row items-center justify-center z-10 rounded-md mt-1 ${className}`} onPress={handlePress}>
+            <Feather name="chevron-left" size={24} color={twColor("foreground")} />
           </TouchableOpacity>
         ) : null}
         <Text
           className={`text-2xl font-bold flex-1 mt-2 ${textAlign === "center" ? "text-center" : textAlign === "left" ? "text-left ml-4" : "text-right mr-4"}`}
-          style={{ color: twColor("navigation-foreground") }}
+          style={{ color: twColor("foreground") }}
         >
           {title}
         </Text>
-        {!fbackButton ? null : <View style={{ width: 24 }} />} {/* Espaceur pour équilibrer */}
+        {fbackButton && <View style={{ width: 24 }} />}
       </View>
     </View>
   )

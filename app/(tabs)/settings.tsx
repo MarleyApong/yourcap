@@ -1,11 +1,12 @@
-import { View, Text, ScrollView, Switch, Pressable } from "react-native"
+import { LoadingState } from "@/components/feature/loading-state"
+import { PageHeader } from "@/components/feature/page-header"
 import { useAuth } from "@/hooks/useAuth"
+import { useSettings } from "@/hooks/useSettings"
+import { useTwColors } from "@/lib/tw-colors"
 import { Feather } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
-import { useTwColors } from "@/lib/tw-colors"
-import { useSettings } from "@/hooks/useSettings"
+import { Alert, Pressable, ScrollView, Switch, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { LoadingState } from "@/components/feature/loading-state"
 
 export default function Settings() {
   const { user, logout } = useAuth()
@@ -15,8 +16,20 @@ export default function Settings() {
   const insets = useSafeAreaInsets()
 
   const handleLogout = () => {
-    logout()
-    router.replace("/")
+    Alert.alert("Confirm Logout", "Are you sure you want to log out?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Log Out",
+        style: "destructive",
+        onPress: () => {
+          logout()
+          router.replace("/")
+        },
+      },
+    ])
   }
 
   const SettingCard = ({ title, children, isDanger = false }: { title: string; children: React.ReactNode; isDanger?: boolean }) => (
@@ -130,6 +143,8 @@ export default function Settings() {
         paddingBottom: Math.max(40, insets.bottom + 20),
       }}
     >
+      {/* Fixed header */}
+      <PageHeader title="Settings" textPosition="center" textAlign="left" />
       <View className="p-6">
         {/* User Profile Section */}
         <SettingCard title="Profile">
