@@ -145,6 +145,7 @@ export default function Settings() {
     >
       {/* Fixed header */}
       <PageHeader title="Settings" textPosition="center" textAlign="left" />
+      
       <View className="p-6">
         {/* User Profile Section */}
         <SettingCard title="Profile">

@@ -3,13 +3,14 @@ import { TextInput } from "@/components/ui/text-input"
 import { useAuth } from "@/hooks/useAuth"
 import { useTwColors } from "@/lib/tw-colors"
 import { createDebt } from "@/services/debtServices"
-import { Feather } from "@expo/vector-icons"
-import DateTimePicker from "@react-native-community/datetimepicker"
-import { format } from "date-fns"
 import { useRouter } from "expo-router"
-import { useState } from "react"
-import { Pressable, ScrollView, Text, View } from "react-native"
+import { useRef, useState } from "react"
+import { Pressable, Text, View, TextInput as RNTextInput, Platform } from "react-native"
 import Toast from "react-native-toast-message"
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+import { DateInput } from "@/components/ui/date-input"
+import { Feather } from "@expo/vector-icons"
+import { Loader } from "@/components/ui/loader"
 
 export default function AddDebt() {
   const { user } = useAuth()
@@ -26,21 +27,21 @@ export default function AddDebt() {
     due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // +30 jours par défaut
     debt_type: "OWING",
   })
-  const [showLoanDatePicker, setShowLoanDatePicker] = useState(false)
-  const [showDueDatePicker, setShowDueDatePicker] = useState(false)
   const [loading, setLoading] = useState(false)
+
+  // Refs pour navigation entre inputs
+  const contactNameRef = useRef<RNTextInput>(null)
+  const contactPhoneRef = useRef<RNTextInput>(null)
+  const contactEmailRef = useRef<RNTextInput>(null)
+  const amountRef = useRef<RNTextInput>(null)
+  const descriptionRef = useRef<RNTextInput>(null)
 
   const handleChange = (field: string, value: string) => {
     setForm({ ...form, [field]: value })
   }
 
-  const handleDateChange = (field: "loan_date" | "due_date") => (event: any, selectedDate?: Date) => {
-    if (field === "loan_date") setShowLoanDatePicker(false)
-    if (field === "due_date") setShowDueDatePicker(false)
-
-    if (selectedDate) {
-      setForm({ ...form, [field]: selectedDate })
-    }
+  const handleDateChange = (field: "loan_date" | "due_date") => (date: Date) => {
+    setForm({ ...form, [field]: date })
   }
 
   const validateForm = () => {
@@ -138,96 +139,146 @@ export default function AddDebt() {
   }
 
   return (
-    <ScrollView className="bg-primary/5" contentContainerStyle={{ paddingBottom: 40 }}>
-      <PageHeader title="New debt" textPosition="center" textAlign="left" backPath="/dashboard" />
+    <KeyboardAwareScrollView
+      style={{
+        backgroundColor: twColor("background"),
+      }}
+      contentContainerStyle={{ paddingBottom: 40 }}
+      enableOnAndroid
+      extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+    >
+      {/* Fixed header */}
+      <PageHeader title="New debt" textPosition="center" textAlign="left" />
 
       <View className="px-6">
         <View className="mt-8 gap-4">
           {/* Debt Type Toggle */}
-          <View className="flex-row justify-around bg-white p-1 rounded-xl border border-primary">
+          <View
+            style={{
+              backgroundColor: twColor("card-background"),
+              borderColor: twColor("primary"),
+            }}
+            className="flex-row justify-around p-1 rounded-xl border"
+          >
             <Pressable
               onPress={() => setForm({ ...form, debt_type: "OWING" })}
-              className={`flex-1 items-center py-3 rounded-lg ${form.debt_type === "OWING" ? "bg-primary" : "bg-white"}`}
+              style={{
+                backgroundColor: form.debt_type === "OWING" ? twColor("primary") : twColor("card-background"),
+              }}
+              className="flex-1 items-center py-3 rounded-lg"
             >
-              <Text className={`font-medium ${form.debt_type === "OWING" ? "text-white" : "text-gray-700"}`}>Someone owes me</Text>
+              <Text
+                style={{
+                  color: form.debt_type === "OWING" ? twColor("primary-foreground") : twColor("foreground"),
+                }}
+                className="font-medium"
+              >
+                Someone owes me
+              </Text>
             </Pressable>
             <Pressable
               onPress={() => setForm({ ...form, debt_type: "OWED" })}
-              className={`flex-1 items-center py-3 rounded-lg ${form.debt_type === "OWED" ? "bg-primary" : "bg-white"}`}
+              style={{
+                backgroundColor: form.debt_type === "OWED" ? twColor("primary") : twColor("card-background"),
+              }}
+              className="flex-1 items-center py-3 rounded-lg"
             >
-              <Text className={`font-medium ${form.debt_type === "OWED" ? "text-white" : "text-gray-700"}`}>I owe someone</Text>
+              <Text
+                style={{
+                  color: form.debt_type === "OWED" ? twColor("primary-foreground") : twColor("foreground"),
+                }}
+                className="font-medium"
+              >
+                I owe someone
+              </Text>
             </Pressable>
           </View>
 
           {/* Contact Info */}
-          <View className="bg-white p-4 rounded-xl shadow-sm">
-            <Text className="text-2xl font-bold text-primary mb-4">Contact Information</Text>
-
-            <TextInput label="Full Name" required placeholder="John Doe" value={form.contact_name} onChangeText={(text) => handleChange("contact_name", text)} icon="user" />
+          <View
+            style={{
+              backgroundColor: twColor("card-background"),
+              borderColor: twColor("border"),
+            }}
+            className="p-4 rounded-xl shadow-sm border"
+          >
+            <Text style={{ color: twColor("primary") }} className="text-2xl font-bold mb-4">
+              Contact Information
+            </Text>
 
             <TextInput
+              ref={contactNameRef}
+              label="Full Name"
+              required
+              placeholder="xxx xxx"
+              value={form.contact_name}
+              onChangeText={(text) => handleChange("contact_name", text)}
+              icon="user"
+              returnKeyType="next"
+              onSubmitEditing={() => contactPhoneRef.current?.focus()}
+            />
+
+            <TextInput
+              ref={contactPhoneRef}
               label="Phone Number"
-              placeholder="123 456 7890"
+              placeholder="xxx xxx xxx"
               value={form.contact_phone}
               onChangeText={(text) => handleChange("contact_phone", text)}
               keyboardType="phone-pad"
               icon="phone"
               required
+              returnKeyType="next"
+              onSubmitEditing={() => contactEmailRef.current?.focus()}
             />
 
             <TextInput
+              ref={contactEmailRef}
               label="Email"
-              placeholder="john@example.com"
+              placeholder="xxx@xxx.xx"
               value={form.contact_email}
               onChangeText={(text) => handleChange("contact_email", text)}
               keyboardType="email-address"
               autoCapitalize="none"
               icon="mail"
               containerClassName="mb-0"
+              returnKeyType="next"
+              onSubmitEditing={() => amountRef.current?.focus()}
             />
           </View>
 
           {/* Debt Details */}
-          <View className="bg-white p-4 rounded-xl shadow-sm">
-            <Text className="text-2xl font-bold text-primary mb-4">Debt Details</Text>
+          <View
+            style={{
+              backgroundColor: twColor("card-background"),
+              borderColor: twColor("border"),
+            }}
+            className="p-4 rounded-xl shadow-sm border"
+          >
+            <Text style={{ color: twColor("primary") }} className="text-2xl font-bold mb-4">
+              Debt Details
+            </Text>
 
             <TextInput
+              ref={amountRef}
               label="Amount"
               required
-              placeholder="1000"
+              placeholder="xxx"
               value={form.amount}
               onChangeText={(text) => handleChange("amount", text)}
               keyboardType="numeric"
               icon="credit-card"
+              returnKeyType="next"
+              onSubmitEditing={() => descriptionRef.current?.focus()}
             />
 
-            <View className="mb-4">
-              <Text className="font-bold text-lg">Loan Date</Text>
-              <Pressable onPress={() => setShowLoanDatePicker(true)} className="flex-row items-center justify-between border-b border-primary p-3">
-                <View className="flex-row items-center">
-                  <Feather name="calendar" size={20} color={twColor("text-primary")} />
-                  <Text className="ml-2 text-gray-700">{format(form.loan_date, "MMM dd, yyyy")}</Text>
-                </View>
-                <Feather name="chevron-down" size={20} color={twColor("text-gray-500")} />
-              </Pressable>
-            </View>
+            <DateInput label="Loan Date" value={form.loan_date} onChange={handleDateChange("loan_date")} maximumDate={new Date()} required />
 
-            <View className="mb-6">
-              <Text className="font-bold text-lg">Due Date</Text>
-              <Pressable onPress={() => setShowDueDatePicker(true)} className="flex-row items-center justify-between border-b border-primary p-3">
-                <View className="flex-row items-center">
-                  <Feather name="calendar" size={20} color={twColor("text-primary")} />
-                  <Text className="ml-2 text-gray-700">{format(form.due_date, "MMM dd, yyyy")}</Text>
-                </View>
-                <Feather name="chevron-down" size={20} color={twColor("text-gray-500")} />
-              </Pressable>
-            </View>
-
-            {showLoanDatePicker && <DateTimePicker value={form.loan_date} mode="date" display="default" onChange={handleDateChange("loan_date")} maximumDate={new Date()} />}
-
-            {showDueDatePicker && <DateTimePicker value={form.due_date} mode="date" display="default" onChange={handleDateChange("due_date")} minimumDate={form.loan_date} />}
+            <DateInput label="Due Date" value={form.due_date} onChange={handleDateChange("due_date")} minimumDate={form.loan_date} required />
 
             <TextInput
+              ref={descriptionRef}
               label="Description"
               placeholder="Loan for car repair"
               value={form.description}
@@ -236,15 +287,28 @@ export default function AddDebt() {
               numberOfLines={3}
               icon="file-text"
               containerClassName="mb-0"
+              returnKeyType="done"
+              onSubmitEditing={handleSubmit}
             />
           </View>
 
           {/* Submit Button */}
-          <Pressable onPress={handleSubmit} disabled={loading} className={`bg-primary p-4 rounded-xl ${loading ? "opacity-70" : ""}`}>
-            <Text className="text-center text-white font-semibold text-lg">{loading ? "Saving..." : "Save Debt"}</Text>
+          <Pressable
+            onPress={handleSubmit}
+            disabled={loading}
+            style={{
+              backgroundColor: twColor("primary"),
+              opacity: loading ? 0.7 : 1,
+            }}
+            className="p-4 rounded-xl flex-row gap-2 justify-center items-center"
+          >
+            {loading ? <Loader /> : <Feather name="navigation" size={20} color={twColor("white")} />}
+            <Text style={{ color: twColor("primary-foreground") }} className="text-center font-semibold text-lg">
+              {loading ? "Saving..." : "Save Debt"}
+            </Text>
           </Pressable>
         </View>
       </View>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   )
 }
