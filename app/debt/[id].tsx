@@ -3,6 +3,7 @@ import { useTwColors } from "@/lib/tw-colors"
 import { formatCurrency, formatDate } from "@/lib/utils"
 import { deleteDebt, getDebtById, updateDebt } from "@/services/debtServices"
 import { useAuthStore } from "@/stores/authStore"
+import { DebtStatus } from "@/types/debt"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useEffect, useState } from "react"
 import { Alert, Pressable, ScrollView, Text, View } from "react-native"
@@ -55,7 +56,7 @@ export default function DebtDetails() {
     }
   }
 
-  const handleStatusChange = async (newStatus: string) => {
+  const handleStatusChange = async (newStatus: DebtStatus) => {
     try {
       await updateDebt(debt.debt_id, { status: newStatus })
       loadDebt()

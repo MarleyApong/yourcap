@@ -11,6 +11,7 @@ import { DateInput } from "@/components/ui/date-input"
 import { Feather } from "@expo/vector-icons"
 import { Loader } from "@/components/ui/loader"
 import { useAuthStore } from "@/stores/authStore"
+import { SelectInput } from "@/components/ui/select-input"
 
 export default function AddDebt() {
   const { user } = useAuthStore()
@@ -22,6 +23,7 @@ export default function AddDebt() {
     contact_phone: "",
     contact_email: "",
     amount: "",
+    currency: "XAF",
     description: "",
     loan_date: new Date(),
     due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // +30 jours par défaut
@@ -105,6 +107,7 @@ export default function AddDebt() {
         contact_phone: form.contact_phone.trim(),
         contact_email: form.contact_email.trim() || undefined,
         amount: Number(form.amount),
+        currency: form.currency,
         description: form.description.trim() || undefined,
         loan_date: form.loan_date.toISOString(),
         due_date: form.due_date.toISOString(),
@@ -118,13 +121,13 @@ export default function AddDebt() {
         contact_phone: "",
         contact_email: "",
         amount: "",
+        currency: "",
         description: "",
         loan_date: new Date(),
         due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         debt_type: "OWING",
       })
 
-      // Retourner au dashboard (qui se rafraîchira automatiquement avec useFocusEffect)
       router.back()
     } catch (error) {
       console.error("Error creating debt:", error)
@@ -271,6 +274,18 @@ export default function AddDebt() {
               icon="credit-card"
               returnKeyType="next"
               onSubmitEditing={() => descriptionRef.current?.focus()}
+            />
+
+            <SelectInput
+              label="Currency"
+              value={form.currency}
+              onChange={(val) => handleChange("currency", val)}
+              options={[
+                { label: "USD ($)", value: "USD" },
+                { label: "EUR (€)", value: "EUR" },
+                { label: "GBP (£)", value: "GBP" },
+                { label: "XAF (CFA)", value: "XAF" },
+              ]}
             />
 
             <DateInput label="Loan Date" value={form.loan_date} onChange={handleDateChange("loan_date")} maximumDate={new Date()} required />

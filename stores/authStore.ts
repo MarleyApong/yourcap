@@ -84,7 +84,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           },
         })
 
-        Toast.show({ type: "success", text1: "Success", text2: "Login successful!" })
+        // Toast.show({ type: "success", text1: "Success", text2: "Login successful!" })
         return true
       }
       return false
