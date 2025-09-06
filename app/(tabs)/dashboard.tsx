@@ -7,7 +7,6 @@ import { Debt } from "@/types/debt"
 import { Link, useRouter } from "expo-router"
 import { useCallback, useState } from "react"
 import { ScrollView, Text, View } from "react-native"
-import Toast from "react-native-toast-message"
 import { useFocusEffect } from "@react-navigation/core"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { SummaryCard } from "@/components/feature/dashboard/summary-card"
@@ -36,11 +35,7 @@ export default function Dashboard() {
       setRecentDebts(debts.slice(0, 5))
     } catch (error) {
       console.error("Dashboard load error:", error)
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Failed to load data. Please try again.",
-      })
+      Alert.error("Failed to load data. Please try again.", "Error")
     } finally {
       setLoading(false)
     }

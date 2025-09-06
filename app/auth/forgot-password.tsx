@@ -4,7 +4,6 @@ import { Link, useRouter } from "expo-router"
 import { Feather } from "@expo/vector-icons"
 import { FBackButton } from "@/components/ui/fback-button"
 import { useTwColors } from "@/lib/tw-colors"
-import Toast from "react-native-toast-message"
 import { resetPassword } from "@/services/userService"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { PasswordInput } from "@/components/ui/password-input"
@@ -32,31 +31,19 @@ export default function ForgotPassword() {
 
   const validateStep1 = () => {
     if (!formData.full_name || !formData.identifier) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Full name and identifier are required",
-      })
+      Alert.error("Full name and email are required", "Error")
       return false
     }
 
     // Email format
     if (formData.identifier.includes("@") && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.identifier)) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Please enter a valid email address",
-      })
+      Alert.error("Please enter a valid email address", "Error")
       return false
     }
 
     // Phone format (optionnel)
     if (!formData.identifier.includes("@") && !/^(6|2)(2|3|[5-9])[0-9]{7}$/.test(formData.identifier)) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Please enter a valid Cameroonian phone number",
-      })
+      Alert.error("Please enter a valid Cameroonian phone number", "Error")
       return false
     }
 
@@ -65,20 +52,12 @@ export default function ForgotPassword() {
 
   const validateStep2 = () => {
     if (formData.newPassword.length < 6) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Password must be at least 6 characters",
-      })
+      Alert.error("Password must be at least 6 characters", "Error")
       return false
     }
 
     if (formData.newPassword !== formData.confirmPassword) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Passwords do not match",
-      })
+      Alert.error("Passwords do not match", "Error")
       return false
     }
 
@@ -101,13 +80,7 @@ export default function ForgotPassword() {
     if (success) {
       router.replace("/auth/login")
     } else {
-      console.log(success);
-      
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Password reset failed",
-      })
+      Alert.error("Password reset failed", "Error")
     }
   }
 
@@ -124,10 +97,7 @@ export default function ForgotPassword() {
         <FBackButton />
       ) : (
         <View className="absolute top-28 left-6 z-10">
-          <Pressable
-            onPress={() => setStep(1)}
-            className="flex-row items-center justify-center p-2 bg-background/20 border border-primary rounded-full"
-          >
+          <Pressable onPress={() => setStep(1)} className="flex-row items-center justify-center p-2 bg-background/20 border border-primary rounded-full">
             <Feather name="chevron-left" size={24} color={twColor("primary")} />
           </Pressable>
         </View>
@@ -140,10 +110,7 @@ export default function ForgotPassword() {
         {/* Step indicator */}
         <View className="flex-row gap-2 my-6">
           {[1, 2].map((i) => (
-            <View
-              key={i}
-              className={`h-2 rounded-full ${step >= i ? "bg-primary w-8" : "bg-gray-300 w-4"}`}
-            />
+            <View key={i} className={`h-2 rounded-full ${step >= i ? "bg-primary w-8" : "bg-gray-300 w-4"}`} />
           ))}
         </View>
 
@@ -217,29 +184,16 @@ export default function ForgotPassword() {
           <Pressable
             onPress={step === 1 ? handleContinue : handleResetPassword}
             disabled={loading}
-            className={`flex-row gap-2 justify-center items-center bg-primary p-4 rounded-xl w-full ${
-              loading ? "opacity-70" : ""
-            }`}
+            className={`flex-row gap-2 justify-center items-center bg-primary p-4 rounded-xl w-full ${loading ? "opacity-70" : ""}`}
           >
-            {step === 1 ? (
-              <Feather name="arrow-up-right" size={24} color={twColor("text-white")} />
-            ) : (
-              <Feather name="send" size={24} color={twColor("text-white")} />
-            )}
-            <Text className="text-center text-white font-semibold text-lg">
-              {loading ? "Processing..." : step === 1 ? "Continue" : "Reset Password"}
-            </Text>
+            {step === 1 ? <Feather name="arrow-up-right" size={24} color={twColor("text-white")} /> : <Feather name="send" size={24} color={twColor("text-white")} />}
+            <Text className="text-center text-white font-semibold text-lg">{loading ? "Processing..." : step === 1 ? "Continue" : "Reset Password"}</Text>
           </Pressable>
 
           {step === 2 && (
-            <Pressable
-              onPress={() => setStep(1)}
-              className="mt-4 flex-row items-center justify-center gap-2"
-            >
+            <Pressable onPress={() => setStep(1)} className="mt-4 flex-row items-center justify-center gap-2">
               <Feather name="arrow-left" size={16} color={twColor("text-primary")} />
-              <Text className="text-center text-primary font-semibold">
-                Back to identity
-              </Text>
+              <Text className="text-center text-primary font-semibold">Back to identity</Text>
             </Pressable>
           )}
 

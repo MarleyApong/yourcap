@@ -1,20 +1,18 @@
-import { FBackButton } from "@/components/ui/fback-button"
+import { PageHeader } from "@/components/feature/page-header"
+import { DateInput } from "@/components/ui/date-input"
+import { Loader } from "@/components/ui/loader"
+import { SelectInput } from "@/components/ui/select-input"
+import { TextInput } from "@/components/ui/text-input"
 import { useTwColors } from "@/lib/tw-colors"
 import { formatCurrency, formatDate } from "@/lib/utils"
 import { deleteDebt, getDebtById, updateDebt } from "@/services/debtServices"
 import { useAuthStore } from "@/stores/authStore"
 import { Debt, DebtStatus } from "@/types/debt"
+import { Feather } from "@expo/vector-icons"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useEffect, useState } from "react"
-import { Alert, Modal, Pressable, ScrollView, Text, View, Platform } from "react-native"
-import Toast from "react-native-toast-message"
+import { Modal, Platform, Pressable, ScrollView, Text, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
-import { Feather } from "@expo/vector-icons"
-import { TextInput } from "@/components/ui/text-input"
-import { DateInput } from "@/components/ui/date-input"
-import { SelectInput } from "@/components/ui/select-input"
-import { Loader } from "@/components/ui/loader"
-import { PageHeader } from "@/components/feature/page-header"
 
 export default function DebtDetails() {
   const { id } = useLocalSearchParams()
@@ -67,19 +65,11 @@ export default function DebtDetails() {
           debt_type: debtData.debt_type,
         })
       } else {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "Debt not found or access denied",
-        })
+        Alert.error("Debt not found or access denied", "Error")
         router.back()
       }
     } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Failed to load debt details",
-      })
+      Alert.error("Failed to load debt details", "Error")
       router.back()
     } finally {
       setLoading(false)
@@ -90,45 +80,30 @@ export default function DebtDetails() {
     try {
       await updateDebt(debt!.debt_id, { status: newStatus })
       loadDebt()
-      Toast.show({
-        type: "success",
-        text1: "Success",
-        text2: "Debt status updated",
-      })
+      Alert.success("Debt status updated", "Success")
     } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Failed to update status",
-      })
+      Alert.error("Failed to update status", "Error")
     }
   }
 
   const handleDelete = () => {
-    Alert.alert("Confirm Delete", "Are you sure you want to delete this debt record?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            await deleteDebt(debt!.debt_id)
-            Toast.show({
-              type: "success",
-              text1: "Success",
-              text2: "Debt deleted successfully",
-            })
-            router.back()
-          } catch (error) {
-            Toast.show({
-              type: "error",
-              text1: "Error",
-              text2: "Failed to delete debt",
-            })
-          }
-        },
+    Alert.confirm(
+      "Are you sure you want to delete this debt record?",
+      async () => {
+        try {
+          await deleteDebt(debt!.debt_id)
+          Alert.success("Debt deleted successfully", "Success")
+          router.back()
+        } catch (error) {
+          Alert.error("Failed to delete debt", "Error")
+        }
       },
-    ])
+      {
+        title: "Confirm Delete",
+        confirmText: "Delete",
+        cancelText: "Cancel",
+      },
+    )
   }
 
   const handleEditChange = (field: string, value: string) => {
@@ -141,48 +116,28 @@ export default function DebtDetails() {
 
   const validateEditForm = () => {
     if (!editForm.contact_name.trim()) {
-      Toast.show({
-        type: "error",
-        text1: "Validation Error",
-        text2: "Contact name is required",
-      })
+      Alert.error("Contact name is required", "Validation Error")
       return false
     }
 
     if (!editForm.contact_phone.trim()) {
-      Toast.show({
-        type: "error",
-        text1: "Validation Error",
-        text2: "Phone number is required",
-      })
+      Alert.error("Phone number is required", "Validation Error")
       return false
     }
 
     if (!editForm.amount.trim()) {
-      Toast.show({
-        type: "error",
-        text1: "Validation Error",
-        text2: "Amount is required",
-      })
+      Alert.error("Amount is required", "Validation Error")
       return false
     }
 
     const amount = Number(editForm.amount)
     if (isNaN(amount) || amount <= 0) {
-      Toast.show({
-        type: "error",
-        text1: "Validation Error",
-        text2: "Please enter a valid amount greater than 0",
-      })
+      Alert.error("Please enter a valid amount greater than 0", "Validation Error")
       return false
     }
 
     if (editForm.due_date < editForm.loan_date) {
-      Toast.show({
-        type: "error",
-        text1: "Validation Error",
-        text2: "Due date cannot be before loan date",
-      })
+      Alert.error("Due date cannot be before loan date", "Validation Error")
       return false
     }
 
@@ -206,21 +161,12 @@ export default function DebtDetails() {
         debt_type: editForm.debt_type,
       })
 
-      Toast.show({
-        type: "success",
-        text1: "Success",
-        text2: "Debt updated successfully",
-      })
-
+      Alert.success("Debt updated successfully", "Success")
       setEditModalVisible(false)
       loadDebt()
     } catch (error) {
       console.error("Error updating debt:", error)
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Failed to update debt. Please try again.",
-      })
+      Alert.error("Failed to update debt. Please try again.", "Error")
     } finally {
       setEditLoading(false)
     }

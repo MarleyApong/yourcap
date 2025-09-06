@@ -6,7 +6,6 @@ import { formatCurrency, formatDate } from "@/lib/utils"
 import { Feather } from "@expo/vector-icons"
 import { useTwColors } from "@/lib/tw-colors"
 import { Debt, DebtStatus, DebtType } from "@/types/debt"
-import Toast from "react-native-toast-message"
 import { PageHeader } from "@/components/feature/page-header"
 import { LoadingState } from "@/components/feature/loading-state"
 import { EmptyState } from "@/components/feature/empty-state"
@@ -44,11 +43,7 @@ export default function History() {
       setDebts(allDebts)
     } catch (error) {
       console.error("History load error:", error)
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Failed to load debts. Please try again.",
-      })
+      Alert.error("Failed to load debts. Please try again.", "Error")
     } finally {
       setLoading(false)
     }

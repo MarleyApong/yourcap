@@ -1,4 +1,3 @@
-// lib/headerConfig.tsx - Custom header configurations with React components
 import { useTwColors } from "@/lib/tw-colors"
 import { Feather } from "@expo/vector-icons"
 import { useRouter } from "expo-router"

@@ -1,17 +1,16 @@
 import { PageHeader } from "@/components/feature/page-header"
+import { DateInput } from "@/components/ui/date-input"
+import { Loader } from "@/components/ui/loader"
+import { SelectInput } from "@/components/ui/select-input"
 import { TextInput } from "@/components/ui/text-input"
 import { useTwColors } from "@/lib/tw-colors"
 import { createDebt } from "@/services/debtServices"
+import { useAuthStore } from "@/stores/authStore"
+import { Feather } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { useRef, useState } from "react"
-import { Pressable, Text, View, TextInput as RNTextInput, Platform } from "react-native"
-import Toast from "react-native-toast-message"
+import { Platform, Pressable, TextInput as RNTextInput, Text, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
-import { DateInput } from "@/components/ui/date-input"
-import { Feather } from "@expo/vector-icons"
-import { Loader } from "@/components/ui/loader"
-import { useAuthStore } from "@/stores/authStore"
-import { SelectInput } from "@/components/ui/select-input"
 
 export default function AddDebt() {
   const { user } = useAuthStore()
@@ -48,48 +47,28 @@ export default function AddDebt() {
 
   const validateForm = () => {
     if (!form.contact_name.trim()) {
-      Toast.show({
-        type: "error",
-        text1: "Validation Error",
-        text2: "Contact name is required",
-      })
+      Alert.error("Contact name is required", "Validation Error")
       return false
     }
 
     if (!form.contact_phone.trim()) {
-      Toast.show({
-        type: "error",
-        text1: "Validation Error",
-        text2: "Phone number is required",
-      })
+      Alert.error("Phone number is required", "Validation Error")
       return false
     }
 
     if (!form.amount.trim()) {
-      Toast.show({
-        type: "error",
-        text1: "Validation Error",
-        text2: "Amount is required",
-      })
+      Alert.error("Amount is required", "Validation Error")
       return false
     }
 
     const amount = Number(form.amount)
     if (isNaN(amount) || amount <= 0) {
-      Toast.show({
-        type: "error",
-        text1: "Validation Error",
-        text2: "Please enter a valid amount greater than 0",
-      })
+      Alert.error("Please enter a valid amount greater than 0", "Validation Error")
       return false
     }
 
     if (form.due_date < form.loan_date) {
-      Toast.show({
-        type: "error",
-        text1: "Validation Error",
-        text2: "Due date cannot be before loan date",
-      })
+      Alert.error("Due date cannot be before loan date", "Validation Error")
       return false
     }
 
@@ -131,11 +110,7 @@ export default function AddDebt() {
       router.back()
     } catch (error) {
       console.error("Error creating debt:", error)
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Failed to create debt. Please try again.",
-      })
+      Alert.error("Failed to create debt. Please try again.", "Error")
     } finally {
       setLoading(false)
     }

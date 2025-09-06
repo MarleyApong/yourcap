@@ -6,30 +6,25 @@ import { PasswordInput } from "@/components/ui/password-input"
 import { useTwColors } from "@/lib/tw-colors"
 import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
-import Toast from "react-native-toast-message"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { Loader } from "@/components/ui/loader"
 import { useAuthStore } from "@/stores/authStore"
 
 export default function Login() {
+  const { login } = useAuthStore()
+  const { twColor } = useTwColors()
+  const passwordRef = useRef<TextInput>(null)
+  const router = useRouter()
+
+  // State
   const [identifier, setIdentifier] = useState("")
   const [password, setPassword] = useState("")
   const [agreed, setAgreed] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const passwordRef = useRef<TextInput>(null)
-
-  const { login } = useAuthStore()
-  const { twColor } = useTwColors()
-  const router = useRouter()
-
   const handleSubmit = async () => {
     if (!identifier || !password) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Please enter both identifier and password",
-      })
+      Alert.error("Please enter both identifier and password", "Error")
       return
     }
 
@@ -39,18 +34,10 @@ export default function Login() {
       if (success) {
         router.replace("/(tabs)/dashboard")
       } else {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "Login failed. Please check your credentials.",
-        })
+        Alert.error("Login failed. Please check your credentials.", "Error")
       }
     } catch (err) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "An unexpected error occurred. Please try again later.",
-      })
+      Alert.error("An unexpected error occurred. Please try again later.", "Error")
     } finally {
       setLoading(false)
     }

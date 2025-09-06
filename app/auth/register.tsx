@@ -4,7 +4,6 @@ import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
 import { useRef, useState } from "react"
 import { Pressable, Text, TextInput, View, Platform } from "react-native"
-import Toast from "react-native-toast-message"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { PasswordInput } from "@/components/ui/password-input"
 import { Loader } from "@/components/ui/loader"
@@ -37,29 +36,17 @@ export default function Register() {
 
   const validateStep1 = () => {
     if (!formData.full_name || !formData.email) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Full name and email are required",
-      })
+      Alert.error("Full name and email are required", "Error")
       return false
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Please enter a valid email address",
-      })
+      Alert.error("Please enter a valid email address", "Error")
       return false
     }
 
     if (formData.phone_number && !/^(6|2)(2|3|[5-9])[0-9]{7}$/.test(formData.phone_number)) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Please enter a valid Cameroonian phone number",
-      })
+      Alert.error("Please enter a valid Cameroonian phone number", "Error")
       return false
     }
 
@@ -68,19 +55,12 @@ export default function Register() {
 
   const validateStep2 = () => {
     if (formData.password.length < 6) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Password must be at least 6 characters",
-      })
+      Alert.error("Password must be at least 6 characters", "Error")
       return false
     }
 
     if (formData.password !== formData.confirmPassword) {
-      Toast.show({
-        type: "error",
-        text2: "Passwords do not match",
-      })
+      Alert.error("Passwords do not match", "Error")
       return false
     }
 
@@ -96,12 +76,7 @@ export default function Register() {
       if (success) router.replace("/(tabs)/dashboard")
     } catch (error) {
       console.log("error", error)
-
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Registration failed. Please try again.",
-      })
+      Alert.error("Registration failed. Please try again.", "Error")
     } finally {
       setLoading(false)
     }
