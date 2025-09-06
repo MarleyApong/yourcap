@@ -5,7 +5,7 @@ import { useTwColors } from "@/lib/tw-colors"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
-import { Alert, Pressable, ScrollView, Switch, Text, View } from "react-native"
+import { Pressable, ScrollView, Switch, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function Settings() {
@@ -16,20 +16,18 @@ export default function Settings() {
   const insets = useSafeAreaInsets()
 
   const handleLogout = () => {
-    Alert.alert("Confirm Logout", "Are you sure you want to log out?", [
-      {
-        text: "Cancel",
-        style: "cancel",
+    Alert.confirm(
+      "Are you sure you want to log out?",
+      () => {
+        logout()
+        router.replace("/")
       },
       {
-        text: "Log Out",
-        style: "destructive",
-        onPress: () => {
-          logout()
-          router.replace("/")
-        },
+        title: "Confirm Logout",
+        confirmText: "Log Out",
+        cancelText: "Cancel",
       },
-    ])
+    )
   }
 
   const SettingCard = ({ title, children, isDanger = false }: { title: string; children: React.ReactNode; isDanger?: boolean }) => (
@@ -145,7 +143,7 @@ export default function Settings() {
     >
       {/* Fixed header */}
       <PageHeader title="Settings" textPosition="center" textAlign="left" />
-      
+
       <View className="p-6">
         {/* User Profile Section */}
         <SettingCard title="Profile">
@@ -212,7 +210,7 @@ export default function Settings() {
         </SettingCard>
 
         {/* Preferences Section */}
-        <SettingCard title="Preferences">
+        {/* <SettingCard title="Preferences">
           <View className="py-3">
             <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
               Currency
@@ -228,7 +226,7 @@ export default function Settings() {
               onSelect={(curr) => updateSetting("currency", curr)}
             />
           </View>
-        </SettingCard>
+        </SettingCard> */}
 
         {/* Security Section */}
         <SettingCard title="Security">

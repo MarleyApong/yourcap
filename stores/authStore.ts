@@ -1,10 +1,9 @@
-import { create } from "zustand"
-import { getAuthToken, setAuthToken, clearAuthToken } from "@/lib/auth"
-import { createUser, loginUser, getUserById } from "@/services/userService"
-import { getSettings, ensureUserSettings } from "@/services/settingsService"
+import { clearAuthToken, getAuthToken, setAuthToken } from "@/lib/auth"
+import { ensureUserSettings, getSettings } from "@/services/settingsService"
+import { createUser, getUserById, loginUser } from "@/services/userService"
 import { CreateUserInput } from "@/types/user"
-import Toast from "react-native-toast-message"
 import { router } from "expo-router"
+import { create } from "zustand"
 
 type User = {
   user_id: string
@@ -38,7 +37,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   loadUser: async () => {
     try {
-      set({loading: true})
+      set({ loading: true })
       const storedAuth = await getAuthToken()
       if (storedAuth) {
         const authData = JSON.parse(storedAuth)
@@ -89,14 +88,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
       return false
     } catch (error) {
-      Toast.show({ type: "error", text1: "Error", text2: "Login failed" })
+      // Toast.show({ type: "error", text1: "Error", text2: "Login failed" })
       return false
     }
   },
 
   register: async (credentials) => {
     if (credentials.password !== credentials.confirmPassword) {
-      Toast.show({ type: "error", text1: "Error", text2: "Passwords don't match" })
+      // Toast.show({ type: "error", text1: "Error", text2: "Passwords don't match" })
       throw new Error("Passwords don't match")
     }
 
@@ -116,11 +115,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           settings,
         },
       })
-
-      Toast.show({ type: "success", text1: "Success", text2: "Registration successful!" })
+      Alert.success("Registration successful!", "Success")
       return true
     } catch (error) {
-      Toast.show({ type: "error", text1: "Error", text2: "Registration failed" })
       throw error
     }
   },
@@ -149,7 +146,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   logout: async () => {
     await clearAuthToken()
     set({ user: null })
-    Toast.show({ type: "success", text1: "Success", text2: "Logged out successfully" })
+    Alert.success("Logged out successfully", "Success")
     router.replace("/")
   },
 }))

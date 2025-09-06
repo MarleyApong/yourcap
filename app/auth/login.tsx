@@ -33,6 +33,7 @@ export default function Login() {
       const success = await login({ identifier, password })
       if (success) {
         router.replace("/(tabs)/dashboard")
+        Alert.success("Welcome!", "Success")
       } else {
         Alert.error("Login failed. Please check your credentials.", "Error")
       }

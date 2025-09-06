@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react"
 import { getSettings, updateSettings } from "@/services/settingsService"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import Toast from "react-native-toast-message"
 import { useAuthStore } from "@/stores/authStore"
 import { User } from "@/types/user"
 
@@ -29,8 +28,7 @@ export const useSettings = () => {
           inactivity_timeout: savedSettings.inactivity_timeout,
         }
         setSettings(newSettings)
-        console.log("Settings loaded:", newSettings);
-        
+        console.log("Settings loaded:", newSettings)
 
         // Mettre à jour les settings dans useAuth
         if (setUser && user) {
@@ -45,11 +43,7 @@ export const useSettings = () => {
       }
     } catch (error) {
       console.error("Failed to load settings:", error)
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Failed to load settings",
-      })
+      Alert.error("Failed to load settings", "Error")
     } finally {
       setLoading(false)
     }
@@ -80,21 +74,12 @@ export const useSettings = () => {
           }
         })
       }
-
-      Toast.show({
-        type: "success",
-        text1: "Success",
-        text2: "Setting updated successfully",
-      })
+      Alert.success("Setting updated successfully", "Success")
     } catch (error) {
       console.error("Failed to update setting:", error)
       // Annuler la mise à jour optimiste en cas d'erreur
       setSettings(previousSettings)
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Failed to update setting",
-      })
+      Alert.error("Failed to update setting", "Error")
     }
   }
 

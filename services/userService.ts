@@ -2,7 +2,6 @@ import db from "@/db/db"
 import bcrypt from "bcryptjs"
 import { v4 as uuidv4 } from "uuid"
 import { CreateUserInput, User } from "@/types/user"
-import Toast from "react-native-toast-message"
 
 export const getUserById = async (user_id: string): Promise<User | null> => {
   try {
@@ -28,11 +27,7 @@ export const createUser = async ({ full_name, email, phone_number, password }: C
     const existing = await db.getFirstAsync(`SELECT * FROM users WHERE email = ? OR phone_number = ?`, [email, phone_number])
 
     if (existing) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "User already exists with this email or phone number.",
-      })
+      Alert.error("Registration failed. Please try again.", "Error")
       throw new Error("User already exists")
     }
 
@@ -46,11 +41,7 @@ export const createUser = async ({ full_name, email, phone_number, password }: C
 
     return user_id // Retourne le user_id créé
   } catch (error) {
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: "Registration failed. Please try again.",
-    })
+    Alert.error("Registration failed. Please try again.", "Error")
     throw error
   }
 }
@@ -75,11 +66,7 @@ export const loginUser = async (identifier: string, password: string): Promise<{
       phone_number: result.phone_number,
     }
   } catch (error) {
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: "Login failed. Please check your credentials and try again.",
-    })
+    Alert.error("Login failed. Please check your credentials and try again.", "Error")
     throw error
   }
 }
@@ -93,38 +80,22 @@ export const resetPassword = async ({
 }): Promise<boolean> => {
   try {
     const user = await db.getFirstAsync(`SELECT * FROM users WHERE email = ? OR phone_number = ?`, [identifier, identifier])
-    console.log("Moi", user)
 
     if (!user) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "No user found with this email or phone number.",
-      })
+      Alert.error("No user found with this email or phone number.", "Error")
       return false
     }
-
-    console.log("use", user)
 
     const hashedPassword = await bcrypt.hash(newPassword, 10)
     const now = new Date().toISOString()
 
     await db.runAsync(`UPDATE users SET password = ?, updated_at = ? WHERE user_id = ?`, [hashedPassword, now, (user as { user_id: string }).user_id])
 
-    Toast.show({
-      type: "success",
-      text1: "Success",
-      text2: "Password reset successfully!",
-    })
-
+    Alert.success("Password reset successfully!", "Success")
     return true
   } catch (error) {
     console.error("resetPassword error:", error)
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: "Failed to reset password. Try again.",
-    })
+    Alert.error("Failed to reset password. Please try again.", "Error")
     return false
   }
 }

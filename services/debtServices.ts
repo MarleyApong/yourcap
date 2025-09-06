@@ -1,6 +1,5 @@
 import db from "@/db/db"
 import { v4 as uuidv4 } from "uuid"
-import Toast from "react-native-toast-message"
 import { Debt, DebtInput, DebtStatus, DebtType } from "@/types/debt"
 
 export const createDebt = async (debt: DebtInput): Promise<Debt> => {
@@ -32,21 +31,11 @@ export const createDebt = async (debt: DebtInput): Promise<Debt> => {
 
     const newDebt = await getDebtById(debt_id)
     if (!newDebt) throw new Error("Failed to retrieve created debt")
-
-    Toast.show({
-      type: "success",
-      text1: "Success",
-      text2: "Debt created successfully!",
-    })
-
+    Alert.success("Debt created successfully!", "Success")
     return newDebt
   } catch (error) {
     console.error("Create debt error:", error)
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: "Failed to create debt. Please try again.",
-    })
+    Alert.error("Failed to create debt. Please try again.", "Error")
     throw error
   }
 }
@@ -74,21 +63,11 @@ export const updateDebt = async (debt_id: string, updates: Partial<DebtInput>): 
     if (!updatedDebt) {
       throw new Error("Failed to retrieve updated debt")
     }
-
-    Toast.show({
-      type: "success",
-      text1: "Success",
-      text2: "Debt updated successfully!",
-    })
-
+    Alert.success("Debt updated successfully!", "Success")
     return updatedDebt
   } catch (error) {
     console.error("Update debt error:", error)
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: "Failed to update debt. Please try again.",
-    })
+    Alert.error("Failed to update debt. Please try again.", "Error")
     throw error
   }
 }
@@ -96,18 +75,9 @@ export const updateDebt = async (debt_id: string, updates: Partial<DebtInput>): 
 export const deleteDebt = async (debt_id: string): Promise<void> => {
   try {
     await db.runAsync(`DELETE FROM debts WHERE debt_id = ?`, [debt_id])
-
-    Toast.show({
-      type: "success",
-      text1: "Success",
-      text2: "Debt deleted successfully!",
-    })
+    Alert.success("Debt deleted successfully!", "Success")
   } catch (error) {
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: "Failed to delete debt. Please try again.",
-    })
+    Alert.error("Failed to delete debt. Please try again.", "Error")
     throw error
   }
 }
