@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "yourcap",
-    "slug": "yourcap",
+    "slug": "yourcap-slug",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.anonymous.yourcapslug"
     },
     "web": {
       "bundler": "metro",
@@ -37,6 +38,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "db21fc39-6fb2-4b12-b025-f82890ba36ce"
+      }
     }
   }
 }

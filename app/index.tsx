@@ -8,7 +8,7 @@ const { height: screenHeight } = Dimensions.get("window")
 
 export default function Index() {
   const { user, loading } = useAuthStore()
-  const router = useRouter()  
+  const router = useRouter()    
 
   useEffect(() => {
     if (!loading && user) {

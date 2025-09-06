@@ -55,16 +55,25 @@ export const updateDebt = async (debt_id: string, updates: Partial<DebtInput>): 
   const now = new Date().toISOString()
 
   try {
-    const setClause = Object.keys(updates)
-      .map((key) => `${key} = ?`)
-      .join(", ")
+    // Exclure les clés qui n'ont pas de valeur ou qui ne doivent pas être mises à jour
+    const validUpdates = Object.entries(updates).filter(([_, value]) => value !== undefined && value !== null)
 
-    const values = Object.values(updates)
-    values.push(debt_id)
+    if (validUpdates.length === 0) {
+      throw new Error("No valid updates provided")
+    }
 
-    await db.runAsync(`UPDATE debts SET ${setClause}, updated_at = ? WHERE debt_id = ?`, [...values, now, debt_id])
+    const setClause = validUpdates.map(([key]) => `${key} = ?`).join(", ")
+    const values = validUpdates.map(([_, value]) => value)
 
-    const updatedDebt = await db.getFirstAsync<Debt>(`SELECT * FROM debts WHERE debt_id = ?`, [debt_id])
+    const allValues = [...values, now, debt_id]
+
+    await db.runAsync(`UPDATE debts SET ${setClause}, updated_at = ? WHERE debt_id = ?`, allValues)
+
+    const updatedDebt = await getDebtById(debt_id)
+
+    if (!updatedDebt) {
+      throw new Error("Failed to retrieve updated debt")
+    }
 
     Toast.show({
       type: "success",
@@ -72,8 +81,9 @@ export const updateDebt = async (debt_id: string, updates: Partial<DebtInput>): 
       text2: "Debt updated successfully!",
     })
 
-    return updatedDebt!
+    return updatedDebt
   } catch (error) {
+    console.error("Update debt error:", error)
     Toast.show({
       type: "error",
       text1: "Error",
