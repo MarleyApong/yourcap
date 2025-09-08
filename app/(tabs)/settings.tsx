@@ -3,17 +3,28 @@ import { PageHeader } from "@/components/feature/page-header"
 import { useSettings } from "@/hooks/useSettings"
 import { useTwColors } from "@/lib/tw-colors"
 import { useAuthStore } from "@/stores/authStore"
-import { Feather } from "@expo/vector-icons"
+import { BiometricCapabilities, checkBiometricCapabilities, getBiometricDisplayName } from "@/services/biometricService"
+import { Feather, MaterialIcons } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
+import { useEffect, useState } from "react"
 import { Pressable, ScrollView, Switch, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function Settings() {
-  const { user, logout } = useAuthStore()
+  const { user, logout, updateBiometricSetting, biometricCapabilities } = useAuthStore()
   const { settings, loading, updateSetting } = useSettings()
   const router = useRouter()
   const { twColor } = useTwColors()
   const insets = useSafeAreaInsets()
+  const [localBiometricCapabilities, setLocalBiometricCapabilities] = useState<BiometricCapabilities | null >(null)
+
+  useEffect(() => {
+    const checkCapabilities = async () => {
+      const capabilities = await checkBiometricCapabilities()
+      setLocalBiometricCapabilities(capabilities)
+    }
+    checkCapabilities()
+  }, [])
 
   const handleLogout = () => {
     Alert.confirm(
@@ -28,6 +39,18 @@ export default function Settings() {
         cancelText: "Cancel",
       },
     )
+  }
+
+  const handleBiometricToggle = async (enabled: boolean) => {
+    if (enabled && !localBiometricCapabilities?.isAvailable) {
+      Alert.error("Biometric authentication is not available on this device", "Error")
+      return
+    }
+
+    const success = await updateBiometricSetting(enabled)
+    if (!success) {
+      Alert.error("Failed to update biometric setting", "Error")
+    }
   }
 
   const SettingCard = ({ title, children, isDanger = false }: { title: string; children: React.ReactNode; isDanger?: boolean }) => (
@@ -167,7 +190,61 @@ export default function Settings() {
           </View>
 
           <SettingRow title="Edit Profile" onPress={() => router.push("/profile/edit")} />
-          <SettingRow title="Change Password" onPress={() => router.push("/change-password")} />
+          <SettingRow title="Change PIN" onPress={() => router.push("/change-pin")} />
+        </SettingCard>
+
+        {/* Security Section */}
+        <SettingCard title="Security">
+          {localBiometricCapabilities?.isAvailable && (
+            <View className="flex-row items-center justify-between py-3">
+              <View className="flex-row items-center flex-1">
+                <View
+                  style={{
+                    backgroundColor: `${twColor("primary")}15`,
+                  }}
+                  className="p-2 rounded-full mr-3"
+                >
+                  <MaterialIcons name="fingerprint" size={20} color={twColor("primary")} />
+                </View>
+                <View className="flex-1">
+                  <Text style={{ color: twColor("foreground") }}>{getBiometricDisplayName(localBiometricCapabilities.biometryType)} Authentication</Text>
+                  <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
+                    Use {getBiometricDisplayName(localBiometricCapabilities.biometryType).toLowerCase()} to unlock
+                  </Text>
+                </View>
+              </View>
+              <Switch
+                value={user?.biometric_enabled || false}
+                onValueChange={handleBiometricToggle}
+                trackColor={{
+                  false: twColor("muted"),
+                  true: twColor("primary"),
+                }}
+                thumbColor={twColor("card-background")}
+              />
+            </View>
+          )}
+
+          <View
+            className={`py-3 ${localBiometricCapabilities?.isAvailable ? "border-t" : ""}`}
+            style={{
+              borderTopColor: twColor("border"),
+            }}
+          >
+            <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
+              Auto-logout after inactivity
+            </Text>
+            <SelectionButtons
+              options={[
+                { value: 15, label: "15 min" },
+                { value: 30, label: "30 min" },
+                { value: 60, label: "60 min" },
+                { value: 120, label: "120 min" },
+              ]}
+              selectedValue={settings.inactivity_timeout}
+              onSelect={(minutes) => updateSetting("inactivity_timeout", minutes)}
+            />
+          </View>
         </SettingCard>
 
         {/* Notifications Section */}
@@ -207,44 +284,6 @@ export default function Settings() {
               />
             </View>
           )}
-        </SettingCard>
-
-        {/* Preferences Section */}
-        {/* <SettingCard title="Preferences">
-          <View className="py-3">
-            <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-              Currency
-            </Text>
-            <SelectionButtons
-              options={[
-                { value: "USD", label: "USD" },
-                { value: "EUR", label: "EUR" },
-                { value: "XAF", label: "XAF" },
-                { value: "GBP", label: "GBP" },
-              ]}
-              selectedValue={settings.currency}
-              onSelect={(curr) => updateSetting("currency", curr)}
-            />
-          </View>
-        </SettingCard> */}
-
-        {/* Security Section */}
-        <SettingCard title="Security">
-          <View className="py-3">
-            <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-              Auto-logout after inactivity
-            </Text>
-            <SelectionButtons
-              options={[
-                { value: 15, label: "15 min" },
-                { value: 30, label: "30 min" },
-                { value: 60, label: "60 min" },
-                { value: 120, label: "120 min" },
-              ]}
-              selectedValue={settings.inactivity_timeout}
-              onSelect={(minutes) => updateSetting("inactivity_timeout", minutes)}
-            />
-          </View>
         </SettingCard>
 
         {/* About Section */}

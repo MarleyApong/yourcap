@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react"
-import { View, Text, ScrollView, Pressable } from "react-native"
-import { useRouter } from "expo-router"
-import { getUserDebts } from "@/services/debtServices"
-import { formatCurrency, formatDate } from "@/lib/utils"
-import { Feather } from "@expo/vector-icons"
-import { useTwColors } from "@/lib/tw-colors"
-import { Debt, DebtStatus, DebtType } from "@/types/debt"
-import { PageHeader } from "@/components/feature/page-header"
-import { LoadingState } from "@/components/feature/loading-state"
 import { EmptyState } from "@/components/feature/empty-state"
+import { LoadingState } from "@/components/feature/loading-state"
+import { PageHeader } from "@/components/feature/page-header"
+import { useTwColors } from "@/lib/tw-colors"
+import { formatCurrency, formatDate } from "@/lib/utils"
+import { getUserDebts } from "@/services/debtServices"
 import { useAuthStore } from "@/stores/authStore"
+import { Debt, DebtStatus, DebtType } from "@/types/debt"
+import { Feather } from "@expo/vector-icons"
+import { useRouter } from "expo-router"
+import { useEffect, useState } from "react"
+import { Pressable, ScrollView, Text, View } from "react-native"
 
 export default function History() {
   const { user } = useAuthStore()
@@ -186,7 +186,7 @@ export default function History() {
                     {debt.contact_name}
                   </Text>
                   <Text style={{ color: getTypeColor(debt.debt_type) }} className="font-medium mt-1">
-                    {getTypeText(debt.debt_type)} {formatCurrency(debt.amount, user?.settings?.currency)}
+                    {getTypeText(debt.debt_type)} {formatCurrency(debt.amount, "XAF")}
                   </Text>
                   <Text style={{ color: twColor("muted-foreground") }} className="text-sm mt-1">
                     Loan: {formatDate(debt.loan_date)} | Due: {formatDate(debt.due_date)}

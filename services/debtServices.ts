@@ -1,4 +1,4 @@
-import db from "@/db/db"
+import { getDb } from "@/db/db"
 import { v4 as uuidv4 } from "uuid"
 import { Debt, DebtInput, DebtStatus, DebtType } from "@/types/debt"
 
@@ -7,6 +7,8 @@ export const createDebt = async (debt: DebtInput): Promise<Debt> => {
   const now = new Date().toISOString()
 
   try {
+    const db = getDb()
+
     await db.runAsync(
       `INSERT INTO debts 
       (debt_id, user_id, contact_name, contact_phone, contact_email, 
@@ -44,6 +46,8 @@ export const updateDebt = async (debt_id: string, updates: Partial<DebtInput>): 
   const now = new Date().toISOString()
 
   try {
+    const db = getDb()
+
     // Exclure les clés qui n'ont pas de valeur ou qui ne doivent pas être mises à jour
     const validUpdates = Object.entries(updates).filter(([_, value]) => value !== undefined && value !== null)
 
@@ -74,6 +78,7 @@ export const updateDebt = async (debt_id: string, updates: Partial<DebtInput>): 
 
 export const deleteDebt = async (debt_id: string): Promise<void> => {
   try {
+    const db = getDb()
     await db.runAsync(`DELETE FROM debts WHERE debt_id = ?`, [debt_id])
     Alert.success("Debt deleted successfully!", "Success")
   } catch (error) {
@@ -84,6 +89,7 @@ export const deleteDebt = async (debt_id: string): Promise<void> => {
 
 export const getDebtById = async (debt_id: string): Promise<Debt | null> => {
   try {
+    const db = getDb()
     const debt = await db.getFirstAsync<Debt>(
       `SELECT 
         debt_id, user_id, contact_name, contact_phone, contact_email,
@@ -102,6 +108,7 @@ export const getDebtById = async (debt_id: string): Promise<Debt | null> => {
 
 export const getUserDebts = async (user_id: string): Promise<Debt[]> => {
   try {
+    const db = getDb()
     const debts = await db.getAllAsync<Debt>(
       `SELECT 
         debt_id, user_id, contact_name, contact_phone, contact_email,
@@ -123,6 +130,7 @@ export const getUserDebts = async (user_id: string): Promise<Debt[]> => {
 
 export const getDebtsSummary = async (user_id: string) => {
   try {
+    const db = getDb()
     const result = await db.getFirstAsync<{
       owing: number
       owed: number

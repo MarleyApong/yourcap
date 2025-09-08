@@ -1,11 +1,11 @@
-import db from "@/db/db"
+import { getDb } from "@/db/db"
 import { DEFAULT_SETTINGS } from "@/constants/DefaultSettings"
 import { Settings } from "@/types/settings"
 
 export const getSettings = async (user_id: string): Promise<Settings | null> => {
   try {
+    const db = getDb()
     const settings = await db.getFirstAsync<Settings>(`SELECT * FROM settings WHERE user_id = ?`, [user_id])
-
     return settings || null
   } catch (error) {
     console.error("Error fetching settings:", error)
@@ -17,22 +17,15 @@ export const createDefaultSettings = async (user_id: string): Promise<Settings> 
   const now = new Date().toISOString()
 
   try {
+    const db = getDb()
+
     await db.runAsync(
       `INSERT INTO settings (
-        user_id, currency, notification_enabled, 
-        days_before_reminder, inactivity_timeout, language,
+        user_id, notification_enabled, 
+        days_before_reminder, inactivity_timeout, language, currency,
         created_at, updated_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        user_id,
-        DEFAULT_SETTINGS.currency,
-        DEFAULT_SETTINGS.notification_enabled ? 1 : 0,
-        DEFAULT_SETTINGS.days_before_reminder,
-        DEFAULT_SETTINGS.inactivity_timeout,
-        DEFAULT_SETTINGS.language,
-        now,
-        now,
-      ],
+      [user_id, DEFAULT_SETTINGS.notification_enabled ? 1 : 0, DEFAULT_SETTINGS.days_before_reminder, DEFAULT_SETTINGS.inactivity_timeout, DEFAULT_SETTINGS.language, now, now],
     )
 
     const newSettings = await getSettings(user_id)
@@ -45,6 +38,7 @@ export const createDefaultSettings = async (user_id: string): Promise<Settings> 
 
 export const updateSettings = async (user_id: string, updates: Partial<Settings>): Promise<Settings> => {
   try {
+    const db = getDb()
     const existingSettings = await getSettings(user_id)
     const now = new Date().toISOString()
 
@@ -68,11 +62,11 @@ export const updateSettings = async (user_id: string, updates: Partial<Settings>
       const allSettings = { ...DEFAULT_SETTINGS, ...updates }
       await db.runAsync(
         `INSERT INTO settings (
-          user_id, currency, notification_enabled, 
-          days_before_reminder, inactivity_timeout, language,
+          user_id, notification_enabled, 
+          days_before_reminder, inactivity_timeout, language, currency,
           created_at, updated_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [user_id, allSettings.currency, allSettings.notification_enabled ? 1 : 0, allSettings.days_before_reminder, allSettings.inactivity_timeout, allSettings.language, now, now],
+        [user_id, allSettings.notification_enabled ? 1 : 0, allSettings.days_before_reminder, allSettings.inactivity_timeout, allSettings.language, now, now],
       )
     }
 
@@ -91,6 +85,7 @@ export const updateSettings = async (user_id: string, updates: Partial<Settings>
 
 export const deleteSettings = async (user_id: string): Promise<void> => {
   try {
+    const db = getDb()
     await db.runAsync(`DELETE FROM settings WHERE user_id = ?`, [user_id])
   } catch (error) {
     console.error("Error deleting settings:", error)

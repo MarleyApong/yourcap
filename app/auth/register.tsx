@@ -1,13 +1,13 @@
 import { FBackButton } from "@/components/ui/fback-button"
+import { Loader } from "@/components/ui/loader"
+import PinInput from "@/components/ui/pin-input"
 import { useTwColors } from "@/lib/tw-colors"
+import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
-import { useRef, useState } from "react"
-import { Pressable, Text, TextInput, View, Platform } from "react-native"
+import { useRef, useState, useEffect } from "react"
+import { Platform, Pressable, Text, TextInput, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
-import { PasswordInput } from "@/components/ui/password-input"
-import { Loader } from "@/components/ui/loader"
-import { useAuthStore } from "@/stores/authStore"
 
 export default function Register() {
   const [step, setStep] = useState(1)
@@ -15,52 +15,61 @@ export default function Register() {
     full_name: "",
     email: "",
     phone_number: "",
-    password: "",
-    confirmPassword: "",
+    pin: "",
+    confirmPin: "",
   })
   const [loading, setLoading] = useState(false)
+  const [resetKey, setResetKey] = useState(0)
+  const [shouldSubmit, setShouldSubmit] = useState(false)
 
   const { twColor } = useTwColors()
   const { register } = useAuthStore()
   const router = useRouter()
 
-  // Refs pour navigation entre inputs
   const emailRef = useRef<TextInput>(null)
   const phoneRef = useRef<TextInput>(null)
-  const passwordRef = useRef<any>(null)
-  const confirmPasswordRef = useRef<any>(null)
+
+  // Effect pour gérer la soumission après mise à jour du confirmPin
+  useEffect(() => {
+    if (shouldSubmit && formData.confirmPin) {
+      setShouldSubmit(false)
+      handleSubmit()
+    }
+  }, [formData.confirmPin, shouldSubmit])
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
   const validateStep1 = () => {
-    if (!formData.full_name || !formData.email) {
-      Alert.error("Full name and email are required", "Error")
+    if (!formData.full_name || !formData.phone_number) {
+      Alert.error("Full name and phone number are required", "Error")
       return false
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      Alert.error("Please enter a valid email address", "Error")
-      return false
-    }
-
-    if (formData.phone_number && !/^(6|2)(2|3|[5-9])[0-9]{7}$/.test(formData.phone_number)) {
+    if (!/^(6|2)(2|3|[5-9])[0-9]{7}$/.test(formData.phone_number)) {
       Alert.error("Please enter a valid Cameroonian phone number", "Error")
+      return false
+    }
+
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      Alert.error("Please enter a valid email address", "Error")
       return false
     }
 
     return true
   }
 
-  const validateStep2 = () => {
-    if (formData.password.length < 6) {
-      Alert.error("Password must be at least 6 characters", "Error")
+  const validatePin = () => {
+    console.log("formData", formData)
+
+    if (formData.pin.length !== 6) {
+      Alert.error("PIN must be 6 digits", "Error")
       return false
     }
 
-    if (formData.password !== formData.confirmPassword) {
-      Alert.error("Passwords do not match", "Error")
+    if (formData.pin !== formData.confirmPin) {
+      Alert.error("PINs do not match", "Error")
       return false
     }
 
@@ -68,7 +77,12 @@ export default function Register() {
   }
 
   const handleSubmit = async () => {
-    if (!validateStep2()) return
+    if (!validatePin()) {
+      // Reset du champ de confirmation uniquement
+      setFormData((prev) => ({ ...prev, confirmPin: "" }))
+      setResetKey((k) => k + 1) // force un nouveau rendu de PinInput
+      return
+    }
 
     setLoading(true)
     try {
@@ -88,6 +102,78 @@ export default function Register() {
     }
   }
 
+  const handlePinComplete = (pin: string) => {
+    setFormData((prev) => ({ ...prev, pin }))
+    setStep(3)
+  }
+
+  const handleConfirmPinComplete = (confirmPin: string) => {
+    setFormData((prev) => ({ ...prev, confirmPin }))
+    // On marque qu'on doit soumettre après la mise à jour du state
+    setShouldSubmit(true)
+  }
+
+  // --- STEP 2: CREATE PIN ---
+  if (step === 2) {
+    return (
+      <KeyboardAwareScrollView
+        className="h-full bg-primary-50"
+        contentContainerStyle={{ flexGrow: 1 }}
+        enableOnAndroid
+        extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="absolute top-28 left-6 z-10">
+          <Pressable onPress={() => setStep(1)} className="flex-row items-center justify-center p-2 bg-background/20 border border-primary rounded-full">
+            <Feather name="chevron-left" size={24} color={twColor("primary")} />
+          </Pressable>
+        </View>
+
+        <PinInput key="create-pin" title="Create PIN" subtitle="Create a 6-digit PIN for your account" onComplete={handlePinComplete} showBiometric={false} length={6} />
+      </KeyboardAwareScrollView>
+    )
+  }
+
+  // --- STEP 3: CONFIRM PIN ---
+  if (step === 3) {
+    return (
+      <KeyboardAwareScrollView
+        className="h-full bg-primary-50"
+        contentContainerStyle={{ flexGrow: 1 }}
+        enableOnAndroid
+        extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="absolute top-28 left-6 z-10">
+          <Pressable onPress={() => setStep(2)} className="flex-row items-center justify-center p-2 bg-background/20 border border-primary rounded-full">
+            <Feather name="chevron-left" size={24} color={twColor("primary")} />
+          </Pressable>
+        </View>
+
+        <PinInput
+          key={`confirm-pin-${resetKey}`}
+          title="Confirm PIN"
+          subtitle="Enter your 6-digit PIN again to confirm"
+          onComplete={handleConfirmPinComplete}
+          showBiometric={false}
+          length={6}
+        />
+
+        {loading && (
+          <View className="absolute inset-0 bg-black/30 flex-1 justify-center items-center">
+            <View className="bg-primary rounded-xl p-6 items-center">
+              <Loader />
+              <Text className="mt-4 text-white">Verifying and creating account...</Text>
+            </View>
+          </View>
+        )}
+      </KeyboardAwareScrollView>
+    )
+  }
+
+  // --- STEP 1: USER INFO ---
   return (
     <KeyboardAwareScrollView
       className="h-full bg-primary-50"
@@ -97,15 +183,7 @@ export default function Register() {
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
     >
-      {step === 1 ? (
-        <FBackButton />
-      ) : (
-        <View className="absolute top-28 left-6 z-10">
-          <Pressable onPress={() => setStep(1)} className="flex-row items-center justify-center p-2 bg-background/20 border border-primary rounded-full">
-            <Feather name="chevron-left" size={24} color={twColor("primary")} />
-          </Pressable>
-        </View>
-      )}
+      <FBackButton />
 
       <View className="flex items-center justify-center h-screen w-full px-8">
         <Text className="text-5xl text-primary font-bold">Register</Text>
@@ -113,114 +191,66 @@ export default function Register() {
 
         {/* Step indicator */}
         <View className="flex-row gap-2 my-6">
-          {[1, 2].map((i) => (
+          {[1, 2, 3].map((i) => (
             <View key={i} className={`h-2 rounded-full ${step >= i ? "bg-primary w-8" : "bg-gray-300 w-4"}`} />
           ))}
         </View>
 
-        {step === 1 ? (
-          <View className="w-full mt-4 flex-col gap-4">
-            {/* Full name */}
-            <View className="bg-primary-50 border border-primary rounded-md flex-row gap-2 items-center px-3 py-1">
-              <Feather name="user" size={24} color={twColor("text-primary")} />
-              <TextInput
-                className="text-xl flex-1"
-                placeholder="Full name"
-                value={formData.full_name}
-                onChangeText={(text) => handleChange("full_name", text)}
-                returnKeyType="next"
-                onSubmitEditing={() => emailRef.current?.focus()}
-              />
-            </View>
-
-            {/* Email */}
-            <View className="bg-primary-50 border border-primary rounded-md flex-row gap-2 items-center px-3 py-1">
-              <Feather name="mail" size={24} color={twColor("text-primary")} />
-              <TextInput
-                ref={emailRef}
-                className="text-xl flex-1"
-                placeholder="Email"
-                value={formData.email}
-                onChangeText={(text) => handleChange("email", text)}
-                autoCapitalize="none"
-                keyboardType="email-address"
-                returnKeyType="next"
-                onSubmitEditing={() => phoneRef.current?.focus()}
-              />
-            </View>
-
-            {/* Phone number */}
-            <View className="bg-primary-50 border border-primary rounded-md flex-row gap-2 items-center px-3 py-1">
-              <Feather name="phone" size={24} color={twColor("text-primary")} />
-              <TextInput
-                ref={phoneRef}
-                className="text-xl flex-1"
-                placeholder="6xx xxx xxx or 2xx xxx xxx"
-                value={formData.phone_number}
-                onChangeText={(text) => handleChange("phone_number", text)}
-                keyboardType="phone-pad"
-                returnKeyType="done"
-                onSubmitEditing={handleContinue}
-              />
-            </View>
+        <View className="w-full mt-4 flex-col gap-4">
+          {/* Full name */}
+          <View className="bg-primary-50 border border-primary rounded-md flex-row gap-2 items-center px-3 py-1">
+            <Feather name="user" size={24} color={twColor("text-primary")} />
+            <TextInput
+              className="text-xl flex-1"
+              placeholder="Full name"
+              value={formData.full_name}
+              onChangeText={(text) => handleChange("full_name", text)}
+              returnKeyType="next"
+              onSubmitEditing={() => phoneRef.current?.focus()}
+            />
           </View>
-        ) : (
-          <View className="w-full mt-4 flex-col gap-4">
-            {/* Password */}
-            <View className="bg-primary-50 border border-primary rounded-lg flex-row gap-2 items-center px-3 py-1">
-              <Feather name="lock" size={24} color={twColor("text-primary")} />
-              <PasswordInput
-                ref={passwordRef}
-                className="text-xl flex-1"
-                placeholder="Password"
-                value={formData.password}
-                onChangeText={(text) => handleChange("password", text)}
-                iconColor={twColor("text-primary")}
-                returnKeyType="next"
-                onSubmitEditing={() => confirmPasswordRef.current?.focus()}
-              />
-            </View>
 
-            {/* Confirm password */}
-            <View className="bg-primary-50 border border-primary rounded-md flex-row gap-2 items-center px-3 py-1">
-              <Feather name="lock" size={24} color={twColor("text-primary")} />
-              <PasswordInput
-                ref={confirmPasswordRef}
-                className="text-xl flex-1"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChangeText={(text) => handleChange("confirmPassword", text)}
-                iconColor={twColor("text-primary")}
-                returnKeyType="done"
-                onSubmitEditing={handleSubmit}
-              />
-            </View>
+          {/* Phone (required) */}
+          <View className="bg-primary-50 border border-primary rounded-md flex-row gap-2 items-center px-3 py-1">
+            <Feather name="phone" size={24} color={twColor("text-primary")} />
+            <TextInput
+              ref={phoneRef}
+              className="text-xl flex-1"
+              placeholder="6xx xxx xxx or 2xx xxx xxx"
+              value={formData.phone_number}
+              onChangeText={(text) => handleChange("phone_number", text)}
+              keyboardType="phone-pad"
+              returnKeyType="done"
+              onSubmitEditing={handleContinue}
+            />
           </View>
-        )}
 
-        {/* Boutons en bas */}
+          {/* Email (optional) */}
+          <View className="bg-primary-50 border border-primary rounded-md flex-row gap-2 items-center px-3 py-1">
+            <Feather name="mail" size={24} color={twColor("text-primary")} />
+            <TextInput
+              ref={emailRef}
+              className="text-xl flex-1"
+              placeholder="Email (optional)"
+              value={formData.email}
+              onChangeText={(text) => handleChange("email", text)}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              returnKeyType="next"
+            />
+          </View>
+        </View>
+
+        {/* Buttons */}
         <View className="w-full px-10 mt-8 mb-10 absolute bottom-0">
           <Pressable
-            onPress={step === 1 ? handleContinue : handleSubmit}
+            onPress={handleContinue}
             disabled={loading}
             className={`flex-row gap-2 justify-center items-center bg-primary p-4 rounded-xl w-full ${loading ? "opacity-70" : ""}`}
           >
-            {loading ? (
-              <Loader />
-            ) : step === 1 ? (
-              <Feather name="arrow-up-right" size={18} color={twColor("text-white")} />
-            ) : (
-              <Feather name="send" size={18} color={twColor("text-white")} />
-            )}
-            <Text className="text-center text-white font-semibold text-lg">{loading ? "Processing..." : step === 1 ? "Continue" : "Sign up"}</Text>
+            <Feather name="arrow-up-right" size={18} color={twColor("text-white")} />
+            <Text className="text-center text-white font-semibold text-lg">Continue</Text>
           </Pressable>
-
-          {step === 2 && (
-            <Pressable onPress={() => setStep(1)} className="mt-4 flex-row items-center justify-center gap-2">
-              <Feather name="arrow-left" size={16} color={twColor("text-primary")} />
-              <Text className="text-center text-primary font-semibold">Back to personal info</Text>
-            </Pressable>
-          )}
 
           <View className="flex-row justify-center items-center gap-3 mt-3">
             <Text>Already have an account?</Text>

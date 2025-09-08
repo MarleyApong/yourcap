@@ -2,14 +2,12 @@ import { useState, useEffect } from "react"
 import { getSettings, updateSettings } from "@/services/settingsService"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useAuthStore } from "@/stores/authStore"
-import { User } from "@/types/user"
 
 export const useSettings = () => {
   const { user, setUser } = useAuthStore()
   const [settings, setSettings] = useState({
     notification_enabled: true,
     days_before_reminder: 3,
-    currency: "USD",
     inactivity_timeout: 30,
   })
   const [loading, setLoading] = useState(true)
@@ -24,20 +22,15 @@ export const useSettings = () => {
         const newSettings = {
           notification_enabled: typeof savedSettings.notification_enabled === "boolean" ? savedSettings.notification_enabled : savedSettings.notification_enabled === 1,
           days_before_reminder: savedSettings.days_before_reminder,
-          currency: savedSettings.currency,
           inactivity_timeout: savedSettings.inactivity_timeout,
         }
         setSettings(newSettings)
-        console.log("Settings loaded:", newSettings)
 
-        // Mettre à jour les settings dans useAuth
+        // Mettre à jour les settings dans le store auth
         if (setUser && user) {
-          setUser((prev) => {
-            if (!prev) return prev
-            return {
-              ...prev,
-              settings: newSettings,
-            }
+          setUser({
+            ...user,
+            settings: newSettings,
           })
         }
       }
@@ -60,20 +53,19 @@ export const useSettings = () => {
     try {
       await updateSettings(user.user_id, { [field]: value })
 
+      // Sauvegarder le timeout d'inactivité dans AsyncStorage pour le hook
       if (field === "inactivity_timeout") {
         await AsyncStorage.setItem("inactivityTimeout", value.toString())
       }
 
-      // Mettre à jour les settings dans useAuth après la mise à jour réussie
+      // Mettre à jour les settings dans le store auth
       if (setUser && user) {
-        setUser((prev) => {
-          if (!prev) return prev
-          return {
-            ...prev,
-            settings: newSettings,
-          }
+        setUser({
+          ...user,
+          settings: newSettings,
         })
       }
+
       Alert.success("Setting updated successfully", "Success")
     } catch (error) {
       console.error("Failed to update setting:", error)

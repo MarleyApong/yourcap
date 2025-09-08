@@ -1,21 +1,44 @@
 import { ActivityIndicator, View } from "react-native"
 import { Stack } from "expo-router"
 import { useEffect, useState } from "react"
-import { initDb } from "@/db/db"
+import { initDb, isDatabaseReady } from "@/db/db"
 import { AppProvider } from "@/contexts/AppContext"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { AlertProvider } from "@/components/ui/alert"
-import useInactivityTimeout from "@/hooks/useInactivityTimeout"
+import useInactivityTimeout, { useAppStartup } from "@/hooks/useInactivityTimeout"
 import "../global.css"
 import "react-native-get-random-values"
 
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false)
 
+  // Initialize database
   useEffect(() => {
-    initDb().finally(() => setIsReady(true))
+    const initializeDatabase = async () => {
+      try {
+        console.log("🚀 Starting database initialization...")
+        await initDb()
+
+        // Vérifier que la DB est bien prête
+        if (isDatabaseReady()) {
+          console.log("✅ Database is ready")
+          setIsReady(true)
+        } else {
+          throw new Error("Database initialization failed - not ready")
+        }
+      } catch (error) {
+        console.error("❌ Database initialization error:", error)
+        setIsReady(true) // Set to true to show error state instead of loading
+      }
+    }
+
+    initializeDatabase()
   }, [])
 
+  // Use the new app startup hook
+  useAppStartup()
+
+  // Use the inactivity timeout hook
   useInactivityTimeout()
 
   if (!isReady) {

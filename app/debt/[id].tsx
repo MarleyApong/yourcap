@@ -219,7 +219,7 @@ export default function DebtDetails() {
                   {debt.contact_name}
                 </Text>
                 <Text style={{ color: getTypeColor() }} className="text-xl font-semibold mt-1">
-                  {getTypeText()} {formatCurrency(debt.amount, debt.currency || user?.settings?.currency)}
+                  {getTypeText()} {formatCurrency(debt.amount, debt.currency || "XAF")}
                 </Text>
               </View>
 

@@ -3,16 +3,14 @@ export interface User {
   full_name: string
   email: string
   phone_number: string
-  password: string
+  biometric_enabled: boolean
   status: string
   created_at: string
   updated_at: string
-  deleted_at?: string | null
 }
 
 export interface CreateUserInput {
   full_name: string
   email: string
   phone_number: string
-  password: string
 }

@@ -1,15 +1,28 @@
-import { openDatabaseSync } from "expo-sqlite"
-const db = openDatabaseSync("debt_app.db")
+import { openDatabaseSync, SQLiteDatabase } from "expo-sqlite"
 
-export const initDb = async () => {
+let db: SQLiteDatabase | null = null
+
+export const getDb = (): SQLiteDatabase => {
+  if (!db) {
+    throw new Error("Database not initialized. Call initDb() first.")
+  }
+  return db
+}
+
+export const initDb = async (): Promise<void> => {
   try {
+    if (!db) {
+      db = openDatabaseSync("debt_app.db")
+    }
+
     await db.execAsync(`
       CREATE TABLE IF NOT EXISTS users (
         user_id TEXT PRIMARY KEY NOT NULL,
         full_name TEXT,
         email TEXT UNIQUE,
         phone_number TEXT UNIQUE,
-        password TEXT,
+        pin TEXT,
+        biometric_enabled INTEGER DEFAULT 0,
         status TEXT,
         created_at TEXT,
         updated_at TEXT,
@@ -66,25 +79,34 @@ export const initDb = async () => {
       CREATE INDEX IF NOT EXISTS idx_users_phone ON users(phone_number);
     `)
 
-    console.log("✅ DB initialized")
+    console.log("✅ Database initialized successfully")
   } catch (error) {
-    console.error("❌ Erreur init DB:", error)
+    console.error("❌ Database initialization error:", error)
     throw error
   }
 }
 
-export const resetDatabase = async () => {
+export const resetDatabase = async (): Promise<boolean> => {
   try {
-    await db.execAsync(`
-      DROP TABLE IF EXISTS users;
-      DROP TABLE IF EXISTS debts;
+    if (!db) {
+      await initDb()
+    }
+
+    const database = getDb()
+
+    await database.execAsync(`
       DROP TABLE IF EXISTS notifications;
       DROP TABLE IF EXISTS settings;
+      DROP TABLE IF EXISTS debts;
+      DROP TABLE IF EXISTS users;
     `)
 
     console.log("🗑️ Database tables dropped")
+
+    db = null
     await initDb()
-    console.log("🔄 Database reinitialized")
+
+    console.log("🔄 Database reset successfully")
     return true
   } catch (error) {
     console.error("❌ Error resetting database:", error)
@@ -94,4 +116,12 @@ export const resetDatabase = async () => {
 
 // resetDatabase()
 
-export default db
+export const isDatabaseReady = (): boolean => {
+  return db !== null
+}
+
+export default {
+  get instance() {
+    return getDb()
+  },
+}
