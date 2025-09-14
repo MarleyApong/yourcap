@@ -1,7 +1,7 @@
 import { getDb } from "@/db/db"
+import { CreateUserInput, User } from "@/types/user"
 import bcrypt from "bcryptjs"
 import { v4 as uuidv4 } from "uuid"
-import { CreateUserInput, User } from "@/types/user"
 
 export const getUserById = async (user_id: string): Promise<User | null> => {
   try {
@@ -30,7 +30,7 @@ export const createUser = async ({ full_name, email, phone_number, pin }: Create
     const existing = await db.getFirstAsync(`SELECT * FROM users WHERE email = ? OR phone_number = ?`, [email, phone_number])
 
     if (existing) {
-      Alert.error("User with this email or phone already exists", "Registration Error")
+      Toast.error("User with this email or phone already exists", "Registration Error")
       throw new Error("User already exists")
     }
 
@@ -45,7 +45,7 @@ export const createUser = async ({ full_name, email, phone_number, pin }: Create
     return user_id
   } catch (error) {
     console.error("Create user error:", error)
-    Alert.error("Registration failed. Please try again.", "Error")
+    Toast.error("Registration failed. Please try again.", "Error")
     throw error
   }
 }
@@ -76,7 +76,7 @@ export const loginUser = async (
     }
   } catch (error) {
     console.error("Login error:", error)
-    Alert.error("Login failed. Please check your credentials and try again.", "Error")
+    Toast.error("Login failed. Please check your credentials and try again.", "Error")
     throw error
   }
 }
@@ -87,7 +87,7 @@ export const resetPin = async ({ identifier, newPin }: { identifier: string; new
     const user = await db.getFirstAsync(`SELECT user_id FROM users WHERE (email = ? OR phone_number = ?) AND status = 'ACTIVE'`, [identifier, identifier])
 
     if (!user) {
-      Alert.error("No user found with this email or phone number.", "Error")
+      Toast.error("No user found with this email or phone number.", "Error")
       return false
     }
 
@@ -96,11 +96,11 @@ export const resetPin = async ({ identifier, newPin }: { identifier: string; new
 
     await db.runAsync(`UPDATE users SET pin = ?, updated_at = ? WHERE user_id = ?`, [hashedPin, now, (user as { user_id: string }).user_id])
 
-    Alert.success("PIN reset successfully!", "Success")
+    Toast.success("PIN reset successfully!", "Success")
     return true
   } catch (error) {
     console.error("resetPin error:", error)
-    Alert.error("Failed to reset PIN. Please try again.", "Error")
+    Toast.error("Failed to reset PIN. Please try again.", "Error")
     return false
   }
 }

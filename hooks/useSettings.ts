@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react"
 import { getSettings, updateSettings } from "@/services/settingsService"
-import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useAuthStore } from "@/stores/authStore"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useEffect, useState } from "react"
 
 export const useSettings = () => {
   const { user, setUser } = useAuthStore()
@@ -36,7 +36,7 @@ export const useSettings = () => {
       }
     } catch (error) {
       console.error("Failed to load settings:", error)
-      Alert.error("Failed to load settings", "Error")
+      Toast.error("Failed to load settings", "Error")
     } finally {
       setLoading(false)
     }
@@ -66,12 +66,12 @@ export const useSettings = () => {
         })
       }
 
-      Alert.success("Setting updated successfully", "Success")
+      Toast.success("Setting updated successfully", "Success")
     } catch (error) {
       console.error("Failed to update setting:", error)
       // Annuler la mise à jour optimiste en cas d'erreur
       setSettings(previousSettings)
-      Alert.error("Failed to update setting", "Error")
+      Toast.error("Failed to update setting", "Error")
     }
   }
 

@@ -1,18 +1,18 @@
+import { useTwColors } from '@/lib/tw-colors'
+import { Feather } from '@expo/vector-icons'
+import { BlurView } from 'expo-blur'
 import React, { useEffect, useRef } from 'react'
 import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  Animated,
-  Dimensions,
-  TouchableWithoutFeedback,
+    Animated,
+    Dimensions,
+    Modal,
+    Text,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View,
 } from 'react-native'
-import { BlurView } from 'expo-blur'
-import { Feather } from '@expo/vector-icons'
-import { useTwColors } from '@/lib/tw-colors'
 
-interface AlertModalProps {
+interface ToastModalProps {
   visible: boolean
   title?: string
   message: string
@@ -27,7 +27,7 @@ interface AlertModalProps {
 
 const { height: screenHeight } = Dimensions.get('window')
 
-export const AlertModal: React.FC<AlertModalProps> = ({
+export const ToastModal: React.FC<ToastModalProps> = ({
   visible,
   title,
   message,
@@ -80,7 +80,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({
       case 'error':
         return { name: 'x-circle' as const, color: twColor('text-destructive') }
       case 'warning':
-        return { name: 'alert-triangle' as const, color: twColor('text-warning') }
+        return { name: 'toast-triangle' as const, color: twColor('text-warning') }
       case 'confirm':
         return { name: 'help-circle' as const, color: twColor('text-primary') }
       default:
@@ -188,7 +188,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({
                     {/* Icon */}
                     <View className="mb-4">
                       <Feather 
-                        name={iconConfig.name} 
+                        name={iconConfig.name as any} 
                         size={48} 
                         color={iconConfig.color} 
                       />

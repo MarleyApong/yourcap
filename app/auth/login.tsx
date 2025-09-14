@@ -1,4 +1,5 @@
 import { FBackButton } from "@/components/ui/fback-button"
+import { Loader } from "@/components/ui/loader"
 import PinInput from "@/components/ui/pin-input"
 import { useTwColors } from "@/lib/tw-colors"
 import { useAuthStore } from "@/stores/authStore"
@@ -7,7 +8,6 @@ import { Link, useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
 import { Image, Platform, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
-import { Loader } from "@/components/ui/loader"
 
 export default function Login() {
   const { login, loginWithBiometric, biometricCapabilities, checkBiometricCapabilities } = useAuthStore()
@@ -19,44 +19,55 @@ export default function Login() {
   const [identifier, setIdentifier] = useState("")
   const [showPinInput, setShowPinInput] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [pinKey, setPinKey] = useState(0) // 👈 reset PinInput si erreur
+  const [pinKey, setPinKey] = useState(0) // Pour reset PinInput si erreur
 
   useEffect(() => {
     checkBiometricCapabilities()
   }, [])
 
+  const validateIdentifier = (value: string): boolean => {
+    if (!value.trim()) {
+      Toast.error("Please enter your email or phone number")
+      return false
+    }
+
+    if (value.includes("@")) {
+      // Validation email
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        Toast.error("Please enter a valid email address")
+        return false
+      }
+    } else {
+      // Validation numéro de téléphone camerounais
+      if (!/^(6|2)(2|3|[5-9])[0-9]{7}$/.test(value)) {
+        Toast.error("Please enter a valid Cameroonian phone number")
+        return false
+      }
+    }
+
+    return true
+  }
+
   const handleIdentifierSubmit = () => {
-    if (!identifier) {
-      Alert.error("Please enter your email or phone number")
-      return
+    if (validateIdentifier(identifier)) {
+      setShowPinInput(true)
     }
-
-    if (identifier.includes("@") && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier)) {
-      Alert.error("Please enter a valid email address")
-      return
-    }
-
-    if (!identifier.includes("@") && !/^(6|2)(2|3|[5-9])[0-9]{7}$/.test(identifier)) {
-      Alert.error("Please enter a valid Cameroonian phone number")
-      return
-    }
-
-    setShowPinInput(true)
   }
 
   const handlePinComplete = async (pin: string) => {
     setLoading(true)
     try {
-      const success = await login({ identifier, pin })
+      const success = await login({ identifier: identifier.trim(), pin })
       if (success) {
+        Toast.success("Welcome back!")
         router.replace("/(tabs)/dashboard")
-        Alert.success("Welcome!")
       } else {
-        Alert.error("Invalid credentials. Please try again.")
+        Toast.error("Invalid credentials. Please try again.")
         setPinKey((prev) => prev + 1)
       }
     } catch (err) {
-      Alert.error("An unexpected error occurred. Please try again later.")
+      console.error("Login error:", err)
+      Toast.error("An unexpected error occurred. Please try again later.")
       setPinKey((prev) => prev + 1)
     } finally {
       setLoading(false)
@@ -68,22 +79,28 @@ export default function Login() {
     try {
       const success = await loginWithBiometric()
       if (success) {
+        Toast.success("Welcome back!")
         router.replace("/(tabs)/dashboard")
-        Alert.success("Welcome!")
       } else {
-        Alert.error("Biometric authentication failed")
+        Toast.error("Biometric authentication failed")
       }
     } catch (err) {
-      Alert.error("Biometric authentication error")
+      console.error("Biometric error:", err)
+      Toast.error("Biometric authentication error")
     } finally {
       setLoading(false)
     }
   }
 
+  const handleBackFromPin = () => {
+    setShowPinInput(false)
+    setPinKey((prev) => prev + 1)
+  }
+
   if (showPinInput) {
     return (
       <View className="flex-1 bg-primary-50">
-        <FBackButton onPress={() => setShowPinInput(false)} />
+        <FBackButton onPress={handleBackFromPin} />
         <PinInput
           key={`pin-${pinKey}`}
           title="Enter PIN"
@@ -144,7 +161,6 @@ export default function Login() {
               </View>
             </View>
 
-            {/* Bouton pour soumettre l'identifiant */}
             <View className="w-full px-10 pb-8 mt-8">
               <TouchableOpacity
                 onPress={handleIdentifierSubmit}

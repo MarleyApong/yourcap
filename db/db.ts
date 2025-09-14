@@ -36,7 +36,7 @@ export const initDb = async (): Promise<void> => {
         contact_phone TEXT NOT NULL,
         contact_email TEXT,
         amount REAL NOT NULL,
-        currency TEXT DEFAULT 'USD',
+        currency TEXT DEFAULT 'XAF',
         description TEXT,
         loan_date TEXT NOT NULL,
         due_date TEXT NOT NULL,
@@ -53,7 +53,6 @@ export const initDb = async (): Promise<void> => {
         notification_enabled INTEGER DEFAULT 1,
         days_before_reminder INTEGER DEFAULT 3,
         language TEXT DEFAULT 'en',
-        currency TEXT DEFAULT 'USD',
         inactivity_timeout INTEGER DEFAULT 30,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
@@ -111,9 +110,11 @@ export const resetDatabase = async (): Promise<boolean> => {
   } catch (error) {
     console.error("❌ Error resetting database:", error)
     throw error
+    
   }
 }
 
+// Décommentez cette ligne si vous voulez reset la DB au démarrage
 // resetDatabase()
 
 export const isDatabaseReady = (): boolean => {

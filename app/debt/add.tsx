@@ -47,28 +47,28 @@ export default function AddDebt() {
 
   const validateForm = () => {
     if (!form.contact_name.trim()) {
-      Alert.error("Contact name is required", "Validation Error")
+      Toast.error("Contact name is required", "Validation Error")
       return false
     }
 
     if (!form.contact_phone.trim()) {
-      Alert.error("Phone number is required", "Validation Error")
+      Toast.error("Phone number is required", "Validation Error")
       return false
     }
 
     if (!form.amount.trim()) {
-      Alert.error("Amount is required", "Validation Error")
+      Toast.error("Amount is required", "Validation Error")
       return false
     }
 
     const amount = Number(form.amount)
     if (isNaN(amount) || amount <= 0) {
-      Alert.error("Please enter a valid amount greater than 0", "Validation Error")
+      Toast.error("Please enter a valid amount greater than 0", "Validation Error")
       return false
     }
 
     if (form.due_date < form.loan_date) {
-      Alert.error("Due date cannot be before loan date", "Validation Error")
+      Toast.error("Due date cannot be before loan date", "Validation Error")
       return false
     }
 
@@ -110,7 +110,7 @@ export default function AddDebt() {
       router.back()
     } catch (error) {
       console.error("Error creating debt:", error)
-      Alert.error("Failed to create debt. Please try again.", "Error")
+      Toast.error("Failed to create debt. Please try again.", "Error")
     } finally {
       setLoading(false)
     }

@@ -5,7 +5,7 @@ import { useTwColors } from "@/lib/tw-colors"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
-import { useRef, useState, useEffect } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Platform, Pressable, Text, TextInput, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
@@ -20,7 +20,6 @@ export default function Register() {
   })
   const [loading, setLoading] = useState(false)
   const [resetKey, setResetKey] = useState(0)
-  const [shouldSubmit, setShouldSubmit] = useState(false)
 
   const { twColor } = useTwColors()
   const { register } = useAuthStore()
@@ -29,47 +28,42 @@ export default function Register() {
   const emailRef = useRef<TextInput>(null)
   const phoneRef = useRef<TextInput>(null)
 
-  // Effect pour gérer la soumission après mise à jour du confirmPin
-  useEffect(() => {
-    if (shouldSubmit && formData.confirmPin) {
-      setShouldSubmit(false)
-      handleSubmit()
-    }
-  }, [formData.confirmPin, shouldSubmit])
-
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
-  const validateStep1 = () => {
-    if (!formData.full_name || !formData.phone_number) {
-      Alert.error("Full name and phone number are required", "Error")
+  const validateStep1 = (): boolean => {
+    if (!formData.full_name.trim()) {
+      Toast.error("Full name is required")
+      return false
+    }
+
+    if (!formData.phone_number.trim()) {
+      Toast.error("Phone number is required")
       return false
     }
 
     if (!/^(6|2)(2|3|[5-9])[0-9]{7}$/.test(formData.phone_number)) {
-      Alert.error("Please enter a valid Cameroonian phone number", "Error")
+      Toast.error("Please enter a valid Cameroonian phone number")
       return false
     }
 
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      Alert.error("Please enter a valid email address", "Error")
+      Toast.error("Please enter a valid email address")
       return false
     }
 
     return true
   }
 
-  const validatePin = () => {
-    console.log("formData", formData)
-
+  const validatePin = (): boolean => {
     if (formData.pin.length !== 6) {
-      Alert.error("PIN must be 6 digits", "Error")
+      Toast.error("PIN must be 6 digits")
       return false
     }
 
     if (formData.pin !== formData.confirmPin) {
-      Alert.error("PINs do not match", "Error")
+      Toast.error("PINs do not match")
       return false
     }
 
@@ -78,19 +72,32 @@ export default function Register() {
 
   const handleSubmit = async () => {
     if (!validatePin()) {
-      // Reset du champ de confirmation uniquement
       setFormData((prev) => ({ ...prev, confirmPin: "" }))
-      setResetKey((k) => k + 1) // force un nouveau rendu de PinInput
+      setResetKey((k) => k + 1)
       return
     }
 
     setLoading(true)
     try {
-      const success = await register(formData)
-      if (success) router.replace("/(tabs)/dashboard")
+      console.log("formData", formData)
+
+      const success = await register({
+        full_name: formData.full_name.trim(),
+        email: formData.email.trim() || "",
+        phone_number: formData.phone_number.trim(),
+        pin: formData.pin,
+        confirmPin: formData.confirmPin,
+      })
+
+      if (success) {
+        Toast.success("Account created successfully!")
+        router.replace("/(tabs)/dashboard")
+      }
     } catch (error) {
-      console.log("error", error)
-      Alert.error("Registration failed. Please try again.", "Error")
+      console.error("Registration error:", error)
+      Toast.error("Registration failed. Please try again.")
+      setFormData((prev) => ({ ...prev, confirmPin: "" }))
+      setResetKey((k) => k + 1)
     } finally {
       setLoading(false)
     }
@@ -109,9 +116,13 @@ export default function Register() {
 
   const handleConfirmPinComplete = (confirmPin: string) => {
     setFormData((prev) => ({ ...prev, confirmPin }))
-    // On marque qu'on doit soumettre après la mise à jour du state
-    setShouldSubmit(true)
   }
+
+  useEffect(() => {
+    if (step === 3 && formData.confirmPin.length === 6) {
+      handleSubmit()
+    }
+  }, [formData.confirmPin])
 
   // --- STEP 2: CREATE PIN ---
   if (step === 2) {
@@ -165,7 +176,7 @@ export default function Register() {
           <View className="absolute inset-0 bg-black/30 flex-1 justify-center items-center">
             <View className="bg-primary rounded-xl p-6 items-center">
               <Loader />
-              <Text className="mt-4 text-white">Verifying and creating account...</Text>
+              <Text className="mt-4 text-white">Creating your account...</Text>
             </View>
           </View>
         )}
@@ -220,8 +231,8 @@ export default function Register() {
               value={formData.phone_number}
               onChangeText={(text) => handleChange("phone_number", text)}
               keyboardType="phone-pad"
-              returnKeyType="done"
-              onSubmitEditing={handleContinue}
+              returnKeyType="next"
+              onSubmitEditing={() => emailRef.current?.focus()}
             />
           </View>
 
@@ -236,7 +247,8 @@ export default function Register() {
               onChangeText={(text) => handleChange("email", text)}
               autoCapitalize="none"
               keyboardType="email-address"
-              returnKeyType="next"
+              returnKeyType="done"
+              onSubmitEditing={handleContinue}
             />
           </View>
         </View>

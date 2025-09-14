@@ -26,3 +26,15 @@ export const clearAuthToken = async (): Promise<void> => {
     console.error("Error clearing auth token:", error)
   }
 }
+
+export const setUserIdentifier = async (identifier: string): Promise<void> => {
+  await SecureStore.setItemAsync("user_identifier", identifier)
+}
+
+export const getUserIdentifier = async (): Promise<string | null> => {
+  return await SecureStore.getItemAsync("user_identifier")
+}
+
+export const clearUserIdentifier = async (): Promise<void> => {
+  await SecureStore.deleteItemAsync("user_identifier")
+}

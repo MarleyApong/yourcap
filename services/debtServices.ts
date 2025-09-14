@@ -1,6 +1,6 @@
 import { getDb } from "@/db/db"
+import { Debt, DebtInput } from "@/types/debt"
 import { v4 as uuidv4 } from "uuid"
-import { Debt, DebtInput, DebtStatus, DebtType } from "@/types/debt"
 
 export const createDebt = async (debt: DebtInput): Promise<Debt> => {
   const debt_id = uuidv4()
@@ -33,11 +33,11 @@ export const createDebt = async (debt: DebtInput): Promise<Debt> => {
 
     const newDebt = await getDebtById(debt_id)
     if (!newDebt) throw new Error("Failed to retrieve created debt")
-    Alert.success("Debt created successfully!", "Success")
+    Toast.success("Debt created successfully!", "Success")
     return newDebt
   } catch (error) {
     console.error("Create debt error:", error)
-    Alert.error("Failed to create debt. Please try again.", "Error")
+    Toast.error("Failed to create debt. Please try again.", "Error")
     throw error
   }
 }
@@ -67,11 +67,11 @@ export const updateDebt = async (debt_id: string, updates: Partial<DebtInput>): 
     if (!updatedDebt) {
       throw new Error("Failed to retrieve updated debt")
     }
-    Alert.success("Debt updated successfully!", "Success")
+    Toast.success("Debt updated successfully!", "Success")
     return updatedDebt
   } catch (error) {
     console.error("Update debt error:", error)
-    Alert.error("Failed to update debt. Please try again.", "Error")
+    Toast.error("Failed to update debt. Please try again.", "Error")
     throw error
   }
 }
@@ -80,9 +80,9 @@ export const deleteDebt = async (debt_id: string): Promise<void> => {
   try {
     const db = getDb()
     await db.runAsync(`DELETE FROM debts WHERE debt_id = ?`, [debt_id])
-    Alert.success("Debt deleted successfully!", "Success")
+    Toast.success("Debt deleted successfully!", "Success")
   } catch (error) {
-    Alert.error("Failed to delete debt. Please try again.", "Error")
+    Toast.error("Failed to delete debt. Please try again.", "Error")
     throw error
   }
 }

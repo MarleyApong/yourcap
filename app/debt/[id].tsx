@@ -65,11 +65,11 @@ export default function DebtDetails() {
           debt_type: debtData.debt_type,
         })
       } else {
-        Alert.error("Debt not found or access denied", "Error")
+        Toast.error("Debt not found or access denied", "Error")
         router.back()
       }
     } catch (error) {
-      Alert.error("Failed to load debt details", "Error")
+      Toast.error("Failed to load debt details", "Error")
       router.back()
     } finally {
       setLoading(false)
@@ -80,22 +80,22 @@ export default function DebtDetails() {
     try {
       await updateDebt(debt!.debt_id, { status: newStatus })
       loadDebt()
-      Alert.success("Debt status updated", "Success")
+      Toast.success("Debt status updated", "Success")
     } catch (error) {
-      Alert.error("Failed to update status", "Error")
+      Toast.error("Failed to update status", "Error")
     }
   }
 
   const handleDelete = () => {
-    Alert.confirm(
+    Toast.confirm(
       "Are you sure you want to delete this debt record?",
       async () => {
         try {
           await deleteDebt(debt!.debt_id)
-          Alert.success("Debt deleted successfully", "Success")
+          Toast.success("Debt deleted successfully", "Success")
           router.back()
         } catch (error) {
-          Alert.error("Failed to delete debt", "Error")
+          Toast.error("Failed to delete debt", "Error")
         }
       },
       {
@@ -116,28 +116,28 @@ export default function DebtDetails() {
 
   const validateEditForm = () => {
     if (!editForm.contact_name.trim()) {
-      Alert.error("Contact name is required", "Validation Error")
+      Toast.error("Contact name is required", "Validation Error")
       return false
     }
 
     if (!editForm.contact_phone.trim()) {
-      Alert.error("Phone number is required", "Validation Error")
+      Toast.error("Phone number is required", "Validation Error")
       return false
     }
 
     if (!editForm.amount.trim()) {
-      Alert.error("Amount is required", "Validation Error")
+      Toast.error("Amount is required", "Validation Error")
       return false
     }
 
     const amount = Number(editForm.amount)
     if (isNaN(amount) || amount <= 0) {
-      Alert.error("Please enter a valid amount greater than 0", "Validation Error")
+      Toast.error("Please enter a valid amount greater than 0", "Validation Error")
       return false
     }
 
     if (editForm.due_date < editForm.loan_date) {
-      Alert.error("Due date cannot be before loan date", "Validation Error")
+      Toast.error("Due date cannot be before loan date", "Validation Error")
       return false
     }
 
@@ -161,12 +161,12 @@ export default function DebtDetails() {
         debt_type: editForm.debt_type,
       })
 
-      Alert.success("Debt updated successfully", "Success")
+      Toast.success("Debt updated successfully", "Success")
       setEditModalVisible(false)
       loadDebt()
     } catch (error) {
       console.error("Error updating debt:", error)
-      Alert.error("Failed to update debt. Please try again.", "Error")
+      Toast.error("Failed to update debt. Please try again.", "Error")
     } finally {
       setEditLoading(false)
     }

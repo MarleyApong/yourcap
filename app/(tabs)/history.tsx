@@ -43,7 +43,7 @@ export default function History() {
       setDebts(allDebts)
     } catch (error) {
       console.error("History load error:", error)
-      Alert.error("Failed to load debts. Please try again.", "Error")
+      Toast.error("Failed to load debts. Please try again.", "Error")
     } finally {
       setLoading(false)
     }

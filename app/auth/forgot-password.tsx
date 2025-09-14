@@ -1,13 +1,13 @@
-import { useState, useRef, useEffect } from "react"
-import { View, Text, Pressable, TextInput as RNTextInput, Platform } from "react-native"
-import { Link, useRouter } from "expo-router"
-import { Feather } from "@expo/vector-icons"
 import { FBackButton } from "@/components/ui/fback-button"
+import { Loader } from "@/components/ui/loader"
+import PinInput from "@/components/ui/pin-input"
 import { useTwColors } from "@/lib/tw-colors"
 import { resetPin } from "@/services/userService"
+import { Feather } from "@expo/vector-icons"
+import { Link, useRouter } from "expo-router"
+import { useEffect, useRef, useState } from "react"
+import { Platform, Pressable, TextInput as RNTextInput, Text, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
-import PinInput from "@/components/ui/pin-input"
-import { Loader } from "@/components/ui/loader"
 
 export default function ForgotPassword() {
   const [step, setStep] = useState(1)
@@ -40,18 +40,18 @@ export default function ForgotPassword() {
 
   const validateStep1 = () => {
     if (!formData.full_name || !formData.identifier) {
-      Alert.error("Full name and email/phone are required", "Error")
+      Toast.error("Full name and email/phone are required", "Error")
       return false
     }
 
     if (formData.identifier.includes("@")) {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.identifier)) {
-        Alert.error("Please enter a valid email address", "Error")
+        Toast.error("Please enter a valid email address", "Error")
         return false
       }
     } else {
       if (!/^(6|2)(2|3|[5-9])[0-9]{7}$/.test(formData.identifier)) {
-        Alert.error("Please enter a valid Cameroonian phone number", "Error")
+        Toast.error("Please enter a valid Cameroonian phone number", "Error")
         return false
       }
     }
@@ -61,11 +61,11 @@ export default function ForgotPassword() {
 
   const validatePin = () => {
     if (formData.newPin.length !== 6) {
-      Alert.error("PIN must be 6 digits", "Error")
+      Toast.error("PIN must be 6 digits", "Error")
       return false
     }
     if (formData.newPin !== formData.confirmPin) {
-      Alert.error("PINs do not match", "Error")
+      Toast.error("PINs do not match", "Error")
       return false
     }
     return true
@@ -100,7 +100,7 @@ export default function ForgotPassword() {
         router.replace("/auth/login")
       }
     } catch (err) {
-      Alert.error("Failed to reset PIN. Try again.", "Error")
+      Toast.error("Failed to reset PIN. Try again.", "Error")
     } finally {
       setLoading(false)
     }

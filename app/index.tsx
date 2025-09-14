@@ -1,42 +1,27 @@
-import { Loader } from "@/components/ui/loader"
-import { useAuthStore } from "@/stores/authStore"
-import { Link, useRouter } from "expo-router"
-import { useEffect } from "react"
 import { Dimensions, ImageBackground, Text, View } from "react-native"
+import { Link } from "expo-router"
 
 const { height: screenHeight } = Dimensions.get("window")
 
 export default function Index() {
-  const { user, loading } = useAuthStore()
-  const router = useRouter()    
-
-  useEffect(() => {
-    if (!loading && user) {
-      router.replace("/(tabs)/dashboard")
-    }
-    // else {
-    //   router.replace("/auth/login")
-    // }
-  }, [user, loading])
-
-  if (loading || user) {
-    return (
-      <View className="flex-1 bg-gray-50 justify-center items-center">
-        <Loader color="primary" size="large"/>
-      </View>
-    )
-  }
-
   return (
     <ImageBackground source={require("@/assets/images/bg/welcome.jpg")} className="flex-1 justify-center items-center" resizeMode="cover">
+      {/* Overlay sombre */}
       <View className="absolute inset-0 bg-black/60" />
+
       <View style={{ height: screenHeight - 400 }} className="w-full justify-between">
-        <Text className="px-10 text-white text-6xl font-bold">Never forget who owes you again</Text>
+        {/* Titre + sous-titre */}
+        <View className="px-10">
+          <Text className="text-white text-6xl font-bold leading-tight">Never forget who owes you again</Text>
+          <Text className="text-white/80 text-lg mt-4">Keep track of debts easily and securely.</Text>
+        </View>
+
+        {/* Boutons */}
         <View className="w-full px-10" style={{ position: "absolute", bottom: 0 }}>
-          <Link href="/auth/login" className="bg-white/20 p-4 rounded-xl w-full">
+          <Link href="/auth/login" className="bg-white/20 p-4 rounded-xl w-full mb-4">
             <Text className="text-center text-white font-semibold text-lg">Sign in</Text>
           </Link>
-          <Link href="/auth/register" className="w-full mt-4">
+          <Link href="/auth/register" className="w-full">
             <Text className="text-center text-white font-semibold text-lg">Create an account</Text>
           </Link>
         </View>

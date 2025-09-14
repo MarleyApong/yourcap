@@ -57,7 +57,7 @@ export default function Dashboard() {
     } catch (error) {
       console.error("Dashboard load error:", error)
       setError("Failed to load data. Please try again.")
-      Alert.error("Failed to load data. Please try again.", "Error")
+      Toast.error("Failed to load data. Please try again.", "Error")
     } finally {
       setLoading(false)
     }

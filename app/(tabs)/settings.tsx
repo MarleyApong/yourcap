@@ -2,8 +2,8 @@ import { LoadingState } from "@/components/feature/loading-state"
 import { PageHeader } from "@/components/feature/page-header"
 import { useSettings } from "@/hooks/useSettings"
 import { useTwColors } from "@/lib/tw-colors"
-import { useAuthStore } from "@/stores/authStore"
 import { BiometricCapabilities, checkBiometricCapabilities, getBiometricDisplayName } from "@/services/biometricService"
+import { useAuthStore } from "@/stores/authStore"
 import { Feather, MaterialIcons } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { useEffect, useState } from "react"
@@ -27,7 +27,7 @@ export default function Settings() {
   }, [])
 
   const handleLogout = () => {
-    Alert.confirm(
+    Toast.confirm(
       "Are you sure you want to log out?",
       () => {
         logout()
@@ -43,13 +43,13 @@ export default function Settings() {
 
   const handleBiometricToggle = async (enabled: boolean) => {
     if (enabled && !localBiometricCapabilities?.isAvailable) {
-      Alert.error("Biometric authentication is not available on this device", "Error")
+      Toast.error("Biometric authentication is not available on this device", "Error")
       return
     }
 
     const success = await updateBiometricSetting(enabled)
     if (!success) {
-      Alert.error("Failed to update biometric setting", "Error")
+      Toast.error("Failed to update biometric setting", "Error")
     }
   }
 

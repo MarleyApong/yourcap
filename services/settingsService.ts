@@ -22,10 +22,18 @@ export const createDefaultSettings = async (user_id: string): Promise<Settings> 
     await db.runAsync(
       `INSERT INTO settings (
         user_id, notification_enabled, 
-        days_before_reminder, inactivity_timeout, language, currency,
+        days_before_reminder, inactivity_timeout, language,
         created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [user_id, DEFAULT_SETTINGS.notification_enabled ? 1 : 0, DEFAULT_SETTINGS.days_before_reminder, DEFAULT_SETTINGS.inactivity_timeout, DEFAULT_SETTINGS.language, now, now],
+      ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        user_id, 
+        DEFAULT_SETTINGS.notification_enabled ? 1 : 0, 
+        DEFAULT_SETTINGS.days_before_reminder, 
+        DEFAULT_SETTINGS.inactivity_timeout, 
+        DEFAULT_SETTINGS.language,
+        now, 
+        now
+      ],
     )
 
     const newSettings = await getSettings(user_id)
@@ -63,10 +71,18 @@ export const updateSettings = async (user_id: string, updates: Partial<Settings>
       await db.runAsync(
         `INSERT INTO settings (
           user_id, notification_enabled, 
-          days_before_reminder, inactivity_timeout, language, currency,
+          days_before_reminder, inactivity_timeout, language,
           created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [user_id, allSettings.notification_enabled ? 1 : 0, allSettings.days_before_reminder, allSettings.inactivity_timeout, allSettings.language, now, now],
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+          user_id, 
+          allSettings.notification_enabled ? 1 : 0, 
+          allSettings.days_before_reminder, 
+          allSettings.inactivity_timeout, 
+          allSettings.language,
+          now, 
+          now
+        ],
       )
     }
 

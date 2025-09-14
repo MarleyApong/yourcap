@@ -41,35 +41,44 @@ export const checkBiometricCapabilities = async (): Promise<BiometricCapabilitie
 
 export const authenticateWithBiometric = async (): Promise<{ success: boolean; error?: string }> => {
   try {
-    const capabilities = await checkBiometricCapabilities()
+    const hasHardware = await LocalAuthentication.hasHardwareAsync()
+    const isEnrolled = await LocalAuthentication.isEnrolledAsync()
 
-    if (!capabilities.isAvailable) {
+    console.log("Biometric hardware available:", hasHardware)
+    console.log("Biometric credentials enrolled:", isEnrolled)
+
+    if (!hasHardware) {
       return {
         success: false,
-        error: "Biometric authentication is not available",
+        error: "No biometric hardware available on this device",
+      }
+    }
+
+    if (!isEnrolled) {
+      return {
+        success: false,
+        error: "No biometric credentials enrolled. Please set up biometric authentication in your device settings.",
       }
     }
 
     const result = await LocalAuthentication.authenticateAsync({
       promptMessage: "Authenticate to access your account",
       cancelLabel: "Use PIN instead",
-      disableDeviceFallback: true,
+      disableDeviceFallback: false, // Permettre le fallback
       requireConfirmation: false,
     })
 
-    if (result.success) {
-      return { success: true }
-    } else {
-      return {
-        success: false,
-        error: result.error || "Authentication failed",
-      }
+    console.log("LocalAuthentication result:", result)
+
+    return {
+      success: result.success,
+      error: result.success ? undefined : result.error || "Authentication failed",
     }
   } catch (error) {
     console.error("Biometric authentication error:", error)
     return {
       success: false,
-      error: "An error occurred during authentication",
+      error: "An unexpected error occurred during authentication",
     }
   }
 }
