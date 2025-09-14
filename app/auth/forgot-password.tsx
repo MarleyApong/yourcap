@@ -19,20 +19,18 @@ export default function ForgotPassword() {
   })
   const [loading, setLoading] = useState(false)
   const [confirmKey, setConfirmKey] = useState(0)
-  const [shouldSubmit, setShouldSubmit] = useState(false)
 
   const router = useRouter()
   const { twColor } = useTwColors()
 
   const identifierRef = useRef<RNTextInput>(null)
 
-  // Effect pour gérer la soumission après mise à jour du confirmPin
+  // Effect pour gérer la soumission quand confirmPin est saisi complètement
   useEffect(() => {
-    if (shouldSubmit && formData.confirmPin) {
-      setShouldSubmit(false)
+    if (step === 3 && formData.confirmPin.length === 6) {
       handleSubmitPin()
     }
-  }, [formData.confirmPin, shouldSubmit])
+  }, [formData.confirmPin])
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -84,7 +82,6 @@ export default function ForgotPassword() {
 
   const handleSubmitPin = async () => {
     if (!validatePin()) {
-      // Reset du champ de confirmation
       setFormData((prev) => ({ ...prev, confirmPin: "" }))
       setConfirmKey((prev) => prev + 1)
       return
@@ -108,8 +105,6 @@ export default function ForgotPassword() {
 
   const handleConfirmPinComplete = (confirmPin: string) => {
     setFormData((prev) => ({ ...prev, confirmPin }))
-    // On marque qu'on doit soumettre après la mise à jour du state
-    setShouldSubmit(true)
   }
 
   // --- STEP 2: NEW PIN ---
