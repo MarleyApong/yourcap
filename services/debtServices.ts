@@ -6,6 +6,9 @@ export const createDebt = async (debt: DebtInput): Promise<Debt> => {
   const debt_id = uuidv4()
   const now = new Date().toISOString()
 
+  console.log("debt", debt);
+  
+
   try {
     const db = getDb()
 
@@ -13,7 +16,7 @@ export const createDebt = async (debt: DebtInput): Promise<Debt> => {
       `INSERT INTO debts 
       (debt_id, user_id, contact_name, contact_phone, contact_email, 
        amount, currency, description, loan_date, due_date, status, debt_type, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         debt_id,
         debt.user_id,
