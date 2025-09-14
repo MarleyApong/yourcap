@@ -21,81 +21,46 @@ export const createDefaultSettings = async (user_id: string): Promise<Settings> 
 
     await db.runAsync(
       `INSERT INTO settings (
-        user_id, notification_enabled, 
-        days_before_reminder, inactivity_timeout, language,
+        user_id, notification_enabled, days_before_reminder,
+        inactivity_timeout, language, remember_session, session_duration,
         created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [
-        user_id, 
-        DEFAULT_SETTINGS.notification_enabled ? 1 : 0, 
-        DEFAULT_SETTINGS.days_before_reminder, 
-        DEFAULT_SETTINGS.inactivity_timeout, 
-        DEFAULT_SETTINGS.language,
-        now, 
-        now
-      ],
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [user_id, DEFAULT_SETTINGS.notification_enabled ? 1 : 0, DEFAULT_SETTINGS.days_before_reminder, DEFAULT_SETTINGS.inactivity_timeout, DEFAULT_SETTINGS.language, DEFAULT_SETTINGS.remember_session ? 1 : 0, DEFAULT_SETTINGS.session_duration, now, now],
     )
 
     const newSettings = await getSettings(user_id)
-    return newSettings || { ...DEFAULT_SETTINGS, user_id }
+    return newSettings || { ...DEFAULT_SETTINGS, user_id, created_at: now, updated_at: now }
   } catch (error) {
     console.error("Error creating default settings:", error)
     throw error
   }
 }
 
-export const updateSettings = async (user_id: string, updates: Partial<Settings>): Promise<Settings> => {
+export const updateSettings = async (user_id: string, updates: Partial<Settings>): Promise<boolean> => {
   try {
     const db = getDb()
-    const existingSettings = await getSettings(user_id)
     const now = new Date().toISOString()
 
-    if (existingSettings) {
-      // Mise à jour des paramètres existants
-      const setClause = Object.keys(updates)
-        .map((key) => `${key} = ?`)
-        .join(", ")
+    const fields = []
+    const values = []
 
-      const values = Object.values(updates).map((value) => {
-        // Convertir les booléens en entiers pour SQLite
-        if (typeof value === "boolean") {
-          return value ? 1 : 0
-        }
-        return value
-      })
+    Object.entries(updates).forEach(([key, value]) => {
+      if (key !== "user_id" && key !== "created_at" && key !== "updated_at") {
+        fields.push(`${key} = ?`)
+        values.push(value)
+      }
+    })
 
-      await db.runAsync(`UPDATE settings SET ${setClause}, updated_at = ? WHERE user_id = ?`, [...values, now, user_id])
-    } else {
-      // Créer de nouveaux paramètres si ils n'existent pas
-      const allSettings = { ...DEFAULT_SETTINGS, ...updates }
-      await db.runAsync(
-        `INSERT INTO settings (
-          user_id, notification_enabled, 
-          days_before_reminder, inactivity_timeout, language,
-          created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [
-          user_id, 
-          allSettings.notification_enabled ? 1 : 0, 
-          allSettings.days_before_reminder, 
-          allSettings.inactivity_timeout, 
-          allSettings.language,
-          now, 
-          now
-        ],
-      )
-    }
+    fields.push("updated_at = ?")
+    values.push(now)
+    values.push(user_id)
 
-    // Récupérer les paramètres mis à jour
-    const updatedSettings = await getSettings(user_id)
-    if (!updatedSettings) {
-      throw new Error("Failed to retrieve updated settings")
-    }
+    await db.runAsync(`UPDATE settings SET ${fields.join(", ")} WHERE user_id = ?`, values)
 
-    return updatedSettings
+    return true
   } catch (error) {
     console.error("Error updating settings:", error)
-    throw error
+    return false
   }
 }
 
@@ -112,16 +77,46 @@ export const deleteSettings = async (user_id: string): Promise<void> => {
 // Fonction utilitaire pour s'assurer que l'utilisateur a des paramètres
 export const ensureUserSettings = async (user_id: string): Promise<Settings> => {
   try {
-    let settings = await getSettings(user_id)
+    const db = getDb()
+    const existingSettings = await db.getFirstAsync<Settings>(`SELECT * FROM settings WHERE user_id = ?`, [user_id])
 
-    if (!settings) {
-      settings = await createDefaultSettings(user_id)
+    if (existingSettings) {
+      return existingSettings
     }
 
-    return settings
+    // Créer des paramètres par défaut avec les nouvelles colonnes
+    const now = new Date().toISOString()
+    await db.runAsync(
+      `INSERT INTO settings 
+      (user_id, notification_enabled, days_before_reminder, language, 
+        inactivity_timeout, remember_session, session_duration, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        user_id,
+        DEFAULT_SETTINGS.notification_enabled ? 1 : 0,
+        DEFAULT_SETTINGS.days_before_reminder,
+        DEFAULT_SETTINGS.language,
+        DEFAULT_SETTINGS.inactivity_timeout,
+        DEFAULT_SETTINGS.remember_session ? 1 : 0,
+        DEFAULT_SETTINGS.session_duration,
+        now,
+        now,
+      ],
+    )
+
+    return {
+      user_id,
+      notification_enabled: DEFAULT_SETTINGS.notification_enabled,
+      days_before_reminder: DEFAULT_SETTINGS.days_before_reminder,
+      language: DEFAULT_SETTINGS.language,
+      inactivity_timeout: DEFAULT_SETTINGS.inactivity_timeout,
+      remember_session: DEFAULT_SETTINGS.remember_session,
+      session_duration: DEFAULT_SETTINGS.session_duration,
+      created_at: now,
+      updated_at: now,
+    }
   } catch (error) {
     console.error("Error ensuring user settings:", error)
-    // Retourner les paramètres par défaut en cas d'erreur
-    return { ...DEFAULT_SETTINGS, user_id }
+    throw error
   }
 }

@@ -9,6 +9,9 @@ export const useSettings = () => {
     notification_enabled: true,
     days_before_reminder: 3,
     inactivity_timeout: 30,
+    language: "en",
+    remember_session: true,
+    session_duration: 30,
   })
   const [loading, setLoading] = useState(true)
 
@@ -23,6 +26,11 @@ export const useSettings = () => {
           notification_enabled: typeof savedSettings.notification_enabled === "boolean" ? savedSettings.notification_enabled : savedSettings.notification_enabled === 1,
           days_before_reminder: savedSettings.days_before_reminder,
           inactivity_timeout: savedSettings.inactivity_timeout,
+          language: savedSettings.language,
+          remember_session: typeof savedSettings.remember_session === "boolean" ? savedSettings.remember_session : savedSettings.remember_session === 1,
+          session_duration: savedSettings.session_duration,
+          created_at: savedSettings.created_at,
+          updated_at: savedSettings.updated_at,
         }
         setSettings(newSettings)
 

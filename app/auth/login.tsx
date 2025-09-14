@@ -1,6 +1,7 @@
 import { FBackButton } from "@/components/ui/fback-button"
 import { Loader } from "@/components/ui/loader"
 import PinInput from "@/components/ui/pin-input"
+import { isSessionValid } from "@/lib/auth"
 import { useTwColors } from "@/lib/tw-colors"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
@@ -23,6 +24,18 @@ export default function Login() {
 
   useEffect(() => {
     checkBiometricCapabilities()
+  }, [])
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const isValid = await isSessionValid()
+      if (isValid) {
+        // Essayez la connexion biométrique automatique
+        handleBiometric()
+      }
+    }
+
+    checkSession()
   }, [])
 
   const validateIdentifier = (value: string): boolean => {

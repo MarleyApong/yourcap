@@ -1,7 +1,8 @@
-import { clearAuthToken, clearUserIdentifier, getAuthToken, getUserIdentifier, setAuthToken, setUserIdentifier } from "@/lib/auth"
+import { DEFAULT_SETTINGS } from "@/constants/DefaultSettings"
+import { clearAuthToken, clearUserIdentifier, getAuthToken, getUserIdentifier, setAuthToken, setSessionExpiry, setUserIdentifier } from "@/lib/auth"
 import { authenticateWithBiometric, checkBiometricCapabilities } from "@/services/biometricService"
 import { ensureUserSettings, getSettings } from "@/services/settingsService"
-import { createUser, getUserById, loginUser, updateBiometricPreference } from "@/services/userService"
+import { createUser, getUserById, getUserByIdentifier, loginUser, updateBiometricPreference } from "@/services/userService"
 import { CreateUserInput } from "@/types/user"
 import { router } from "expo-router"
 import { create } from "zustand"
@@ -18,6 +19,8 @@ type User = {
     days_before_reminder: number
     inactivity_timeout: number
     language: string
+    remember_session: boolean
+    session_duration: number
   }
 }
 
@@ -56,6 +59,18 @@ export const useAuthStore = create<AuthState & AuthActions>()(
     loadUser: async () => {
       try {
         set({ loading: true })
+
+        // Vérifiez d'abord si la session est valide
+        const { isSessionValid } = await import("@/lib/auth")
+        const sessionValid = await isSessionValid()
+
+        if (!sessionValid) {
+          await clearAuthToken()
+          await clearUserIdentifier()
+          set({ user: null, isInitialized: true, loading: false, sessionExpired: true })
+          return
+        }
+
         const storedAuth = await getAuthToken()
 
         if (storedAuth) {
@@ -79,6 +94,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
                 days_before_reminder: settings.days_before_reminder,
                 inactivity_timeout: settings.inactivity_timeout,
                 language: settings.language,
+                remember_session: settings.remember_session,
+                session_duration: settings.session_duration,
               },
             },
             isInitialized: true,
@@ -103,9 +120,11 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         if (result) {
           // Stocker l'identifiant pour la biométrie future
           await setUserIdentifier(credentials.identifier)
+          await setSessionExpiry()
 
           const settings = await ensureUserSettings(result.user_id)
           const authData = { user_id: result.user_id }
+          await setAuthToken(JSON.stringify(authData))
           await setAuthToken(JSON.stringify(authData))
 
           const user = {
@@ -123,7 +142,14 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           }
 
           set({
-            user,
+            user: {
+              ...user,
+              settings: {
+                ...user.settings,
+                remember_session: DEFAULT_SETTINGS.remember_session, // Default value
+                session_duration: DEFAULT_SETTINGS.session_duration,
+              }
+            },
             sessionExpired: false,
             loading: false,
           })
@@ -148,8 +174,16 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         const storedIdentifier = await getUserIdentifier()
         console.log("Stored identifier:", storedIdentifier)
 
-        if (!storedIdentifier) {
-          Toast.error("No saved credentials found. Please log in with PIN first.", "Error")
+        const user = storedIdentifier ? await getUserByIdentifier(storedIdentifier) : null
+
+        if (!user) {
+          Toast.error("No user found with saved credentials", "Error")
+          set({ loading: false })
+          return false
+        }
+
+        if (!user.biometric_enabled) {
+          Toast.error("Biometric authentication is not enabled for this account", "Error")
           set({ loading: false })
           return false
         }
@@ -170,7 +204,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         console.log("Biometric result:", biometricResult)
 
         if (!biometricResult.success) {
-          Toast.error( biometricResult.error || "Biometric authentication failed", "Authentication Failed")
+          Toast.error(biometricResult.error || "Biometric authentication failed", "Authentication Failed")
           set({ loading: false })
           return false
         }
@@ -179,11 +213,12 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         // Note: Vous devrez peut-être adapter votre backend pour accepter une connexion biométrique
         // Pour l'instant, on utilise le même endpoint avec un PIN spécial
         console.log("Logging in with stored identifier:", storedIdentifier)
-        const result = await loginUser(storedIdentifier, "biometric_auth")
+        const result = storedIdentifier ? await loginUser(storedIdentifier, "", true) : null
         console.log("Login result:", result)
 
         if (result) {
           const settings = await ensureUserSettings(result.user_id)
+          await setSessionExpiry()
 
           const user = {
             user_id: result.user_id,
@@ -243,6 +278,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         await setUserIdentifier(identifier)
 
         const settings = await ensureUserSettings(user_id)
+        await setSessionExpiry()
         const authData = { user_id }
         await setAuthToken(JSON.stringify(authData))
 

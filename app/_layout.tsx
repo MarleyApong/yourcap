@@ -10,6 +10,8 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
 import "react-native-get-random-values"
 import "@/lib/toast-global"
 import "../global.css"
+import { expoDb } from "@/db/client"
+import { useDrizzleStudio } from "expo-drizzle-studio-plugin"
 
 export default function RootLayout() {
   const [isDbReady, setIsDbReady] = useState(false)
@@ -45,6 +47,8 @@ export default function RootLayout() {
 
   // Use the inactivity timeout hook
   useInactivityTimeout()
+
+  useDrizzleStudio(expoDb)
 
   // Handle redirection once everything is ready
   useEffect(() => {

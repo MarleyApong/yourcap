@@ -3,6 +3,21 @@ import { CreateUserInput, User } from "@/types/user"
 import bcrypt from "bcryptjs"
 import { v4 as uuidv4 } from "uuid"
 
+export const getUserByIdentifier = async (identifier: string): Promise<User | null> => {
+  try {
+    const db = getDb()
+    const user = await db.getFirstAsync<User>(
+      `SELECT user_id, full_name, email, phone_number, biometric_enabled, status, created_at, updated_at 
+       FROM users WHERE (email = ? OR phone_number = ?) AND status = 'ACTIVE'`,
+      [identifier, identifier],
+    )
+    return user || null
+  } catch (error) {
+    console.error(`Error fetching user by identifier ${identifier}:`, error)
+    return null
+  }
+}
+
 export const getUserById = async (user_id: string): Promise<User | null> => {
   try {
     const db = getDb()
@@ -19,6 +34,19 @@ export const getUserById = async (user_id: string): Promise<User | null> => {
 }
 
 export const createUser = async ({ full_name, email, phone_number, pin }: CreateUserInput & { pin: string }): Promise<string> => {
+  console.log("🔧 createUser called with:", { full_name, email, phone_number, pin: pin ? "***" : "empty" })
+
+  // Validation des données
+  if (!full_name?.trim()) {
+    throw new Error("Full name is required")
+  }
+  if (!phone_number?.trim()) {
+    throw new Error("Phone number is required")
+  }
+  if (!pin || pin.length !== 6) {
+    throw new Error("PIN must be 6 digits")
+  }
+
   const user_id = uuidv4()
   const now = new Date().toISOString()
   const hashedPin = await bcrypt.hash(pin, 10)
@@ -27,25 +55,23 @@ export const createUser = async ({ full_name, email, phone_number, pin }: Create
     const db = getDb()
 
     // Vérification si l'utilisateur existe déjà
-    const existing = await db.getFirstAsync(`SELECT * FROM users WHERE email = ? OR phone_number = ?`, [email, phone_number])
+    const existing = await db.getFirstAsync(`SELECT * FROM users WHERE email = ? OR phone_number = ?`, [email?.trim() || "", phone_number.trim()])
 
     if (existing) {
-      Toast.error("User with this email or phone already exists", "Registration Error")
-      throw new Error("User already exists")
+      throw new Error("User with this email or phone already exists")
     }
 
-    // Insertion
+    // Insertion avec gestion des valeurs NULL
     await db.runAsync(
       `INSERT INTO users 
       (user_id, full_name, email, phone_number, pin, biometric_enabled, status, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [user_id, full_name, email, phone_number, hashedPin, 0, "ACTIVE", now, now],
+      [user_id, full_name.trim(), email?.trim() || null, phone_number.trim(), hashedPin, 0, "ACTIVE", now, now],
     )
 
     return user_id
   } catch (error) {
-    console.error("Create user error:", error)
-    Toast.error("Registration failed. Please try again.", "Error")
+    console.error("❌ Create user error:", error)
     throw error
   }
 }
@@ -53,17 +79,30 @@ export const createUser = async ({ full_name, email, phone_number, pin }: Create
 export const loginUser = async (
   identifier: string,
   pin: string,
+  isBiometric: boolean = false,
 ): Promise<{ user_id: string; full_name: string; email: string; phone_number: string; biometric_enabled: boolean } | null> => {
   try {
     const db = getDb()
     const result = await db.getFirstAsync<User & { pin: string }>(
       `SELECT user_id, full_name, email, phone_number, pin, biometric_enabled
-       FROM users WHERE (email = ? OR phone_number = ?) AND status = 'ACTIVE'`,
+      FROM users WHERE (email = ? OR phone_number = ?) AND status = 'ACTIVE'`,
       [identifier, identifier],
     )
 
     if (!result) return null
 
+    // Si c'est une authentification biométrique, on skip la vérification du PIN
+    if (isBiometric) {
+      return {
+        user_id: result.user_id,
+        full_name: result.full_name,
+        email: result.email,
+        phone_number: result.phone_number,
+        biometric_enabled: !!result.biometric_enabled,
+      }
+    }
+
+    // Vérification normale du PIN
     const isValid = await bcrypt.compare(pin, result.pin)
     if (!isValid) return null
 

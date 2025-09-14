@@ -16,7 +16,7 @@ export default function Settings() {
   const router = useRouter()
   const { twColor } = useTwColors()
   const insets = useSafeAreaInsets()
-  const [localBiometricCapabilities, setLocalBiometricCapabilities] = useState<BiometricCapabilities | null >(null)
+  const [localBiometricCapabilities, setLocalBiometricCapabilities] = useState<BiometricCapabilities | null>(null)
 
   useEffect(() => {
     const checkCapabilities = async () => {
@@ -50,6 +50,27 @@ export default function Settings() {
     const success = await updateBiometricSetting(enabled)
     if (!success) {
       Toast.error("Failed to update biometric setting", "Error")
+    }
+  }
+
+  const handleRememberSessionToggle = async (enabled: boolean) => {
+    await updateSetting("remember_session", enabled)
+
+    // Si on désactive "remember session", on efface immédiatement l'expiration
+    if (!enabled) {
+      const { clearSessionExpiry } = await import("@/lib/auth")
+      await clearSessionExpiry()
+    }
+  }
+
+  const handleSessionDurationChange = async (hours: number) => {
+    const minutes = hours * 60
+    await updateSetting("session_duration", minutes)
+
+    // Mettre à jour immédiatement l'expiration si la session est active
+    if (settings.remember_session) {
+      const { setSessionExpiry } = await import("@/lib/auth")
+      await setSessionExpiry()
     }
   }
 
@@ -164,7 +185,6 @@ export default function Settings() {
         paddingBottom: Math.max(40, insets.bottom + 20),
       }}
     >
-      {/* Fixed header */}
       <PageHeader title="Settings" textPosition="center" textAlign="left" />
 
       <View className="p-6">
@@ -236,6 +256,8 @@ export default function Settings() {
             </Text>
             <SelectionButtons
               options={[
+                { value: 0, label: "Immediately" },
+                { value: 5, label: "5 min" },
                 { value: 15, label: "15 min" },
                 { value: 30, label: "30 min" },
                 { value: 60, label: "60 min" },
@@ -245,6 +267,50 @@ export default function Settings() {
               onSelect={(minutes) => updateSetting("inactivity_timeout", minutes)}
             />
           </View>
+        </SettingCard>
+
+        {/* Session Management Section - NOUVELLE SECTION */}
+        <SettingCard title="Session Management">
+          <View className="flex-row items-center justify-between py-3">
+            <View className="flex-1">
+              <Text style={{ color: twColor("foreground") }}>Remember Me</Text>
+              <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
+                Keep me logged in on this device
+              </Text>
+            </View>
+            <Switch
+              value={settings.remember_session}
+              onValueChange={handleRememberSessionToggle}
+              trackColor={{
+                false: twColor("muted"),
+                true: twColor("primary"),
+              }}
+              thumbColor={twColor("card-background")}
+            />
+          </View>
+
+          {settings.remember_session && (
+            <View
+              style={{
+                borderTopColor: twColor("border"),
+              }}
+              className="py-3 border-t"
+            >
+              <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
+                Session Duration
+              </Text>
+              <SelectionButtons
+                options={[
+                  { value: 1, label: "1 hour" },
+                  { value: 8, label: "8 hours" },
+                  { value: 24, label: "24 hours" },
+                  { value: 168, label: "7 days" },
+                ]}
+                selectedValue={settings.session_duration / 60} // Convert minutes to hours
+                onSelect={handleSessionDurationChange}
+              />
+            </View>
+          )}
         </SettingCard>
 
         {/* Notifications Section */}

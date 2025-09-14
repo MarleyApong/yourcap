@@ -11,9 +11,15 @@ export const getDb = (): SQLiteDatabase => {
 
 export const initDb = async (): Promise<void> => {
   try {
+    console.log("🔧 Starting database initialization...")
+
     if (!db) {
+      console.log("🔧 Opening database...")
       db = openDatabaseSync("debt_app.db")
+      console.log("✅ Database opened successfully")
     }
+
+    console.log("🔧 Executing schema...")
 
     await db.execAsync(`
       CREATE TABLE IF NOT EXISTS users (
@@ -54,6 +60,8 @@ export const initDb = async (): Promise<void> => {
         days_before_reminder INTEGER DEFAULT 3,
         language TEXT DEFAULT 'en',
         inactivity_timeout INTEGER DEFAULT 30,
+        remember_session INTEGER DEFAULT 1,
+        session_duration INTEGER DEFAULT 1440, -- en minutes, 1440 = 24h
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(user_id)
@@ -78,6 +86,7 @@ export const initDb = async (): Promise<void> => {
       CREATE INDEX IF NOT EXISTS idx_users_phone ON users(phone_number);
     `)
 
+    console.log("✅ Schema executed successfully")
     console.log("✅ Database initialized successfully")
   } catch (error) {
     console.error("❌ Database initialization error:", error)
@@ -110,7 +119,6 @@ export const resetDatabase = async (): Promise<boolean> => {
   } catch (error) {
     console.error("❌ Error resetting database:", error)
     throw error
-    
   }
 }
 
