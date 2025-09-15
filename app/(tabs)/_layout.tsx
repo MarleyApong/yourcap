@@ -3,6 +3,9 @@ import { Feather } from "@expo/vector-icons"
 import { Tabs, useRouter } from "expo-router"
 import { Text, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
+import { useEffect } from "react"
+import { useAuthStore } from "@/stores/authStore"
+import { isSessionValid } from "@/lib/auth"
 
 const TabIcon = ({ focused, iconName, title }: { focused: boolean; iconName: string; title: string }) => {
   const { twColor } = useTwColors()
@@ -31,14 +34,10 @@ const TabIcon = ({ focused, iconName, title }: { focused: boolean; iconName: str
           elevation: 6,
         }}
       >
-        <Feather
-          name={iconName as any}
-          size={22}
-          color={twColor("navigation-active-foreground")}
-        />
+        <Feather name={iconName as any} size={22} color={twColor("navigation-active-foreground")} />
         <Text
           style={{
-            color: twColor("navigation-active-foreground"), 
+            color: twColor("navigation-active-foreground"),
             fontSize: 12,
             fontWeight: "600",
             marginTop: 4,
@@ -53,22 +52,7 @@ const TabIcon = ({ focused, iconName, title }: { focused: boolean; iconName: str
 
   return (
     <View>
-      <Feather
-        name={iconName as any}
-        size={24}
-        color={twColor("navigation-inactive-foreground")}
-      />
-      {/* <Text
-        style={{
-          color: twColor("navigation-inactive-foreground"),
-          fontSize: 11,
-          fontWeight: "500",
-          marginTop: 2,
-          opacity: 0.7,
-        }}
-      >
-        {title}
-      </Text> */}
+      <Feather name={iconName as any} size={24} color={twColor("navigation-inactive-foreground")} />
     </View>
   )
 }
@@ -76,11 +60,25 @@ const TabIcon = ({ focused, iconName, title }: { focused: boolean; iconName: str
 export default function TabsLayout() {
   const { twColor } = useTwColors()
   const router = useRouter()
+  const { user, markSessionExpired } = useAuthStore()
+
+  // Vérifier la session à chaque focus des tabs
+  useEffect(() => {
+    const checkSession = async () => {
+      if (!user) return
+
+      const isValid = await isSessionValid()
+      // if (!isValid) {
+      //   markSessionExpired()
+      //   router.replace("/auth/login")
+      // }
+    }
+
+    checkSession()
+  }, [user])
 
   return (
     <>
-      {/* Status bar matches background */}
-      {/* <StatusBar barStyle="default" hidden backgroundColor={twColor("background")} /> */}
       <SafeAreaView
         style={{
           flex: 1,
@@ -98,13 +96,13 @@ export default function TabsLayout() {
               paddingVertical: 18,
             },
             tabBarStyle: {
-              backgroundColor: twColor("navigation-background"), // Navigation background
+              backgroundColor: twColor("navigation-background"),
               borderRadius: 16,
               marginHorizontal: 16,
               marginBottom: 8,
               height: 72,
               position: "absolute",
-              overflow: "visible", // Allow shadows to be visible
+              overflow: "visible",
               borderWidth: 1,
               borderColor: twColor("navigation-border"),
               shadowColor: twColor("navigation-shadow"),
@@ -118,10 +116,8 @@ export default function TabsLayout() {
             },
             tabBarActiveTintColor: twColor("navigation-active-foreground"),
             tabBarInactiveTintColor: twColor("navigation-inactive-foreground"),
-            // Header styles for consistency
             headerStyle: {
               backgroundColor: twColor("header-background"),
-              // shadowColor: twColor("header-shadow"),
             },
             headerTintColor: twColor("header-foreground"),
             headerTitleStyle: {

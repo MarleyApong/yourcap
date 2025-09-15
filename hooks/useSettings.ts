@@ -1,17 +1,19 @@
 import { getSettings, updateSettings } from "@/services/settingsService"
 import { useAuthStore } from "@/stores/authStore"
-import AsyncStorage from "@react-native-async-storage/async-storage"
+import { DefaultSettings } from "@/types/settings"
 import { useEffect, useState } from "react"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export const useSettings = () => {
   const { user, setUser } = useAuthStore()
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<DefaultSettings>({
     notification_enabled: true,
     days_before_reminder: 3,
     inactivity_timeout: 30,
     language: "en",
     remember_session: true,
     session_duration: 30,
+    theme: "system",
   })
   const [loading, setLoading] = useState(true)
 
@@ -29,6 +31,7 @@ export const useSettings = () => {
           language: savedSettings.language,
           remember_session: typeof savedSettings.remember_session === "boolean" ? savedSettings.remember_session : savedSettings.remember_session === 1,
           session_duration: savedSettings.session_duration,
+          theme: savedSettings.theme,
           created_at: savedSettings.created_at,
           updated_at: savedSettings.updated_at,
         }

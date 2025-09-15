@@ -23,15 +23,74 @@ export const createDefaultSettings = async (user_id: string): Promise<Settings> 
       `INSERT INTO settings (
         user_id, notification_enabled, days_before_reminder,
         inactivity_timeout, language, remember_session, session_duration,
-        created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [user_id, DEFAULT_SETTINGS.notification_enabled ? 1 : 0, DEFAULT_SETTINGS.days_before_reminder, DEFAULT_SETTINGS.inactivity_timeout, DEFAULT_SETTINGS.language, DEFAULT_SETTINGS.remember_session ? 1 : 0, DEFAULT_SETTINGS.session_duration, now, now],
+        theme, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        user_id,
+        DEFAULT_SETTINGS.notification_enabled ? 1 : 0,
+        DEFAULT_SETTINGS.days_before_reminder,
+        DEFAULT_SETTINGS.inactivity_timeout,
+        DEFAULT_SETTINGS.language,
+        DEFAULT_SETTINGS.remember_session ? 1 : 0,
+        DEFAULT_SETTINGS.session_duration,
+        DEFAULT_SETTINGS.theme,
+        now,
+        now,
+      ],
     )
 
     const newSettings = await getSettings(user_id)
     return newSettings || { ...DEFAULT_SETTINGS, user_id, created_at: now, updated_at: now }
   } catch (error) {
     console.error("Error creating default settings:", error)
+    throw error
+  }
+}
+
+export const ensureUserSettings = async (user_id: string): Promise<Settings> => {
+  try {
+    const db = getDb()
+    const existingSettings = await db.getFirstAsync<Settings>(`SELECT * FROM settings WHERE user_id = ?`, [user_id])
+
+    if (existingSettings) {
+      return existingSettings
+    }
+
+    // Créer des paramètres par défaut avec les nouvelles colonnes
+    const now = new Date().toISOString()
+    await db.runAsync(
+      `INSERT INTO settings 
+      (user_id, notification_enabled, days_before_reminder, language, 
+        inactivity_timeout, remember_session, session_duration, theme, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        user_id,
+        DEFAULT_SETTINGS.notification_enabled ? 1 : 0,
+        DEFAULT_SETTINGS.days_before_reminder,
+        DEFAULT_SETTINGS.language,
+        DEFAULT_SETTINGS.inactivity_timeout,
+        DEFAULT_SETTINGS.remember_session ? 1 : 0,
+        DEFAULT_SETTINGS.session_duration,
+        DEFAULT_SETTINGS.theme,
+        now,
+        now,
+      ],
+    )
+
+    return {
+      user_id,
+      notification_enabled: DEFAULT_SETTINGS.notification_enabled,
+      days_before_reminder: DEFAULT_SETTINGS.days_before_reminder,
+      language: DEFAULT_SETTINGS.language,
+      inactivity_timeout: DEFAULT_SETTINGS.inactivity_timeout,
+      remember_session: DEFAULT_SETTINGS.remember_session,
+      session_duration: DEFAULT_SETTINGS.session_duration,
+      theme: DEFAULT_SETTINGS.theme,
+      created_at: now,
+      updated_at: now,
+    }
+  } catch (error) {
+    console.error("Error ensuring user settings:", error)
     throw error
   }
 }
@@ -70,53 +129,6 @@ export const deleteSettings = async (user_id: string): Promise<void> => {
     await db.runAsync(`DELETE FROM settings WHERE user_id = ?`, [user_id])
   } catch (error) {
     console.error("Error deleting settings:", error)
-    throw error
-  }
-}
-
-// Fonction utilitaire pour s'assurer que l'utilisateur a des paramètres
-export const ensureUserSettings = async (user_id: string): Promise<Settings> => {
-  try {
-    const db = getDb()
-    const existingSettings = await db.getFirstAsync<Settings>(`SELECT * FROM settings WHERE user_id = ?`, [user_id])
-
-    if (existingSettings) {
-      return existingSettings
-    }
-
-    // Créer des paramètres par défaut avec les nouvelles colonnes
-    const now = new Date().toISOString()
-    await db.runAsync(
-      `INSERT INTO settings 
-      (user_id, notification_enabled, days_before_reminder, language, 
-        inactivity_timeout, remember_session, session_duration, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        user_id,
-        DEFAULT_SETTINGS.notification_enabled ? 1 : 0,
-        DEFAULT_SETTINGS.days_before_reminder,
-        DEFAULT_SETTINGS.language,
-        DEFAULT_SETTINGS.inactivity_timeout,
-        DEFAULT_SETTINGS.remember_session ? 1 : 0,
-        DEFAULT_SETTINGS.session_duration,
-        now,
-        now,
-      ],
-    )
-
-    return {
-      user_id,
-      notification_enabled: DEFAULT_SETTINGS.notification_enabled,
-      days_before_reminder: DEFAULT_SETTINGS.days_before_reminder,
-      language: DEFAULT_SETTINGS.language,
-      inactivity_timeout: DEFAULT_SETTINGS.inactivity_timeout,
-      remember_session: DEFAULT_SETTINGS.remember_session,
-      session_duration: DEFAULT_SETTINGS.session_duration,
-      created_at: now,
-      updated_at: now,
-    }
-  } catch (error) {
-    console.error("Error ensuring user settings:", error)
     throw error
   }
 }

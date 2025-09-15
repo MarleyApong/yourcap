@@ -1,7 +1,7 @@
 import { FBackButton } from "@/components/ui/fback-button"
 import { Loader } from "@/components/ui/loader"
 import PinInput from "@/components/ui/pin-input"
-import { isSessionValid } from "@/lib/auth"
+import { getUserIdentifier, isSessionValid } from "@/lib/auth"
 import { useTwColors } from "@/lib/tw-colors"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
@@ -20,23 +20,34 @@ export default function Login() {
   const [identifier, setIdentifier] = useState("")
   const [showPinInput, setShowPinInput] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [pinKey, setPinKey] = useState(0) // Pour reset PinInput si erreur
+  const [pinKey, setPinKey] = useState(0)
+  const [shouldShowBiometric, setShouldShowBiometric] = useState(false)
 
   useEffect(() => {
     checkBiometricCapabilities()
+    initializeLoginState()
   }, [])
 
-  useEffect(() => {
-    const checkSession = async () => {
-      const isValid = await isSessionValid()
-      if (isValid) {
-        // Essayez la connexion biométrique automatique
-        handleBiometric()
+  const initializeLoginState = async () => {
+    try {
+      // Vérifier si une session est valide
+      const sessionValid = await isSessionValid()
+      const storedIdentifier = await getUserIdentifier()
+
+      if (sessionValid && storedIdentifier) {
+        // Session valide, aller directement au PIN/biométrie
+        setIdentifier(storedIdentifier)
+        setShowPinInput(true)
+        setShouldShowBiometric(true)
+      } else if (storedIdentifier) {
+        // Session expirée mais identifiant sauvé
+        setIdentifier(storedIdentifier)
+        setShouldShowBiometric(true)
       }
+    } catch (error) {
+      console.error("Error initializing login state:", error)
     }
-
-    checkSession()
-  }, [])
+  }
 
   const validateIdentifier = (value: string): boolean => {
     if (!value.trim()) {
@@ -45,13 +56,11 @@ export default function Login() {
     }
 
     if (value.includes("@")) {
-      // Validation email
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
         Toast.error("Please enter a valid email address")
         return false
       }
     } else {
-      // Validation numéro de téléphone camerounais
       if (!/^(6|2)(2|3|[5-9])[0-9]{7}$/.test(value)) {
         Toast.error("Please enter a valid Cameroonian phone number")
         return false
@@ -73,7 +82,7 @@ export default function Login() {
       const success = await login({ identifier: identifier.trim(), pin })
       if (success) {
         Toast.success("Welcome back!")
-        router.replace("/(tabs)/dashboard")
+        // Ne pas router.replace ici, le store s'en charge déjà
       } else {
         Toast.error("Invalid credentials. Please try again.")
         setPinKey((prev) => prev + 1)
@@ -93,7 +102,7 @@ export default function Login() {
       const success = await loginWithBiometric()
       if (success) {
         Toast.success("Welcome back!")
-        router.replace("/(tabs)/dashboard")
+        // Ne pas router.replace ici, le store s'en charge déjà
       } else {
         Toast.error("Biometric authentication failed")
       }
@@ -107,6 +116,7 @@ export default function Login() {
 
   const handleBackFromPin = () => {
     setShowPinInput(false)
+    setShouldShowBiometric(false)
     setPinKey((prev) => prev + 1)
   }
 
@@ -120,8 +130,8 @@ export default function Login() {
           subtitle="Enter your 6-digit PIN to continue"
           onComplete={handlePinComplete}
           onBiometric={handleBiometric}
-          biometricAvailable={biometricCapabilities?.isAvailable}
-          showBiometric={true}
+          biometricAvailable={biometricCapabilities?.isAvailable && shouldShowBiometric}
+          showBiometric={shouldShowBiometric}
         />
 
         {loading && (

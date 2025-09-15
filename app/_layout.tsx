@@ -4,7 +4,7 @@ import { initDb, isDatabaseReady } from "@/db/db"
 import useInactivityTimeout, { useAppStartup } from "@/hooks/useInactivityTimeout"
 import { useAuthStore } from "@/stores/authStore"
 import { Stack, useRouter } from "expo-router"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { ActivityIndicator, Text, View } from "react-native"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import "react-native-get-random-values"
@@ -16,8 +16,10 @@ import { useDrizzleStudio } from "expo-drizzle-studio-plugin"
 export default function RootLayout() {
   const [isDbReady, setIsDbReady] = useState(false)
   const [dbError, setDbError] = useState<string | null>(null)
-  const { user, isInitialized, loading: authLoading, sessionExpired } = useAuthStore()
+  const { user, isInitialized, loading: authLoading, sessionExpired, loadUser } = useAuthStore()
   const router = useRouter()
+  const hasInitializedRef = useRef(false)
+  const lastNavigationRef = useRef<string>("")
 
   // Initialize database
   useEffect(() => {
@@ -35,12 +37,21 @@ export default function RootLayout() {
       } catch (error) {
         console.error("❌ Database initialization error:", error)
         setDbError(error instanceof Error ? error.message : "Database initialization failed")
-        setIsDbReady(true)
+        setIsDbReady(true) // On continue même en cas d'erreur pour ne pas bloquer l'app
       }
     }
 
     initializeDatabase()
   }, [])
+
+  // Load user once database is ready
+  useEffect(() => {
+    if (isDbReady && !hasInitializedRef.current) {
+      console.log("🔄 Database ready, loading user...")
+      hasInitializedRef.current = true
+      loadUser()
+    }
+  }, [isDbReady, loadUser])
 
   // Use the app startup hook (authentication)
   useAppStartup()
@@ -50,14 +61,42 @@ export default function RootLayout() {
 
   useDrizzleStudio(expoDb)
 
-  // Handle redirection once everything is ready
+  // Handle navigation based on auth state
   useEffect(() => {
-    if (!isDbReady || !isInitialized || authLoading) return
+    if (!isDbReady || !isInitialized || authLoading) {
+      console.log("🔄 Not ready for navigation:", { isDbReady, isInitialized, authLoading })
+      return
+    }
 
-    if (user && !sessionExpired) {
-      router.replace("/(tabs)/dashboard")
+    console.log("🔄 Navigation check:", {
+      user: !!user,
+      sessionExpired,
+    })
+
+    let targetRoute = ""
+
+    if (sessionExpired) {
+      targetRoute = "/auth/login"
+      console.log("🔒 Session expired, redirecting to login")
+    } else if (user) {
+      targetRoute = "/(tabs)/dashboard"
+      console.log("✅ User authenticated, redirecting to dashboard")
     } else {
-      router.replace("/auth/login")
+      targetRoute = "/auth/login"
+      console.log("🔒 No user, redirecting to login")
+    }
+
+    // Éviter les navigations redondantes
+    if (lastNavigationRef.current !== targetRoute) {
+      console.log(`🚀 Navigating to: ${targetRoute}`)
+      lastNavigationRef.current = targetRoute
+
+      // Utiliser un setTimeout pour éviter les conflits de navigation
+      const timer = setTimeout(() => {
+        router.replace(targetRoute as any)
+      }, 100)
+
+      return () => clearTimeout(timer)
     }
   }, [isDbReady, isInitialized, authLoading, user, sessionExpired, router])
 

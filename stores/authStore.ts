@@ -1,5 +1,5 @@
 import { DEFAULT_SETTINGS } from "@/constants/DefaultSettings"
-import { clearAuthToken, clearUserIdentifier, getAuthToken, getUserIdentifier, setAuthToken, setSessionExpiry, setUserIdentifier } from "@/lib/auth"
+import { clearAuthToken, clearUserIdentifier, getAuthToken, getUserIdentifier, setAuthToken, setSessionExpiry, setUserIdentifier, isSessionValid } from "@/lib/auth"
 import { authenticateWithBiometric, checkBiometricCapabilities } from "@/services/biometricService"
 import { ensureUserSettings, getSettings } from "@/services/settingsService"
 import { createUser, getUserById, getUserByIdentifier, loginUser, updateBiometricPreference } from "@/services/userService"
@@ -8,20 +8,22 @@ import { router } from "expo-router"
 import { create } from "zustand"
 import { subscribeWithSelector } from "zustand/middleware"
 
+type UserSettings = {
+  notification_enabled: boolean
+  days_before_reminder: number
+  inactivity_timeout: number
+  language: string
+  remember_session: boolean
+  session_duration: number
+}
+
 type User = {
   user_id: string
   full_name: string
   email: string
   phone_number: string
   biometric_enabled: boolean
-  settings?: {
-    notification_enabled: boolean
-    days_before_reminder: number
-    inactivity_timeout: number
-    language: string
-    remember_session: boolean
-    session_duration: number
-  }
+  settings?: UserSettings
 }
 
 type AuthState = {
@@ -60,50 +62,44 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       try {
         set({ loading: true })
 
-        // Vérifiez d'abord si la session est valide
-        const { isSessionValid } = await import("@/lib/auth")
         const sessionValid = await isSessionValid()
+        const storedAuth = await getAuthToken()
 
-        if (!sessionValid) {
+        if (!sessionValid || !storedAuth) {
           await clearAuthToken()
           await clearUserIdentifier()
-          set({ user: null, isInitialized: true, loading: false, sessionExpired: true })
+          set({ user: null, isInitialized: true, loading: false, sessionExpired: !sessionValid && !!storedAuth })
           return
         }
 
-        const storedAuth = await getAuthToken()
+        const authData = JSON.parse(storedAuth)
+        const userData = await getUserById(authData.user_id)
 
-        if (storedAuth) {
-          const authData = JSON.parse(storedAuth)
-          const userData = await getUserById(authData.user_id)
-
-          if (!userData) {
-            await clearAuthToken()
-            await clearUserIdentifier()
-            set({ user: null, isInitialized: true, loading: false })
-            return
-          }
-
-          const settings = await ensureUserSettings(authData.user_id)
-
-          set({
-            user: {
-              ...userData,
-              settings: {
-                notification_enabled: settings.notification_enabled,
-                days_before_reminder: settings.days_before_reminder,
-                inactivity_timeout: settings.inactivity_timeout,
-                language: settings.language,
-                remember_session: settings.remember_session,
-                session_duration: settings.session_duration,
-              },
-            },
-            isInitialized: true,
-            loading: false,
-          })
-        } else {
+        if (!userData) {
+          await clearAuthToken()
+          await clearUserIdentifier()
           set({ user: null, isInitialized: true, loading: false })
+          return
         }
+
+        const settings = await ensureUserSettings(authData.user_id)
+
+        set({
+          user: {
+            ...userData,
+            settings: {
+              notification_enabled: settings.notification_enabled,
+              days_before_reminder: settings.days_before_reminder,
+              inactivity_timeout: settings.inactivity_timeout,
+              language: settings.language,
+              remember_session: settings.remember_session,
+              session_duration: settings.session_duration,
+            },
+          },
+          isInitialized: true,
+          loading: false,
+          sessionExpired: false,
+        })
       } catch (error) {
         console.error("Failed to load user:", error)
         await clearAuthToken()
@@ -114,113 +110,25 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
     login: async (credentials) => {
       try {
-        set({ loading: true })
+        console.log("🔐 Starting login process...")
+
         const result = await loginUser(credentials.identifier, credentials.pin)
+        console.log("🔐 Login result:", result ? "success" : "failed")
 
         if (result) {
           // Stocker l'identifiant pour la biométrie future
           await setUserIdentifier(credentials.identifier)
-          await setSessionExpiry()
 
+          // Gérer la session
           const settings = await ensureUserSettings(result.user_id)
-          const authData = { user_id: result.user_id }
-          await setAuthToken(JSON.stringify(authData))
-          await setAuthToken(JSON.stringify(authData))
-
-          const user = {
-            user_id: result.user_id,
-            full_name: result.full_name,
-            email: result.email,
-            phone_number: result.phone_number,
-            biometric_enabled: result.biometric_enabled,
-            settings: {
-              notification_enabled: settings.notification_enabled,
-              days_before_reminder: settings.days_before_reminder,
-              inactivity_timeout: settings.inactivity_timeout,
-              language: settings.language,
-            },
+          if (settings.remember_session) {
+            await setSessionExpiry()
           }
 
-          set({
-            user: {
-              ...user,
-              settings: {
-                ...user.settings,
-                remember_session: DEFAULT_SETTINGS.remember_session, // Default value
-                session_duration: DEFAULT_SETTINGS.session_duration,
-              }
-            },
-            sessionExpired: false,
-            loading: false,
-          })
+          const authData = { user_id: result.user_id }
+          await setAuthToken(JSON.stringify(authData))
 
-          return true
-        }
-        set({ loading: false })
-        return false
-      } catch (error) {
-        console.error("Login error:", error)
-        set({ loading: false })
-        return false
-      }
-    },
-
-    loginWithBiometric: async () => {
-      try {
-        console.log("Starting biometric login process...")
-        set({ loading: true })
-
-        // Récupérer l'identifiant stocké
-        const storedIdentifier = await getUserIdentifier()
-        console.log("Stored identifier:", storedIdentifier)
-
-        const user = storedIdentifier ? await getUserByIdentifier(storedIdentifier) : null
-
-        if (!user) {
-          Toast.error("No user found with saved credentials", "Error")
-          set({ loading: false })
-          return false
-        }
-
-        if (!user.biometric_enabled) {
-          Toast.error("Biometric authentication is not enabled for this account", "Error")
-          set({ loading: false })
-          return false
-        }
-
-        // Vérifier que la biométrie est disponible
-        const capabilities = await checkBiometricCapabilities()
-        console.log("Biometric capabilities:", capabilities)
-
-        if (!capabilities.isAvailable) {
-          Toast.error("Biometric authentication is not available on this device", "Error")
-          set({ loading: false })
-          return false
-        }
-
-        // Authentifier avec la biométrie
-        console.log("Starting biometric authentication...")
-        const biometricResult = await authenticateWithBiometric()
-        console.log("Biometric result:", biometricResult)
-
-        if (!biometricResult.success) {
-          Toast.error(biometricResult.error || "Biometric authentication failed", "Authentication Failed")
-          set({ loading: false })
-          return false
-        }
-
-        // Maintenant, connectez-vous avec l'identifiant stocké
-        // Note: Vous devrez peut-être adapter votre backend pour accepter une connexion biométrique
-        // Pour l'instant, on utilise le même endpoint avec un PIN spécial
-        console.log("Logging in with stored identifier:", storedIdentifier)
-        const result = storedIdentifier ? await loginUser(storedIdentifier, "", true) : null
-        console.log("Login result:", result)
-
-        if (result) {
-          const settings = await ensureUserSettings(result.user_id)
-          await setSessionExpiry()
-
-          const user = {
+          const user: User = {
             user_id: result.user_id,
             full_name: result.full_name,
             email: result.email,
@@ -231,26 +139,110 @@ export const useAuthStore = create<AuthState & AuthActions>()(
               days_before_reminder: settings.days_before_reminder,
               inactivity_timeout: settings.inactivity_timeout,
               language: settings.language,
+              remember_session: settings.remember_session,
+              session_duration: settings.session_duration,
             },
           }
 
           set({
             user,
             sessionExpired: false,
-            loading: false,
           })
 
+          // Navigation différée pour éviter les conflits
+          setTimeout(() => {
+            router.replace("/(tabs)/dashboard")
+          }, 100)
+
           return true
-        } else {
-          Toast.error("Failed to login after biometric authentication", "Error")
         }
 
-        set({ loading: false })
         return false
       } catch (error) {
-        console.error("Biometric login error:", error)
-        Toast.error("An unexpected error occurred during biometric login", "Error")
-        set({ loading: false })
+        console.error("❌ Login error:", error)
+        return false
+      }
+    },
+
+    loginWithBiometric: async () => {
+      try {
+        console.log("🔐 Starting biometric login process...")
+
+        // Récupérer l'identifiant stocké
+        const storedIdentifier = await getUserIdentifier()
+        if (!storedIdentifier) {
+          Toast.error("No stored credentials found for biometric authentication")
+          return false
+        }
+
+        // Vérifier que l'utilisateur existe et a la biométrie activée
+        const user = await getUserByIdentifier(storedIdentifier)
+        if (!user) {
+          Toast.error("User not found")
+          return false
+        }
+
+        if (!user.biometric_enabled) {
+          Toast.error("Biometric authentication is not enabled for this account")
+          return false
+        }
+
+        // Vérifier les capacités biométriques
+        const capabilities = await checkBiometricCapabilities()
+        if (!capabilities.isAvailable) {
+          Toast.error("Biometric authentication is not available")
+          return false
+        }
+
+        // Authentification biométrique
+        const biometricResult = await authenticateWithBiometric()
+        if (!biometricResult.success) {
+          Toast.error(biometricResult.error || "Biometric authentication failed")
+          return false
+        }
+
+        // Connexion avec bypass PIN
+        const result = await loginUser(storedIdentifier, "", true)
+        if (result) {
+          const settings = await ensureUserSettings(result.user_id)
+          await setSessionExpiry()
+
+          const authData = { user_id: result.user_id }
+          await setAuthToken(JSON.stringify(authData))
+
+          const userObj: User = {
+            user_id: result.user_id,
+            full_name: result.full_name,
+            email: result.email,
+            phone_number: result.phone_number,
+            biometric_enabled: result.biometric_enabled,
+            settings: {
+              notification_enabled: settings.notification_enabled,
+              days_before_reminder: settings.days_before_reminder,
+              inactivity_timeout: settings.inactivity_timeout,
+              language: settings.language,
+              remember_session: settings.remember_session,
+              session_duration: settings.session_duration,
+            },
+          }
+
+          set({
+            user: userObj,
+            sessionExpired: false,
+          })
+
+          // Navigation différée
+          setTimeout(() => {
+            router.replace("/(tabs)/dashboard")
+          }, 100)
+
+          return true
+        }
+
+        return false
+      } catch (error) {
+        console.error("❌ Biometric login error:", error)
+        Toast.error("Biometric authentication error")
         return false
       }
     },
@@ -265,7 +257,6 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       }
 
       try {
-        set({ loading: true })
         const user_id = await createUser({
           full_name: credentials.full_name,
           email: credentials.email,
@@ -273,35 +264,36 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           pin: credentials.pin,
         })
 
-        // Stocker l'identifiant (email ou téléphone) pour la biométrie future
+        // Stocker l'identifiant pour futures connexions
         const identifier = credentials.email || credentials.phone_number
         await setUserIdentifier(identifier)
 
         const settings = await ensureUserSettings(user_id)
         await setSessionExpiry()
+
         const authData = { user_id }
         await setAuthToken(JSON.stringify(authData))
 
-        set({
-          user: {
-            user_id,
-            full_name: credentials.full_name,
-            email: credentials.email,
-            phone_number: credentials.phone_number,
-            biometric_enabled: false,
-            settings: {
-              notification_enabled: settings.notification_enabled,
-              days_before_reminder: settings.days_before_reminder,
-              inactivity_timeout: settings.inactivity_timeout,
-              language: settings.language,
-            },
+        const user: User = {
+          user_id,
+          full_name: credentials.full_name,
+          email: credentials.email,
+          phone_number: credentials.phone_number,
+          biometric_enabled: false,
+          settings: {
+            notification_enabled: settings.notification_enabled,
+            days_before_reminder: settings.days_before_reminder,
+            inactivity_timeout: settings.inactivity_timeout,
+            language: settings.language,
+            remember_session: settings.remember_session,
+            session_duration: settings.session_duration,
           },
-          loading: false,
-        })
+        }
+
+        set({ user })
 
         return true
       } catch (error) {
-        set({ loading: false })
         throw error
       }
     },
@@ -315,17 +307,28 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         const settings = await getSettings(user.user_id)
 
         if (userData) {
+          const updatedSettings: UserSettings = settings
+            ? {
+                notification_enabled: settings.notification_enabled,
+                days_before_reminder: settings.days_before_reminder,
+                inactivity_timeout: settings.inactivity_timeout,
+                language: settings.language,
+                remember_session: settings.remember_session,
+                session_duration: settings.session_duration,
+              }
+            : user.settings || {
+                notification_enabled: DEFAULT_SETTINGS.notification_enabled,
+                days_before_reminder: DEFAULT_SETTINGS.days_before_reminder,
+                inactivity_timeout: DEFAULT_SETTINGS.inactivity_timeout,
+                language: DEFAULT_SETTINGS.language,
+                remember_session: DEFAULT_SETTINGS.remember_session,
+                session_duration: DEFAULT_SETTINGS.session_duration,
+              }
+
           set({
             user: {
               ...userData,
-              settings: settings
-                ? {
-                    notification_enabled: settings.notification_enabled,
-                    days_before_reminder: settings.days_before_reminder,
-                    inactivity_timeout: settings.inactivity_timeout,
-                    language: settings.language,
-                  }
-                : user.settings,
+              settings: updatedSettings,
             },
           })
         }
@@ -366,7 +369,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
     logout: async () => {
       await clearAuthToken()
-      await clearUserIdentifier()
+      // Ne pas supprimer l'identifiant pour permettre la reconnexion rapide
+      // await clearUserIdentifier()
       set({
         user: null,
         sessionExpired: false,

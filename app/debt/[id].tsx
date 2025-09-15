@@ -11,7 +11,7 @@ import { Debt, DebtStatus } from "@/types/debt"
 import { Feather } from "@expo/vector-icons"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useEffect, useState } from "react"
-import { Modal, Platform, Pressable, ScrollView, Text, View } from "react-native"
+import { Modal, Platform, Pressable, ScrollView, Text, View, Linking } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 export default function DebtDetails() {
@@ -52,7 +52,6 @@ export default function DebtDetails() {
 
       if (debtData && debtData.user_id === user.user_id) {
         setDebt(debtData)
-        // Pré-remplir le formulaire d'édition
         setEditForm({
           contact_name: debtData.contact_name,
           contact_phone: debtData.contact_phone || "",
@@ -80,7 +79,7 @@ export default function DebtDetails() {
     try {
       await updateDebt(debt!.debt_id, { status: newStatus })
       loadDebt()
-      Toast.success("Debt status updated", "Success")
+      Toast.success("Debt status updated successfully", "Success")
     } catch (error) {
       Toast.error("Failed to update status", "Error")
     }
@@ -88,7 +87,7 @@ export default function DebtDetails() {
 
   const handleDelete = () => {
     Toast.confirm(
-      "Are you sure you want to delete this debt record?",
+      "This action cannot be undone. The debt record will be permanently deleted.",
       async () => {
         try {
           await deleteDebt(debt!.debt_id)
@@ -99,11 +98,42 @@ export default function DebtDetails() {
         }
       },
       {
-        title: "Confirm Delete",
+        title: "Delete Debt Record?",
         confirmText: "Delete",
         cancelText: "Cancel",
       },
     )
+  }
+
+  const handleCall = () => {
+    if (debt?.contact_phone) {
+      Linking.openURL(`tel:${debt.contact_phone}`)
+    }
+  }
+
+  const handleSMS = () => {
+    if (debt?.contact_phone) {
+      const message =
+        debt.debt_type === "OWING"
+          ? `Hi ${debt.contact_name}, this is a friendly reminder about the ${formatCurrency(debt.amount, debt.currency)} you borrowed on ${formatDate(debt.loan_date)}. The due date is ${formatDate(debt.due_date)}. Please let me know when you can settle this. Thanks!`
+          : `Hi ${debt.contact_name}, I wanted to confirm that I owe you ${formatCurrency(debt.amount, debt.currency)} from ${formatDate(debt.loan_date)}. I plan to repay by ${formatDate(debt.due_date)}. Thank you for your patience.`
+
+      Linking.openURL(`sms:${debt.contact_phone}?body=${encodeURIComponent(message)}`)
+    }
+  }
+
+  const handleEmail = () => {
+    if (debt?.contact_email) {
+      const subject =
+        debt.debt_type === "OWING" ? `Payment Reminder - ${formatCurrency(debt.amount, debt.currency)}` : `Payment Confirmation - ${formatCurrency(debt.amount, debt.currency)}`
+
+      const body =
+        debt.debt_type === "OWING"
+          ? `Dear ${debt.contact_name},\n\nI hope this email finds you well. This is a friendly reminder regarding the ${formatCurrency(debt.amount, debt.currency)} loan from ${formatDate(debt.loan_date)}.\n\nThe agreed due date is ${formatDate(debt.due_date)}. Please let me know your payment plan at your earliest convenience.\n\nBest regards`
+          : `Dear ${debt.contact_name},\n\nI wanted to acknowledge that I owe you ${formatCurrency(debt.amount, debt.currency)} from ${formatDate(debt.loan_date)}.\n\nI plan to settle this by ${formatDate(debt.due_date)}. Please let me know if you need to discuss any payment arrangements.\n\nBest regards`
+
+      Linking.openURL(`mailto:${debt.contact_email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`)
+    }
   }
 
   const handleEditChange = (field: string, value: string) => {
@@ -194,18 +224,21 @@ export default function DebtDetails() {
   if (loading || !debt) {
     return (
       <View className="flex-1 items-center justify-center" style={{ backgroundColor: twColor("background") }}>
-        <Text style={{ color: twColor("foreground") }}>Loading...</Text>
+        <Loader />
+        <Text style={{ color: twColor("foreground") }} className="mt-4">
+          Loading debt details...
+        </Text>
       </View>
     )
   }
 
   return (
     <View className="flex-1" style={{ backgroundColor: twColor("background") }}>
-      <PageHeader title="Details debt" textPosition="center" textAlign="left" />
+      <PageHeader title="Debt Details" textPosition="center" textAlign="left" />
 
       <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         <View className="p-6">
-          {/* Header */}
+          {/* Header Card */}
           <View
             style={{
               backgroundColor: twColor("card-background"),
@@ -213,7 +246,7 @@ export default function DebtDetails() {
             }}
             className="p-4 rounded-xl shadow-sm border mb-6"
           >
-            <View className="flex-row justify-between items-start">
+            <View className="flex-row justify-between items-start mb-4">
               <View className="flex-1">
                 <Text style={{ color: twColor("foreground") }} className="text-2xl font-bold">
                   {debt.contact_name}
@@ -231,10 +264,52 @@ export default function DebtDetails() {
                 className="flex-row items-center px-3 py-1 rounded-full border"
               >
                 <View style={{ backgroundColor: getStatusColor() }} className="w-3 h-3 rounded-full mr-2" />
-                <Text style={{ color: twColor("foreground") }} className="capitalize">
+                <Text style={{ color: twColor("foreground") }} className="capitalize text-sm font-medium">
                   {debt.status.toLowerCase()}
                 </Text>
               </View>
+            </View>
+
+            {/* Quick Contact Actions */}
+            <View className="flex-row gap-2 mt-4">
+              {debt.contact_phone && (
+                <>
+                  <Pressable
+                    onPress={handleCall}
+                    style={{ backgroundColor: twColor("success") + "20" }}
+                    className="flex-1 flex-row items-center justify-center py-2 px-3 rounded-lg"
+                  >
+                    <Feather name="phone" size={16} color={twColor("success")} />
+                    <Text style={{ color: twColor("success") }} className="ml-2 font-medium">
+                      Call
+                    </Text>
+                  </Pressable>
+
+                  <Pressable
+                    onPress={handleSMS}
+                    style={{ backgroundColor: twColor("primary") + "20" }}
+                    className="flex-1 flex-row items-center justify-center py-2 px-3 rounded-lg"
+                  >
+                    <Feather name="message-square" size={16} color={twColor("primary")} />
+                    <Text style={{ color: twColor("primary") }} className="ml-2 font-medium">
+                      SMS
+                    </Text>
+                  </Pressable>
+                </>
+              )}
+
+              {debt.contact_email && (
+                <Pressable
+                  onPress={handleEmail}
+                  style={{ backgroundColor: twColor("warning") + "20" }}
+                  className="flex-1 flex-row items-center justify-center py-2 px-3 rounded-lg"
+                >
+                  <Feather name="mail" size={16} color={twColor("warning")} />
+                  <Text style={{ color: twColor("warning") }} className="ml-2 font-medium">
+                    Email
+                  </Text>
+                </Pressable>
+              )}
             </View>
           </View>
 
@@ -246,12 +321,25 @@ export default function DebtDetails() {
             }}
             className="p-6 rounded-xl shadow-sm border"
           >
+            <Text style={{ color: twColor("primary") }} className="text-lg font-bold mb-4">
+              Debt Information
+            </Text>
+
             <View className="mb-6">
               <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
                 Due Date
               </Text>
               <Text style={{ color: twColor("foreground") }} className="text-lg mt-1">
                 {formatDate(debt.due_date)}
+              </Text>
+            </View>
+
+            <View className="mb-6">
+              <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
+                Loan Date
+              </Text>
+              <Text style={{ color: twColor("foreground") }} className="text-lg mt-1">
+                {formatDate(debt.loan_date)}
               </Text>
             </View>
 
@@ -298,32 +386,57 @@ export default function DebtDetails() {
             </View>
           </View>
 
-          {/* Actions */}
-          <View className="mt-8 gap-2">
+          {/* Status Actions */}
+          <View className="mt-8 gap-3">
+            <Text style={{ color: twColor("primary") }} className="text-lg font-bold mb-2">
+              Status Actions
+            </Text>
+
             {debt.status !== "PAID" && (
-              <Pressable onPress={() => handleStatusChange("PAID")} style={{ backgroundColor: twColor("success") }} className="p-4 rounded-xl">
-                <Text style={{ color: twColor("success-foreground") }} className="text-center font-semibold text-lg">
+              <Pressable onPress={() => handleStatusChange("PAID")} style={{ backgroundColor: twColor("success") }} className="p-4 rounded-xl flex-row items-center justify-center">
+                <Feather name="check-circle" size={20} color={twColor("success-foreground")} />
+                <Text style={{ color: twColor("success-foreground") }} className="ml-2 font-semibold text-lg">
                   Mark as Paid
                 </Text>
               </Pressable>
             )}
 
-            {debt.status !== "OVERDUE" && (
-              <Pressable onPress={() => handleStatusChange("OVERDUE")} style={{ backgroundColor: twColor("warning") }} className="p-4 rounded-xl">
-                <Text style={{ color: twColor("warning-foreground") }} className="text-center font-semibold text-lg">
+            {debt.status !== "OVERDUE" && debt.status !== "PAID" && (
+              <Pressable
+                onPress={() => handleStatusChange("OVERDUE")}
+                style={{ backgroundColor: twColor("warning") }}
+                className="p-4 rounded-xl flex-row items-center justify-center"
+              >
+                <Feather name="alert-triangle" size={20} color={twColor("warning-foreground")} />
+                <Text style={{ color: twColor("warning-foreground") }} className="ml-2 font-semibold text-lg">
                   Mark as Overdue
                 </Text>
               </Pressable>
             )}
 
-            <Pressable onPress={() => setEditModalVisible(true)} style={{ backgroundColor: twColor("primary") }} className="p-4 rounded-xl">
-              <Text style={{ color: twColor("primary-foreground") }} className="text-center font-semibold text-lg">
+            {debt.status === "OVERDUE" && (
+              <Pressable
+                onPress={() => handleStatusChange("PENDING")}
+                style={{ backgroundColor: twColor("primary") }}
+                className="p-4 rounded-xl flex-row items-center justify-center"
+              >
+                <Feather name="clock" size={20} color={twColor("primary-foreground")} />
+                <Text style={{ color: twColor("primary-foreground") }} className="ml-2 text-center font-semibold text-lg">
+                  Mark as Overdue
+                </Text>
+              </Pressable>
+            )}
+
+            <Pressable onPress={() => setEditModalVisible(true)} style={{ backgroundColor: twColor("primary") }} className="p-4 rounded-xl flex-row items-center justify-center">
+              <Feather name="edit" size={20} color={twColor("primary-foreground")} />
+              <Text style={{ color: twColor("primary-foreground") }} className="ml-2 text-center font-semibold text-lg">
                 Edit Debt
               </Text>
             </Pressable>
 
-            <Pressable onPress={handleDelete} style={{ backgroundColor: twColor("destructive") }} className="p-4 rounded-xl">
-              <Text style={{ color: twColor("destructive-foreground") }} className="text-center font-semibold text-lg">
+            <Pressable onPress={handleDelete} style={{ backgroundColor: twColor("destructive") }} className="p-4 rounded-xl flex-row items-center justify-center">
+              <Feather name="trash-2" size={20} color={twColor("primary-foreground")} />
+              <Text style={{ color: twColor("destructive-foreground") }} className="ml-2 text-center font-semibold text-lg">
                 Delete Debt
               </Text>
             </Pressable>
@@ -359,46 +472,60 @@ export default function DebtDetails() {
           >
             <View className="px-6">
               <View className="mt-8 gap-4">
-                {/* Debt Type Toggle */}
+                {/* Debt Type Display (non modifiable) avec Description */}
                 <View
                   style={{
                     backgroundColor: twColor("card-background"),
                     borderColor: twColor("primary"),
                   }}
-                  className="flex-row justify-around p-1 rounded-xl border"
+                  className="p-4 rounded-xl border"
                 >
-                  <Pressable
-                    onPress={() => handleEditChange("debt_type", "OWING")}
-                    style={{
-                      backgroundColor: editForm.debt_type === "OWING" ? twColor("primary") : twColor("card-background"),
-                    }}
-                    className="flex-1 items-center py-3 rounded-lg"
-                  >
-                    <Text
+                  <Text style={{ color: twColor("primary") }} className="text-lg font-bold mb-2">
+                    Debt Type
+                  </Text>
+
+                  {/* Affichage statique du type de dette */}
+                  <View className="flex-row justify-around p-1 rounded-xl border border-primary mb-3">
+                    <View
                       style={{
-                        color: editForm.debt_type === "OWING" ? twColor("primary-foreground") : twColor("foreground"),
+                        backgroundColor: editForm.debt_type === "OWING" ? twColor("primary") + "40" : twColor("muted") + "20",
                       }}
-                      className="font-medium"
+                      className="flex-1 items-center py-3 rounded-lg"
                     >
-                      Someone owes me
-                    </Text>
-                  </Pressable>
-                  <Pressable
-                    onPress={() => handleEditChange("debt_type", "OWED")}
-                    style={{
-                      backgroundColor: editForm.debt_type === "OWED" ? twColor("primary") : twColor("card-background"),
-                    }}
-                    className="flex-1 items-center py-3 rounded-lg"
-                  >
-                    <Text
+                      <Text
+                        style={{
+                          color: editForm.debt_type === "OWING" ? twColor("primary") : twColor("muted-foreground"),
+                        }}
+                        className="font-medium"
+                      >
+                        Someone owes me
+                      </Text>
+                    </View>
+                    <View
                       style={{
-                        color: editForm.debt_type === "OWED" ? twColor("primary-foreground") : twColor("foreground"),
+                        backgroundColor: editForm.debt_type === "OWED" ? twColor("primary") + "40" : twColor("muted") + "20",
                       }}
-                      className="font-medium"
+                      className="flex-1 items-center py-3 rounded-lg"
                     >
-                      I owe someone
+                      <Text
+                        style={{
+                          color: editForm.debt_type === "OWED" ? twColor("primary") : twColor("muted-foreground"),
+                        }}
+                        className="font-medium"
+                      >
+                        I owe someone
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Description dynamique */}
+                  <View style={{ backgroundColor: twColor("muted") + "40" }} className="p-3 rounded-lg">
+                    <Text style={{ color: twColor("muted-foreground") }} className="text-sm leading-5">
+                      {editForm.debt_type === "OWING"
+                        ? "Record money that someone owes you - track when you lent money and when it should be repaid."
+                        : "Record money that you owe to someone - keep track of your borrowing obligations and due dates."}
                     </Text>
-                  </Pressable>
+                  </View>
                 </View>
 
                 {/* Contact Info */}
@@ -409,14 +536,17 @@ export default function DebtDetails() {
                   }}
                   className="p-4 rounded-xl shadow-sm border"
                 >
-                  <Text style={{ color: twColor("primary") }} className="text-2xl font-bold mb-4">
+                  <Text style={{ color: twColor("primary") }} className="text-lg font-bold mb-2">
                     Contact Information
+                  </Text>
+                  <Text style={{ color: twColor("muted-foreground") }} className="text-sm mb-4">
+                    Add the person's details for easy identification and contact.
                   </Text>
 
                   <TextInput
                     label="Full Name"
                     required
-                    placeholder="xxx xxx"
+                    placeholder="John Doe"
                     value={editForm.contact_name}
                     onChangeText={(text) => handleEditChange("contact_name", text)}
                     icon="user"
@@ -424,7 +554,7 @@ export default function DebtDetails() {
 
                   <TextInput
                     label="Phone Number"
-                    placeholder="xxx xxx xxx"
+                    placeholder="6XX XXX XXX"
                     value={editForm.contact_phone}
                     onChangeText={(text) => handleEditChange("contact_phone", text)}
                     keyboardType="phone-pad"
@@ -433,7 +563,7 @@ export default function DebtDetails() {
                   />
 
                   <TextInput
-                    label="Email"
+                    label="Email (Optional)"
                     placeholder="xxx@xxx.xx"
                     value={editForm.contact_email}
                     onChangeText={(text) => handleEditChange("contact_email", text)}
@@ -452,14 +582,17 @@ export default function DebtDetails() {
                   }}
                   className="p-4 rounded-xl shadow-sm border"
                 >
-                  <Text style={{ color: twColor("primary") }} className="text-2xl font-bold mb-4">
-                    Debt Details
+                  <Text style={{ color: twColor("primary") }} className="text-lg font-bold mb-2">
+                    Financial Details
+                  </Text>
+                  <Text style={{ color: twColor("muted-foreground") }} className="text-sm mb-4">
+                    Specify the amount, currency and important dates for this debt.
                   </Text>
 
                   <TextInput
                     label="Amount"
                     required
-                    placeholder="xxx"
+                    placeholder="Eg: 50000"
                     value={editForm.amount}
                     onChangeText={(text) => handleEditChange("amount", text)}
                     keyboardType="numeric"
@@ -471,10 +604,10 @@ export default function DebtDetails() {
                     value={editForm.currency}
                     onChange={(val) => handleEditChange("currency", val)}
                     options={[
-                      { label: "USD ($)", value: "USD" },
-                      { label: "EUR (€)", value: "EUR" },
-                      { label: "GBP (£)", value: "GBP" },
-                      { label: "XAF (CFA)", value: "XAF" },
+                      { label: "XAF (CFA Franc)", value: "XAF" },
+                      { label: "USD (US Dollar)", value: "USD" },
+                      { label: "EUR (Euro)", value: "EUR" },
+                      { label: "GBP (British Pound)", value: "GBP" },
                     ]}
                   />
 
@@ -483,8 +616,8 @@ export default function DebtDetails() {
                   <DateInput label="Due Date" value={editForm.due_date} onChange={handleEditDateChange("due_date")} minimumDate={editForm.loan_date} required />
 
                   <TextInput
-                    label="Description"
-                    placeholder="Loan for car repair"
+                    label="Description (Optional)"
+                    placeholder="Eg: Car repair loan, business investment, etc."
                     value={editForm.description}
                     onChangeText={(text) => handleEditChange("description", text)}
                     multiline
@@ -504,7 +637,7 @@ export default function DebtDetails() {
                   }}
                   className="p-4 rounded-xl flex-row gap-2 justify-center items-center"
                 >
-                  {editLoading ? <Loader /> : <Feather name="save" size={20} color={twColor("primary-foreground")} />}
+                  {editLoading ? <Loader /> : <Feather name="check" size={20} color={twColor("primary-foreground")} />}
                   <Text style={{ color: twColor("primary-foreground") }} className="text-center font-semibold text-lg">
                     {editLoading ? "Saving..." : "Save Changes"}
                   </Text>

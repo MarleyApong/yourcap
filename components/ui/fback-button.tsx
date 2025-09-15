@@ -9,13 +9,19 @@ type FBackButtonProps = {
   isAbsolute?: boolean
   className?: string
   color?: string
+  onPress?: () => void // ✅ ajout
 }
 
-export const FBackButton = ({ path, isAbsolute = true, className, color = "white" }: FBackButtonProps) => {
+export const FBackButton = ({ path, isAbsolute = true, className, color = "white", onPress }: FBackButtonProps) => {
   const router = useRouter()
   const { twColor } = useTwColors()
 
   const handlePress = () => {
+    if (onPress) {
+      onPress()
+      return
+    }
+
     if (path) {
       router.replace(path)
     } else {

@@ -82,6 +82,8 @@ export const loginUser = async (
   isBiometric: boolean = false,
 ): Promise<{ user_id: string; full_name: string; email: string; phone_number: string; biometric_enabled: boolean } | null> => {
   try {
+    console.log("🔐 loginUser called:", { identifier, isBiometric })
+
     const db = getDb()
     const result = await db.getFirstAsync<User & { pin: string }>(
       `SELECT user_id, full_name, email, phone_number, pin, biometric_enabled
@@ -89,10 +91,16 @@ export const loginUser = async (
       [identifier, identifier],
     )
 
-    if (!result) return null
+    console.log("🔐 User found in DB:", !!result)
+
+    if (!result) {
+      console.log("❌ No user found with identifier:", identifier)
+      return null
+    }
 
     // Si c'est une authentification biométrique, on skip la vérification du PIN
     if (isBiometric) {
+      console.log("🔐 Biometric login, skipping PIN verification")
       return {
         user_id: result.user_id,
         full_name: result.full_name,
@@ -103,9 +111,16 @@ export const loginUser = async (
     }
 
     // Vérification normale du PIN
+    console.log("🔐 Verifying PIN...")
     const isValid = await bcrypt.compare(pin, result.pin)
-    if (!isValid) return null
+    console.log("🔐 PIN valid:", isValid)
 
+    if (!isValid) {
+      console.log("❌ Invalid PIN")
+      return null
+    }
+
+    console.log("✅ Login successful")
     return {
       user_id: result.user_id,
       full_name: result.full_name,
@@ -114,8 +129,7 @@ export const loginUser = async (
       biometric_enabled: !!result.biometric_enabled,
     }
   } catch (error) {
-    console.error("Login error:", error)
-    Toast.error("Login failed. Please check your credentials and try again.", "Error")
+    console.error("❌ Login error:", error)
     throw error
   }
 }
@@ -126,7 +140,6 @@ export const resetPin = async ({ identifier, newPin }: { identifier: string; new
     const user = await db.getFirstAsync(`SELECT user_id FROM users WHERE (email = ? OR phone_number = ?) AND status = 'ACTIVE'`, [identifier, identifier])
 
     if (!user) {
-      Toast.error("No user found with this email or phone number.", "Error")
       return false
     }
 
@@ -135,11 +148,9 @@ export const resetPin = async ({ identifier, newPin }: { identifier: string; new
 
     await db.runAsync(`UPDATE users SET pin = ?, updated_at = ? WHERE user_id = ?`, [hashedPin, now, (user as { user_id: string }).user_id])
 
-    Toast.success("PIN reset successfully!", "Success")
     return true
   } catch (error) {
     console.error("resetPin error:", error)
-    Toast.error("Failed to reset PIN. Please try again.", "Error")
     return false
   }
 }
@@ -149,11 +160,14 @@ export const updateBiometricPreference = async (user_id: string, enabled: boolea
     const db = getDb()
     const now = new Date().toISOString()
 
+    console.log(`🔐 Updating biometric preference for user ${user_id}: ${enabled}`)
+
     await db.runAsync(`UPDATE users SET biometric_enabled = ?, updated_at = ? WHERE user_id = ?`, [enabled ? 1 : 0, now, user_id])
 
+    console.log("✅ Biometric preference updated successfully")
     return true
   } catch (error) {
-    console.error("Update biometric preference error:", error)
+    console.error("❌ Update biometric preference error:", error)
     return false
   }
 }

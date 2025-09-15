@@ -4,8 +4,9 @@ export interface Settings {
   days_before_reminder: number
   language: string
   inactivity_timeout: number
-  remember_session: boolean 
+  remember_session: boolean
   session_duration: number // (en minutes)
+  theme: "system" | "light" | "dark"
   created_at: string
   updated_at: string
 }
@@ -15,6 +16,7 @@ export interface DefaultSettings {
   days_before_reminder: number
   language: string
   inactivity_timeout: number
-  remember_session: boolean 
+  remember_session: boolean
   session_duration: number // (en minutes)
+  theme: "system" | "light" | "dark"
 }

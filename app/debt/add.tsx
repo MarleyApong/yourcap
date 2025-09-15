@@ -94,13 +94,15 @@ export default function AddDebt() {
         status: "PENDING",
       })
 
+      Toast.success("Debt record created successfully!", "Success")
+      
       // Réinitialiser le formulaire après succès
       setForm({
         contact_name: "",
         contact_phone: "",
         contact_email: "",
         amount: "",
-        currency: "",
+        currency: "XAF",
         description: "",
         loan_date: new Date(),
         due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -114,6 +116,13 @@ export default function AddDebt() {
     } finally {
       setLoading(false)
     }
+  }
+
+  // Descriptions pour chaque type de dette
+  const getDebtTypeDescription = () => {
+    return form.debt_type === "OWING" 
+      ? "Record money that someone owes you - track when you lent money and when it should be repaid."
+      : "Record money that you owe to someone - keep track of your borrowing obligations and due dates."
   }
 
   return (
@@ -132,46 +141,62 @@ export default function AddDebt() {
 
       <View className="px-6">
         <View className="mt-8 gap-4">
-          {/* Debt Type Toggle */}
+          {/* Debt Type Toggle with Description */}
           <View
             style={{
               backgroundColor: twColor("card-background"),
               borderColor: twColor("primary"),
             }}
-            className="flex-row justify-around p-1 rounded-xl border"
+            className="p-4 rounded-xl border"
           >
-            <Pressable
-              onPress={() => setForm({ ...form, debt_type: "OWING" })}
-              style={{
-                backgroundColor: form.debt_type === "OWING" ? twColor("primary") : twColor("card-background"),
-              }}
-              className="flex-1 items-center py-3 rounded-lg"
-            >
-              <Text
+            <Text style={{ color: twColor("primary") }} className="text-lg font-bold mb-2">
+              Debt Type
+            </Text>
+            
+            <View className="flex-row justify-around p-1 rounded-xl border border-primary mb-3">
+              <Pressable
+                onPress={() => setForm({ ...form, debt_type: "OWING" })}
                 style={{
-                  color: form.debt_type === "OWING" ? twColor("primary-foreground") : twColor("foreground"),
+                  backgroundColor: form.debt_type === "OWING" ? twColor("primary") : "transparent",
                 }}
-                className="font-medium"
+                className="flex-1 items-center py-3 rounded-lg"
               >
-                Someone owes me
-              </Text>
-            </Pressable>
-            <Pressable
-              onPress={() => setForm({ ...form, debt_type: "OWED" })}
-              style={{
-                backgroundColor: form.debt_type === "OWED" ? twColor("primary") : twColor("card-background"),
-              }}
-              className="flex-1 items-center py-3 rounded-lg"
-            >
-              <Text
+                <Text
+                  style={{
+                    color: form.debt_type === "OWING" ? twColor("primary-foreground") : twColor("foreground"),
+                  }}
+                  className="font-medium"
+                >
+                  Someone owes me
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setForm({ ...form, debt_type: "OWED" })}
                 style={{
-                  color: form.debt_type === "OWED" ? twColor("primary-foreground") : twColor("foreground"),
+                  backgroundColor: form.debt_type === "OWED" ? twColor("primary") : "transparent",
                 }}
-                className="font-medium"
+                className="flex-1 items-center py-3 rounded-lg"
               >
-                I owe someone
+                <Text
+                  style={{
+                    color: form.debt_type === "OWED" ? twColor("primary-foreground") : twColor("foreground"),
+                  }}
+                  className="font-medium"
+                >
+                  I owe someone
+                </Text>
+              </Pressable>
+            </View>
+
+            {/* Description dynamique */}
+            <View 
+              style={{ backgroundColor: twColor("muted") + "40" }}
+              className="p-3 rounded-lg"
+            >
+              <Text style={{ color: twColor("muted-foreground") }} className="text-sm leading-5">
+                {getDebtTypeDescription()}
               </Text>
-            </Pressable>
+            </View>
           </View>
 
           {/* Contact Info */}
@@ -182,8 +207,11 @@ export default function AddDebt() {
             }}
             className="p-4 rounded-xl shadow-sm border"
           >
-            <Text style={{ color: twColor("primary") }} className="text-2xl font-bold mb-4">
+            <Text style={{ color: twColor("primary") }} className="text-lg font-bold mb-2">
               Contact Information
+            </Text>
+            <Text style={{ color: twColor("muted-foreground") }} className="text-sm mb-4">
+              Add the person's details for easy identification and contact.
             </Text>
 
             <TextInput
@@ -201,7 +229,7 @@ export default function AddDebt() {
             <TextInput
               ref={contactPhoneRef}
               label="Phone Number"
-              placeholder="xxx xxx xxx"
+              placeholder="6XX XXX XXX"
               value={form.contact_phone}
               onChangeText={(text) => handleChange("contact_phone", text)}
               keyboardType="phone-pad"
@@ -213,7 +241,7 @@ export default function AddDebt() {
 
             <TextInput
               ref={contactEmailRef}
-              label="Email"
+              label="Email (Optional)"
               placeholder="xxx@xxx.xx"
               value={form.contact_email}
               onChangeText={(text) => handleChange("contact_email", text)}
@@ -234,15 +262,18 @@ export default function AddDebt() {
             }}
             className="p-4 rounded-xl shadow-sm border"
           >
-            <Text style={{ color: twColor("primary") }} className="text-2xl font-bold mb-4">
-              Debt Details
+            <Text style={{ color: twColor("primary") }} className="text-lg font-bold mb-2">
+              Financial Details
+            </Text>
+            <Text style={{ color: twColor("muted-foreground") }} className="text-sm mb-4">
+              Specify the amount, currency and important dates for this debt.
             </Text>
 
             <TextInput
               ref={amountRef}
               label="Amount"
               required
-              placeholder="xxx"
+              placeholder="Eg: 50000"
               value={form.amount}
               onChangeText={(text) => handleChange("amount", text)}
               keyboardType="numeric"
@@ -256,21 +287,33 @@ export default function AddDebt() {
               value={form.currency}
               onChange={(val) => handleChange("currency", val)}
               options={[
-                { label: "USD ($)", value: "USD" },
-                { label: "EUR (€)", value: "EUR" },
-                { label: "GBP (£)", value: "GBP" },
-                { label: "XAF (CFA)", value: "XAF" },
+                { label: "XAF (CFA Franc)", value: "XAF" },
+                { label: "USD (US Dollar)", value: "USD" },
+                { label: "EUR (Euro)", value: "EUR" },
+                { label: "GBP (British Pound)", value: "GBP" },
               ]}
             />
 
-            <DateInput label="Loan Date" value={form.loan_date} onChange={handleDateChange("loan_date")} maximumDate={new Date()} required />
+            <DateInput 
+              label="Loan Date" 
+              value={form.loan_date} 
+              onChange={handleDateChange("loan_date")} 
+              maximumDate={new Date()} 
+              required 
+            />
 
-            <DateInput label="Due Date" value={form.due_date} onChange={handleDateChange("due_date")} minimumDate={form.loan_date} required />
+            <DateInput 
+              label="Due Date" 
+              value={form.due_date} 
+              onChange={handleDateChange("due_date")} 
+              minimumDate={form.loan_date} 
+              required 
+            />
 
             <TextInput
               ref={descriptionRef}
-              label="Description"
-              placeholder="Loan for car repair"
+              label="Description (Optional)"
+              placeholder="Eg: Car repair loan, business investment, etc."
               value={form.description}
               onChangeText={(text) => handleChange("description", text)}
               multiline
@@ -292,9 +335,9 @@ export default function AddDebt() {
             }}
             className="p-4 rounded-xl flex-row gap-2 justify-center items-center"
           >
-            {loading ? <Loader /> : <Feather name="navigation" size={20} color={twColor("white")} />}
+            {loading ? <Loader /> : <Feather name="plus" size={20} color={twColor("primary-foreground")} />}
             <Text style={{ color: twColor("primary-foreground") }} className="text-center font-semibold text-lg">
-              {loading ? "Saving..." : "Save Debt"}
+              {loading ? "Creating..." : "Create Debt Record"}
             </Text>
           </Pressable>
         </View>

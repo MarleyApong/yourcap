@@ -62,6 +62,7 @@ export const initDb = async (): Promise<void> => {
         inactivity_timeout INTEGER DEFAULT 30,
         remember_session INTEGER DEFAULT 1,
         session_duration INTEGER DEFAULT 1440, -- en minutes, 1440 = 24h
+        theme TEXT DEFAULT 'system',
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(user_id)
