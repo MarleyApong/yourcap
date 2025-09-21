@@ -32,7 +32,7 @@ export const SummaryCard = ({ label, amount, type }: SummaryCardProps) => {
       <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
         {label}
       </Text>
-      <Text style={{ color: getAmountColor() }} className="text-xl font-bold mt-1">
+      <Text style={{ color: getAmountColor() }} className="text-xs font-bold mt-1">
         {amount}
       </Text>
     </View>

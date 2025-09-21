@@ -90,7 +90,7 @@ export default function RootLayout() {
     if (lastNavigationRef.current !== targetRoute) {
       console.log(`🚀 Navigating to: ${targetRoute}`)
       lastNavigationRef.current = targetRoute
-
+      
       // Utiliser un setTimeout pour éviter les conflits de navigation
       const timer = setTimeout(() => {
         router.replace(targetRoute as any)
@@ -120,7 +120,12 @@ export default function RootLayout() {
             textAlign: "center",
           }}
         >
-          {!isDbReady ? "Initializing database..." : !isInitialized ? "Loading user session..." : "Starting app..."}
+          {!isDbReady 
+            ? "Initializing database..." 
+            : !isInitialized 
+            ? "Loading user session..." 
+            : "Starting app..."
+          }
         </Text>
         {dbError && (
           <Text
