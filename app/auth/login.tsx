@@ -1,11 +1,11 @@
 import { FBackButton } from "@/components/ui/fback-button"
 import { Loader } from "@/components/ui/loader"
 import PinInput from "@/components/ui/pin-input"
-import { getUserIdentifier, isSessionValid } from "@/lib/auth"
+import { hasPreviousSession, isAppLocked, setAppLocked } from "@/lib/auth"
 import { useTwColors } from "@/lib/tw-colors"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
-import { Link, useRouter } from "expo-router"
+import { Link } from "expo-router"
 import { useEffect, useRef, useState } from "react"
 import { Image, Platform, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
@@ -14,7 +14,6 @@ export default function Login() {
   const { login, loginWithBiometric, biometricCapabilities, checkBiometricCapabilities } = useAuthStore()
   const { twColor } = useTwColors()
   const identifierRef = useRef<TextInput>(null)
-  const router = useRouter()
 
   // State
   const [identifier, setIdentifier] = useState("")
@@ -22,6 +21,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [pinKey, setPinKey] = useState(0)
   const [shouldShowBiometric, setShouldShowBiometric] = useState(false)
+  const [isQuickAuth, setIsQuickAuth] = useState(false) // For Microsoft Authenticator-like flow
 
   useEffect(() => {
     checkBiometricCapabilities()
@@ -30,19 +30,21 @@ export default function Login() {
 
   const initializeLoginState = async () => {
     try {
-      // Vérifier si une session est valide
-      const sessionValid = await isSessionValid()
-      const storedIdentifier = await getUserIdentifier()
+      // Check if app was locked (coming from background)
+      const appLocked = await isAppLocked()
+      const previousSession = await hasPreviousSession()
 
-      if (sessionValid && storedIdentifier) {
-        // Session valide, aller directement au PIN/biométrie
-        setIdentifier(storedIdentifier)
+      console.log("Login init - App locked:", appLocked, "Previous session:", previousSession.hasData)
+
+      if (previousSession.hasData) {
+        // User has previous session data - go to quick auth
+        setIdentifier(previousSession.identifier!)
         setShowPinInput(true)
-        setShouldShowBiometric(true)
-      } else if (storedIdentifier) {
-        // Session expirée mais identifiant sauvé
-        setIdentifier(storedIdentifier)
-        setShouldShowBiometric(true)
+        setIsQuickAuth(true)
+        setShouldShowBiometric(previousSession.biometricEnabled || false)
+
+        // Clear app lock since we're asking for auth
+        await setAppLocked(false)
       }
     } catch (error) {
       console.error("Error initializing login state:", error)
@@ -73,6 +75,7 @@ export default function Login() {
   const handleIdentifierSubmit = () => {
     if (validateIdentifier(identifier)) {
       setShowPinInput(true)
+      setIsQuickAuth(false)
     }
   }
 
@@ -82,7 +85,6 @@ export default function Login() {
       const success = await login({ identifier: identifier.trim(), pin })
       if (success) {
         Toast.success("Welcome back!")
-        // Ne pas router.replace ici, le store s'en charge déjà
       } else {
         Toast.error("Invalid credentials. Please try again.")
         setPinKey((prev) => prev + 1)
@@ -102,7 +104,6 @@ export default function Login() {
       const success = await loginWithBiometric()
       if (success) {
         Toast.success("Welcome back!")
-        // Ne pas router.replace ici, le store s'en charge déjà
       } else {
         Toast.error("Biometric authentication failed")
       }
@@ -115,19 +116,37 @@ export default function Login() {
   }
 
   const handleBackFromPin = () => {
-    setShowPinInput(false)
-    setShouldShowBiometric(false)
+    if (isQuickAuth) {
+      // If it's quick auth and user goes back, reset everything
+      setShowPinInput(false)
+      setIdentifier("")
+      setIsQuickAuth(false)
+      setShouldShowBiometric(false)
+    } else {
+      // Normal flow - just go back to identifier input
+      setShowPinInput(false)
+    }
     setPinKey((prev) => prev + 1)
   }
 
   if (showPinInput) {
     return (
       <View className="flex-1 bg-primary-50">
-        <FBackButton onPress={handleBackFromPin} />
+        {!isQuickAuth && <FBackButton onPress={handleBackFromPin} />}
+
+        {isQuickAuth && (
+          <View className="pt-12 px-8">
+            <TouchableOpacity onPress={handleBackFromPin} className="flex-row items-center gap-2 mb-4">
+              <Text className="text-primary font-medium">Use different account</Text>
+            </TouchableOpacity>
+            <Text className="text-lg text-gray-600 mb-4">Welcome back, {identifier}</Text>
+          </View>
+        )}
+
         <PinInput
           key={`pin-${pinKey}`}
-          title="Enter PIN"
-          subtitle="Enter your 6-digit PIN to continue"
+          title={isQuickAuth ? "Verify Identity" : "Enter PIN"}
+          subtitle={isQuickAuth ? "Use your PIN or biometric to continue" : "Enter your 6-digit PIN to continue"}
           onComplete={handlePinComplete}
           onBiometric={handleBiometric}
           biometricAvailable={biometricCapabilities?.isAvailable && shouldShowBiometric}

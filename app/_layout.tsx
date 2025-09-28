@@ -3,11 +3,13 @@ import { useFonts } from "expo-font"
 import { useEffect, useState } from "react"
 import * as SplashScreen from "expo-splash-screen"
 import { ToastProvider } from "@/components/ui/toast/toast-provider"
-import { useInactivityTimeout } from "@/hooks/useInactivityTimeout"
+import { useInactivityTimeout, useAppStartup } from "@/hooks/useInactivityTimeout"
 import { initDb } from "@/db/db"
 import { useAuthStore } from "@/stores/authStore"
-import "../global.css"
+import AppLockScreen from "@/components/feature/app-lock-screen"
+import { useNotificationHandler } from "@/hooks/useNotificationHandler"
 import "react-native-get-random-values"
+import "../global.css"
 
 SplashScreen.preventAutoHideAsync()
 
@@ -17,7 +19,11 @@ export default function RootLayout() {
   })
 
   const [dbInitialized, setDbInitialized] = useState(false)
+
+  // Use both hooks
   useInactivityTimeout()
+  useAppStartup()
+  useNotificationHandler()
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -25,20 +31,20 @@ export default function RootLayout() {
         if (error) throw error
         if (!fontsLoaded) return
 
-        console.log("🚀 Starting app initialization...")
+        console.log("Starting app initialization...")
 
-        console.log("🔧 Initializing database...")
+        console.log("Initializing database...")
         await initDb()
         setDbInitialized(true)
-        console.log("✅ Database initialized successfully")
+        console.log("Database initialized successfully")
 
-        console.log("👤 Loading user...")
+        console.log("Loading user...")
         await useAuthStore.getState().loadUser()
-        console.log("✅ App initialization completed")
+        console.log("App initialization completed")
 
         await SplashScreen.hideAsync()
       } catch (error) {
-        console.error("❌ App initialization failed:", error)
+        console.error("App initialization failed:", error)
         await SplashScreen.hideAsync()
       }
     }
@@ -54,10 +60,10 @@ export default function RootLayout() {
     <ToastProvider>
       <Stack
         screenOptions={{
+         contentStyle: {
+            backgroundColor: "#000000",
+          },
           headerShown: false,
-          // contentStyle: {
-          //   backgroundColor: colorScheme === "dark" ? "#000000" : "#ffffff",
-          // },
         }}
       >
         <Stack.Screen name="index" />
@@ -66,6 +72,8 @@ export default function RootLayout() {
         <Stack.Screen name="debt" />
         <Stack.Screen name="+not-found" />
       </Stack>
+
+      <AppLockScreen />
     </ToastProvider>
   )
 }

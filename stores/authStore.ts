@@ -1,5 +1,16 @@
 import { DEFAULT_SETTINGS } from "@/constants/DefaultSettings"
-import { clearAuthToken, clearUserIdentifier, getAuthToken, getUserIdentifier, setAuthToken, setSessionExpiry, setUserIdentifier, isSessionValid } from "@/lib/auth"
+import {
+  clearAuthToken,
+  clearUserIdentifier,
+  getAuthToken,
+  getUserIdentifier,
+  setAuthToken,
+  setSessionExpiry,
+  setUserIdentifier,
+  isSessionValid,
+  setAppLocked,
+  isAppLocked,
+} from "@/lib/auth"
 import { authenticateWithBiometric, checkBiometricCapabilities } from "@/services/biometricService"
 import { ensureUserSettings, getSettings } from "@/services/settingsService"
 import { createUser, getUserById, getUserByIdentifier, loginUser, updateBiometricPreference } from "@/services/userService"
@@ -33,6 +44,7 @@ type AuthState = {
   biometricCapabilities: any
   isInitialized: boolean
   sessionExpired: boolean
+  appLocked: boolean
 }
 
 type AuthActions = {
@@ -47,6 +59,8 @@ type AuthActions = {
   logout: () => Promise<void>
   markSessionExpired: () => void
   clearSessionExpired: () => void
+  setAppLocked: (locked: boolean) => Promise<void>
+  checkAppLock: () => Promise<boolean>
 }
 
 export const useAuthStore = create<AuthState & AuthActions>()(
@@ -56,6 +70,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
     biometricCapabilities: null,
     isInitialized: false,
     sessionExpired: false,
+    appLocked: false,
 
     setUser: (user) => set({ user }),
 
@@ -65,10 +80,39 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
         const sessionValid = await isSessionValid()
         const storedAuth = await getAuthToken()
+        const appLocked = await isAppLocked()
+
+        // Check if app is locked but has valid session
+        if (appLocked && sessionValid && storedAuth) {
+          // App is locked, keep user data but set locked state
+          const authData = JSON.parse(storedAuth)
+          const userData = await getUserById(authData.user_id)
+
+          if (userData) {
+            const settings = await ensureUserSettings(authData.user_id)
+            set({
+              user: {
+                ...userData,
+                settings: {
+                  notification_enabled: settings.notification_enabled,
+                  days_before_reminder: settings.days_before_reminder,
+                  inactivity_timeout: settings.inactivity_timeout,
+                  language: settings.language,
+                  remember_session: settings.remember_session,
+                  session_duration: settings.session_duration,
+                },
+              },
+              appLocked: true,
+              isInitialized: true,
+              loading: false,
+            })
+            return
+          }
+        }
 
         if (!sessionValid || !storedAuth) {
           await clearAuthToken()
-          await clearUserIdentifier()
+          // Don't clear user identifier - keep for quick re-auth
           set({ user: null, isInitialized: true, loading: false, sessionExpired: !sessionValid && !!storedAuth })
           return
         }
@@ -78,7 +122,6 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
         if (!userData) {
           await clearAuthToken()
-          await clearUserIdentifier()
           set({ user: null, isInitialized: true, loading: false })
           return
         }
@@ -100,37 +143,43 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           isInitialized: true,
           loading: false,
           sessionExpired: false,
+          appLocked: false,
         })
+
+        // Unlock app after successful load
+        await setAppLocked(false)
       } catch (error) {
         console.error("Failed to load user:", error)
         await clearAuthToken()
-        await clearUserIdentifier()
         set({ user: null, isInitialized: true, loading: false })
       }
     },
 
     login: async (credentials) => {
       try {
-        console.log("🔐 Starting login process...")
+        console.log("Starting login process...")
 
         const result = await loginUser(credentials.identifier, credentials.pin)
-        console.log("🔐 Login result:", result ? "success" : "failed")
+        console.log("Login result:", result ? "success" : "failed")
 
         if (result) {
-          // Stocker l'identifiant pour la biométrie future
+          // Store identifier for future biometric auth
           await setUserIdentifier(credentials.identifier)
-          console.log("✅ User identifier saved for biometric")
+          console.log("User identifier saved for biometric")
 
-          // Gérer la session
+          // Handle session
           const settings = await ensureUserSettings(result.user_id)
           if (settings.remember_session) {
             await setSessionExpiry()
-            console.log("✅ Session expiry set")
+            console.log("Session expiry set")
           }
 
           const authData = { user_id: result.user_id }
           await setAuthToken(JSON.stringify(authData))
-          console.log("✅ Auth token saved")
+          console.log("Auth token saved")
+
+          // Unlock app after successful login
+          await setAppLocked(false)
 
           const user: User = {
             user_id: result.user_id,
@@ -151,9 +200,10 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           set({
             user,
             sessionExpired: false,
+            appLocked: false,
           })
 
-          // Navigation différée pour éviter les conflits
+          // Delayed navigation to avoid conflicts
           setTimeout(() => {
             router.replace("/(tabs)/dashboard")
           }, 100)
@@ -163,23 +213,23 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
         return false
       } catch (error) {
-        console.error("❌ Login error:", error)
+        console.error("Login error:", error)
         return false
       }
     },
 
     loginWithBiometric: async () => {
       try {
-        console.log("🔐 Starting biometric login process...")
+        console.log("Starting biometric login process...")
 
-        // Récupérer l'identifiant stocké
+        // Get stored identifier
         const storedIdentifier = await getUserIdentifier()
         if (!storedIdentifier) {
           Toast.error("No stored credentials found for biometric authentication")
           return false
         }
 
-        // Vérifier que l'utilisateur existe et a la biométrie activée
+        // Check user exists and has biometric enabled
         const user = await getUserByIdentifier(storedIdentifier)
         if (!user) {
           Toast.error("User not found")
@@ -191,21 +241,21 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           return false
         }
 
-        // Vérifier les capacités biométriques
+        // Check biometric capabilities
         const capabilities = await checkBiometricCapabilities()
         if (!capabilities.isAvailable) {
           Toast.error("Biometric authentication is not available")
           return false
         }
 
-        // Authentification biométrique
+        // Biometric authentication
         const biometricResult = await authenticateWithBiometric()
         if (!biometricResult.success) {
-          Toast.error(biometricResult.error || "Biometric authentication failed")
+          Toast.error("Biometric authentication failed")
           return false
         }
 
-        // Connexion avec bypass PIN
+        // Login with PIN bypass
         const result = await loginUser(storedIdentifier, "", true)
         if (result) {
           const settings = await ensureUserSettings(result.user_id)
@@ -213,6 +263,9 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
           const authData = { user_id: result.user_id }
           await setAuthToken(JSON.stringify(authData))
+
+          // Unlock app after successful biometric login
+          await setAppLocked(false)
 
           const userObj: User = {
             user_id: result.user_id,
@@ -233,9 +286,10 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           set({
             user: userObj,
             sessionExpired: false,
+            appLocked: false,
           })
 
-          // Navigation différée
+          // Delayed navigation
           setTimeout(() => {
             router.replace("/(tabs)/dashboard")
           }, 100)
@@ -245,7 +299,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
         return false
       } catch (error) {
-        console.error("❌ Biometric login error:", error)
+        console.error("Biometric login error:", error)
         Toast.error("Biometric authentication error")
         return false
       }
@@ -268,7 +322,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           pin: credentials.pin,
         })
 
-        // Stocker l'identifiant pour futures connexions
+        // Store identifier for future connections
         const identifier = credentials.email || credentials.phone_number
         await setUserIdentifier(identifier)
 
@@ -373,11 +427,12 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
     logout: async () => {
       await clearAuthToken()
-      // Ne pas supprimer l'identifiant pour permettre la reconnexion rapide
-      // await clearUserIdentifier()
+      // Don't clear user identifier to allow quick re-authentication
+      await setAppLocked(false)
       set({
         user: null,
         sessionExpired: false,
+        appLocked: false,
         loading: false,
       })
       router.replace("/")
@@ -389,6 +444,17 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
     clearSessionExpired: () => {
       set({ sessionExpired: false })
+    },
+
+    setAppLocked: async (locked: boolean) => {
+      await setAppLocked(locked)
+      set({ appLocked: locked })
+    },
+
+    checkAppLock: async () => {
+      const locked = await isAppLocked()
+      set({ appLocked: locked })
+      return locked
     },
   })),
 )

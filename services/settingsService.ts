@@ -13,6 +13,9 @@ export const getSettings = async (user_id: string): Promise<Settings | null> => 
         ...settings,
         notification_enabled: Boolean(settings.notification_enabled),
         remember_session: Boolean(settings.remember_session),
+        system_notifications: settings.system_notifications !== undefined ? Boolean(settings.system_notifications) : true,
+        email_notifications: Boolean(settings.email_notifications),
+        sms_notifications: Boolean(settings.sms_notifications),
       }
     }
 
@@ -22,6 +25,7 @@ export const getSettings = async (user_id: string): Promise<Settings | null> => 
     return null
   }
 }
+
 export const createDefaultSettings = async (user_id: string): Promise<Settings> => {
   const now = new Date().toISOString()
 
@@ -32,8 +36,9 @@ export const createDefaultSettings = async (user_id: string): Promise<Settings> 
       `INSERT INTO settings (
         user_id, notification_enabled, days_before_reminder,
         inactivity_timeout, language, remember_session, session_duration,
+        system_notifications, email_notifications, sms_notifications, notification_time,
         created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         user_id,
         DEFAULT_SETTINGS.notification_enabled ? 1 : 0,
@@ -42,6 +47,10 @@ export const createDefaultSettings = async (user_id: string): Promise<Settings> 
         DEFAULT_SETTINGS.language,
         DEFAULT_SETTINGS.remember_session ? 1 : 0,
         DEFAULT_SETTINGS.session_duration,
+        DEFAULT_SETTINGS.system_notifications ? 1 : 0,
+        DEFAULT_SETTINGS.email_notifications ? 1 : 0,
+        DEFAULT_SETTINGS.sms_notifications ? 1 : 0,
+        DEFAULT_SETTINGS.notification_time,
         now,
         now,
       ],
@@ -69,8 +78,10 @@ export const ensureUserSettings = async (user_id: string): Promise<Settings> => 
     await db.runAsync(
       `INSERT INTO settings 
       (user_id, notification_enabled, days_before_reminder, language, 
-        inactivity_timeout, remember_session, session_duration, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        inactivity_timeout, remember_session, session_duration, 
+        system_notifications, email_notifications, sms_notifications, notification_time,
+        created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         user_id,
         DEFAULT_SETTINGS.notification_enabled ? 1 : 0,
@@ -79,6 +90,10 @@ export const ensureUserSettings = async (user_id: string): Promise<Settings> => 
         DEFAULT_SETTINGS.inactivity_timeout,
         DEFAULT_SETTINGS.remember_session ? 1 : 0,
         DEFAULT_SETTINGS.session_duration,
+        DEFAULT_SETTINGS.system_notifications ? 1 : 0,
+        DEFAULT_SETTINGS.email_notifications ? 1 : 0,
+        DEFAULT_SETTINGS.sms_notifications ? 1 : 0,
+        DEFAULT_SETTINGS.notification_time,
         now,
         now,
       ],
@@ -92,6 +107,10 @@ export const ensureUserSettings = async (user_id: string): Promise<Settings> => 
       inactivity_timeout: DEFAULT_SETTINGS.inactivity_timeout,
       remember_session: DEFAULT_SETTINGS.remember_session,
       session_duration: DEFAULT_SETTINGS.session_duration,
+      system_notifications: DEFAULT_SETTINGS.system_notifications,
+      email_notifications: DEFAULT_SETTINGS.email_notifications,
+      sms_notifications: DEFAULT_SETTINGS.sms_notifications,
+      notification_time: DEFAULT_SETTINGS.notification_time,
       created_at: now,
       updated_at: now,
     }
@@ -135,14 +154,5 @@ export const updateSettings = async (user_id: string, updates: Partial<Settings>
   } catch (error) {
     console.error("❌ Error updating settings:", error)
     return false
-  }
-}
-export const deleteSettings = async (user_id: string): Promise<void> => {
-  try {
-    const db = getDb()
-    await db.runAsync(`DELETE FROM settings WHERE user_id = ?`, [user_id])
-  } catch (error) {
-    console.error("Error deleting settings:", error)
-    throw error
   }
 }

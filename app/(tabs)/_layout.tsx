@@ -1,7 +1,7 @@
 import { useTwColors } from "@/lib/tw-colors"
 import { Feather } from "@expo/vector-icons"
 import { Tabs, useRouter } from "expo-router"
-import { Text, View } from "react-native"
+import { StatusBar, Text, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useEffect } from "react"
 import { useAuthStore } from "@/stores/authStore"
@@ -79,6 +79,8 @@ export default function TabsLayout() {
 
   return (
     <>
+      <StatusBar animated translucent barStyle="dark-content" />
+
       <SafeAreaView
         style={{
           flex: 1,
@@ -148,7 +150,6 @@ export default function TabsLayout() {
               title: "Paramètres",
               tabBarIcon: ({ focused }) => <TabIcon focused={focused} iconName="settings" title="Paramètres" />,
               headerShown: false,
-            
             }}
           />
         </Tabs>

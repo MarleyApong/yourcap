@@ -7,17 +7,16 @@ import { useAuthStore } from "@/stores/authStore"
 import { Feather, MaterialIcons } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { useEffect, useState } from "react"
-import { Modal, Pressable, ScrollView, Switch, Text, useColorScheme, View } from "react-native"
+import { Modal, Pressable, ScrollView, Switch, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import AsyncStorage from "@react-native-async-storage/async-storage"
+import { requestNotificationPermissions, scheduleAllDebtReminders, updateNotificationSettings } from "@/services/notificationService"
 
 export default function Settings() {
-  const { user, logout, updateBiometricSetting, biometricCapabilities } = useAuthStore()
+  const { user, logout, updateBiometricSetting } = useAuthStore()
   const { settings, loading, updateSetting } = useSettings()
   const { twColor } = useTwColors()
   const router = useRouter()
   const insets = useSafeAreaInsets()
-  const colorScheme = useColorScheme()
 
   // State
   const [localBiometricCapabilities, setLocalBiometricCapabilities] = useState<BiometricCapabilities | null>(null)
@@ -56,9 +55,8 @@ export default function Settings() {
     const success = await updateBiometricSetting(enabled)
     if (!success) {
       Toast.error("Failed to update biometric setting", "Error")
-    }
-    else {
-      Toast.success(enabled ?"Biometric enabled" : "Biometric disabled")
+    } else {
+      Toast.success(enabled ? "Biometric enabled" : "Biometric disabled")
     }
   }
 
@@ -489,8 +487,23 @@ export default function Settings() {
               <Text style={{ color: twColor("foreground") }}>Enable Notifications</Text>
               <Switch
                 value={settings.notification_enabled}
-                onValueChange={(val) => {
-                  updateSetting("notification_enabled", val)
+                onValueChange={async (val) => {
+                  const success = await updateSetting("notification_enabled", val)
+                  if (success && val) {
+                    // Request permissions and schedule notifications
+                    const hasPermission = await requestNotificationPermissions()
+                    if (hasPermission && user?.user_id) {
+                      await scheduleAllDebtReminders(user.user_id)
+                      Toast.success("Notifications enabled")
+                    } else {
+                      Toast.error("Notification permissions denied")
+                    }
+                  } else if (success && !val) {
+                    // Cancel all notifications
+                    const Notifications = await import("expo-notifications")
+                    await Notifications.cancelAllScheduledNotificationsAsync()
+                    Toast.success("Notifications disabled")
+                  }
                 }}
                 trackColor={{
                   false: twColor("muted"),
@@ -501,26 +514,136 @@ export default function Settings() {
             </View>
 
             {settings.notification_enabled && (
-              <View
-                style={{
-                  borderTopColor: twColor("border"),
-                }}
-                className="py-3 border-t"
-              >
-                <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                  Days Before Reminder
-                </Text>
-                <SelectionButtons
-                  options={[
-                    { value: 1, label: "1 day" },
-                    { value: 3, label: "3 days" },
-                    { value: 5, label: "5 days" },
-                    { value: 7, label: "7 days" },
-                  ]}
-                  selectedValue={settings.days_before_reminder}
-                  onSelect={(days) => updateSetting("days_before_reminder", days)}
-                />
-              </View>
+              <>
+                {/* Notification Types */}
+                <View
+                  style={{
+                    borderTopColor: twColor("border"),
+                  }}
+                  className="py-3 border-t"
+                >
+                  <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
+                    Notification Types
+                  </Text>
+
+                  {/* System Notifications */}
+                  <View className="flex-row items-center justify-between py-2">
+                    <View className="flex-1">
+                      <Text style={{ color: twColor("foreground") }}>System Notifications</Text>
+                      <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
+                        Push notifications on your device
+                      </Text>
+                    </View>
+                    <Switch
+                      value={settings.system_notifications}
+                      onValueChange={async (val) => {
+                        const success = await updateSetting("system_notifications", val)
+                        if (success && user?.user_id) {
+                          await updateNotificationSettings(user.user_id)
+                          Toast.success(val ? "System notifications enabled" : "System notifications disabled")
+                        }
+                      }}
+                      trackColor={{
+                        false: twColor("muted"),
+                        true: twColor("primary"),
+                      }}
+                      thumbColor={twColor("card-background")}
+                    />
+                  </View>
+
+                  {/* Email Notifications */}
+                  <View className="flex-row items-center justify-between py-2">
+                    <View className="flex-1">
+                      <Text style={{ color: twColor("foreground") }}>Email Notifications</Text>
+                      <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
+                        Send reminders to your email
+                      </Text>
+                    </View>
+                    <Switch
+                      value={settings.email_notifications}
+                      onValueChange={() => Toast.info("Email notifications coming soon!")}
+                      trackColor={{
+                        false: twColor("muted"),
+                        true: twColor("primary"),
+                      }}
+                      thumbColor={twColor("card-background")}
+                    />
+                  </View>
+
+                  {/* SMS Notifications */}
+                  <View className="flex-row items-center justify-between py-2">
+                    <View className="flex-1">
+                      <Text style={{ color: twColor("foreground") }}>SMS Notifications</Text>
+                      <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
+                        Send reminders via SMS
+                      </Text>
+                    </View>
+                    <Switch
+                      value={settings.sms_notifications}
+                      onValueChange={() => Toast.info("SMS notifications coming soon!")}
+                      trackColor={{
+                        false: twColor("muted"),
+                        true: twColor("primary"),
+                      }}
+                      thumbColor={twColor("card-background")}
+                    />
+                  </View>
+                </View>
+
+                {/* Days Before Reminder */}
+                <View
+                  style={{
+                    borderTopColor: twColor("border"),
+                  }}
+                  className="py-3 border-t"
+                >
+                  <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
+                    Days Before Reminder
+                  </Text>
+                  <SelectionButtons
+                    options={[
+                      { value: 1, label: "1 day" },
+                      { value: 3, label: "3 days" },
+                      { value: 5, label: "5 days" },
+                      { value: 7, label: "7 days" },
+                    ]}
+                    selectedValue={settings.days_before_reminder}
+                    onSelect={async (days) => {
+                      const success = await updateSetting("days_before_reminder", days)
+                      if (success && user?.user_id) {
+                        await scheduleAllDebtReminders(user.user_id)
+                        Toast.success("Reminder schedule updated")
+                      }
+                    }}
+                  />
+                </View>
+
+                {/* Notification Time */}
+                <View
+                  style={{
+                    borderTopColor: twColor("border"),
+                  }}
+                  className="py-3 border-t"
+                >
+                  <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
+                    Preferred Time for Notifications
+                  </Text>
+                  <SelectionButtons
+                    options={[
+                      { value: "09:00", label: "9:00 AM" },
+                      { value: "12:00", label: "12:00 PM" },
+                      { value: "15:00", label: "3:00 PM" },
+                      { value: "18:00", label: "6:00 PM" },
+                      { value: "20:00", label: "8:00 PM" },
+                    ]}
+                    selectedValue={settings.notification_time}
+                    onSelect={(time) => {
+                      updateSetting("notification_time", time)
+                      Toast.info("Notification time preference saved")
+                    }}
+                  />
+                </View>
+              </>
             )}
           </SettingCard>
 

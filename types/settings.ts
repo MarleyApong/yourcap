@@ -6,6 +6,10 @@ export interface Settings {
   inactivity_timeout: number
   remember_session: boolean
   session_duration: number // (en minutes)
+  system_notifications?: boolean
+  email_notifications?: boolean
+  sms_notifications?: boolean
+  notification_time?: string // Format HH:MM
   created_at: string
   updated_at: string
 }
@@ -17,4 +21,8 @@ export interface DefaultSettings {
   inactivity_timeout: number
   remember_session: boolean
   session_duration: number // (en minutes)
+  system_notifications: boolean
+  email_notifications: boolean
+  sms_notifications: boolean
+  notification_time: string // Format HH:MM
 }
