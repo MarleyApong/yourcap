@@ -148,6 +148,7 @@ export default function TabsLayout() {
               title: "Paramètres",
               tabBarIcon: ({ focused }) => <TabIcon focused={focused} iconName="settings" title="Paramètres" />,
               headerShown: false,
+            
             }}
           />
         </Tabs>

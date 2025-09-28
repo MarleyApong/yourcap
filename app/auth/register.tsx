@@ -6,7 +6,7 @@ import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
-import { Platform, Pressable, Text, TextInput, View } from "react-native"
+import { Image, Platform, Pressable, Text, TextInput, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 export default function Register() {
@@ -79,8 +79,6 @@ export default function Register() {
 
     setLoading(true)
     try {
-      console.log("formData", formData)
-
       const success = await register({
         full_name: formData.full_name.trim(),
         email: formData.email.trim() || "",
@@ -197,6 +195,7 @@ export default function Register() {
       <FBackButton />
 
       <View className="flex items-center justify-center h-screen w-full px-8">
+        <Image source={require("@/assets/images/logo/logo.png")} className="w-60 h-60 absolute opacity-5" />
         <Text className="text-5xl text-primary font-bold">Register</Text>
         <Text className="text-2xl">Create your account</Text>
 

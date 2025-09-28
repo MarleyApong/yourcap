@@ -7,6 +7,7 @@ import { CreateUserInput } from "@/types/user"
 import { router } from "expo-router"
 import { create } from "zustand"
 import { subscribeWithSelector } from "zustand/middleware"
+import "react-native-get-random-values"
 
 type UserSettings = {
   notification_enabled: boolean
@@ -118,15 +119,18 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         if (result) {
           // Stocker l'identifiant pour la biométrie future
           await setUserIdentifier(credentials.identifier)
+          console.log("✅ User identifier saved for biometric")
 
           // Gérer la session
           const settings = await ensureUserSettings(result.user_id)
           if (settings.remember_session) {
             await setSessionExpiry()
+            console.log("✅ Session expiry set")
           }
 
           const authData = { user_id: result.user_id }
           await setAuthToken(JSON.stringify(authData))
+          console.log("✅ Auth token saved")
 
           const user: User = {
             user_id: result.user_id,

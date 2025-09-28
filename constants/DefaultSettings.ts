@@ -5,5 +5,4 @@ export const DEFAULT_SETTINGS = {
   inactivity_timeout: 30,
   remember_session: true,
   session_duration: 1440, // 24h en minutes
-  theme: 'system',
 } as const

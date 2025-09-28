@@ -6,7 +6,6 @@ export interface Settings {
   inactivity_timeout: number
   remember_session: boolean
   session_duration: number // (en minutes)
-  theme: "system" | "light" | "dark"
   created_at: string
   updated_at: string
 }
@@ -18,5 +17,4 @@ export interface DefaultSettings {
   inactivity_timeout: number
   remember_session: boolean
   session_duration: number // (en minutes)
-  theme: "system" | "light" | "dark"
 }

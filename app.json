@@ -4,7 +4,7 @@
     "slug": "yourcap-slug",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo/logo.png",
     "scheme": "yourcap",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,26 +13,31 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/logo/logo.png",
+        "backgroundColor": "#00000000"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.yourcapslug"
+      "package": "com.anonymous.yourcap"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/logo/logo.png"
     },
     "plugins": [
-      "expo-router",
+      [
+        "expo-router",
+        {
+          "origin": "https://yourcap-slug.com"
+        }
+      ],
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/logo/logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#00000000"
         }
       ]
     ],
@@ -40,7 +45,9 @@
       "typedRoutes": true
     },
     "extra": {
-      "router": {},
+      "router": {
+        "origin": false
+      },
       "eas": {
         "projectId": "db21fc39-6fb2-4b12-b025-f82890ba36ce"
       }

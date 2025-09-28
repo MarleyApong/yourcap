@@ -164,6 +164,8 @@ export default function Login() {
 
         <View className="flex-1 justify-between">
           <View className="flex items-center w-full px-8 mt-10">
+            <Image source={require("@/assets/images/logo/logo.png")} className="w-60 h-60 absolute opacity-5" />
+
             <Text className="text-5xl text-primary font-bold">Welcome Back</Text>
             <Text className="text-2xl">Enter your credentials</Text>
 

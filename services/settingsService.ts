@@ -6,13 +6,22 @@ export const getSettings = async (user_id: string): Promise<Settings | null> => 
   try {
     const db = getDb()
     const settings = await db.getFirstAsync<Settings>(`SELECT * FROM settings WHERE user_id = ?`, [user_id])
-    return settings || null
+
+    if (settings) {
+      // Convertir les valeurs numériques en booléens
+      return {
+        ...settings,
+        notification_enabled: Boolean(settings.notification_enabled),
+        remember_session: Boolean(settings.remember_session),
+      }
+    }
+
+    return null
   } catch (error) {
     console.error("Error fetching settings:", error)
     return null
   }
 }
-
 export const createDefaultSettings = async (user_id: string): Promise<Settings> => {
   const now = new Date().toISOString()
 
@@ -23,8 +32,8 @@ export const createDefaultSettings = async (user_id: string): Promise<Settings> 
       `INSERT INTO settings (
         user_id, notification_enabled, days_before_reminder,
         inactivity_timeout, language, remember_session, session_duration,
-        theme, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         user_id,
         DEFAULT_SETTINGS.notification_enabled ? 1 : 0,
@@ -33,7 +42,6 @@ export const createDefaultSettings = async (user_id: string): Promise<Settings> 
         DEFAULT_SETTINGS.language,
         DEFAULT_SETTINGS.remember_session ? 1 : 0,
         DEFAULT_SETTINGS.session_duration,
-        DEFAULT_SETTINGS.theme,
         now,
         now,
       ],
@@ -61,8 +69,8 @@ export const ensureUserSettings = async (user_id: string): Promise<Settings> => 
     await db.runAsync(
       `INSERT INTO settings 
       (user_id, notification_enabled, days_before_reminder, language, 
-        inactivity_timeout, remember_session, session_duration, theme, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        inactivity_timeout, remember_session, session_duration, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         user_id,
         DEFAULT_SETTINGS.notification_enabled ? 1 : 0,
@@ -71,7 +79,6 @@ export const ensureUserSettings = async (user_id: string): Promise<Settings> => 
         DEFAULT_SETTINGS.inactivity_timeout,
         DEFAULT_SETTINGS.remember_session ? 1 : 0,
         DEFAULT_SETTINGS.session_duration,
-        DEFAULT_SETTINGS.theme,
         now,
         now,
       ],
@@ -85,7 +92,6 @@ export const ensureUserSettings = async (user_id: string): Promise<Settings> => 
       inactivity_timeout: DEFAULT_SETTINGS.inactivity_timeout,
       remember_session: DEFAULT_SETTINGS.remember_session,
       session_duration: DEFAULT_SETTINGS.session_duration,
-      theme: DEFAULT_SETTINGS.theme,
       created_at: now,
       updated_at: now,
     }
@@ -106,7 +112,12 @@ export const updateSettings = async (user_id: string, updates: Partial<Settings>
     Object.entries(updates).forEach(([key, value]) => {
       if (key !== "user_id" && key !== "created_at" && key !== "updated_at") {
         fields.push(`${key} = ?`)
-        values.push(value)
+        // Convertir les booléens en nombres pour SQLite
+        if (typeof value === "boolean") {
+          values.push(value ? 1 : 0)
+        } else {
+          values.push(value)
+        }
       }
     })
 
@@ -114,15 +125,18 @@ export const updateSettings = async (user_id: string, updates: Partial<Settings>
     values.push(now)
     values.push(user_id)
 
-    await db.runAsync(`UPDATE settings SET ${fields.join(", ")} WHERE user_id = ?`, values)
+    const query = `UPDATE settings SET ${fields.join(", ")} WHERE user_id = ?`
+    console.log("🔧 Updating settings:", query, values)
 
+    await db.runAsync(query, values)
+
+    console.log("✅ Settings updated successfully")
     return true
   } catch (error) {
-    console.error("Error updating settings:", error)
+    console.error("❌ Error updating settings:", error)
     return false
   }
 }
-
 export const deleteSettings = async (user_id: string): Promise<void> => {
   try {
     const db = getDb()

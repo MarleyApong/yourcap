@@ -35,7 +35,7 @@ export const PageHeader = ({ title, backPath, fbackButton = true, textAlign = "c
         borderBottomWidth: 1,
         borderColor: twColor("navigation-border"),
         shadowColor: twColor("navigation-shadow"),
-        // paddingTop: insets.top - 20,
+        paddingTop: 20,
         paddingBottom: 10,
         position: "relative",
         top: 0,

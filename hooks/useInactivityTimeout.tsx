@@ -5,27 +5,40 @@ import { useRouter, usePathname } from "expo-router"
 import { useAuthStore } from "@/stores/authStore"
 
 const LAST_ACTIVE_KEY = "lastActiveTime"
+const INACTIVITY_TIMEOUT_KEY = "inactivityTimeout"
 
-export default function useInactivityTimeout() {
+export function useInactivityTimeout() {
   const { user, logout, markSessionExpired } = useAuthStore()
   const router = useRouter()
   const pathname = usePathname()
   const appStateRef = useRef(AppState.currentState)
-  const lastActiveTimeRef = useRef<Date>(new Date())
-  const inactivityCheckRef = useRef<NodeJS.Timeout>()
+  const inactivityCheckRef = useRef<number | null>(null)
 
   useEffect(() => {
-    if (!user?.settings?.inactivity_timeout) return
+    if (!user) return
 
     const updateLastActiveTime = async () => {
       const now = new Date()
-      lastActiveTimeRef.current = now
       await AsyncStorage.setItem(LAST_ACTIVE_KEY, now.toISOString())
+      console.log("✅ Last active time updated:", now)
     }
 
     const checkInactivity = async () => {
       try {
-        if (!user?.settings?.inactivity_timeout) return
+        // Récupérer le timeout d'inactivité depuis les settings ou AsyncStorage
+        let inactivityTimeout = user.settings?.inactivity_timeout ?? 30 // 30 minutes par défaut
+
+        // Vérifier s'il y a une valeur dans AsyncStorage (pour les cas où les settings ne sont pas encore chargées)
+        const storedTimeout = await AsyncStorage.getItem(INACTIVITY_TIMEOUT_KEY)
+        if (storedTimeout) {
+          inactivityTimeout = parseInt(storedTimeout, 10)
+        }
+
+        // Si le timeout est 0, déconnecter immédiatement quand l'app passe en arrière-plan
+        if (inactivityTimeout === 0) {
+          console.log("⚡ Immediate logout on background")
+          return
+        }
 
         const lastActiveStr = await AsyncStorage.getItem(LAST_ACTIVE_KEY)
         if (!lastActiveStr) {
@@ -37,14 +50,14 @@ export default function useInactivityTimeout() {
         const now = new Date()
         const inactiveMinutes = (now.getTime() - lastActive.getTime()) / (1000 * 60)
 
-        console.log(`🕐 Inactive for ${inactiveMinutes.toFixed(2)} minutes (limit: ${user.settings.inactivity_timeout})`)
+        console.log(`🕐 Inactive for ${inactiveMinutes.toFixed(2)} minutes (limit: ${inactivityTimeout})`)
 
-        if (inactiveMinutes > user.settings.inactivity_timeout) {
+        if (inactiveMinutes > inactivityTimeout) {
           console.log("🔒 Session expired due to inactivity")
           markSessionExpired()
           await logout()
-          
-          // Redirection vers la page appropriée
+
+          // Redirection vers la page de login
           if (!pathname.includes("auth") && pathname !== "/") {
             router.replace("/")
           }
@@ -61,17 +74,28 @@ export default function useInactivityTimeout() {
       console.log(`📱 App state: ${previousAppState} → ${nextAppState}`)
 
       if (nextAppState === "active") {
-        if (previousAppState.match(/inactive|background/)) {
-          // App revient au premier plan - vérifier l'inactivité
-          console.log("🔍 App resumed, checking inactivity")
-          await checkInactivity()
-        }
-        // Mise à jour du timestamp d'activité
+        // App revient au premier plan
+        console.log("🔍 App resumed, checking inactivity")
+        await checkInactivity()
         await updateLastActiveTime()
       } else if (nextAppState.match(/inactive|background/)) {
         // App passe en arrière-plan
-        console.log("💤 App going to background, saving timestamp")
-        await updateLastActiveTime()
+        console.log("💤 App going to background")
+
+        // Vérifier le timeout immédiat
+        const inactivityTimeout = user.settings?.inactivity_timeout ?? 30
+        if (inactivityTimeout === 0) {
+          // Déconnexion immédiate
+          console.log("⚡ Immediate logout triggered")
+          markSessionExpired()
+          await logout()
+          if (!pathname.includes("auth") && pathname !== "/") {
+            router.replace("/")
+          }
+        } else {
+          // Sauvegarder le timestamp
+          await updateLastActiveTime()
+        }
       }
     }
 
@@ -84,10 +108,9 @@ export default function useInactivityTimeout() {
     // Vérifier l'inactivité périodiquement quand l'app est active
     inactivityCheckRef.current = setInterval(() => {
       if (AppState.currentState === "active" && user) {
-        updateLastActiveTime()
         checkInactivity()
       }
-    }, 30000) // Vérifier toutes les 30 secondes
+    }, 30000) as unknown as number
 
     return () => {
       subscription?.remove()
@@ -97,39 +120,32 @@ export default function useInactivityTimeout() {
     }
   }, [user?.settings?.inactivity_timeout, user?.user_id, logout, markSessionExpired, router, pathname])
 
+  // Sauvegarder le timeout d'inactivité quand il change
+  useEffect(() => {
+    const saveInactivityTimeout = async () => {
+      if (user?.settings?.inactivity_timeout !== undefined) {
+        await AsyncStorage.setItem(INACTIVITY_TIMEOUT_KEY, user.settings.inactivity_timeout.toString())
+        console.log("✅ Inactivity timeout saved:", user.settings.inactivity_timeout)
+      }
+    }
+
+    saveInactivityTimeout()
+  }, [user?.settings?.inactivity_timeout])
+
   // Nettoyage si l'utilisateur se déconnecte
   useEffect(() => {
     if (!user && inactivityCheckRef.current) {
       clearInterval(inactivityCheckRef.current)
+      inactivityCheckRef.current = null
     }
   }, [user])
 }
 
-// Hook séparé pour gérer l'authentification au démarrage
+// Hook séparé pour gérer l'authentification au démarrage - MAINTENANT SIMPLIFIÉ
 export const useAppStartup = () => {
-  const { user, loadUser, checkBiometricCapabilities, isInitialized, sessionExpired, clearSessionExpired } = useAuthStore()
+  const { user, isInitialized, sessionExpired, clearSessionExpired } = useAuthStore()
   const router = useRouter()
   const pathname = usePathname()
-
-  useEffect(() => {
-    const initializeApp = async () => {
-      try {
-        console.log("🚀 Initializing app...")
-        
-        // Charger les capacités biométriques
-        await checkBiometricCapabilities()
-
-        // Charger l'utilisateur depuis le storage
-        await loadUser()
-        
-        console.log("✅ App initialized")
-      } catch (error) {
-        console.error("❌ Error during app startup:", error)
-      }
-    }
-
-    initializeApp()
-  }, [checkBiometricCapabilities, loadUser])
 
   useEffect(() => {
     if (!isInitialized) return

@@ -1,9 +1,12 @@
 import { Dimensions, ImageBackground, Text, View } from "react-native"
 import { Link } from "expo-router"
+import { useAppStartup } from "@/hooks/useInactivityTimeout"
 
 const { height: screenHeight } = Dimensions.get("window")
 
 export default function Index() {
+  useAppStartup()
+  
   return (
     <ImageBackground source={require("@/assets/images/bg/welcome.jpg")} className="flex-1 justify-center items-center" resizeMode="cover">
       {/* Overlay sombre */}

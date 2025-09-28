@@ -7,15 +7,19 @@ import { useAuthStore } from "@/stores/authStore"
 import { Feather, MaterialIcons } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { useEffect, useState } from "react"
-import { Pressable, ScrollView, Switch, Text, View, Modal, Alert } from "react-native"
+import { Modal, Pressable, ScrollView, Switch, Text, useColorScheme, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export default function Settings() {
   const { user, logout, updateBiometricSetting, biometricCapabilities } = useAuthStore()
   const { settings, loading, updateSetting } = useSettings()
-  const router = useRouter()
   const { twColor } = useTwColors()
+  const router = useRouter()
   const insets = useSafeAreaInsets()
+  const colorScheme = useColorScheme()
+
+  // State
   const [localBiometricCapabilities, setLocalBiometricCapabilities] = useState<BiometricCapabilities | null>(null)
   const [modalVisible, setModalVisible] = useState(false)
   const [modalContent, setModalContent] = useState<React.ReactNode>(null)
@@ -53,6 +57,9 @@ export default function Settings() {
     if (!success) {
       Toast.error("Failed to update biometric setting", "Error")
     }
+    else {
+      Toast.success(enabled ?"Biometric enabled" : "Biometric disabled")
+    }
   }
 
   const handleRememberSessionToggle = async (enabled: boolean) => {
@@ -67,12 +74,15 @@ export default function Settings() {
 
   const handleSessionDurationChange = async (hours: number) => {
     const minutes = hours * 60
-    await updateSetting("session_duration", minutes)
+    const success = await updateSetting("session_duration", minutes)
 
-    // Mettre à jour immédiatement l'expiration si la session est active
-    if (settings.remember_session) {
-      const { setSessionExpiry } = await import("@/lib/auth")
-      await setSessionExpiry()
+    if (success) {
+      // Mettre à jour immédiatement l'expiration si la session est active
+      if (settings.remember_session) {
+        const { setSessionExpiry } = await import("@/lib/auth")
+        await setSessionExpiry()
+      }
+      Toast.success("Session duration updated", "Success")
     }
   }
 
@@ -277,11 +287,11 @@ export default function Settings() {
         {icon && (
           <View
             style={{
-              backgroundColor: isDanger ? `${twColor("destructive")}15` : `${twColor("primary")}15`,
+              backgroundColor: isDanger ? `${twColor("destructive")}15` : `${twColor("primary")}`,
             }}
             className="p-2 rounded-full mr-3"
           >
-            <Feather name={icon as any} size={20} color={isDanger ? twColor("destructive") : twColor("primary")} />
+            <Feather name={icon as any} size={20} color={isDanger ? twColor("destructive") : twColor("primary-foreground")} />
           </View>
         )}
         <Text
@@ -353,11 +363,11 @@ export default function Settings() {
             <View className="flex-row items-center mb-4">
               <View
                 style={{
-                  backgroundColor: `${twColor("primary")}15`,
+                  backgroundColor: `${twColor("primary")}`,
                 }}
                 className="p-3 rounded-full mr-4"
               >
-                <Feather name="user" size={24} color={twColor("primary")} />
+                <Feather name="user" size={24} color={twColor("primary-foreground")} />
               </View>
               <View>
                 <Text style={{ color: twColor("foreground") }} className="text-lg font-medium">
@@ -373,24 +383,6 @@ export default function Settings() {
             <SettingRow icon="lock" title="Change PIN" onPress={() => Toast.info("Change PIN feature coming soon!", "Info")} />
           </SettingCard>
 
-          {/* Appearance Section */}
-          <SettingCard title="Appearance">
-            <View className="py-3">
-              <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                Theme
-              </Text>
-              <SelectionButtons
-                options={[
-                  { value: "system", label: "System" },
-                  { value: "light", label: "Light" },
-                  { value: "dark", label: "Dark" },
-                ]}
-                selectedValue={settings.theme}
-                onSelect={(theme) => updateSetting("theme", theme)}
-              />
-            </View>
-          </SettingCard>
-
           {/* Security Section */}
           <SettingCard title="Security">
             {localBiometricCapabilities?.isAvailable && (
@@ -398,11 +390,11 @@ export default function Settings() {
                 <View className="flex-row items-center flex-1">
                   <View
                     style={{
-                      backgroundColor: `${twColor("primary")}15`,
+                      backgroundColor: `${twColor("primary")}`,
                     }}
                     className="p-2 rounded-full mr-3"
                   >
-                    <MaterialIcons name="fingerprint" size={20} color={twColor("primary")} />
+                    <MaterialIcons name="fingerprint" size={20} color={twColor("primary-foreground")} />
                   </View>
                   <View className="flex-1">
                     <Text style={{ color: twColor("foreground") }}>{getBiometricDisplayName(localBiometricCapabilities.biometryType)} Authentication</Text>
@@ -497,7 +489,9 @@ export default function Settings() {
               <Text style={{ color: twColor("foreground") }}>Enable Notifications</Text>
               <Switch
                 value={settings.notification_enabled}
-                onValueChange={(val) => updateSetting("notification_enabled", val)}
+                onValueChange={(val) => {
+                  updateSetting("notification_enabled", val)
+                }}
                 trackColor={{
                   false: twColor("muted"),
                   true: twColor("primary"),
