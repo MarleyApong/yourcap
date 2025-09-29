@@ -82,9 +82,11 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         const storedAuth = await getAuthToken()
         const appLocked = await isAppLocked()
 
-        // Check if app is locked but has valid session
+        console.log("Load user - Session valid:", sessionValid, "Stored auth:", !!storedAuth, "App locked:", appLocked)
+
+        // Si l'app est verrouillée MAIS a une session valide, on garde l'utilisateur connecté MAIS verrouillé
         if (appLocked && sessionValid && storedAuth) {
-          // App is locked, keep user data but set locked state
+          console.log("App is locked but session is valid - user needs PIN/fingerprint")
           const authData = JSON.parse(storedAuth)
           const userData = await getUserById(authData.user_id)
 
@@ -102,27 +104,66 @@ export const useAuthStore = create<AuthState & AuthActions>()(
                   session_duration: settings.session_duration,
                 },
               },
-              appLocked: true,
+              appLocked: true, // L'app reste verrouillée jusqu'à authentification PIN/fingerprint
               isInitialized: true,
               loading: false,
+              sessionExpired: false,
             })
             return
           }
         }
 
+        // Si l'app n'est PAS verrouillée ET a une session valide, on déverrouille automatiquement
+        if (!appLocked && sessionValid && storedAuth) {
+          console.log("App not locked and session valid - auto unlocking")
+          const authData = JSON.parse(storedAuth)
+          const userData = await getUserById(authData.user_id)
+
+          if (userData) {
+            const settings = await ensureUserSettings(authData.user_id)
+            set({
+              user: {
+                ...userData,
+                settings: {
+                  notification_enabled: settings.notification_enabled,
+                  days_before_reminder: settings.days_before_reminder,
+                  inactivity_timeout: settings.inactivity_timeout,
+                  language: settings.language,
+                  remember_session: settings.remember_session,
+                  session_duration: settings.session_duration,
+                },
+              },
+              appLocked: false, // Déverrouillé car session valide et app pas verrouillée
+              isInitialized: true,
+              loading: false,
+              sessionExpired: false,
+            })
+            return
+          }
+        }
+
+        // Si pas de session valide OU pas de token stocké
         if (!sessionValid || !storedAuth) {
+          console.log("No valid session or auth token - logging out")
           await clearAuthToken()
-          // Don't clear user identifier - keep for quick re-auth
-          set({ user: null, isInitialized: true, loading: false, sessionExpired: !sessionValid && !!storedAuth })
+          set({
+            user: null,
+            isInitialized: true,
+            loading: false,
+            sessionExpired: !sessionValid && !!storedAuth,
+            appLocked: false,
+          })
           return
         }
 
+        // Cas par défaut - session valide mais problème de chargement utilisateur
         const authData = JSON.parse(storedAuth)
         const userData = await getUserById(authData.user_id)
 
         if (!userData) {
+          console.log("No user data found for stored auth")
           await clearAuthToken()
-          set({ user: null, isInitialized: true, loading: false })
+          set({ user: null, isInitialized: true, loading: false, appLocked: false })
           return
         }
 
@@ -146,12 +187,11 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           appLocked: false,
         })
 
-        // Unlock app after successful load
-        await setAppLocked(false)
+        console.log("User loaded successfully - app unlocked")
       } catch (error) {
         console.error("Failed to load user:", error)
         await clearAuthToken()
-        set({ user: null, isInitialized: true, loading: false })
+        set({ user: null, isInitialized: true, loading: false, appLocked: false })
       }
     },
 

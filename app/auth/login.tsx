@@ -1,7 +1,7 @@
 import { FBackButton } from "@/components/ui/fback-button"
 import { Loader } from "@/components/ui/loader"
 import PinInput from "@/components/ui/pin-input"
-import { hasPreviousSession, isAppLocked, setAppLocked } from "@/lib/auth"
+import { hasPreviousSession, isAppLocked, setAppLocked, hasValidSessionForQuickAuth } from "@/lib/auth"
 import { useTwColors } from "@/lib/tw-colors"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
@@ -21,7 +21,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [pinKey, setPinKey] = useState(0)
   const [shouldShowBiometric, setShouldShowBiometric] = useState(false)
-  const [isQuickAuth, setIsQuickAuth] = useState(false) // For Microsoft Authenticator-like flow
+  const [isQuickAuth, setIsQuickAuth] = useState(false)
 
   useEffect(() => {
     checkBiometricCapabilities()
@@ -30,20 +30,16 @@ export default function Login() {
 
   const initializeLoginState = async () => {
     try {
-      // Check if app was locked (coming from background)
-      const appLocked = await isAppLocked()
-      const previousSession = await hasPreviousSession()
+      const quickAuthSession = await hasValidSessionForQuickAuth()
 
-      console.log("Login init - App locked:", appLocked, "Previous session:", previousSession.hasData)
+      console.log("Login init - Quick auth session:", quickAuthSession)
 
-      if (previousSession.hasData) {
-        // User has previous session data - go to quick auth
-        setIdentifier(previousSession.identifier!)
+      if (quickAuthSession.hasValidSession) {
+        setIdentifier(quickAuthSession.identifier!)
         setShowPinInput(true)
         setIsQuickAuth(true)
-        setShouldShowBiometric(previousSession.biometricEnabled || false)
+        setShouldShowBiometric(quickAuthSession.biometricEnabled || false)
 
-        // Clear app lock since we're asking for auth
         await setAppLocked(false)
       }
     } catch (error) {
@@ -117,13 +113,13 @@ export default function Login() {
 
   const handleBackFromPin = () => {
     if (isQuickAuth) {
-      // If it's quick auth and user goes back, reset everything
+      // Si c'est l'authentification rapide et que l'utilisateur revient en arrière, tout réinitialiser
       setShowPinInput(false)
       setIdentifier("")
       setIsQuickAuth(false)
       setShouldShowBiometric(false)
     } else {
-      // Normal flow - just go back to identifier input
+      // Flux normal - juste retourner à la saisie de l'identifiant
       setShowPinInput(false)
     }
     setPinKey((prev) => prev + 1)
@@ -137,6 +133,7 @@ export default function Login() {
         {isQuickAuth && (
           <View className="pt-12 px-8">
             <TouchableOpacity onPress={handleBackFromPin} className="flex-row items-center gap-2 mb-4">
+              <Feather name="chevron-left" size={24} color={twColor("primary")} />
               <Text className="text-primary font-medium">Use different account</Text>
             </TouchableOpacity>
             <Text className="text-lg text-gray-600 mb-4">Welcome back, {identifier}</Text>

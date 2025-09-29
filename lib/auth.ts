@@ -174,3 +174,26 @@ const getUserSettings = async (user_id: string): Promise<any> => {
     return null
   }
 }
+
+// Nouvelle fonction pour vérifier si l'utilisateur a une session valide pour l'authentification rapide
+export const hasValidSessionForQuickAuth = async (): Promise<{ hasValidSession: boolean; identifier?: string; biometricEnabled?: boolean }> => {
+  try {
+    const sessionValid = await isSessionValid()
+    const previousSession = await hasPreviousSession()
+
+    // Session valide = l'utilisateur n'a pas besoin de ressaisir l'identifiant
+    // Mais doit quand même confirmer avec PIN/fingerprint
+    const hasValidSession = sessionValid && previousSession.hasData
+
+    console.log("Quick auth check - Session valid:", sessionValid, "Previous session:", previousSession.hasData, "Result:", hasValidSession)
+
+    return {
+      hasValidSession,
+      identifier: previousSession.identifier,
+      biometricEnabled: previousSession.biometricEnabled,
+    }
+  } catch (error) {
+    console.error("Error checking valid session for quick auth:", error)
+    return { hasValidSession: false }
+  }
+}

@@ -6,8 +6,7 @@ export const createDebt = async (debt: DebtInput): Promise<Debt> => {
   const debt_id = uuidv4()
   const now = new Date().toISOString()
 
-  console.log("debt", debt);
-  
+  console.log("debt", debt)
 
   try {
     const db = getDb()
@@ -24,7 +23,7 @@ export const createDebt = async (debt: DebtInput): Promise<Debt> => {
         debt.contact_phone,
         debt.contact_email || null,
         debt.amount,
-        debt.currency || "XAF", // Assurez-vous d'avoir une valeur par défaut
+        debt.currency || "XAF",
         debt.description || null,
         debt.loan_date,
         debt.due_date,
@@ -99,8 +98,8 @@ export const getDebtById = async (debt_id: string): Promise<Debt | null> => {
         debt_id, user_id, contact_name, contact_phone, contact_email,
         amount, description, loan_date, due_date, status, debt_type,
         created_at, updated_at
-       FROM debts 
-       WHERE debt_id = ?`,
+        FROM debts 
+        WHERE debt_id = ?`,
       [debt_id],
     )
     return debt || null
@@ -118,11 +117,11 @@ export const getUserDebts = async (user_id: string): Promise<Debt[]> => {
         debt_id, user_id, contact_name, contact_phone, contact_email,
         amount, description, loan_date, due_date, status, debt_type,
         created_at, updated_at
-       FROM debts 
-       WHERE user_id = ? 
-       ORDER BY 
-         CASE WHEN status = 'PENDING' THEN 1 ELSE 2 END,
-         due_date ASC`,
+        FROM debts 
+        WHERE user_id = ? 
+        ORDER BY 
+        CASE WHEN status = 'PENDING' THEN 1 ELSE 2 END,
+        due_date ASC`,
       [user_id],
     )
     return debts || []

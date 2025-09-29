@@ -2,9 +2,9 @@
   "expo": {
     "name": "yourcap",
     "slug": "yourcap-slug",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo/logo.png",
+    "icon": "./assets/images/logo/logo-white.png",
     "scheme": "yourcap",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -14,7 +14,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo/logo.png",
-        "backgroundColor": "#00000000"
+        "backgroundColor": "#fff"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.anonymous.yourcap"
@@ -22,7 +22,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/logo/logo.png"
+      "favicon": "./assets/images/logo/logo-white.png"
     },
     "plugins": [
       [
@@ -34,10 +34,10 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/logo/logo.png",
+          "image": "./assets/images/logo/logo-white.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#00000000"
+          "backgroundColor": "#fff"
         }
       ]
     ],

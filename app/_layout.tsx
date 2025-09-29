@@ -19,11 +19,12 @@ export default function RootLayout() {
   })
 
   const [dbInitialized, setDbInitialized] = useState(false)
+  const { loadUser, user, loading, isInitialized } = useAuthStore()
 
-  // Use both hooks
-  useInactivityTimeout()
-  useAppStartup()
+  // Use hooks - l'ordre est important
   useNotificationHandler()
+  useAppStartup()
+  useInactivityTimeout()
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -39,9 +40,10 @@ export default function RootLayout() {
         console.log("Database initialized successfully")
 
         console.log("Loading user...")
-        await useAuthStore.getState().loadUser()
+        await loadUser()
         console.log("App initialization completed")
 
+        // Cacher le splash screen une fois tout initialisé
         await SplashScreen.hideAsync()
       } catch (error) {
         console.error("App initialization failed:", error)
@@ -52,7 +54,8 @@ export default function RootLayout() {
     initializeApp()
   }, [fontsLoaded, error])
 
-  if (!fontsLoaded || !dbInitialized) {
+  // Afficher null pendant le chargement initial
+  if (!fontsLoaded || !dbInitialized || !isInitialized) {
     return null
   }
 
@@ -60,19 +63,21 @@ export default function RootLayout() {
     <ToastProvider>
       <Stack
         screenOptions={{
-         contentStyle: {
+          contentStyle: {
             backgroundColor: "#000000",
           },
           headerShown: false,
         }}
       >
-        <Stack.Screen name="index" />
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="auth" />
-        <Stack.Screen name="debt" />
-        <Stack.Screen name="+not-found" />
+        {/* Routes principales */}
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="auth" options={{ headerShown: false }} />
+        <Stack.Screen name="debt" options={{ headerShown: false }} />
+        <Stack.Screen name="+not-found" options={{ headerShown: false }} />
       </Stack>
 
+      {/* App Lock Screen - s'affiche par-dessus tout quand nécessaire */}
       <AppLockScreen />
     </ToastProvider>
   )

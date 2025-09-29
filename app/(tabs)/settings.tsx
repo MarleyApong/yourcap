@@ -424,7 +424,8 @@ export default function Settings() {
               </Text>
               <SelectionButtons
                 options={[
-                  { value: 0, label: "Immediately" },
+                  // { value: 0, label: "Immediately" },
+                  { value: 1, label: "1 min" },
                   { value: 5, label: "5 min" },
                   { value: 15, label: "15 min" },
                   { value: 30, label: "30 min" },
@@ -630,8 +631,14 @@ export default function Settings() {
                   </Text>
                   <SelectionButtons
                     options={[
+                      { value: "05:00", label: "5:00 AM" },
+                      { value: "06:00", label: "6:00 AM" },
+                      { value: "07:00", label: "7:00 AM" },
+                      { value: "08:00", label: "8:00 AM" },
                       { value: "09:00", label: "9:00 AM" },
                       { value: "12:00", label: "12:00 PM" },
+                      { value: "13:00", label: "1:00 PM" },
+                      { value: "14:00", label: "2:00 PM" },
                       { value: "15:00", label: "3:00 PM" },
                       { value: "18:00", label: "6:00 PM" },
                       { value: "20:00", label: "8:00 PM" },
