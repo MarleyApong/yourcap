@@ -18,49 +18,49 @@ const colorTokens = {
     "popover-background": "#ffffff",
     "popover-foreground": "#1e293b",
 
-    // Primary brand colors - Basé sur #2d728f
-    primary: "#2d728f",
+    // Primary brand colors - Basé sur #562d8f
+    primary: "#562d8f",
     "primary-foreground": "#ffffff",
-    "primary-50": "#f0f9ff",
-    "primary-100": "#e0f2fe",
-    "primary-200": "#bae6fd",
-    "primary-500": "#0ea5e9",
-    "primary-600": "#0284c7",
-    "primary-700": "#0369a1",
-    "primary-900": "#2d728f",
+    "primary-50": "#faf5ff",
+    "primary-100": "#f3e8ff",
+    "primary-200": "#e9d5ff",
+    "primary-500": "#a855f7",
+    "primary-600": "#9333ea",
+    "primary-700": "#7c3aed",
+    "primary-900": "#562d8f",
 
     // Secondary colors
-    secondary: "#f0f9ff",
-    "secondary-foreground": "#0369a1",
+    secondary: "#faf5ff",
+    "secondary-foreground": "#7c3aed",
 
     // Navigation specific colors
     "navigation-background": "#ffffff",
     "navigation-foreground": "#64748b",
-    "navigation-active-background": "#2d728f",
+    "navigation-active-background": "#562d8f",
     "navigation-active-foreground": "#ffffff",
     "navigation-inactive-background": "transparent",
     "navigation-inactive-foreground": "#64748b",
     "navigation-border": "#e2e8f0",
-    "navigation-shadow": "rgba(45, 114, 143, 0.08)",
-    "navigation-shadow-style": "0 4px 12px rgba(45, 114, 143, 0.08)",
+    "navigation-shadow": "rgba(86, 45, 143, 0.08)",
+    "navigation-shadow-style": "0 4px 12px rgba(86, 45, 143, 0.08)",
 
     // Header colors
     "header-background": "#ffffff",
     "header-foreground": "#1e293b",
-    "header-primary": "#f0f9ff",
-    "header-primary-foreground": "#2d728f",
+    "header-primary": "#faf5ff",
+    "header-primary-foreground": "#562d8f",
     "header-accent": "#e2e8f0",
-    "header-accent-foreground": "#0369a1",
+    "header-accent-foreground": "#7c3aed",
     "header-border": "#e2e8f0",
     "header-shadow-style": "0 1px 3px rgba(30, 41, 59, 0.1)",
 
     // Sidebar colors
     "sidebar-background": "#ffffff",
     "sidebar-foreground": "#1e293b",
-    "sidebar-primary": "#f0f9ff",
-    "sidebar-primary-foreground": "#2d728f",
+    "sidebar-primary": "#faf5ff",
+    "sidebar-primary-foreground": "#562d8f",
     "sidebar-accent": "#e2e8f0",
-    "sidebar-accent-foreground": "#0369a1",
+    "sidebar-accent-foreground": "#7c3aed",
     "sidebar-border": "#e2e8f0",
 
     // Status colors
@@ -74,11 +74,11 @@ const colorTokens = {
     // Utility colors
     muted: "#f8fafc",
     "muted-foreground": "#64748b",
-    accent: "#f0f9ff",
-    "accent-foreground": "#0369a1",
+    accent: "#faf5ff",
+    "accent-foreground": "#7c3aed",
     border: "#e2e8f0",
     input: "#f8fafc",
-    ring: "#2d728f",
+    ring: "#562d8f",
 
     // Chart colors (inchangés)
     "chart-1": "#3b82f6",
@@ -114,25 +114,25 @@ const colorTokens = {
     "popover-background": "#334155",
     "popover-foreground": "#f1f5f9",
 
-    // Primary colors - Basé sur #2d728f
-    primary: "#0ea5e9",
+    // Primary colors - Basé sur #562d8f
+    primary: "#a855f7",
     "primary-foreground": "#ffffff",
-    "primary-50": "#082f49",
-    "primary-100": "#0c4a6e",
-    "primary-200": "#075985",
-    "primary-500": "#0ea5e9",
-    "primary-600": "#0284c7",
-    "primary-700": "#0369a1",
-    "primary-900": "#2d728f",
+    "primary-50": "#1e1b4b",
+    "primary-100": "#312e81",
+    "primary-200": "#3730a3",
+    "primary-500": "#a855f7",
+    "primary-600": "#9333ea",
+    "primary-700": "#7c3aed",
+    "primary-900": "#562d8f",
 
     // Secondary colors
-    secondary: "#0c4a6e",
-    "secondary-foreground": "#bae6fd",
+    secondary: "#312e81",
+    "secondary-foreground": "#e9d5ff",
 
     // Navigation
     "navigation-background": "#1e293b",
     "navigation-foreground": "#94a3b8",
-    "navigation-active-background": "#0ea5e9",
+    "navigation-active-background": "#a855f7",
     "navigation-active-foreground": "#ffffff",
     "navigation-inactive-background": "transparent",
     "navigation-inactive-foreground": "#94a3b8",
@@ -143,8 +143,8 @@ const colorTokens = {
     // Header
     "header-background": "#0f172a",
     "header-foreground": "#f1f5f9",
-    "header-primary": "#082f49",
-    "header-primary-foreground": "#bae6fd",
+    "header-primary": "#1e1b4b",
+    "header-primary-foreground": "#e9d5ff",
     "header-accent": "#475569",
     "header-accent-foreground": "#cbd5e1",
     "header-border": "#475569",
@@ -153,8 +153,8 @@ const colorTokens = {
     // Sidebar
     "sidebar-background": "#0f172a",
     "sidebar-foreground": "#f1f5f9",
-    "sidebar-primary": "#082f49",
-    "sidebar-primary-foreground": "#bae6fd",
+    "sidebar-primary": "#1e1b4b",
+    "sidebar-primary-foreground": "#e9d5ff",
     "sidebar-accent": "#475569",
     "sidebar-accent-foreground": "#cbd5e1",
     "sidebar-border": "#475569",
@@ -170,11 +170,11 @@ const colorTokens = {
     // Utility colors
     muted: "#374151",
     "muted-foreground": "#9ca3af",
-    accent: "#082f49",
-    "accent-foreground": "#bae6fd",
+    accent: "#1e1b4b",
+    "accent-foreground": "#e9d5ff",
     border: "#475569",
     input: "#374151",
-    ring: "#0ea5e9",
+    ring: "#a855f7",
 
     // Chart colors (inchangés)
     "chart-1": "#60a5fa",

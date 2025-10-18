@@ -18,6 +18,7 @@ export const fr = {
     info: "Information",
     retry: "Réessayer",
     done: "Terminé",
+    none: "Aucun",
     next: "Suivant",
     previous: "Précédent",
     search: "Rechercher",
@@ -124,19 +125,46 @@ export const fr = {
       name: "Nom de la personne",
       namePlaceholder: "Ex: Jean Dupont",
       amount: "Montant",
-      amountPlaceholder: "0",
+      amountPlaceholder: "Ex: 50000",
       description: "Description",
-      descriptionPlaceholder: "Raison de la dette...",
+      descriptionPlaceholder: "Ex: Prêt pour urgence médicale",
       type: "Type",
       typeIOwed: "Je dois (quelqu'un me doit)",
       typeIOwe: "Je prête (je dois à quelqu'un)",
-      save: "Sauvegarder",
+      save: "Enregistrer la dette",
       delete: "Supprimer cette dette",
+      debtType: {
+        title: "Type de dette",
+        owing: "Quelqu'un me doit",
+        owed: "Je dois à quelqu'un",
+        owingDescription: "Enregistrer l'argent que quelqu'un vous doit - suivez quand vous avez prêté de l'argent et quand il devrait être remboursé.",
+        owedDescription: "Enregistrer l'argent que vous devez à quelqu'un - gardez une trace de vos obligations d'emprunt et des dates d'échéance."
+      },
+      contact: {
+        title: "Informations de contact",
+        subtitle: "Ajoutez les détails de la personne pour une identification et un contact faciles.",
+        phone: "Numéro de téléphone",
+        phonePlaceholder: "6XX XXX XXX",
+        email: "Email (Optionnel)",
+        emailPlaceholder: "xxx@xxx.xx"
+      },
+      financial: {
+        title: "Détails financiers",
+        subtitle: "Spécifiez le montant, la devise et les dates importantes pour cette dette.",
+        currency: "Devise",
+        loanDate: "Date du prêt",
+        dueDate: "Date d'échéance"
+      },
       validation: {
-        nameRequired: "Le nom est requis",
+        nameRequired: "Le nom du contact est requis",
+        phoneRequired: "Le numéro de téléphone est requis",
         amountRequired: "Le montant est requis",
         amountPositive: "Le montant doit être positif",
+        invalidAmount: "Veuillez saisir un montant valide supérieur à 0",
+        invalidDueDate: "La date d'échéance ne peut pas être antérieure à la date du prêt"
       },
+      success: "Enregistrement de dette créé avec succès !",
+      error: "Échec de la création de la dette. Veuillez réessayer.",
     },
     list: {
       filterAll: "Tous",
@@ -211,6 +239,138 @@ export const fr = {
     logoutConfirm: "Êtes-vous sûr de vouloir vous déconnecter ?",
     logoutTitle: "Confirmer la déconnexion",
     logoutCancel: "Annuler",
+
+    // Session Management
+    sessionManagement: "Gestion des sessions",
+    rememberMe: "Se souvenir de moi",
+    rememberMeDescription: "Rester connecté sur cet appareil",
+    sessionDuration: "Durée de session",
+    autoLogout: "Déconnexion automatique après inactivité",
+
+    // Modal texts
+    termsOfService: "Conditions d'utilisation",
+    privacyPolicy: "Politique de confidentialité",
+    helpSupport: "Aide et Support",
+    deleteAccount: "Supprimer le compte",
+    iUnderstand: "J'ai compris",
+    close: "Fermer",
+    
+    // About modal texts
+    lastUpdated: "Dernière mise à jour :",
+    termsWelcome: "Bienvenue sur YourCap ! Ces Conditions d'utilisation régissent votre utilisation de notre application de gestion de dettes.",
+    termsAgreement: "En utilisant notre application, vous acceptez ces conditions. Veuillez les lire attentivement.",
+    freeService: "Service gratuit :",
+    freeServiceText: "Actuellement, YourCap est entièrement gratuit. Nous pourrions introduire des fonctionnalités premium à l'avenir avec une communication claire.",
+    dataUsage: "Utilisation des données :",
+    dataUsageText: "Pour améliorer nos services, nous pourrions collecter des données d'utilisation anonymisées. Les informations personnelles ne seront jamais vendues à des tiers.",
+    userResponsibilities: "Responsabilités de l'utilisateur :",
+    userResponsibilitiesText: "Vous êtes responsable de maintenir la confidentialité de votre compte et d'assurer l'exactitude de vos enregistrements de dettes.",
+    
+    // Privacy modal texts
+    privacyImportant: "Votre confidentialité est importante pour nous. Cette Politique de confidentialité explique comment nous collectons, utilisons et protégeons vos informations.",
+    informationWeCollect: "Informations que nous collectons :",
+    accountInfo: "• Informations de compte (nom, email, numéro de téléphone)",
+    debtRecords: "• Enregistrements de dettes et informations financières", 
+    usageData: "• Données d'utilisation de l'application à des fins d'amélioration",
+    howWeUse: "Comment nous utilisons vos informations :",
+    provideServices: "• Pour fournir et améliorer nos services",
+    sendNotifications: "• Pour envoyer des notifications importantes sur vos dettes",
+    analytics: "• À des fins analytiques pour améliorer l'expérience utilisateur",
+    dataSecure: "Vos données sont stockées de manière sécurisée et ne sont jamais partagées avec des tiers sans votre consentement, sauf si requis par la loi.",
+    
+    // Help modal texts
+    helpIntro: "Besoin d'aide avec YourCap ? Voici quelques ressources :",
+    faq: "Questions fréquemment posées :",
+    howToAddDebt: "• Comment ajouter une nouvelle dette ?",
+    howToAddDebtAnswer: "Allez à l'onglet Tableau de bord et appuyez sur le bouton \"+\" pour ajouter un nouvel enregistrement de dette.",
+    howToChangePin: "• Comment changer mon PIN ?",
+    howToChangePinAnswer: "Naviguez vers Paramètres → Profil → Changer PIN pour mettre à jour votre PIN de sécurité.",
+    contactSupport: "Contact Support :",
+    supportEmail: "Email: support@yourcap.app",
+    responseTime: "Nous répondons généralement dans les 24 heures.",
+    
+    // Delete account texts
+    deleteAccountConfirm: "Cela supprimera définitivement votre compte et toutes les données associées. Cette action ne peut pas être annulée.",
+    deleteAccountTitle: "Supprimer le compte ?",
+    deleteAccountButton: "Supprimer",
+    accountDeletionSoon: "Fonction de suppression de compte bientôt disponible !",
+    
+    // Development tools
+    developmentTools: "Outils de développement",
+    testSummaryNotification: "Tester notification de résumé",
+    testNotificationSent: "Notification de test envoyée !",
+    rescheduleNotifications: "Reprogrammer toutes les notifications",
+    notificationsRescheduled: "Toutes les notifications reprogrammées !",
+    
+    // Danger zone
+    dangerZone: "Zone de danger",
+    logOut: "Se déconnecter",
+
+    // Additional notification settings
+    notificationsEnabled: "Notifications activées",
+    notificationsDisabled: "Notifications désactivées",
+    notificationPermissionsDenied: "Autorisations de notification refusées",
+    notificationTypes: "Types de notifications",
+    systemNotifications: "Notifications système",
+    systemNotificationsDesc: "Notifications push sur votre appareil",
+    systemNotificationsEnabled: "Notifications système activées",
+    systemNotificationsDisabled: "Notifications système désactivées",
+    emailNotifications: "Notifications par email",
+    emailNotificationsDesc: "Envoyer des rappels à votre email",
+    emailComingSoon: "Notifications par email bientôt disponibles!",
+    smsNotifications: "Notifications SMS",
+    smsNotificationsDesc: "Envoyer des rappels par SMS",
+    smsComingSoon: "Notifications SMS bientôt disponibles!",
+    daysBeforeReminder: "Jours avant rappel",
+    reminderScheduleUpdated: "Calendrier des rappels mis à jour",
+    preferredNotificationTimes: "Heures préférées pour les notifications",
+
+    // Time and duration labels
+    immediately: "Immédiatement",
+    oneMin: "1 min",
+    fiveMin: "5 min",
+    fifteenMin: "15 min",
+    thirtyMin: "30 min",
+    sixtyMin: "60 min",
+    oneHundredTwentyMin: "120 min",
+    oneHour: "1 heure",
+    eightHours: "8 heures",
+    twentyFourHours: "24 heures",
+    sevenDays: "7 jours",
+    oneDay: "1 jour",
+    threeDays: "3 jours",
+    fiveDays: "5 jours",
+    fiveAm: "5h00",
+    sixAm: "6h00",
+    sevenAm: "7h00",
+    eightAm: "8h00",
+    nineAm: "9h00",
+    twelvePm: "12h00",
+    onePm: "13h00",
+    twoPm: "14h00",
+    threePm: "15h00",
+    sixPm: "18h00",
+    eightPm: "20h00",
+    ninePm: "21h00",
+
+    // Additional summary notifications
+    summaryNotificationsDesc: "Résumé régulier de vos dettes",
+    summaryNotificationsEnabled: "Notifications de résumé activées",
+    summaryNotificationsDisabled: "Notifications de résumé désactivées",
+    summaryFrequency: "Fréquence du résumé",
+    summaryTime: "Heure du résumé",
+    summaryFrequencyUpdated: "Fréquence du résumé mise à jour",
+    summaryTimeUpdated: "Heure du résumé mise à jour",
+    selectMultipleTimes: "Sélectionnez plusieurs heures pour les rappels",
+    notificationTimesUpdated: "Heures de notification mises à jour",
+
+    // About section titles
+    termsOfServiceTitle: "Conditions d'utilisation",
+    privacyPolicyTitle: "Politique de confidentialité",
+    helpSupportTitle: "Aide et support",
+
+    // Import Export
+    debtsImported: "dettes importées!",
   },
 
   // Modals profil
@@ -287,21 +447,58 @@ export const fr = {
     title: "Gestion des données",
     export: {
       title: "Exporter",
-      button: "Exporter en CSV",
-      description: "Téléchargez vos données dans un fichier CSV",
+      sectionTitle: "📤 Exporter vos données",
+      description: "Sauvegardez toutes vos dettes au format CSV",
+      button: "Exporter mes dettes",
+      buttonAlt: "Exporter en CSV",
       success: "Données exportées avec succès !",
       error: "Erreur lors de l'export",
+      dataError: "Erreur lors de l'export des données",
     },
     import: {
       title: "Importer",
+      sectionTitle: "📥 Importer des données",
+      description: "Importez des dettes depuis un fichier CSV",
       fromText: "Depuis le texte",
       fromFile: "Depuis un fichier",
+      pasteCSV: "Coller CSV",
+      fileButton: "Fichier",
+      structureButton: "Structure",
+      templateButton: "Template",
+      templateSuccess: "Template téléchargé!",
+      templateError: "Erreur lors du téléchargement du template",
       textPlaceholder: "Collez votre contenu CSV ici...",
       selectFile: "Sélectionner un fichier CSV",
       success: "Données importées avec succès !",
+      importedSuccess: "dettes importées avec succès!",
+      importedFromFile: "dettes importées depuis le fichier!",
       validation: "Validation des données...",
+      pleaseEnterCSV: "Veuillez coller le contenu CSV",
+      // Modal
+      modalTitle: "Importer CSV",
+      modalDescription: "Collez le contenu de votre fichier CSV ci-dessous :",
+      modalPlaceholder: "contact_name,contact_phone,amount,currency,loan_date,due_date,status,debt_type\\nJohn Doe,+237123456789,50000,XAF,2024-01-15,2024-02-15,PENDING,OWING",
+      modalCancel: "Annuler",
+      modalImport: "Importer",
+      // Results and errors
+      importFileError: "Aucune dette n'a pu être importée depuis le fichier",
+      importFileGeneralError: "Erreur lors de l'import du fichier",
+      importTextError: "Aucune dette n'a pu être importée",
+      importGeneralError: "Erreur lors de l'import",
+      importCompletedWarnings: "Import terminé avec des avertissements",
+      importErrors: "Erreurs d'import",
+      errorsEncountered: "Erreurs rencontrées:",
+      // Validation
+      validationErrors: "Erreurs de validation",
+      validationMessage: "ligne(s) contiennent des erreurs:",
+      continueWithValid: "Voulez-vous continuer avec les",
+      validLines: "lignes valides?",
+      continueButton: "Continuer",
+      cancelButton: "Annuler",
+      line: "Ligne",
       errors: {
         invalidFormat: "Format de fichier invalide",
+        invalidCSVFormat: "Format CSV invalide",
         parseError: "Erreur lors de l'analyse du fichier",
         validationError: "Erreur de validation des données",
       },
@@ -329,6 +526,60 @@ export const fr = {
         dateFormat: "La date doit être au format YYYY-MM-DD (optionnel)",
       },
     },
+  },
+
+  // Modals
+  modals: {
+    editProfile: {
+      title: "Modifier le profil",
+      fullName: "Nom complet",
+      fullNamePlaceholder: "Votre nom complet",
+      email: "Adresse email",
+      emailPlaceholder: "votre@email.com",
+      phoneNumber: "Numéro de téléphone",
+      phonePlaceholder: "6XXXXXXXX",
+      subtitle: "Modifiez vos informations de profil",
+      save: "Sauvegarder",
+      cancel: "Annuler",
+      validation: {
+        fullNameRequired: "Le nom complet est requis",
+        phoneRequired: "Le numéro de téléphone est requis",
+        invalidPhone: "Veuillez entrer un numéro de téléphone camerounais valide",
+        invalidEmail: "Veuillez entrer une adresse email valide"
+      },
+      success: "Profil mis à jour avec succès!",
+      error: "Erreur lors de la mise à jour du profil",
+      unexpectedError: "Une erreur inattendue s'est produite"
+    },
+    changePin: {
+      title: "Modifier le code PIN",
+      currentPin: "Code PIN actuel",
+      newPin: "Nouveau code PIN",
+      confirmPin: "Confirmer le nouveau PIN",
+      change: "Modifier",
+      cancel: "Annuler",
+      steps: {
+        current: "PIN Actuel",
+        new: "Nouveau PIN",
+        confirm: "Confirmer PIN",
+        currentSubtitle: "Entrez votre PIN actuel pour continuer",
+        newSubtitle: "Créez votre nouveau PIN de 6 chiffres",
+        confirmSubtitle: "Confirmez votre nouveau PIN"
+      },
+      validation: {
+        currentPinRequired: "Le code PIN actuel est requis",
+        newPinRequired: "Le nouveau code PIN est requis",
+        confirmPinRequired: "La confirmation du code PIN est requise",
+        pinMismatch: "Les codes PIN ne correspondent pas",
+        invalidCurrentPin: "Le code PIN actuel est incorrect",
+        pinMustBeDifferent: "Le nouveau PIN doit être différent de l'ancien"
+      },
+      success: "Code PIN modifié avec succès!",
+      error: "Erreur lors de la modification du code PIN",
+      verifying: "Vérification...",
+      updating: "Mise à jour...",
+      processing: "Traitement..."
+    }
   },
 
   // Messages d'erreur généraux

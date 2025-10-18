@@ -1,4 +1,6 @@
 import { Loader } from '@/components/ui/loader'
+import { useTranslation } from '@/i18n'
+import { Toast } from '@/lib/toast-global'
 import { useTwColors } from '@/lib/tw-colors'
 import { useAuthStore } from '@/stores/authStore'
 import { Feather } from '@expo/vector-icons'
@@ -14,6 +16,7 @@ interface EditProfileModalProps {
 export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose }) => {
   const { user, updateProfile } = useAuthStore()
   const { twColor } = useTwColors()
+  const { t } = useTranslation()
   
   // Refs
   const phoneRef = useRef<TextInput>(null)
@@ -33,22 +36,22 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
 
   const validateForm = (): boolean => {
     if (!formData.full_name.trim()) {
-      Toast.error("Le nom complet est requis")
+      Toast.error(t("modals.editProfile.validation.fullNameRequired"))
       return false
     }
 
     if (!formData.phone_number.trim()) {
-      Toast.error("Le numéro de téléphone est requis")
+      Toast.error(t("modals.editProfile.validation.phoneRequired"))
       return false
     }
 
     if (!/^(6|2)(2|3|[5-9])[0-9]{7}$/.test(formData.phone_number)) {
-      Toast.error("Veuillez entrer un numéro de téléphone camerounais valide")
+      Toast.error(t("modals.editProfile.validation.invalidPhone"))
       return false
     }
 
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      Toast.error("Veuillez entrer une adresse email valide")
+      Toast.error(t("modals.editProfile.validation.invalidEmail"))
       return false
     }
 
@@ -67,14 +70,14 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
       })
 
       if (success) {
-        Toast.success("Profil mis à jour avec succès!")
+        Toast.success(t("modals.editProfile.success"))
         onClose()
       } else {
-        Toast.error("Erreur lors de la mise à jour du profil")
+        Toast.error(t("modals.editProfile.error"))
       }
     } catch (error) {
       console.error("Update profile error:", error)
-      Toast.error("Une erreur inattendue s'est produite")
+      Toast.error(t("modals.editProfile.unexpectedError"))
     } finally {
       setLoading(false)
     }
@@ -113,7 +116,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
                 <Feather name="x" size={24} color={twColor("foreground")} />
               </Pressable>
               <Text style={{ color: twColor("foreground") }} className="text-xl font-bold">
-                Modifier le Profil
+                {t("modals.editProfile.title")}
               </Text>
               <View className="w-8" />
             </View>
@@ -130,10 +133,10 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
                 <Feather name="user" size={40} color={twColor("primary-foreground")} />
               </View>
               <Text style={{ color: twColor("foreground") }} className="text-2xl font-bold">
-                Informations Personnelles
+                {t("modals.editProfile.title")}
               </Text>
               <Text style={{ color: twColor("muted-foreground") }} className="text-base mt-2">
-                Modifiez vos informations de profil
+                {t("modals.editProfile.subtitle")}
               </Text>
             </View>
 
@@ -145,7 +148,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
                 <TextInput
                   className="text-xl flex-1"
                   style={{ color: twColor("foreground") }}
-                  placeholder="Nom complet"
+                  placeholder={t("modals.editProfile.fullNamePlaceholder")}
                   placeholderTextColor={twColor("muted-foreground")}
                   value={formData.full_name}
                   onChangeText={(text) => handleChange('full_name', text)}
@@ -161,7 +164,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
                   ref={phoneRef}
                   className="text-xl flex-1"
                   style={{ color: twColor("foreground") }}
-                  placeholder="6xx xxx xxx ou 2xx xxx xxx"
+                  placeholder={t("modals.editProfile.phonePlaceholder")}
                   placeholderTextColor={twColor("muted-foreground")}
                   value={formData.phone_number}
                   onChangeText={(text) => handleChange('phone_number', text)}
@@ -178,7 +181,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
                   ref={emailRef}
                   className="text-xl flex-1"
                   style={{ color: twColor("foreground") }}
-                  placeholder="Email (optionnel)"
+                  placeholder={t("modals.editProfile.emailPlaceholder")}
                   placeholderTextColor={twColor("muted-foreground")}
                   value={formData.email}
                   onChangeText={(text) => handleChange('email', text)}
@@ -207,7 +210,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
                   style={{ color: twColor("foreground") }} 
                   className="text-center font-semibold text-lg"
                 >
-                  Annuler
+                  {t("modals.editProfile.cancel")}
                 </Text>
               </Pressable>
 
@@ -228,7 +231,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
                       style={{ color: twColor("primary-foreground") }} 
                       className="text-center font-semibold text-lg ml-2"
                     >
-                      Sauvegarder
+                      {t("modals.editProfile.save")}
                     </Text>
                   </>
                 )}

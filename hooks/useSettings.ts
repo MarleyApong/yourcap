@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react"
-import { useAuthStore } from "@/stores/authStore"
 import { getSettings, updateSettings } from "@/services/settingsService"
+import { useAuthStore } from "@/stores/authStore"
+import { useCallback, useEffect, useState } from "react"
 
 export const useSettings = () => {
   const { user } = useAuthStore()
@@ -43,6 +43,11 @@ export const useSettings = () => {
       if (success) {
         // Mettre à jour le state local immédiatement
         setSettings((prev: any) => ({ ...prev, [key]: value }))
+        
+        // Synchroniser avec l'authStore pour les changements de langue
+        const { updateUserSettings } = useAuthStore.getState()
+        updateUserSettings({ [key]: value })
+        
         console.log(`✅ Setting ${key} updated to:`, value)
       }
       return success

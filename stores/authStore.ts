@@ -55,6 +55,7 @@ type AuthActions = {
   refreshUser: () => Promise<void>
   updateProfile: (data: { full_name: string; email: string; phone_number: string }) => Promise<boolean>
   updateBiometricSetting: (enabled: boolean) => Promise<boolean>
+  updateUserSettings: (settings: Partial<UserSettings>) => void
   checkBiometricCapabilities: () => Promise<void>
   logout: () => Promise<void>
   markSessionExpired: () => void
@@ -477,6 +478,21 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         console.error("Failed to update biometric setting:", error)
         return false
       }
+    },
+
+    updateUserSettings: (settings: Partial<UserSettings>) => {
+      const { user } = get()
+      if (!user || !user.settings) return
+
+      set({
+        user: {
+          ...user,
+          settings: {
+            ...user.settings,
+            ...settings,
+          } as UserSettings,
+        },
+      })
     },
 
     checkBiometricCapabilities: async () => {

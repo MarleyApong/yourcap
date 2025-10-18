@@ -6,7 +6,7 @@ import { es } from './es';
 export const supportedLanguages = {
   fr: { name: 'Français', flag: '🇫🇷', translations: fr },
   en: { name: 'English', flag: '🇺🇸', translations: en },
-  es: { name: 'Español', flag: '🇪🇸', translations: es },
+  // es: { name: 'Español', flag: '🇪🇸', translations: es },
 } as const;
 
 // Types dérivés

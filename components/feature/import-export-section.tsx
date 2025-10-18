@@ -1,12 +1,13 @@
+import { useTranslation } from '@/i18n'
 import { useTwColors } from '@/lib/tw-colors'
 import {
-    generateExportData,
-    generateTemplateData,
-    importDebtsFromCSV,
-    importDebtsFromFile,
-    parseCSV,
-    shareExportData,
-    validateImportData
+  generateExportData,
+  generateTemplateData,
+  importDebtsFromCSV,
+  importDebtsFromFile,
+  parseCSV,
+  shareExportData,
+  validateImportData
 } from '@/services/importExportService'
 import { Feather } from '@expo/vector-icons'
 import React, { useState } from 'react'
@@ -23,6 +24,7 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
   onImportComplete 
 }) => {
   const { twColor } = useTwColors()
+  const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [showStructureModal, setShowStructureModal] = useState(false)
   const [showImportModal, setShowImportModal] = useState(false)
@@ -36,12 +38,12 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
       
       if (result.success && result.csvData) {
         await shareExportData(result.csvData)
-        Toast.success("Données exportées avec succès!")
+        Toast.success(t("importExport.export.success"))
       } else {
-        Toast.error(result.error || "Erreur lors de l'export")
+        Toast.error(result.error || t("importExport.export.error"))
       }
     } catch (error) {
-      Toast.error("Erreur lors de l'export des données")
+      Toast.error(t("importExport.export.dataError"))
     } finally {
       setLoading(false)
     }
@@ -52,9 +54,9 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
     try {
       const templateData = generateTemplateData()
       await shareExportData(templateData, 'yourcap_template.csv')
-      Toast.success("Template téléchargé!")
+      Toast.success(t("importExport.import.templateSuccess"))
     } catch (error) {
-      Toast.error("Erreur lors du téléchargement du template")
+      Toast.error(t("importExport.import.templateError"))
     }
   }
 
@@ -65,23 +67,23 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
       const result = await importDebtsFromFile(userId)
       
       if (result.success) {
-        Toast.success(`${result.imported}/${result.total} dettes importées depuis le fichier!`)
+        Toast.success(`${result.imported}/${result.total} ${t("importExport.import.importedFromFile")}`)
         onImportComplete?.(result.imported, result.total)
         
         if (result.errors.length > 0) {
           Alert.alert(
-            "Import terminé avec des avertissements",
-            `Erreurs rencontrées:\n${result.errors.slice(0, 5).join('\n')}${result.errors.length > 5 ? '\n...' : ''}`
+            t("importExport.import.importCompletedWarnings"),
+            `${t("importExport.import.errorsEncountered")}\n${result.errors.slice(0, 5).join('\n')}${result.errors.length > 5 ? '\n...' : ''}`
           )
         }
       } else {
-        Toast.error("Aucune dette n'a pu être importée depuis le fichier")
+        Toast.error(t("importExport.import.importFileError"))
         if (result.errors.length > 0) {
-          Alert.alert("Erreurs d'import", result.errors.slice(0, 5).join('\n'))
+          Alert.alert(t("importExport.import.importErrors"), result.errors.slice(0, 5).join('\n'))
         }
       }
     } catch (error) {
-      Toast.error("Erreur lors de l'import du fichier")
+      Toast.error(t("importExport.import.importFileGeneralError"))
     } finally {
       setLoading(false)
     }
@@ -90,7 +92,7 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
   // Importer depuis du texte CSV
   const handleImportFromText = async () => {
     if (!csvInput.trim()) {
-      Toast.error("Veuillez coller le contenu CSV")
+      Toast.error(t("importExport.import.pleaseEnterCSV"))
       return
     }
 
@@ -102,16 +104,16 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
 
       if (invalid.length > 0) {
         const errorMessage = invalid.slice(0, 3).map(item => 
-          `Ligne ${item.index}: ${item.errors.join(', ')}`
+          `${t("importExport.import.line")} ${item.index}: ${item.errors.join(', ')}`
         ).join('\n')
         
         Alert.alert(
-          "Erreurs de validation",
-          `${invalid.length} ligne(s) contiennent des erreurs:\n${errorMessage}${invalid.length > 3 ? '\n...' : ''}\n\nVoulez-vous continuer avec les ${valid.length} lignes valides?`,
+          t("importExport.import.validationErrors"),
+          `${invalid.length} ${t("importExport.import.validationMessage")}\n${errorMessage}${invalid.length > 3 ? '\n...' : ''}\n\n${t("importExport.import.continueWithValid")} ${valid.length} ${t("importExport.import.validLines")}`,
           [
-            { text: "Annuler", style: "cancel" },
+            { text: t("importExport.import.cancelButton"), style: "cancel" },
             { 
-              text: "Continuer", 
+              text: t("importExport.import.continueButton"), 
               onPress: () => proceedWithImport(csvInput)
             }
           ]
@@ -120,7 +122,7 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
         await proceedWithImport(csvInput)
       }
     } catch (error) {
-      Toast.error("Format CSV invalide")
+      Toast.error(t("importExport.import.errors.invalidCSVFormat"))
     } finally {
       setLoading(false)
     }
@@ -131,25 +133,25 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
       const result = await importDebtsFromCSV(userId, csvContent)
       
       if (result.success) {
-        Toast.success(`${result.imported}/${result.total} dettes importées avec succès!`)
+        Toast.success(`${result.imported}/${result.total} ${t("importExport.import.importedSuccess")}`)
         setCsvInput('')
         setShowImportModal(false)
         onImportComplete?.(result.imported, result.total)
         
         if (result.errors.length > 0) {
           Alert.alert(
-            "Import terminé avec des avertissements",
-            `Erreurs rencontrées:\n${result.errors.slice(0, 5).join('\n')}${result.errors.length > 5 ? '\n...' : ''}`
+            t("importExport.import.importCompletedWarnings"),
+            `${t("importExport.import.errorsEncountered")}\n${result.errors.slice(0, 5).join('\n')}${result.errors.length > 5 ? '\n...' : ''}`
           )
         }
       } else {
-        Toast.error("Aucune dette n'a pu être importée")
+        Toast.error(t("importExport.import.importTextError"))
         if (result.errors.length > 0) {
-          Alert.alert("Erreurs d'import", result.errors.slice(0, 5).join('\n'))
+          Alert.alert(t("importExport.import.importErrors"), result.errors.slice(0, 5).join('\n'))
         }
       }
     } catch (error) {
-      Toast.error("Erreur lors de l'import")
+      Toast.error(t("importExport.import.importGeneralError"))
     }
   }
 
@@ -158,10 +160,10 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
       {/* Section Export */}
       <View className="mb-4">
         <Text style={{ color: twColor("foreground") }} className="font-medium mb-3">
-          📤 Exporter vos données
+          {t("importExport.export.sectionTitle")}
         </Text>
         <Text style={{ color: twColor("muted-foreground") }} className="text-sm mb-3">
-          Sauvegardez toutes vos dettes au format CSV
+          {t("importExport.export.description")}
         </Text>
         
         <Pressable
@@ -178,7 +180,7 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
             <Feather name="download" size={16} color={twColor("primary-foreground")} />
           )}
           <Text style={{ color: twColor("primary-foreground") }} className="font-medium ml-2">
-            Exporter mes dettes
+            {t("importExport.export.button")}
           </Text>
         </Pressable>
       </View>
@@ -186,10 +188,10 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
       {/* Section Import */}
       <View className="mb-4">
         <Text style={{ color: twColor("foreground") }} className="font-medium mb-3">
-          📥 Importer des données
+          {t("importExport.import.sectionTitle")}
         </Text>
         <Text style={{ color: twColor("muted-foreground") }} className="text-sm mb-3">
-          Importez des dettes depuis un fichier CSV
+          {t("importExport.import.description")}
         </Text>
 
         {/* Boutons d'aide */}
@@ -201,7 +203,7 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
           >
             <Feather name="info" size={14} color={twColor("secondary-foreground")} />
             <Text style={{ color: twColor("secondary-foreground") }} className="text-sm font-medium ml-1">
-              Structure
+              {t("importExport.import.structureButton")}
             </Text>
           </Pressable>
 
@@ -212,7 +214,7 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
           >
             <Feather name="file-text" size={14} color={twColor("secondary-foreground")} />
             <Text style={{ color: twColor("secondary-foreground") }} className="text-sm font-medium ml-1">
-              Template
+              {t("importExport.import.templateButton")}
             </Text>
           </Pressable>
         </View>
@@ -225,7 +227,7 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
           >
             <Feather name="edit-3" size={16} color={twColor("primary-foreground")} />
             <Text style={{ color: twColor("primary-foreground") }} className="font-medium ml-2">
-              Coller CSV
+              {t("importExport.import.pasteCSV")}
             </Text>
           </Pressable>
 
@@ -243,7 +245,7 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
               <Feather name="upload" size={16} color={twColor("secondary-foreground")} />
             )}
             <Text style={{ color: twColor("secondary-foreground") }} className="font-medium ml-2">
-              Fichier
+              {t("importExport.import.fileButton")}
             </Text>
           </Pressable>
         </View>
@@ -267,7 +269,7 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
             >
               <View className="flex-row items-center justify-between mb-4">
                 <Text style={{ color: twColor("foreground") }} className="text-lg font-bold">
-                  Importer CSV
+                  {t("importExport.import.modalTitle")}
                 </Text>
                 <Pressable 
                   onPress={() => {
@@ -280,7 +282,7 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
               </View>
 
               <Text style={{ color: twColor("muted-foreground") }} className="text-sm mb-3">
-                Collez le contenu de votre fichier CSV ci-dessous :
+                {t("importExport.import.modalDescription")}
               </Text>
 
               <TextInput
@@ -290,7 +292,7 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
                   color: twColor("foreground"),
                 }}
                 className="border rounded-lg p-3 mb-4 h-32"
-                placeholder="contact_name,contact_phone,amount,currency,loan_date,due_date,status,debt_type&#10;John Doe,+237123456789,50000,XAF,2024-01-15,2024-02-15,PENDING,OWING"
+                placeholder={t("importExport.import.modalPlaceholder")}
                 placeholderTextColor={twColor("muted-foreground")}
                 multiline
                 textAlignVertical="top"
@@ -308,7 +310,7 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
                   className="flex-1 p-3 rounded-lg"
                 >
                   <Text style={{ color: twColor("secondary-foreground") }} className="text-center font-medium">
-                    Annuler
+                    {t("importExport.import.modalCancel")}
                   </Text>
                 </Pressable>
 
@@ -324,7 +326,7 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
                     <ActivityIndicator size="small" color={twColor("primary-foreground")} />
                   ) : (
                     <Text style={{ color: twColor("primary-foreground") }} className="text-center font-medium">
-                      Importer
+                      {t("importExport.import.modalImport")}
                     </Text>
                   )}
                 </Pressable>

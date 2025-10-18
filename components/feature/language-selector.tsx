@@ -1,6 +1,5 @@
 import { SupportedLanguage, supportedLanguages } from '@/i18n/locales'
 import { useTwColors } from '@/lib/tw-colors'
-import { Feather } from '@expo/vector-icons'
 import React from 'react'
 import { Pressable, Text, View } from 'react-native'
 
@@ -15,8 +14,13 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 }) => {
   const { twColor } = useTwColors()
 
+  const handleLanguageChange = (language: SupportedLanguage) => {
+    console.log('🌐 LanguageSelector: Changing language from', currentLanguage, 'to', language);
+    onLanguageChange(language);
+  };
+
   return (
-    <View className="space-y-2">
+    <View className="flex-row flex-wrap gap-2">
       {Object.entries(supportedLanguages).map(([key, config]) => {
         const isSelected = key === currentLanguage
         const language = key as SupportedLanguage
@@ -24,33 +28,21 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         return (
           <Pressable
             key={key}
-            onPress={() => onLanguageChange(language)}
-            className="flex-row items-center justify-between py-3 px-4 rounded-xl"
+            onPress={() => handleLanguageChange(language)}
             style={{
-              backgroundColor: isSelected ? twColor("primary") : "transparent",
-              borderWidth: 1,
-              borderColor: isSelected ? twColor("primary") : twColor("border")
+              backgroundColor: isSelected ? twColor("primary") : twColor("secondary"),
             }}
+            className="px-4 py-2 rounded-full flex-row items-center gap-2"
           >
-            <View className="flex-row items-center gap-3">
-              <Text className="text-2xl">{config.flag}</Text>
-              <Text 
-                style={{ 
-                  color: isSelected ? twColor("primary-foreground") : twColor("foreground") 
-                }}
-                className="text-base font-medium"
-              >
-                {config.name}
-              </Text>
-            </View>
-            
-            {isSelected && (
-              <Feather 
-                name="check" 
-                size={20} 
-                color={twColor("primary-foreground")} 
-              />
-            )}
+            <Text className="text-lg">{config.flag}</Text>
+            <Text
+              style={{
+                color: isSelected ? twColor("primary-foreground") : twColor("secondary-foreground"),
+              }}
+              className="text-sm font-medium"
+            >
+              {config.name}
+            </Text>
           </Pressable>
         )
       })}

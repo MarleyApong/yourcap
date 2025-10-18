@@ -49,28 +49,28 @@ export default function AddDebt() {
 
   const validateForm = () => {
     if (!form.contact_name.trim()) {
-      Toast.error("Contact name is required", "Validation Error")
+      Toast.error(t("debt.add.validation.nameRequired"), "Validation Error")
       return false
     }
 
     if (!form.contact_phone.trim()) {
-      Toast.error("Phone number is required", "Validation Error")
+      Toast.error(t("debt.add.validation.phoneRequired"), "Validation Error")
       return false
     }
 
     if (!form.amount.trim()) {
-      Toast.error("Amount is required", "Validation Error")
+      Toast.error(t("debt.add.validation.amountRequired"), "Validation Error")
       return false
     }
 
     const amount = Number(form.amount)
     if (isNaN(amount) || amount <= 0) {
-      Toast.error("Please enter a valid amount greater than 0", "Validation Error")
+      Toast.error(t("debt.add.validation.invalidAmount"), "Validation Error")
       return false
     }
 
     if (form.due_date < form.loan_date) {
-      Toast.error("Due date cannot be before loan date", "Validation Error")
+      Toast.error(t("debt.add.validation.invalidDueDate"), "Validation Error")
       return false
     }
 
@@ -96,7 +96,7 @@ export default function AddDebt() {
         status: "PENDING",
       })
 
-      Toast.success("Debt record created successfully!", "Success")
+      Toast.success(t("debt.add.success"), "Success")
       
       // Réinitialiser le formulaire après succès
       setForm({
@@ -114,7 +114,7 @@ export default function AddDebt() {
       router.back()
     } catch (error) {
       console.error("Error creating debt:", error)
-      Toast.error("Failed to create debt. Please try again.", "Error")
+      Toast.error(t("debt.add.error"), "Error")
     } finally {
       setLoading(false)
     }
@@ -123,8 +123,8 @@ export default function AddDebt() {
   // Descriptions pour chaque type de dette
   const getDebtTypeDescription = () => {
     return form.debt_type === "OWING" 
-      ? "Record money that someone owes you - track when you lent money and when it should be repaid."
-      : "Record money that you owe to someone - keep track of your borrowing obligations and due dates."
+      ? t("debt.add.debtType.owingDescription")
+      : t("debt.add.debtType.owedDescription")
   }
 
   return (
@@ -152,7 +152,7 @@ export default function AddDebt() {
             className="p-4 rounded-xl border"
           >
             <Text style={{ color: twColor("primary") }} className="text-lg font-bold mb-2">
-              Debt Type
+              {t("debt.add.debtType.title")}
             </Text>
             
             <View className="flex-row justify-around p-1 rounded-xl border border-primary mb-3">
@@ -169,7 +169,7 @@ export default function AddDebt() {
                   }}
                   className="font-medium"
                 >
-                  Someone owes me
+                  {t("debt.add.debtType.owing")}
                 </Text>
               </Pressable>
               <Pressable
@@ -185,7 +185,7 @@ export default function AddDebt() {
                   }}
                   className="font-medium"
                 >
-                  I owe someone
+                  {t("debt.add.debtType.owed")}
                 </Text>
               </Pressable>
             </View>
@@ -210,10 +210,10 @@ export default function AddDebt() {
             className="p-4 rounded-xl shadow-sm border"
           >
             <Text style={{ color: twColor("primary") }} className="text-lg font-bold mb-2">
-              Contact Information
+              {t("debt.add.contact.title")}
             </Text>
             <Text style={{ color: twColor("muted-foreground") }} className="text-sm mb-4">
-              Add the person's details for easy identification and contact.
+              {t("debt.add.contact.subtitle")}
             </Text>
 
             <TextInput
@@ -230,8 +230,8 @@ export default function AddDebt() {
 
             <TextInput
               ref={contactPhoneRef}
-              label="Phone Number"
-              placeholder="6XX XXX XXX"
+              label={t("debt.add.contact.phone")}
+              placeholder={t("debt.add.contact.phonePlaceholder")}
               value={form.contact_phone}
               onChangeText={(text) => handleChange("contact_phone", text)}
               keyboardType="phone-pad"
@@ -243,8 +243,8 @@ export default function AddDebt() {
 
             <TextInput
               ref={contactEmailRef}
-              label="Email (Optional)"
-              placeholder="xxx@xxx.xx"
+              label={t("debt.add.contact.email")}
+              placeholder={t("debt.add.contact.emailPlaceholder")}
               value={form.contact_email}
               onChangeText={(text) => handleChange("contact_email", text)}
               keyboardType="email-address"
@@ -265,10 +265,10 @@ export default function AddDebt() {
             className="p-4 rounded-xl shadow-sm border"
           >
             <Text style={{ color: twColor("primary") }} className="text-lg font-bold mb-2">
-              Financial Details
+              {t("debt.add.financial.title")}
             </Text>
             <Text style={{ color: twColor("muted-foreground") }} className="text-sm mb-4">
-              Specify the amount, currency and important dates for this debt.
+              {t("debt.add.financial.subtitle")}
             </Text>
 
             <TextInput
@@ -285,7 +285,7 @@ export default function AddDebt() {
             />
 
             <SelectInput
-              label="Currency"
+              label={t("debt.add.financial.currency")}
               value={form.currency}
               onChange={(val) => handleChange("currency", val)}
               options={[
@@ -297,7 +297,7 @@ export default function AddDebt() {
             />
 
             <DateInput 
-              label="Loan Date" 
+              label={t("debt.add.financial.loanDate")} 
               value={form.loan_date} 
               onChange={handleDateChange("loan_date")} 
               maximumDate={new Date()} 
@@ -305,7 +305,7 @@ export default function AddDebt() {
             />
 
             <DateInput 
-              label="Due Date" 
+              label={t("debt.add.financial.dueDate")} 
               value={form.due_date} 
               onChange={handleDateChange("due_date")} 
               minimumDate={form.loan_date} 

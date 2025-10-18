@@ -1,4 +1,5 @@
 import { useAuthStore } from '@/stores/authStore';
+import React from 'react';
 import { DEFAULT_LANGUAGE, translations as localeTranslations, SupportedLanguage } from './locales';
 import type { TranslationKey, TranslationKeys } from './types';
 
@@ -10,6 +11,11 @@ export const useTranslation = () => {
   
   // Utiliser la langue de l'utilisateur ou la langue par défaut
   const currentLanguage: SupportedLanguage = (user?.settings?.language as SupportedLanguage) || DEFAULT_LANGUAGE;
+  
+  // Debug: Log language changes
+  React.useEffect(() => {
+    console.log('🌐 Current language:', currentLanguage, 'from user settings:', user?.settings?.language);
+  }, [currentLanguage, user?.settings?.language]);
   
   const t = (key: TranslationKey): string => {
     const keys = key.split('.');

@@ -1,5 +1,7 @@
 import { Loader } from '@/components/ui/loader'
 import PinInput from '@/components/ui/pin-input'
+import { useTranslation } from '@/i18n'
+import { Toast } from '@/lib/toast-global'
 import { useTwColors } from '@/lib/tw-colors'
 import { updateUserPin, verifyUserPin } from '@/services/userService'
 import { useAuthStore } from '@/stores/authStore'
@@ -16,6 +18,7 @@ interface ChangePinModalProps {
 export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose }) => {
   const { user } = useAuthStore()
   const { twColor } = useTwColors()
+  const { t } = useTranslation()
   
   // State
   const [step, setStep] = useState(1) // 1: Current PIN, 2: New PIN, 3: Confirm PIN
@@ -67,12 +70,12 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
         setStep(2)
         Toast.success("PIN actuel vérifié")
       } else {
-        Toast.error("PIN actuel incorrect")
+        Toast.error(t("modals.changePin.validation.invalidCurrentPin"))
         setResetKey(prev => prev + 1)
       }
     } catch (error) {
       console.error("Current PIN verification error:", error)
-      Toast.error("Erreur lors de la vérification du PIN")
+      Toast.error(t("modals.changePin.error"))
       setResetKey(prev => prev + 1)
     } finally {
       setLoading(false)
@@ -81,7 +84,7 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
 
   const handleNewPinComplete = (pin: string) => {
     if (pin === currentPin) {
-      Toast.error("Le nouveau PIN doit être différent de l'ancien")
+      Toast.error(t("modals.changePin.validation.pinMustBeDifferent"))
       setResetKey(prev => prev + 1)
       return
     }
@@ -92,7 +95,7 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
 
   const handleConfirmPinComplete = async (pin: string) => {
     if (pin !== newPin) {
-      Toast.error("Les PINs ne correspondent pas")
+      Toast.error(t("modals.changePin.validation.pinMismatch"))
       setConfirmPin('')
       setResetKey(prev => prev + 1)
       return
@@ -102,10 +105,10 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
     try {
       const success = await updatePin(pin)
       if (success) {
-        Toast.success("PIN modifié avec succès!")
+        Toast.success(t("modals.changePin.success"))
         onClose()
       } else {
-        Toast.error("Erreur lors de la modification du PIN")
+        Toast.error(t("modals.changePin.error"))
         setStep(2)
         setNewPin('')
         setConfirmPin('')
@@ -113,7 +116,7 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
       }
     } catch (error) {
       console.error("PIN update error:", error)
-      Toast.error("Une erreur inattendue s'est produite")
+      Toast.error(t("modals.changePin.error"))
       setStep(2)
       setNewPin('')
       setConfirmPin('')
@@ -139,18 +142,18 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
 
   const getTitle = () => {
     switch (step) {
-      case 1: return "PIN Actuel"
-      case 2: return "Nouveau PIN"
-      case 3: return "Confirmer PIN"
-      default: return "Changer PIN"
+      case 1: return t("modals.changePin.steps.current")
+      case 2: return t("modals.changePin.steps.new")
+      case 3: return t("modals.changePin.steps.confirm")
+      default: return t("modals.changePin.title")
     }
   }
 
   const getSubtitle = () => {
     switch (step) {
-      case 1: return "Entrez votre PIN actuel pour continuer"
-      case 2: return "Créez votre nouveau PIN de 6 chiffres"
-      case 3: return "Confirmez votre nouveau PIN"
+      case 1: return t("modals.changePin.steps.currentSubtitle")
+      case 2: return t("modals.changePin.steps.newSubtitle")
+      case 3: return t("modals.changePin.steps.confirmSubtitle")
       default: return ""
     }
   }
@@ -192,7 +195,7 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
                 <Feather name="chevron-left" size={24} color={twColor("foreground")} />
               </Pressable>
               <Text style={{ color: twColor("foreground") }} className="text-xl font-bold">
-                Changer PIN
+                {t("modals.changePin.title")}
               </Text>
               <View className="w-8" />
             </View>
@@ -233,19 +236,19 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
                 style={{ color: step >= 1 ? twColor("foreground") : twColor("muted-foreground") }}
                 className="text-xs text-center"
               >
-                Actuel
+                {t("modals.changePin.steps.current")}
               </Text>
               <Text 
                 style={{ color: step >= 2 ? twColor("foreground") : twColor("muted-foreground") }}
                 className="text-xs text-center"
               >
-                Nouveau
+                {t("modals.changePin.steps.new")}
               </Text>
               <Text 
                 style={{ color: step >= 3 ? twColor("foreground") : twColor("muted-foreground") }}
                 className="text-xs text-center"
               >
-                Confirmer
+                {t("modals.changePin.steps.confirm")}
               </Text>
             </View>
           </View>
@@ -271,7 +274,7 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
               >
                 <Loader />
                 <Text style={{ color: twColor("primary-foreground") }} className="mt-4">
-                  {step === 1 ? "Vérification..." : step === 3 ? "Mise à jour..." : "Traitement..."}
+                  {step === 1 ? t("modals.changePin.verifying") : step === 3 ? t("modals.changePin.updating") : t("modals.changePin.processing")}
                 </Text>
               </View>
             </View>

@@ -42,15 +42,15 @@ export default function Settings() {
 
   const handleLogout = () => {
     Toast.confirm(
-      "Are you sure you want to log out?",
+      t("settings.logoutConfirm"),
       () => {
         logout()
         router.replace("/")
       },
       {
-        title: "Confirm Logout",
-        confirmText: "Log Out",
-        cancelText: "Cancel",
+        title: t("settings.logoutTitle"),
+        confirmText: t("settings.logOut"),
+        cancelText: t("settings.logoutCancel"),
       },
     )
   }
@@ -116,34 +116,31 @@ export default function Settings() {
     showModal(
       <View className="p-6">
         <Text style={{ color: twColor("foreground") }} className="text-2xl font-bold mb-4">
-          Terms of Service
+          {t("settings.termsOfService")}
         </Text>
         <ScrollView>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            Last Updated: {new Date().toLocaleDateString()}
+            {t("settings.lastUpdated")} {new Date().toLocaleDateString()}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            Welcome to YourCap! These Terms of Service govern your use of our debt management application.
+            {t("settings.termsWelcome")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            By using our app, you agree to these terms. Please read them carefully.
+            {t("settings.termsAgreement")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            1. <Text className="font-semibold">Free Service:</Text> Currently, YourCap is completely free to use. We may introduce premium features in the future with clear
-            communication.
+            1. <Text className="font-semibold">{t("settings.freeService")}</Text> {t("settings.freeServiceText")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            2. <Text className="font-semibold">Data Usage:</Text> To improve our services, we may collect anonymized usage data. Personal information will never be sold to third
-            parties.
+            2. <Text className="font-semibold">{t("settings.dataUsage")}</Text> {t("settings.dataUsageText")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            3. <Text className="font-semibold">User Responsibilities:</Text> You are responsible for maintaining the confidentiality of your account and ensuring the accuracy of
-            your debt records.
+            3. <Text className="font-semibold">{t("settings.userResponsibilities")}</Text> {t("settings.userResponsibilitiesText")}
           </Text>
         </ScrollView>
         <Pressable onPress={hideModal} style={{ backgroundColor: twColor("primary") }} className="p-4 rounded-xl mt-6">
           <Text style={{ color: twColor("primary-foreground") }} className="text-center font-semibold">
-            I Understand
+            {t("settings.iUnderstand")}
           </Text>
         </Pressable>
       </View>,
@@ -154,43 +151,43 @@ export default function Settings() {
     showModal(
       <View className="p-6">
         <Text style={{ color: twColor("foreground") }} className="text-2xl font-bold mb-4">
-          Privacy Policy
+          {t("settings.privacyPolicy")}
         </Text>
         <ScrollView>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            Your privacy is important to us. This Privacy Policy explains how we collect, use, and protect your information.
+            {t("settings.privacyImportant")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            <Text className="font-semibold">Information We Collect:</Text>
+            <Text className="font-semibold">{t("settings.informationWeCollect")}</Text>
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            • Account information (name, email, phone number)
+            {t("settings.accountInfo")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            • Debt records and financial information
+            {t("settings.debtRecords")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            • App usage data for improvement purposes
+            {t("settings.usageData")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            <Text className="font-semibold">How We Use Your Information:</Text>
+            <Text className="font-semibold">{t("settings.howWeUse")}</Text>
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            • To provide and improve our services
+            {t("settings.provideServices")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            • To send important notifications about your debts
+            {t("settings.sendNotifications")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            • For analytical purposes to enhance user experience
+            {t("settings.analytics")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            Your data is stored securely and never shared with third parties without your consent, except as required by law.
+            {t("settings.dataSecure")}
           </Text>
         </ScrollView>
         <Pressable onPress={hideModal} style={{ backgroundColor: twColor("primary") }} className="p-4 rounded-xl mt-6">
           <Text style={{ color: twColor("primary-foreground") }} className="text-center font-semibold">
-            I Understand
+            {t("settings.iUnderstand")}
           </Text>
         </Pressable>
       </View>,
@@ -201,40 +198,40 @@ export default function Settings() {
     showModal(
       <View className="p-6">
         <Text style={{ color: twColor("foreground") }} className="text-2xl font-bold mb-4">
-          Help & Support
+          {t("settings.helpSupport")}
         </Text>
         <ScrollView>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            Need help with YourCap? Here are some resources:
+            {t("settings.helpIntro")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4 font-semibold">
-            Frequently Asked Questions:
+            {t("settings.faq")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-2">
-            • How to add a new debt?
+            {t("settings.howToAddDebt")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            Go to the Dashboard tab and tap the "+" button to add a new debt record.
+            {t("settings.howToAddDebtAnswer")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-2">
-            • How to change my PIN?
+            {t("settings.howToChangePin")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            Navigate to Settings → Profile → Change PIN to update your security PIN.
+            {t("settings.howToChangePinAnswer")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4 font-semibold">
-            Contact Support:
+            {t("settings.contactSupport")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            Email: support@yourcap.app
+            {t("settings.supportEmail")}
           </Text>
           <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            We typically respond within 24 hours.
+            {t("settings.responseTime")}
           </Text>
         </ScrollView>
         <Pressable onPress={hideModal} style={{ backgroundColor: twColor("primary") }} className="p-4 rounded-xl mt-6">
           <Text style={{ color: twColor("primary-foreground") }} className="text-center font-semibold">
-            Close
+            {t("settings.close")}
           </Text>
         </Pressable>
       </View>,
@@ -245,14 +242,14 @@ export default function Settings() {
 
   const handleDeleteAccount = () => {
     Toast.confirm(
-      "This will permanently delete your account and all associated data. This action cannot be undone.",
+      t("settings.deleteAccountConfirm"),
       () => {
-        Toast.info("Account deletion feature coming soon!", "Info")
+        Toast.info(t("settings.accountDeletionSoon"), "Info")
       },
       {
-        title: "Delete Account?",
-        confirmText: "Delete",
-        cancelText: "Cancel",
+        title: t("settings.deleteAccountTitle"),
+        confirmText: t("settings.deleteAccountButton"),
+        cancelText: t("settings.logoutCancel"),
       },
     )
   }
@@ -492,17 +489,17 @@ export default function Settings() {
               }}
             >
               <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                Auto-logout after inactivity
+                {t("settings.autoLogout")}
               </Text>
               <SelectionButtons
                 options={[
                   // { value: 0, label: "Immediately" },
-                  { value: 1, label: "1 min" },
-                  { value: 5, label: "5 min" },
-                  { value: 15, label: "15 min" },
-                  { value: 30, label: "30 min" },
-                  { value: 60, label: "60 min" },
-                  { value: 120, label: "120 min" },
+                  { value: 1, label: t("settings.oneMin") },
+                  { value: 5, label: t("settings.fiveMin") },
+                  { value: 15, label: t("settings.fifteenMin") },
+                  { value: 30, label: t("settings.thirtyMin") },
+                  { value: 60, label: t("settings.sixtyMin") },
+                  { value: 120, label: t("settings.oneHundredTwentyMin") },
                 ]}
                 selectedValue={settings.inactivity_timeout}
                 onSelect={(minutes) => updateSetting("inactivity_timeout", minutes)}
@@ -511,12 +508,12 @@ export default function Settings() {
           </SettingCard>
 
           {/* Session Management Section */}
-          <SettingCard title="Session Management">
+          <SettingCard title={t("settings.sessionManagement")}>
             <View className="flex-row items-center justify-between py-3">
               <View className="flex-1">
-                <Text style={{ color: twColor("foreground") }}>Remember Me</Text>
+                <Text style={{ color: twColor("foreground") }}>{t("settings.rememberMe")}</Text>
                 <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
-                  Keep me logged in on this device
+                  {t("settings.rememberMeDescription")}
                 </Text>
               </View>
               <Switch
@@ -538,14 +535,14 @@ export default function Settings() {
                 className="py-3 border-t"
               >
                 <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                  Session Duration
+                  {t("settings.sessionDuration")}
                 </Text>
                 <SelectionButtons
                   options={[
-                    { value: 1, label: "1 hour" },
-                    { value: 8, label: "8 hours" },
-                    { value: 24, label: "24 hours" },
-                    { value: 168, label: "7 days" },
+                    { value: 1, label: t("settings.oneHour") },
+                    { value: 8, label: t("settings.eightHours") },
+                    { value: 24, label: t("settings.twentyFourHours") },
+                    { value: 168, label: t("settings.sevenDays") },
                   ]}
                   selectedValue={settings.session_duration / 60} // Convert minutes to hours
                   onSelect={handleSessionDurationChange}
@@ -557,7 +554,7 @@ export default function Settings() {
           {/* Notifications Section */}
           <SettingCard title={t("settings.notifications")}>
             <View className="flex-row items-center justify-between py-3">
-              <Text style={{ color: twColor("foreground") }}>Enable Notifications</Text>
+              <Text style={{ color: twColor("foreground") }}>{t("settings.enableNotifications")}</Text>
               <Switch
                 value={settings.notification_enabled}
                 onValueChange={async (val) => {
@@ -567,15 +564,15 @@ export default function Settings() {
                     const hasPermission = await requestNotificationPermissions()
                     if (hasPermission && user?.user_id) {
                       await scheduleAllDebtReminders(user.user_id)
-                      Toast.success("Notifications enabled")
+                      Toast.success(t("settings.notificationsEnabled"))
                     } else {
-                      Toast.error("Notification permissions denied")
+                      Toast.error(t("settings.notificationPermissionsDenied"))
                     }
                   } else if (success && !val) {
                     // Cancel all notifications
                     const Notifications = await import("expo-notifications")
                     await Notifications.cancelAllScheduledNotificationsAsync()
-                    Toast.success("Notifications disabled")
+                    Toast.success(t("settings.notificationsDisabled"))
                   }
                 }}
                 trackColor={{
@@ -596,15 +593,15 @@ export default function Settings() {
                   className="py-3 border-t"
                 >
                   <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                    Notification Types
+                    {t("settings.notificationTypes")}
                   </Text>
 
                   {/* System Notifications */}
                   <View className="flex-row items-center justify-between py-2">
                     <View className="flex-1">
-                      <Text style={{ color: twColor("foreground") }}>System Notifications</Text>
+                      <Text style={{ color: twColor("foreground") }}>{t("settings.systemNotifications")}</Text>
                       <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
-                        Push notifications on your device
+                        {t("settings.systemNotificationsDesc")}
                       </Text>
                     </View>
                     <Switch
@@ -613,7 +610,7 @@ export default function Settings() {
                         const success = await updateSetting("system_notifications", val)
                         if (success && user?.user_id) {
                           await updateNotificationSettings(user.user_id)
-                          Toast.success(val ? "System notifications enabled" : "System notifications disabled")
+                          Toast.success(val ? t("settings.systemNotificationsEnabled") : t("settings.systemNotificationsDisabled"))
                         }
                       }}
                       trackColor={{
@@ -627,14 +624,14 @@ export default function Settings() {
                   {/* Email Notifications */}
                   <View className="flex-row items-center justify-between py-2">
                     <View className="flex-1">
-                      <Text style={{ color: twColor("foreground") }}>Email Notifications</Text>
+                      <Text style={{ color: twColor("foreground") }}>{t("settings.emailNotifications")}</Text>
                       <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
-                        Send reminders to your email
+                        {t("settings.emailNotificationsDesc")}
                       </Text>
                     </View>
                     <Switch
                       value={settings.email_notifications}
-                      onValueChange={() => Toast.info("Email notifications coming soon!")}
+                      onValueChange={() => Toast.info(t("settings.emailComingSoon"))}
                       trackColor={{
                         false: twColor("muted"),
                         true: twColor("primary"),
@@ -646,14 +643,14 @@ export default function Settings() {
                   {/* SMS Notifications */}
                   <View className="flex-row items-center justify-between py-2">
                     <View className="flex-1">
-                      <Text style={{ color: twColor("foreground") }}>SMS Notifications</Text>
+                      <Text style={{ color: twColor("foreground") }}>{t("settings.smsNotifications")}</Text>
                       <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
-                        Send reminders via SMS
+                        {t("settings.smsNotificationsDesc")}
                       </Text>
                     </View>
                     <Switch
                       value={settings.sms_notifications}
-                      onValueChange={() => Toast.info("SMS notifications coming soon!")}
+                      onValueChange={() => Toast.info(t("settings.smsComingSoon"))}
                       trackColor={{
                         false: twColor("muted"),
                         true: twColor("primary"),
@@ -671,21 +668,21 @@ export default function Settings() {
                   className="py-3 border-t"
                 >
                   <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                    Days Before Reminder
+                    {t("settings.daysBeforeReminder")}
                   </Text>
                   <SelectionButtons
                     options={[
-                      { value: 1, label: "1 day" },
-                      { value: 3, label: "3 days" },
-                      { value: 5, label: "5 days" },
-                      { value: 7, label: "7 days" },
+                      { value: 1, label: t("settings.oneDay") },
+                      { value: 3, label: t("settings.threeDays") },
+                      { value: 5, label: t("settings.fiveDays") },
+                      { value: 7, label: t("settings.sevenDays") },
                     ]}
                     selectedValue={settings.days_before_reminder}
                     onSelect={async (days) => {
                       const success = await updateSetting("days_before_reminder", days)
                       if (success && user?.user_id) {
                         await scheduleAllDebtReminders(user.user_id)
-                        Toast.success("Reminder schedule updated")
+                        Toast.success(t("settings.reminderScheduleUpdated"))
                       }
                     }}
                   />
@@ -699,31 +696,31 @@ export default function Settings() {
                   className="py-3 border-t"
                 >
                   <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                    Preferred Times for Notifications
+                    {t("settings.preferredNotificationTimes")}
                   </Text>
                   <Text style={{ color: twColor("muted-foreground") }} className="text-sm mb-3">
-                    Select multiple times for reminders
+                    {t("settings.selectMultipleTimes")}
                   </Text>
                   <MultipleTimeSelection
                     options={[
-                      { value: "05:00", label: "5:00 AM" },
-                      { value: "06:00", label: "6:00 AM" },
-                      { value: "07:00", label: "7:00 AM" },
-                      { value: "08:00", label: "8:00 AM" },
-                      { value: "09:00", label: "9:00 AM" },
-                      { value: "12:00", label: "12:00 PM" },
-                      { value: "13:00", label: "1:00 PM" },
-                      { value: "14:00", label: "2:00 PM" },
-                      { value: "15:00", label: "3:00 PM" },
-                      { value: "18:00", label: "6:00 PM" },
-                      { value: "20:00", label: "8:00 PM" },
+                      { value: "05:00", label: t("settings.fiveAm") },
+                      { value: "06:00", label: t("settings.sixAm") },
+                      { value: "07:00", label: t("settings.sevenAm") },
+                      { value: "08:00", label: t("settings.eightAm") },
+                      { value: "09:00", label: t("settings.nineAm") },
+                      { value: "12:00", label: t("settings.twelvePm") },
+                      { value: "13:00", label: t("settings.onePm") },
+                      { value: "14:00", label: t("settings.twoPm") },
+                      { value: "15:00", label: t("settings.threePm") },
+                      { value: "18:00", label: t("settings.sixPm") },
+                      { value: "20:00", label: t("settings.eightPm") },
                     ]}
                     selectedValues={settings.notification_times || [settings.notification_time || "09:00"]}
                     onSelectionChange={async (times) => {
                       const success = await updateSetting("notification_times", times)
                       if (success && user?.user_id) {
                         await scheduleAllDebtReminders(user.user_id)
-                        Toast.success("Notification times updated")
+                        Toast.success(t("settings.notificationTimesUpdated"))
                       }
                     }}
                   />
@@ -738,9 +735,9 @@ export default function Settings() {
                 >
                   <View className="flex-row items-center justify-between py-2">
                     <View className="flex-1">
-                      <Text style={{ color: twColor("foreground") }}>Summary Notifications</Text>
+                      <Text style={{ color: twColor("foreground") }}>{t("settings.summaryNotifications")}</Text>
                       <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
-                        Regular summary of your debts
+                        {t("settings.summaryNotificationsDesc")}
                       </Text>
                     </View>
                     <Switch
@@ -749,7 +746,7 @@ export default function Settings() {
                         const success = await updateSetting("summary_notifications", val)
                         if (success && user?.user_id) {
                           await scheduleAllDebtReminders(user.user_id)
-                          Toast.success(val ? "Summary notifications enabled" : "Summary notifications disabled")
+                          Toast.success(val ? t("settings.summaryNotificationsEnabled") : t("settings.summaryNotificationsDisabled"))
                         }
                       }}
                       trackColor={{
@@ -765,20 +762,20 @@ export default function Settings() {
                       {/* Summary Frequency */}
                       <View className="py-3">
                         <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                          Summary Frequency
+                          {t("settings.summaryFrequency")}
                         </Text>
                         <SelectionButtons
                           options={[
-                            { value: 'daily', label: "Daily" },
-                            { value: 'weekly', label: "Weekly" },
-                            { value: 'none', label: "None" },
+                            { value: 'daily', label: t("settings.daily") },
+                            { value: 'weekly', label: t("settings.weekly") },
+                            { value: 'none', label: t("common.none") },
                           ]}
                           selectedValue={settings.summary_frequency || 'daily'}
                           onSelect={async (frequency) => {
                             const success = await updateSetting("summary_frequency", frequency)
                             if (success && user?.user_id) {
                               await scheduleAllDebtReminders(user.user_id)
-                              Toast.success("Summary frequency updated")
+                              Toast.success(t("settings.summaryFrequencyUpdated"))
                             }
                           }}
                         />
@@ -788,22 +785,22 @@ export default function Settings() {
                       {settings.summary_frequency !== 'none' && (
                         <View className="py-3">
                           <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                            Summary Time
+                            {t("settings.summaryTime")}
                           </Text>
                           <SelectionButtons
                             options={[
-                              { value: "08:00", label: "8:00 AM" },
-                              { value: "12:00", label: "12:00 PM" },
-                              { value: "18:00", label: "6:00 PM" },
-                              { value: "20:00", label: "8:00 PM" },
-                              { value: "21:00", label: "9:00 PM" },
+                              { value: "08:00", label: t("settings.eightAm") },
+                              { value: "12:00", label: t("settings.twelvePm") },
+                              { value: "18:00", label: t("settings.sixPm") },
+                              { value: "20:00", label: t("settings.eightPm") },
+                              { value: "21:00", label: t("settings.ninePm") },
                             ]}
                             selectedValue={settings.summary_notification_time || "20:00"}
                             onSelect={async (time) => {
                               const success = await updateSetting("summary_notification_time", time)
                               if (success && user?.user_id) {
                                 await scheduleAllDebtReminders(user.user_id)
-                                Toast.success("Summary time updated")
+                                Toast.success(t("settings.summaryTimeUpdated"))
                               }
                             }}
                           />
@@ -834,39 +831,39 @@ export default function Settings() {
             <ImportExportSection 
               userId={user?.user_id || ''} 
               onImportComplete={(imported, total) => {
-                Toast.success(`${imported}/${total} dettes importées!`)
+                Toast.success(`${imported}/${total} ${t("settings.debtsImported")}`)
               }}
             />
           </SettingCard>
 
           {/* About Section */}
           <SettingCard title={t("settings.about")}>
-            <SettingRow icon="file-text" title="Terms of Service" onPress={showTermsModal} />
-            <SettingRow icon="shield" title="Privacy Policy" onPress={showPrivacyModal} />
-            <SettingRow icon="help-circle" title="Help & Support" onPress={showHelpModal} />
+            <SettingRow icon="file-text" title={t("settings.termsOfServiceTitle")} onPress={showTermsModal} />
+            <SettingRow icon="shield" title={t("settings.privacyPolicyTitle")} onPress={showPrivacyModal} />
+            <SettingRow icon="help-circle" title={t("settings.helpSupportTitle")} onPress={showHelpModal} />
           </SettingCard>
 
           {/* Testing Section - Only show in development */}
           {__DEV__ && (
-            <SettingCard title="Development Tools">
+            <SettingCard title={t("settings.developmentTools")}>
               <SettingRow 
                 icon="bell" 
-                title="Test Summary Notification" 
+                title={t("settings.testSummaryNotification")} 
                 onPress={async () => {
                   if (user?.user_id) {
                     const { updateSummaryNotificationContent } = await import("@/services/notificationService")
                     await updateSummaryNotificationContent(user.user_id)
-                    Toast.success("Test summary notification sent!")
+                    Toast.success(t("settings.testNotificationSent"))
                   }
                 }} 
               />
               <SettingRow 
                 icon="refresh-cw" 
-                title="Reschedule All Notifications" 
+                title={t("settings.rescheduleNotifications")} 
                 onPress={async () => {
                   if (user?.user_id) {
                     await scheduleAllDebtReminders(user.user_id)
-                    Toast.success("All notifications rescheduled!")
+                    Toast.success(t("settings.notificationsRescheduled"))
                   }
                 }} 
               />
@@ -874,8 +871,8 @@ export default function Settings() {
           )}
 
           {/* Danger Zone */}
-          <SettingCard title="Danger Zone" isDanger>
-            <SettingRow icon="trash-2" title="Delete Account" onPress={handleDeleteAccount} isDanger />
+          <SettingCard title={t("settings.dangerZone")} isDanger>
+            <SettingRow icon="trash-2" title={t("settings.deleteAccount")} onPress={handleDeleteAccount} isDanger />
 
             <Pressable
               onPress={handleLogout}
@@ -887,7 +884,7 @@ export default function Settings() {
             >
               <Feather name="log-out" size={20} color={twColor("destructive-foreground")} />
               <Text style={{ color: twColor("destructive-foreground") }} className="font-semibold ml-2">
-                Log Out
+                {t("settings.logOut")}
               </Text>
             </Pressable>
           </SettingCard>
