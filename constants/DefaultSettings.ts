@@ -8,5 +8,9 @@ export const DEFAULT_SETTINGS = {
   system_notifications: true,
   email_notifications: false,
   sms_notifications: false,
-  notification_time: "09:00",
-} as const
+  notification_times: ["09:00"], // Array of notification times
+  notification_time: "09:00", // Backward compatibility
+  summary_notifications: true,
+  summary_notification_time: "20:00", // 8 PM for daily summaries
+  summary_frequency: 'daily' as 'daily' | 'weekly' | 'none',
+}

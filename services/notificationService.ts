@@ -1,5 +1,5 @@
-import * as Notifications from "expo-notifications"
 import * as Device from "expo-device"
+import * as Notifications from "expo-notifications"
 import { Platform } from "react-native"
 import { getUserDebts } from "./debtServices"
 import { getSettings } from "./settingsService"
@@ -35,11 +35,19 @@ export const requestNotificationPermissions = async (): Promise<boolean> => {
       return false
     }
 
-    // Configure Android channel
+    // Configure Android channels
     if (Platform.OS === "android") {
       await Notifications.setNotificationChannelAsync("debt-reminders", {
         name: "Debt Reminders",
         importance: Notifications.AndroidImportance.HIGH,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+        sound: "default",
+      })
+
+      await Notifications.setNotificationChannelAsync("summary-notifications", {
+        name: "Summary Notifications",
+        importance: Notifications.AndroidImportance.DEFAULT,
         vibrationPattern: [0, 250, 250, 250],
         lightColor: "#FF231F7C",
         sound: "default",
@@ -61,7 +69,8 @@ export const scheduleDebtReminder = async (
   dueDate: string,
   debtType: "OWING" | "OWED",
   reminderDays: number,
-): Promise<string | null> => {
+  notificationTimes: string[] = ["09:00"],
+): Promise<string[]> => {
   try {
     const dueDateObj = new Date(dueDate)
     const reminderDate = new Date(dueDateObj)
@@ -70,7 +79,7 @@ export const scheduleDebtReminder = async (
     // Don't schedule if reminder date is in the past
     if (reminderDate <= new Date()) {
       console.log("Reminder date is in the past, skipping")
-      return null
+      return []
     }
 
     const isOwing = debtType === "OWING"
@@ -80,31 +89,48 @@ export const scheduleDebtReminder = async (
       ? `${contactName} owes you ${amount} ${currency}. Due in ${reminderDays} day${reminderDays > 1 ? "s" : ""}.`
       : `Don't forget: You owe ${contactName} ${amount} ${currency}. Due in ${reminderDays} day${reminderDays > 1 ? "s" : ""}.`
 
-    const identifier = await Notifications.scheduleNotificationAsync({
-      content: {
-        title,
-        body,
-        data: {
-          debtId,
-          type: "debt_reminder",
-          debtType,
-          contactName,
-          amount,
-          currency,
-        },
-        sound: "default",
-      },
-      trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.DATE,
-        date: reminderDate,
-      },
-    })
+    const scheduledIds: string[] = []
 
-    console.log("Notification scheduled:", identifier, "for", reminderDate)
-    return identifier
+    // Schedule notification for each selected time
+    for (const time of notificationTimes) {
+      const [hours, minutes] = time.split(':').map(Number)
+      const notificationDate = new Date(reminderDate)
+      notificationDate.setHours(hours, minutes, 0, 0)
+
+      // Skip if this specific time is in the past
+      if (notificationDate <= new Date()) {
+        continue
+      }
+
+      const identifier = await Notifications.scheduleNotificationAsync({
+        content: {
+          title,
+          body,
+          data: {
+            debtId,
+            type: "debt_reminder",
+            debtType,
+            contactName,
+            amount,
+            currency,
+            scheduledTime: time,
+          },
+          sound: "default",
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.DATE,
+          date: notificationDate,
+        },
+      })
+
+      console.log(`Notification scheduled: ${identifier} for ${notificationDate} at ${time}`)
+      scheduledIds.push(identifier)
+    }
+
+    return scheduledIds
   } catch (error) {
     console.error("Error scheduling notification:", error)
-    return null
+    return []
   }
 }
 
@@ -114,6 +140,103 @@ export const cancelDebtReminder = async (notificationId: string): Promise<void> 
     console.log("Notification cancelled:", notificationId)
   } catch (error) {
     console.error("Error cancelling notification:", error)
+  }
+}
+
+// New function for summary notifications
+export const scheduleSummaryNotification = async (
+  userId: string,
+  summaryTime: string,
+  frequency: 'daily' | 'weekly'
+): Promise<string | null> => {
+  try {
+    const [hours, minutes] = summaryTime.split(':').map(Number)
+    
+    let trigger: any
+    let notificationId: string
+
+    if (frequency === 'daily') {
+      // Schedule daily at the specified time
+      trigger = {
+        type: Notifications.SchedulableTriggerInputTypes.DAILY,
+        hour: hours,
+        minute: minutes,
+      }
+      notificationId = `summary_daily_${userId}`
+    } else {
+      // Schedule weekly (every Sunday at the specified time)
+      trigger = {
+        type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+        weekday: 1, // Sunday
+        hour: hours,
+        minute: minutes,
+      }
+      notificationId = `summary_weekly_${userId}`
+    }
+
+    // Cancel existing summary notification
+    await Notifications.cancelScheduledNotificationAsync(notificationId)
+
+    const identifier = await Notifications.scheduleNotificationAsync({
+      identifier: notificationId,
+      content: {
+        title: frequency === 'daily' ? "📊 Daily Summary" : "📊 Weekly Summary",
+        body: "Check your debt summary and reminders",
+        data: {
+          type: "summary_notification",
+          frequency,
+          userId,
+        },
+        sound: "default",
+      },
+      trigger,
+    })
+
+    console.log(`${frequency} summary notification scheduled:`, identifier)
+    return identifier
+  } catch (error) {
+    console.error("Error scheduling summary notification:", error)
+    return null
+  }
+}
+
+export const generateSummaryNotificationContent = async (userId: string): Promise<{title: string, body: string}> => {
+  try {
+    const debts = await getUserDebts(userId)
+    const pendingDebts = debts.filter(debt => debt.status === "PENDING")
+    
+    const owingDebts = pendingDebts.filter(debt => debt.debt_type === "OWING")
+    const owedDebts = pendingDebts.filter(debt => debt.debt_type === "OWED")
+    
+    const totalOwing = owingDebts.reduce((sum, debt) => sum + debt.amount, 0)
+    const totalOwed = owedDebts.reduce((sum, debt) => sum + debt.amount, 0)
+    
+    let title = "📊 Your Debt Summary"
+    let body = ""
+    
+    if (owingDebts.length === 0 && owedDebts.length === 0) {
+      body = "🎉 You have no pending debts!"
+    } else {
+      const parts = []
+      
+      if (owingDebts.length > 0) {
+        parts.push(`💰 ${owingDebts.length} person${owingDebts.length > 1 ? 's' : ''} owe${owingDebts.length === 1 ? 's' : ''} you ${totalOwing} XAF`)
+      }
+      
+      if (owedDebts.length > 0) {
+        parts.push(`⚠️ You owe ${owedDebts.length} person${owedDebts.length > 1 ? 's' : ''} ${totalOwed} XAF`)
+      }
+      
+      body = parts.join(" • ")
+    }
+    
+    return { title, body }
+  } catch (error) {
+    console.error("Error generating summary content:", error)
+    return {
+      title: "📊 Your Debt Summary",
+      body: "Tap to view your debts"
+    }
   }
 }
 
@@ -132,12 +255,32 @@ export const scheduleAllDebtReminders = async (userId: string): Promise<void> =>
 
     console.log(`Scheduling reminders for ${pendingDebts.length} pending debts`)
 
-    // Cancel all existing notifications first
+    // Cancel all existing debt reminder notifications first
     await Notifications.cancelAllScheduledNotificationsAsync()
 
-    // Schedule new notifications
+    // Get notification times (use backward compatibility)
+    const notificationTimes = settings.notification_times && settings.notification_times.length > 0 
+      ? settings.notification_times 
+      : [settings.notification_time || "09:00"]
+
+    // Schedule new debt reminder notifications
     for (const debt of pendingDebts) {
-      await scheduleDebtReminder(debt.debt_id, debt.contact_name, debt.amount, debt.currency || "XAF", debt.due_date, debt.debt_type, settings.days_before_reminder)
+      await scheduleDebtReminder(
+        debt.debt_id, 
+        debt.contact_name, 
+        debt.amount, 
+        debt.currency || "XAF", 
+        debt.due_date, 
+        debt.debt_type, 
+        settings.days_before_reminder,
+        notificationTimes
+      )
+    }
+
+    // Schedule summary notifications if enabled
+    if (settings.summary_notifications && settings.summary_frequency !== 'none') {
+      const summaryTime = settings.summary_notification_time || "20:00"
+      await scheduleSummaryNotification(userId, summaryTime, settings.summary_frequency || 'daily')
     }
   } catch (error) {
     console.error("Error scheduling all debt reminders:", error)
@@ -169,8 +312,43 @@ export const handleNotificationResponse = (response: Notifications.NotificationR
   console.log("Notification response:", response)
   const data = response.notification.request.content.data
 
-  if (data.debtId) {
+  if (data.type === "summary_notification") {
+    // Navigation vers le dashboard pour voir le résumé
+    console.log("Navigate to dashboard for summary")
+  } else if (data.debtId) {
     // Navigation vers le détail de la dette
     console.log("Navigate to debt:", data.debtId)
+  }
+}
+
+// New function to update just the summary notification content
+export const updateSummaryNotificationContent = async (userId: string): Promise<void> => {
+  try {
+    const settings = await getSettings(userId)
+    if (!settings?.summary_notifications || settings.summary_frequency === 'none') {
+      return
+    }
+
+    // Generate fresh content for immediate notification
+    const { title, body } = await generateSummaryNotificationContent(userId)
+    
+    // Send immediate summary notification
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title,
+        body,
+        data: {
+          type: "summary_notification",
+          frequency: "immediate",
+          userId,
+        },
+        sound: "default",
+      },
+      trigger: null, // Send immediately
+    })
+
+    console.log("Immediate summary notification sent")
+  } catch (error) {
+    console.error("Error sending summary notification:", error)
   }
 }

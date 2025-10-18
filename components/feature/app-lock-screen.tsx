@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react"
-import { View, Text, Modal, AppState, AppStateStatus } from "react-native"
 import PinInput from "@/components/ui/pin-input"
-import { useAuthStore } from "@/stores/authStore"
 import { isAppLocked } from "@/lib/auth"
+import { useAuthStore } from "@/stores/authStore"
+import React, { useEffect, useState } from "react"
+import { AppState, AppStateStatus, Modal, Text, View } from "react-native"
 
 export default function AppLockScreen() {
-  const { user, loginWithBiometric, login, biometricCapabilities, checkBiometricCapabilities } = useAuthStore()
+  const { user, loginWithBiometric, login, biometricCapabilities, checkBiometricCapabilities, appLocked } = useAuthStore()
   const [showLock, setShowLock] = useState(false)
   const [loading, setLoading] = useState(false)
   const [appState, setAppState] = useState(AppState.currentState)

@@ -66,6 +66,10 @@ export const initDb = async (): Promise<void> => {
         email_notifications INTEGER DEFAULT 0,
         sms_notifications INTEGER DEFAULT 0,
         notification_time TEXT DEFAULT '09:00', -- Format HH:MM
+        notification_times TEXT, -- JSON array of notification times
+        summary_notifications INTEGER DEFAULT 1,
+        summary_notification_time TEXT DEFAULT '20:00',
+        summary_frequency TEXT DEFAULT 'daily', -- 'daily', 'weekly', or 'none'
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(user_id)
@@ -89,6 +93,43 @@ export const initDb = async (): Promise<void> => {
       CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
       CREATE INDEX IF NOT EXISTS idx_users_phone ON users(phone_number);
     `)
+
+    // Migration pour ajouter les nouvelles colonnes si elles n'existent pas
+    try {
+      await db.execAsync(`
+        ALTER TABLE settings ADD COLUMN notification_times TEXT;
+      `)
+      console.log("✅ Added notification_times column")
+    } catch (error) {
+      // Column might already exist, ignore
+    }
+
+    try {
+      await db.execAsync(`
+        ALTER TABLE settings ADD COLUMN summary_notifications INTEGER DEFAULT 1;
+      `)
+      console.log("✅ Added summary_notifications column")
+    } catch (error) {
+      // Column might already exist, ignore
+    }
+
+    try {
+      await db.execAsync(`
+        ALTER TABLE settings ADD COLUMN summary_notification_time TEXT DEFAULT '20:00';
+      `)
+      console.log("✅ Added summary_notification_time column")
+    } catch (error) {
+      // Column might already exist, ignore
+    }
+
+    try {
+      await db.execAsync(`
+        ALTER TABLE settings ADD COLUMN summary_frequency TEXT DEFAULT 'daily';
+      `)
+      console.log("✅ Added summary_frequency column")
+    } catch (error) {
+      // Column might already exist, ignore
+    }
 
     console.log("✅ Schema executed successfully")
     console.log("✅ Database initialized successfully")

@@ -9,7 +9,11 @@ export interface Settings {
   system_notifications?: boolean
   email_notifications?: boolean
   sms_notifications?: boolean
-  notification_time?: string // Format HH:MM
+  notification_times?: string[] // Array of times in HH:MM format
+  notification_time?: string // Backward compatibility - Format HH:MM
+  summary_notifications?: boolean // For daily/weekly summaries
+  summary_notification_time?: string // When to send summary notifications
+  summary_frequency?: 'daily' | 'weekly' | 'none' // How often to send summaries
   created_at: string
   updated_at: string
 }
@@ -24,5 +28,9 @@ export interface DefaultSettings {
   system_notifications: boolean
   email_notifications: boolean
   sms_notifications: boolean
+  notification_times: string[] // Array of times in HH:MM format
   notification_time: string // Format HH:MM
+  summary_notifications: boolean
+  summary_notification_time: string
+  summary_frequency: 'daily' | 'weekly' | 'none'
 }

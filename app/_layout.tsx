@@ -1,13 +1,15 @@
-import { Stack } from "expo-router"
-import { useFonts } from "expo-font"
-import { useEffect, useState } from "react"
-import * as SplashScreen from "expo-splash-screen"
-import { ToastProvider } from "@/components/ui/toast/toast-provider"
-import { useInactivityTimeout, useAppStartup } from "@/hooks/useInactivityTimeout"
-import { initDb } from "@/db/db"
-import { useAuthStore } from "@/stores/authStore"
 import AppLockScreen from "@/components/feature/app-lock-screen"
+import { InitialLoadingScreen } from "@/components/feature/initial-loading-screen"
+import { ToastProvider } from "@/components/ui/toast/toast-provider"
+import { initDb } from "@/db/db"
+import { useAppStartup, useInactivityTimeout } from "@/hooks/useInactivityTimeout"
 import { useNotificationHandler } from "@/hooks/useNotificationHandler"
+import { isAppLocked } from "@/lib/auth"
+import { useAuthStore } from "@/stores/authStore"
+import { useFonts } from "expo-font"
+import { Stack } from "expo-router"
+import * as SplashScreen from "expo-splash-screen"
+import { useEffect, useState } from "react"
 import "react-native-get-random-values"
 import "../global.css"
 
@@ -19,7 +21,8 @@ export default function RootLayout() {
   })
 
   const [dbInitialized, setDbInitialized] = useState(false)
-  const { loadUser, user, loading, isInitialized } = useAuthStore()
+  const [lockCheckComplete, setLockCheckComplete] = useState(false)
+  const { loadUser, user, loading, isInitialized, appLocked } = useAuthStore()
 
   // Use hooks - l'ordre est important
   useNotificationHandler()
@@ -41,6 +44,12 @@ export default function RootLayout() {
 
         console.log("Loading user...")
         await loadUser()
+        
+        // Vérifier immédiatement le statut de verrouillage après loadUser
+        const lockStatus = await isAppLocked()
+        console.log("Initial lock check complete:", lockStatus)
+        setLockCheckComplete(true)
+        
         console.log("App initialization completed")
 
         // Cacher le splash screen une fois tout initialisé
@@ -57,6 +66,16 @@ export default function RootLayout() {
   // Afficher null pendant le chargement initial
   if (!fontsLoaded || !dbInitialized || !isInitialized) {
     return null
+  }
+
+  // Si l'utilisateur est connecté, attendre la vérification du verrouillage
+  // avant d'afficher quoi que ce soit pour éviter le flash
+  if (user && !lockCheckComplete) {
+    return (
+      <ToastProvider>
+        <InitialLoadingScreen />
+      </ToastProvider>
+    )
   }
 
   return (

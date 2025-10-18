@@ -1,11 +1,12 @@
+import { useTranslation } from "@/i18n"
+import { isSessionValid } from "@/lib/auth"
 import { useTwColors } from "@/lib/tw-colors"
+import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { Tabs, useRouter } from "expo-router"
+import { useEffect } from "react"
 import { StatusBar, Text, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
-import { useEffect } from "react"
-import { useAuthStore } from "@/stores/authStore"
-import { isSessionValid } from "@/lib/auth"
 
 const TabIcon = ({ focused, iconName, title }: { focused: boolean; iconName: string; title: string }) => {
   const { twColor } = useTwColors()
@@ -59,6 +60,7 @@ const TabIcon = ({ focused, iconName, title }: { focused: boolean; iconName: str
 
 export default function TabsLayout() {
   const { twColor } = useTwColors()
+  const { t } = useTranslation()
   const router = useRouter()
   const { user, markSessionExpired } = useAuthStore()
 
@@ -131,24 +133,24 @@ export default function TabsLayout() {
           <Tabs.Screen
             name="dashboard"
             options={{
-              title: "Dashboard",
-              tabBarIcon: ({ focused }) => <TabIcon focused={focused} iconName="home" title="Accueil" />,
+            title: t("tabs.dashboard"),
+            tabBarIcon: ({ focused }) => <TabIcon focused={focused} iconName="home" title={t("tabs.dashboard")} />,
               headerShown: false,
             }}
           />
           <Tabs.Screen
             name="history"
             options={{
-              title: "Historique",
-              tabBarIcon: ({ focused }) => <TabIcon focused={focused} iconName="list" title="Historique" />,
+            title: t("tabs.history"),
+            tabBarIcon: ({ focused }) => <TabIcon focused={focused} iconName="list" title={t("tabs.history")} />,
               headerShown: false,
             }}
           />
           <Tabs.Screen
             name="settings"
             options={{
-              title: "Paramètres",
-              tabBarIcon: ({ focused }) => <TabIcon focused={focused} iconName="settings" title="Paramètres" />,
+            title: t("tabs.settings"),
+            tabBarIcon: ({ focused }) => <TabIcon focused={focused} iconName="settings" title={t("tabs.settings")} />,
               headerShown: false,
             }}
           />

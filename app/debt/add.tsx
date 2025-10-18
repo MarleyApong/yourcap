@@ -3,6 +3,7 @@ import { DateInput } from "@/components/ui/date-input"
 import { Loader } from "@/components/ui/loader"
 import { SelectInput } from "@/components/ui/select-input"
 import { TextInput } from "@/components/ui/text-input"
+import { useTranslation } from "@/i18n"
 import { useTwColors } from "@/lib/tw-colors"
 import { createDebt } from "@/services/debtServices"
 import { useAuthStore } from "@/stores/authStore"
@@ -16,6 +17,7 @@ export default function AddDebt() {
   const { user } = useAuthStore()
   const router = useRouter()
   const { twColor } = useTwColors()
+  const { t } = useTranslation()
 
   const [form, setForm] = useState({
     contact_name: "",
@@ -137,7 +139,7 @@ export default function AddDebt() {
       showsVerticalScrollIndicator={false}
     >
       {/* Fixed header */}
-      <PageHeader title="New debt" textPosition="center" textAlign="left" />
+      <PageHeader title={t("debt.add.title")} textPosition="center" textAlign="left" />
 
       <View className="px-6">
         <View className="mt-8 gap-4">
@@ -216,9 +218,9 @@ export default function AddDebt() {
 
             <TextInput
               ref={contactNameRef}
-              label="Full Name"
+              label={t("debt.add.name")}
               required
-              placeholder="xxx xxx"
+              placeholder={t("debt.add.namePlaceholder")}
               value={form.contact_name}
               onChangeText={(text) => handleChange("contact_name", text)}
               icon="user"
@@ -271,9 +273,9 @@ export default function AddDebt() {
 
             <TextInput
               ref={amountRef}
-              label="Amount"
+              label={t("debt.add.amount")}
               required
-              placeholder="Eg: 50000"
+              placeholder={t("debt.add.amountPlaceholder")}
               value={form.amount}
               onChangeText={(text) => handleChange("amount", text)}
               keyboardType="numeric"
@@ -312,8 +314,8 @@ export default function AddDebt() {
 
             <TextInput
               ref={descriptionRef}
-              label="Description (Optional)"
-              placeholder="Eg: Car repair loan, business investment, etc."
+              label={t("debt.add.description")}
+              placeholder={t("debt.add.descriptionPlaceholder")}
               value={form.description}
               onChangeText={(text) => handleChange("description", text)}
               multiline
@@ -337,7 +339,7 @@ export default function AddDebt() {
           >
             {loading ? <Loader /> : <Feather name="plus" size={20} color={twColor("primary-foreground")} />}
             <Text style={{ color: twColor("primary-foreground") }} className="text-center font-semibold text-lg">
-              {loading ? "Creating..." : "Create Debt Record"}
+              {loading ? t("common.loading") : t("debt.add.save")}
             </Text>
           </Pressable>
         </View>

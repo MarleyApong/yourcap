@@ -94,7 +94,7 @@ export default function History() {
         backgroundColor: twColor("background"),
       }}
     >
-      <PageHeader title="History" textPosition="center" textAlign="left" backPath="/dashboard" />
+      <PageHeader title="History" textPosition="center" textAlign="left" backPath="/dashboard" className=""/>
 
       <View className="p-6">
         <View className="flex-row justify-end">

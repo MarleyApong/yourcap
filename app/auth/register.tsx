@@ -1,6 +1,7 @@
 import { FBackButton } from "@/components/ui/fback-button"
 import { Loader } from "@/components/ui/loader"
 import PinInput from "@/components/ui/pin-input"
+import { useTranslation } from "@/i18n"
 import { useTwColors } from "@/lib/tw-colors"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
@@ -22,6 +23,7 @@ export default function Register() {
   const [resetKey, setResetKey] = useState(0)
 
   const { twColor } = useTwColors()
+  const { t } = useTranslation()
   const { register } = useAuthStore()
   const router = useRouter()
 
@@ -139,7 +141,7 @@ export default function Register() {
           </Pressable>
         </View>
 
-        <PinInput key="create-pin" title="Create PIN" subtitle="Create a 6-digit PIN for your account" onComplete={handlePinComplete} showBiometric={false} length={6} />
+        <PinInput key="create-pin" title={t("auth.register.createPin")} subtitle={t("auth.register.createPinSubtitle")} onComplete={handlePinComplete} showBiometric={false} length={6} />
       </KeyboardAwareScrollView>
     )
   }
@@ -163,8 +165,8 @@ export default function Register() {
 
         <PinInput
           key={`confirm-pin-${resetKey}`}
-          title="Confirm PIN"
-          subtitle="Enter your 6-digit PIN again to confirm"
+          title={t("auth.register.confirmPin")}
+          subtitle={t("auth.register.confirmPinSubtitle")}
           onComplete={handleConfirmPinComplete}
           showBiometric={false}
           length={6}
@@ -174,7 +176,7 @@ export default function Register() {
           <View className="absolute inset-0 bg-black/30 flex-1 justify-center items-center">
             <View className="bg-primary rounded-xl p-6 items-center">
               <Loader />
-              <Text className="mt-4 text-white">Creating your account...</Text>
+              <Text className="mt-4 text-white">{t("auth.register.creatingAccount")}</Text>
             </View>
           </View>
         )}
@@ -196,8 +198,8 @@ export default function Register() {
 
       <View className="flex items-center justify-center h-screen w-full px-8">
         <Image source={require("@/assets/images/logo/logo.png")} className="w-60 h-60 absolute opacity-5" />
-        <Text className="text-5xl text-primary font-bold">Register</Text>
-        <Text className="text-2xl">Create your account</Text>
+        <Text className="text-5xl text-primary font-bold">{t("auth.register.title")}</Text>
+        <Text className="text-2xl">{t("auth.register.subtitle")}</Text>
 
         {/* Step indicator */}
         <View className="flex-row gap-2 my-6">
@@ -212,7 +214,7 @@ export default function Register() {
             <Feather name="user" size={24} color={twColor("text-primary")} />
             <TextInput
               className="text-xl flex-1"
-              placeholder="Full name"
+              placeholder={t("auth.register.fullName")}
               value={formData.full_name}
               onChangeText={(text) => handleChange("full_name", text)}
               returnKeyType="next"
@@ -226,7 +228,7 @@ export default function Register() {
             <TextInput
               ref={phoneRef}
               className="text-xl flex-1"
-              placeholder="6xx xxx xxx or 2xx xxx xxx"
+              placeholder={t("auth.register.phoneNumber")}
               value={formData.phone_number}
               onChangeText={(text) => handleChange("phone_number", text)}
               keyboardType="phone-pad"
@@ -241,7 +243,7 @@ export default function Register() {
             <TextInput
               ref={emailRef}
               className="text-xl flex-1"
-              placeholder="Email (optional)"
+              placeholder={t("auth.register.email")}
               value={formData.email}
               onChangeText={(text) => handleChange("email", text)}
               autoCapitalize="none"
@@ -260,11 +262,11 @@ export default function Register() {
             className={`flex-row gap-2 justify-center items-center bg-primary p-4 rounded-xl w-full ${loading ? "opacity-70" : ""}`}
           >
             <Feather name="arrow-up-right" size={18} color={twColor("text-white")} />
-            <Text className="text-center text-white font-semibold text-lg">Continue</Text>
+            <Text className="text-center text-white font-semibold text-lg">{t("common.continue")}</Text>
           </Pressable>
 
           <View className="flex-row justify-center items-center gap-3 mt-3">
-            <Text>Already have an account?</Text>
+            <Text>{t("auth.register.alreadyHaveAccount")}</Text>
             <Link href="/auth/login" className="text-primary font-bold underline">
               Sign in
             </Link>

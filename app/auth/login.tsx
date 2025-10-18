@@ -1,7 +1,8 @@
 import { FBackButton } from "@/components/ui/fback-button"
 import { Loader } from "@/components/ui/loader"
 import PinInput from "@/components/ui/pin-input"
-import { hasPreviousSession, isAppLocked, setAppLocked, hasValidSessionForQuickAuth } from "@/lib/auth"
+import { useTranslation } from "@/i18n"
+import { hasValidSessionForQuickAuth, setAppLocked } from "@/lib/auth"
 import { useTwColors } from "@/lib/tw-colors"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
@@ -13,6 +14,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 export default function Login() {
   const { login, loginWithBiometric, biometricCapabilities, checkBiometricCapabilities } = useAuthStore()
   const { twColor } = useTwColors()
+  const { t } = useTranslation()
   const identifierRef = useRef<TextInput>(null)
 
   // State
@@ -134,7 +136,7 @@ export default function Login() {
           <View className="pt-12 px-8">
             <TouchableOpacity onPress={handleBackFromPin} className="flex-row items-center gap-2 mb-4">
               <Feather name="chevron-left" size={24} color={twColor("primary")} />
-              <Text className="text-primary font-medium">Use different account</Text>
+              <Text className="text-primary font-medium">{t("auth.login.useDifferentAccount")}</Text>
             </TouchableOpacity>
             <Text className="text-lg text-gray-600 mb-4">Welcome back, {identifier}</Text>
           </View>
@@ -142,8 +144,8 @@ export default function Login() {
 
         <PinInput
           key={`pin-${pinKey}`}
-          title={isQuickAuth ? "Verify Identity" : "Enter PIN"}
-          subtitle={isQuickAuth ? "Use your PIN or biometric to continue" : "Enter your 6-digit PIN to continue"}
+          title={isQuickAuth ? t("auth.login.verifyIdentity") : t("auth.login.pinTitle")}
+          subtitle={isQuickAuth ? t("auth.login.biometricSubtitle") : t("auth.login.pinSubtitle")}
           onComplete={handlePinComplete}
           onBiometric={handleBiometric}
           biometricAvailable={biometricCapabilities?.isAvailable && shouldShowBiometric}
@@ -154,7 +156,7 @@ export default function Login() {
           <View className="absolute inset-0 bg-black/30 flex-1 justify-center items-center">
             <View className="bg-primary rounded-xl p-6 items-center">
               <Loader />
-              <Text className="mt-4 text-white">Verifying...</Text>
+              <Text className="mt-4 text-white">{t("auth.login.verifyIdentity")}</Text>
             </View>
           </View>
         )}
@@ -182,8 +184,8 @@ export default function Login() {
           <View className="flex items-center w-full px-8 mt-10">
             <Image source={require("@/assets/images/logo/logo.png")} className="w-60 h-60 absolute opacity-5" />
 
-            <Text className="text-5xl text-primary font-bold">Welcome Back</Text>
-            <Text className="text-2xl">Enter your credentials</Text>
+            <Text className="text-5xl text-primary font-bold">{t("auth.login.welcomeBack")}</Text>
+            <Text className="text-2xl">{t("auth.login.subtitle")}</Text>
 
             <View className="w-full mt-8 flex-col gap-4">
               <View className="bg-primary-50 border border-primary rounded-md flex-row gap-2 items-center px-3 py-1">
@@ -191,7 +193,7 @@ export default function Login() {
                 <TextInput
                   ref={identifierRef}
                   className="text-xl flex-1"
-                  placeholder="Email or Phone Number"
+                  placeholder={t("auth.login.emailOrPhone")}
                   value={identifier}
                   onChangeText={setIdentifier}
                   keyboardType="default"
@@ -208,11 +210,11 @@ export default function Login() {
                 disabled={loading}
                 className={`flex-row gap-2 justify-center items-center bg-primary p-4 rounded-xl w-full ${loading ? "opacity-70" : ""}`}
               >
-                <Text className="text-center text-white font-semibold text-lg">Continue</Text>
+                <Text className="text-center text-white font-semibold text-lg">{t("common.continue")}</Text>
               </TouchableOpacity>
 
               <View className="flex-row justify-center items-center gap-3 mt-3">
-                <Text>Don't have an account?</Text>
+                <Text>{t("auth.login.dontHaveAccount")}</Text>
                 <Link href="/auth/register" className="text-primary font-bold underline">
                   Sign up
                 </Link>

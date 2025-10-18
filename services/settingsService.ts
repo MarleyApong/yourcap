@@ -1,5 +1,5 @@
-import { getDb } from "@/db/db"
 import { DEFAULT_SETTINGS } from "@/constants/DefaultSettings"
+import { getDb } from "@/db/db"
 import { Settings } from "@/types/settings"
 
 export const getSettings = async (user_id: string): Promise<Settings | null> => {
@@ -8,6 +8,18 @@ export const getSettings = async (user_id: string): Promise<Settings | null> => 
     const settings = await db.getFirstAsync<Settings>(`SELECT * FROM settings WHERE user_id = ?`, [user_id])
 
     if (settings) {
+      // Parse notification_times from JSON if it exists
+      let notificationTimes: string[] = []
+      if (settings.notification_times) {
+        try {
+          notificationTimes = JSON.parse(settings.notification_times as any)
+        } catch (e) {
+          notificationTimes = [settings.notification_time || "09:00"]
+        }
+      } else {
+        notificationTimes = [settings.notification_time || "09:00"]
+      }
+
       // Convertir les valeurs numériques en booléens
       return {
         ...settings,
@@ -16,6 +28,9 @@ export const getSettings = async (user_id: string): Promise<Settings | null> => 
         system_notifications: settings.system_notifications !== undefined ? Boolean(settings.system_notifications) : true,
         email_notifications: Boolean(settings.email_notifications),
         sms_notifications: Boolean(settings.sms_notifications),
+        summary_notifications: settings.summary_notifications !== undefined ? Boolean(settings.summary_notifications) : true,
+        notification_times: notificationTimes,
+        summary_frequency: (settings.summary_frequency as 'daily' | 'weekly' | 'none') || 'daily',
       }
     }
 
@@ -37,8 +52,9 @@ export const createDefaultSettings = async (user_id: string): Promise<Settings> 
         user_id, notification_enabled, days_before_reminder,
         inactivity_timeout, language, remember_session, session_duration,
         system_notifications, email_notifications, sms_notifications, notification_time,
+        notification_times, summary_notifications, summary_notification_time, summary_frequency,
         created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         user_id,
         DEFAULT_SETTINGS.notification_enabled ? 1 : 0,
@@ -51,13 +67,23 @@ export const createDefaultSettings = async (user_id: string): Promise<Settings> 
         DEFAULT_SETTINGS.email_notifications ? 1 : 0,
         DEFAULT_SETTINGS.sms_notifications ? 1 : 0,
         DEFAULT_SETTINGS.notification_time,
+        JSON.stringify(DEFAULT_SETTINGS.notification_times),
+        DEFAULT_SETTINGS.summary_notifications ? 1 : 0,
+        DEFAULT_SETTINGS.summary_notification_time,
+        DEFAULT_SETTINGS.summary_frequency,
         now,
         now,
       ],
     )
 
     const newSettings = await getSettings(user_id)
-    return newSettings || { ...DEFAULT_SETTINGS, user_id, created_at: now, updated_at: now }
+    return newSettings || { 
+      ...DEFAULT_SETTINGS, 
+      user_id, 
+      created_at: now, 
+      updated_at: now,
+      notification_times: [...DEFAULT_SETTINGS.notification_times]
+    }
   } catch (error) {
     console.error("Error creating default settings:", error)
     throw error
@@ -70,6 +96,34 @@ export const ensureUserSettings = async (user_id: string): Promise<Settings> => 
     const existingSettings = await db.getFirstAsync<Settings>(`SELECT * FROM settings WHERE user_id = ?`, [user_id])
 
     if (existingSettings) {
+      // Make sure we have the new fields, update if missing
+      const needsUpdate = !existingSettings.notification_times || 
+                         existingSettings.summary_notifications === undefined ||
+                         !existingSettings.summary_notification_time ||
+                         !existingSettings.summary_frequency
+
+      if (needsUpdate) {
+        await db.runAsync(
+          `UPDATE settings SET 
+           notification_times = ?, 
+           summary_notifications = ?, 
+           summary_notification_time = ?, 
+           summary_frequency = ?,
+           updated_at = ?
+           WHERE user_id = ?`,
+          [
+            JSON.stringify([existingSettings.notification_time || "09:00"]),
+            DEFAULT_SETTINGS.summary_notifications ? 1 : 0,
+            DEFAULT_SETTINGS.summary_notification_time,
+            DEFAULT_SETTINGS.summary_frequency,
+            new Date().toISOString(),
+            user_id
+          ]
+        )
+        
+        return await getSettings(user_id) || existingSettings
+      }
+      
       return existingSettings
     }
 
@@ -80,8 +134,9 @@ export const ensureUserSettings = async (user_id: string): Promise<Settings> => 
       (user_id, notification_enabled, days_before_reminder, language, 
         inactivity_timeout, remember_session, session_duration, 
         system_notifications, email_notifications, sms_notifications, notification_time,
+        notification_times, summary_notifications, summary_notification_time, summary_frequency,
         created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         user_id,
         DEFAULT_SETTINGS.notification_enabled ? 1 : 0,
@@ -94,6 +149,10 @@ export const ensureUserSettings = async (user_id: string): Promise<Settings> => 
         DEFAULT_SETTINGS.email_notifications ? 1 : 0,
         DEFAULT_SETTINGS.sms_notifications ? 1 : 0,
         DEFAULT_SETTINGS.notification_time,
+        JSON.stringify(DEFAULT_SETTINGS.notification_times),
+        DEFAULT_SETTINGS.summary_notifications ? 1 : 0,
+        DEFAULT_SETTINGS.summary_notification_time,
+        DEFAULT_SETTINGS.summary_frequency,
         now,
         now,
       ],
@@ -111,6 +170,10 @@ export const ensureUserSettings = async (user_id: string): Promise<Settings> => 
       email_notifications: DEFAULT_SETTINGS.email_notifications,
       sms_notifications: DEFAULT_SETTINGS.sms_notifications,
       notification_time: DEFAULT_SETTINGS.notification_time,
+      notification_times: [...DEFAULT_SETTINGS.notification_times],
+      summary_notifications: DEFAULT_SETTINGS.summary_notifications,
+      summary_notification_time: DEFAULT_SETTINGS.summary_notification_time,
+      summary_frequency: DEFAULT_SETTINGS.summary_frequency,
       created_at: now,
       updated_at: now,
     }
@@ -134,6 +197,9 @@ export const updateSettings = async (user_id: string, updates: Partial<Settings>
         // Convertir les booléens en nombres pour SQLite
         if (typeof value === "boolean") {
           values.push(value ? 1 : 0)
+        } else if (key === "notification_times" && Array.isArray(value)) {
+          // Convert array to JSON string for storage
+          values.push(JSON.stringify(value))
         } else {
           values.push(value)
         }

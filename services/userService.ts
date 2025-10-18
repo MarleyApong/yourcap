@@ -185,3 +185,99 @@ export const verifyPin = async (user_id: string, pin: string): Promise<boolean> 
     return false
   }
 }
+
+export const updateUserProfile = async (
+  user_id: string, 
+  data: { full_name: string; email: string; phone_number: string }
+): Promise<boolean> => {
+  try {
+    const db = getDb()
+    
+    // Vérifier que l'utilisateur existe
+    const existingUser = await getUserById(user_id)
+    if (!existingUser) {
+      throw new Error("User not found")
+    }
+
+    // Vérifier l'unicité de l'email s'il est fourni et différent de l'actuel
+    if (data.email && data.email !== existingUser.email) {
+      const emailExists = await db.getFirstAsync(
+        "SELECT user_id FROM users WHERE email = ? AND user_id != ? AND status = 'ACTIVE'",
+        [data.email, user_id]
+      )
+      if (emailExists) {
+        throw new Error("Email already exists")
+      }
+    }
+
+    // Vérifier l'unicité du numéro de téléphone s'il est différent de l'actuel
+    if (data.phone_number !== existingUser.phone_number) {
+      const phoneExists = await db.getFirstAsync(
+        "SELECT user_id FROM users WHERE phone_number = ? AND user_id != ? AND status = 'ACTIVE'",
+        [data.phone_number, user_id]
+      )
+      if (phoneExists) {
+        throw new Error("Phone number already exists")
+      }
+    }
+
+    // Mettre à jour le profil
+    await db.runAsync(
+      `UPDATE users SET 
+        full_name = ?, 
+        email = ?, 
+        phone_number = ?, 
+        updated_at = CURRENT_TIMESTAMP 
+      WHERE user_id = ?`,
+      [data.full_name.trim(), data.email.trim(), data.phone_number.trim(), user_id]
+    )
+
+    return true
+  } catch (error) {
+    console.error("Update user profile error:", error)
+    throw error
+  }
+}
+
+export const verifyUserPin = async (user_id: string, pin: string): Promise<boolean> => {
+  try {
+    const db = getDb()
+    const result = await db.getFirstAsync<{ pin: string }>(
+      "SELECT pin FROM users WHERE user_id = ? AND status = 'ACTIVE'",
+      [user_id]
+    )
+    
+    if (!result) return false
+    
+    return await bcrypt.compare(pin, result.pin)
+  } catch (error) {
+    console.error("Verify user PIN error:", error)
+    return false
+  }
+}
+
+export const updateUserPin = async (user_id: string, newPin: string): Promise<boolean> => {
+  try {
+    const db = getDb()
+    
+    // Vérifier que l'utilisateur existe
+    const existingUser = await getUserById(user_id)
+    if (!existingUser) {
+      throw new Error("User not found")
+    }
+
+    // Hasher le nouveau PIN
+    const hashedPin = await bcrypt.hash(newPin, 10)
+
+    // Mettre à jour le PIN
+    await db.runAsync(
+      "UPDATE users SET pin = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?",
+      [hashedPin, user_id]
+    )
+
+    return true
+  } catch (error) {
+    console.error("Update user PIN error:", error)
+    throw error
+  }
+}

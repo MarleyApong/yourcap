@@ -1,20 +1,27 @@
+import { ChangePinModal } from "@/components/feature/change-pin-modal"
+import { EditProfileModal } from "@/components/feature/edit-profile-modal"
+import { ImportExportSection } from "@/components/feature/import-export-section"
+import { LanguageSelector } from "@/components/feature/language-selector"
 import { LoadingState } from "@/components/feature/loading-state"
 import { PageHeader } from "@/components/feature/page-header"
 import { useSettings } from "@/hooks/useSettings"
+import { useTranslation } from "@/i18n"
+import { SupportedLanguage } from "@/i18n/locales"
 import { useTwColors } from "@/lib/tw-colors"
 import { BiometricCapabilities, checkBiometricCapabilities, getBiometricDisplayName } from "@/services/biometricService"
+import { requestNotificationPermissions, scheduleAllDebtReminders, updateNotificationSettings } from "@/services/notificationService"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather, MaterialIcons } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { useEffect, useState } from "react"
 import { Modal, Pressable, ScrollView, Switch, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { requestNotificationPermissions, scheduleAllDebtReminders, updateNotificationSettings } from "@/services/notificationService"
 
 export default function Settings() {
   const { user, logout, updateBiometricSetting } = useAuthStore()
   const { settings, loading, updateSetting } = useSettings()
   const { twColor } = useTwColors()
+  const { t, currentLanguage } = useTranslation()
   const router = useRouter()
   const insets = useSafeAreaInsets()
 
@@ -22,6 +29,8 @@ export default function Settings() {
   const [localBiometricCapabilities, setLocalBiometricCapabilities] = useState<BiometricCapabilities | null>(null)
   const [modalVisible, setModalVisible] = useState(false)
   const [modalContent, setModalContent] = useState<React.ReactNode>(null)
+  const [editProfileModalVisible, setEditProfileModalVisible] = useState(false)
+  const [changePinModalVisible, setChangePinModalVisible] = useState(false)
 
   useEffect(() => {
     const checkCapabilities = async () => {
@@ -81,6 +90,15 @@ export default function Settings() {
         await setSessionExpiry()
       }
       Toast.success("Session duration updated", "Success")
+    }
+  }
+
+  const handleLanguageChange = async (language: SupportedLanguage) => {
+    const success = await updateSetting("language", language)
+    if (success) {
+      Toast.success(t("settings.selectLanguage"))
+    } else {
+      Toast.error(t("common.error"))
     }
   }
 
@@ -223,9 +241,7 @@ export default function Settings() {
     )
   }
 
-  const handleExportData = () => {
-    Toast.info("Export feature coming soon!", "Info")
-  }
+
 
   const handleDeleteAccount = () => {
     Toast.confirm(
@@ -329,6 +345,62 @@ export default function Settings() {
     </View>
   )
 
+  const MultipleTimeSelection = ({ 
+    options, 
+    selectedValues, 
+    onSelectionChange 
+  }: { 
+    options: { value: string; label: string }[]; 
+    selectedValues: string[]; 
+    onSelectionChange: (values: string[]) => void 
+  }) => {
+    const toggleSelection = (value: string) => {
+      let newSelection: string[]
+      if (selectedValues.includes(value)) {
+        // Remove if already selected (but keep at least one)
+        if (selectedValues.length > 1) {
+          newSelection = selectedValues.filter(v => v !== value)
+        } else {
+          return // Don't allow removing the last selected time
+        }
+      } else {
+        // Add if not selected
+        newSelection = [...selectedValues, value]
+      }
+      onSelectionChange(newSelection)
+    }
+
+    return (
+      <View className="flex-row flex-wrap gap-2">
+        {options.map((option) => {
+          const isSelected = selectedValues.includes(option.value)
+          return (
+            <Pressable
+              key={option.value}
+              onPress={() => toggleSelection(option.value)}
+              style={{
+                backgroundColor: isSelected ? twColor("primary") : twColor("secondary"),
+                borderWidth: isSelected ? 2 : 1,
+                borderColor: isSelected ? twColor("primary") : twColor("border"),
+              }}
+              className="px-4 py-2 rounded-full"
+            >
+              <Text
+                style={{
+                  color: isSelected ? twColor("primary-foreground") : twColor("secondary-foreground"),
+                }}
+                className="text-sm font-medium"
+              >
+                {option.label}
+                {isSelected && " ✓"}
+              </Text>
+            </Pressable>
+          )
+        })}
+      </View>
+    )
+  }
+
   if (loading) {
     return (
       <View
@@ -353,11 +425,11 @@ export default function Settings() {
           paddingBottom: Math.max(40, insets.bottom + 20),
         }}
       >
-        <PageHeader title="Settings" textPosition="center" textAlign="left" />
+        <PageHeader title={t("settings.title")} textPosition="center" textAlign="left" />
 
         <View className="p-6">
           {/* User Profile Section */}
-          <SettingCard title="Profile">
+          <SettingCard title={t("settings.profile")}>
             <View className="flex-row items-center mb-4">
               <View
                 style={{
@@ -377,12 +449,12 @@ export default function Settings() {
               </View>
             </View>
 
-            <SettingRow icon="edit" title="Edit Profile" onPress={() => Toast.info("Edit profile feature coming soon!", "Info")} />
-            <SettingRow icon="lock" title="Change PIN" onPress={() => Toast.info("Change PIN feature coming soon!", "Info")} />
+            <SettingRow icon="edit" title={t("settings.editProfile")} onPress={() => setEditProfileModalVisible(true)} />
+            <SettingRow icon="lock" title={t("settings.changePin")} onPress={() => setChangePinModalVisible(true)} />
           </SettingCard>
 
           {/* Security Section */}
-          <SettingCard title="Security">
+          <SettingCard title={t("settings.security")}>
             {localBiometricCapabilities?.isAvailable && (
               <View className="flex-row items-center justify-between py-3">
                 <View className="flex-row items-center flex-1">
@@ -483,7 +555,7 @@ export default function Settings() {
           </SettingCard>
 
           {/* Notifications Section */}
-          <SettingCard title="Notifications">
+          <SettingCard title={t("settings.notifications")}>
             <View className="flex-row items-center justify-between py-3">
               <Text style={{ color: twColor("foreground") }}>Enable Notifications</Text>
               <Switch
@@ -619,7 +691,7 @@ export default function Settings() {
                   />
                 </View>
 
-                {/* Notification Time */}
+                {/* Notification Times - Multiple Selection */}
                 <View
                   style={{
                     borderTopColor: twColor("border"),
@@ -627,9 +699,12 @@ export default function Settings() {
                   className="py-3 border-t"
                 >
                   <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                    Preferred Time for Notifications
+                    Preferred Times for Notifications
                   </Text>
-                  <SelectionButtons
+                  <Text style={{ color: twColor("muted-foreground") }} className="text-sm mb-3">
+                    Select multiple times for reminders
+                  </Text>
+                  <MultipleTimeSelection
                     options={[
                       { value: "05:00", label: "5:00 AM" },
                       { value: "06:00", label: "6:00 AM" },
@@ -643,27 +718,163 @@ export default function Settings() {
                       { value: "18:00", label: "6:00 PM" },
                       { value: "20:00", label: "8:00 PM" },
                     ]}
-                    selectedValue={settings.notification_time}
-                    onSelect={(time) => {
-                      updateSetting("notification_time", time)
-                      Toast.info("Notification time preference saved")
+                    selectedValues={settings.notification_times || [settings.notification_time || "09:00"]}
+                    onSelectionChange={async (times) => {
+                      const success = await updateSetting("notification_times", times)
+                      if (success && user?.user_id) {
+                        await scheduleAllDebtReminders(user.user_id)
+                        Toast.success("Notification times updated")
+                      }
                     }}
                   />
+                </View>
+
+                {/* Summary Notifications */}
+                <View
+                  style={{
+                    borderTopColor: twColor("border"),
+                  }}
+                  className="py-3 border-t"
+                >
+                  <View className="flex-row items-center justify-between py-2">
+                    <View className="flex-1">
+                      <Text style={{ color: twColor("foreground") }}>Summary Notifications</Text>
+                      <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
+                        Regular summary of your debts
+                      </Text>
+                    </View>
+                    <Switch
+                      value={settings.summary_notifications}
+                      onValueChange={async (val) => {
+                        const success = await updateSetting("summary_notifications", val)
+                        if (success && user?.user_id) {
+                          await scheduleAllDebtReminders(user.user_id)
+                          Toast.success(val ? "Summary notifications enabled" : "Summary notifications disabled")
+                        }
+                      }}
+                      trackColor={{
+                        false: twColor("muted"),
+                        true: twColor("primary"),
+                      }}
+                      thumbColor={twColor("card-background")}
+                    />
+                  </View>
+
+                  {settings.summary_notifications && (
+                    <>
+                      {/* Summary Frequency */}
+                      <View className="py-3">
+                        <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
+                          Summary Frequency
+                        </Text>
+                        <SelectionButtons
+                          options={[
+                            { value: 'daily', label: "Daily" },
+                            { value: 'weekly', label: "Weekly" },
+                            { value: 'none', label: "None" },
+                          ]}
+                          selectedValue={settings.summary_frequency || 'daily'}
+                          onSelect={async (frequency) => {
+                            const success = await updateSetting("summary_frequency", frequency)
+                            if (success && user?.user_id) {
+                              await scheduleAllDebtReminders(user.user_id)
+                              Toast.success("Summary frequency updated")
+                            }
+                          }}
+                        />
+                      </View>
+
+                      {/* Summary Time */}
+                      {settings.summary_frequency !== 'none' && (
+                        <View className="py-3">
+                          <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
+                            Summary Time
+                          </Text>
+                          <SelectionButtons
+                            options={[
+                              { value: "08:00", label: "8:00 AM" },
+                              { value: "12:00", label: "12:00 PM" },
+                              { value: "18:00", label: "6:00 PM" },
+                              { value: "20:00", label: "8:00 PM" },
+                              { value: "21:00", label: "9:00 PM" },
+                            ]}
+                            selectedValue={settings.summary_notification_time || "20:00"}
+                            onSelect={async (time) => {
+                              const success = await updateSetting("summary_notification_time", time)
+                              if (success && user?.user_id) {
+                                await scheduleAllDebtReminders(user.user_id)
+                                Toast.success("Summary time updated")
+                              }
+                            }}
+                          />
+                        </View>
+                      )}
+                    </>
+                  )}
                 </View>
               </>
             )}
           </SettingCard>
 
+          {/* Language Section */}
+          <SettingCard title={t("settings.language")}>
+            <View className="py-3">
+              <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
+                {t("settings.selectLanguage")}
+              </Text>
+              <LanguageSelector 
+                currentLanguage={currentLanguage}
+                onLanguageChange={handleLanguageChange}
+              />
+            </View>
+          </SettingCard>
+
+          {/* Data Management Section */}
+          <SettingCard title={t("settings.data")}>
+            <ImportExportSection 
+              userId={user?.user_id || ''} 
+              onImportComplete={(imported, total) => {
+                Toast.success(`${imported}/${total} dettes importées!`)
+              }}
+            />
+          </SettingCard>
+
           {/* About Section */}
-          <SettingCard title="About">
+          <SettingCard title={t("settings.about")}>
             <SettingRow icon="file-text" title="Terms of Service" onPress={showTermsModal} />
             <SettingRow icon="shield" title="Privacy Policy" onPress={showPrivacyModal} />
             <SettingRow icon="help-circle" title="Help & Support" onPress={showHelpModal} />
           </SettingCard>
 
+          {/* Testing Section - Only show in development */}
+          {__DEV__ && (
+            <SettingCard title="Development Tools">
+              <SettingRow 
+                icon="bell" 
+                title="Test Summary Notification" 
+                onPress={async () => {
+                  if (user?.user_id) {
+                    const { updateSummaryNotificationContent } = await import("@/services/notificationService")
+                    await updateSummaryNotificationContent(user.user_id)
+                    Toast.success("Test summary notification sent!")
+                  }
+                }} 
+              />
+              <SettingRow 
+                icon="refresh-cw" 
+                title="Reschedule All Notifications" 
+                onPress={async () => {
+                  if (user?.user_id) {
+                    await scheduleAllDebtReminders(user.user_id)
+                    Toast.success("All notifications rescheduled!")
+                  }
+                }} 
+              />
+            </SettingCard>
+          )}
+
           {/* Danger Zone */}
           <SettingCard title="Danger Zone" isDanger>
-            <SettingRow icon="download" title="Export Data" onPress={handleExportData} isDanger />
             <SettingRow icon="trash-2" title="Delete Account" onPress={handleDeleteAccount} isDanger />
 
             <Pressable
@@ -694,6 +905,18 @@ export default function Settings() {
           {modalContent}
         </View>
       </Modal>
+
+      {/* Edit Profile Modal */}
+      <EditProfileModal 
+        visible={editProfileModalVisible} 
+        onClose={() => setEditProfileModalVisible(false)} 
+      />
+
+      {/* Change PIN Modal */}
+      <ChangePinModal 
+        visible={changePinModalVisible} 
+        onClose={() => setChangePinModalVisible(false)} 
+      />
     </>
   )
 }

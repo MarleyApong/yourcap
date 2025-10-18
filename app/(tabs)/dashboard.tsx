@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/feature/empty-state"
 import { LoadingState } from "@/components/feature/loading-state"
 import { PageHeader } from "@/components/feature/page-header"
 import { isDatabaseReady } from "@/db/db"
+import { useTranslation } from "@/i18n"
 import { useTwColors } from "@/lib/tw-colors"
 import { formatCurrency } from "@/lib/utils"
 import { getDebtsSummary, getUserDebts } from "@/services/debtServices"
@@ -18,6 +19,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function Dashboard() {
   const { user } = useAuthStore()
+  const { t } = useTranslation()
   const [summary, setSummary] = useState({ owing: 0, owed: 0, balance: 0 })
   const [recentDebts, setRecentDebts] = useState<Debt[]>([])
   const [loading, setLoading] = useState(true)
@@ -86,7 +88,7 @@ export default function Dashboard() {
       }}
     >
       {/* Fixed header */}
-      <PageHeader title="Dashboard" fbackButton={false} textPosition="center" textAlign="left" />
+      <PageHeader title={t("dashboard.title")} fbackButton={false} textPosition="center" textAlign="left" />
 
       {/* Scrollable content with padding-top to avoid header */}
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
@@ -112,9 +114,9 @@ export default function Dashboard() {
           {/* Summary Cards */}
           {!error && (
             <View className="flex-row justify-between mt-6">
-              <SummaryCard label="You Owe" amount={formatCurrency(summary.owed, "XAF")} type="negative" />
+              <SummaryCard label={t("dashboard.summary.totalLent")} amount={formatCurrency(summary.owed, "XAF")} type="negative" />
 
-              <SummaryCard label="You're Owed" amount={formatCurrency(summary.owing, "XAF")} type="positive" />
+              <SummaryCard label={t("dashboard.summary.totalOwed")} amount={formatCurrency(summary.owing, "XAF")} type="positive" />
 
               <SummaryCard label="Balance" amount={formatCurrency(summary.balance, "XAF")} type={summary.balance >= 0 ? "positive" : "negative"} />
             </View>
@@ -128,9 +130,9 @@ export default function Dashboard() {
             }}
             className="flex-row justify-around px-6 py-6 mx-0 mt-6 rounded-xl shadow-sm border"
           >
-            <QuickActionButton icon="plus" label="Add Debt" onPress={handleAddDebt} />
-            <QuickActionButton icon="list" label="History" onPress={handleViewHistory} />
-            <QuickActionButton icon="settings" label="Settings" onPress={handleViewSettings} />
+            <QuickActionButton icon="plus" label={t("dashboard.addDebt")} onPress={handleAddDebt} />
+            <QuickActionButton icon="list" label={t("tabs.history")} onPress={handleViewHistory} />
+            <QuickActionButton icon="settings" label={t("tabs.settings")} onPress={handleViewSettings} />
           </View>
 
           {/* Recent Debts Section */}
@@ -138,24 +140,24 @@ export default function Dashboard() {
             <View className="mt-6">
               <View className="flex-row justify-between items-center mb-4">
                 <Text style={{ color: twColor("foreground") }} className="text-lg font-semibold">
-                  Recent Debts
+                  {t("dashboard.quickActions")}
                 </Text>
                 <Link href="/(tabs)/history">
                   <Text style={{ color: twColor("primary") }} className="text-sm font-medium">
-                    View All
+                    {t("tabs.history")}
                   </Text>
                 </Link>
               </View>
 
               {/* Loading State */}
-              {loading && <LoadingState message="Loading your debts..." />}
+              {loading && <LoadingState message={t("common.loading")} />}
 
               {/* Empty State */}
               {!loading && recentDebts.length === 0 && (
                 <EmptyState
-                  title="No debts recorded yet"
-                  description="Start tracking your financial relationships by adding your first debt."
-                  buttonText="Add Your First Debt"
+                  title={t("dashboard.empty.title")}
+                  description={t("dashboard.empty.subtitle")}
+                  buttonText={t("dashboard.empty.addFirst")}
                   onButtonPress={handleAddDebt}
                   image={require("@/assets/images/empty.png")}
                 />

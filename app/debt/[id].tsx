@@ -3,6 +3,7 @@ import { DateInput } from "@/components/ui/date-input"
 import { Loader } from "@/components/ui/loader"
 import { SelectInput } from "@/components/ui/select-input"
 import { TextInput } from "@/components/ui/text-input"
+import { useTranslation } from "@/i18n"
 import { useTwColors } from "@/lib/tw-colors"
 import { formatCurrency, formatDate } from "@/lib/utils"
 import { deleteDebt, getDebtById, updateDebt } from "@/services/debtServices"
@@ -11,12 +12,13 @@ import { Debt, DebtStatus } from "@/types/debt"
 import { Feather } from "@expo/vector-icons"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useEffect, useState } from "react"
-import { Modal, Platform, Pressable, ScrollView, Text, View, Linking } from "react-native"
+import { Linking, Modal, Platform, Pressable, ScrollView, Text, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 export default function DebtDetails() {
   const { id } = useLocalSearchParams()
   const { user } = useAuthStore()
+  const { t } = useTranslation()
   const [debt, setDebt] = useState<Debt | null>(null)
   const [loading, setLoading] = useState(true)
   const [editModalVisible, setEditModalVisible] = useState(false)

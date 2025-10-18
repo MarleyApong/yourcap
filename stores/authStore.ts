@@ -1,24 +1,23 @@
 import { DEFAULT_SETTINGS } from "@/constants/DefaultSettings"
 import {
-  clearAuthToken,
-  clearUserIdentifier,
-  getAuthToken,
-  getUserIdentifier,
-  setAuthToken,
-  setSessionExpiry,
-  setUserIdentifier,
-  isSessionValid,
-  setAppLocked,
-  isAppLocked,
+    clearAuthToken,
+    getAuthToken,
+    getUserIdentifier,
+    isAppLocked,
+    isSessionValid,
+    setAppLocked,
+    setAuthToken,
+    setSessionExpiry,
+    setUserIdentifier
 } from "@/lib/auth"
 import { authenticateWithBiometric, checkBiometricCapabilities } from "@/services/biometricService"
 import { ensureUserSettings, getSettings } from "@/services/settingsService"
-import { createUser, getUserById, getUserByIdentifier, loginUser, updateBiometricPreference } from "@/services/userService"
+import { createUser, getUserById, getUserByIdentifier, loginUser, updateBiometricPreference, updateUserProfile } from "@/services/userService"
 import { CreateUserInput } from "@/types/user"
 import { router } from "expo-router"
+import "react-native-get-random-values"
 import { create } from "zustand"
 import { subscribeWithSelector } from "zustand/middleware"
-import "react-native-get-random-values"
 
 type UserSettings = {
   notification_enabled: boolean
@@ -54,6 +53,7 @@ type AuthActions = {
   loginWithBiometric: () => Promise<boolean>
   register: (credentials: CreateUserInput & { pin: string; confirmPin: string }) => Promise<boolean>
   refreshUser: () => Promise<void>
+  updateProfile: (data: { full_name: string; email: string; phone_number: string }) => Promise<boolean>
   updateBiometricSetting: (enabled: boolean) => Promise<boolean>
   checkBiometricCapabilities: () => Promise<void>
   logout: () => Promise<void>
@@ -432,6 +432,29 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         }
       } catch (error) {
         console.error("Failed to refresh user:", error)
+      }
+    },
+
+    updateProfile: async (data: { full_name: string; email: string; phone_number: string }) => {
+      const { user } = get()
+      if (!user) return false
+
+      try {
+        const success = await updateUserProfile(user.user_id, data)
+        if (success) {
+          set({
+            user: {
+              ...user,
+              full_name: data.full_name,
+              email: data.email,
+              phone_number: data.phone_number,
+            },
+          })
+        }
+        return success
+      } catch (error) {
+        console.error("Failed to update profile:", error)
+        return false
       }
     },
 
