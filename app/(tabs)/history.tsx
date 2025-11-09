@@ -1,6 +1,8 @@
 import { EmptyState } from "@/components/feature/empty-state"
 import { LoadingState } from "@/components/feature/loading-state"
 import { PageHeader } from "@/components/feature/page-header"
+import { useTranslation } from "@/i18n"
+import { Toast } from "@/lib/toast-global"
 import { useTwColors } from "@/lib/tw-colors"
 import { formatCurrency, formatDate } from "@/lib/utils"
 import { getUserDebts } from "@/services/debtServices"
@@ -19,6 +21,7 @@ export default function History() {
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const { twColor } = useTwColors()
+  const { t } = useTranslation()
 
   useEffect(() => {
     if (user?.user_id) {
@@ -43,7 +46,7 @@ export default function History() {
       setDebts(allDebts)
     } catch (error) {
       console.error("History load error:", error)
-      Toast.error("Failed to load debts. Please try again.", "Error")
+      Toast.error(t("history.error"), "Error")
     } finally {
       setLoading(false)
     }
@@ -61,7 +64,7 @@ export default function History() {
   }
 
   const getTypeText = (type: string) => {
-    return type === "OWING" ? "Owes you" : "You owe"
+    return type === "OWING" ? t("history.debtType.owesYou") : t("history.debtType.youOwe")
   }
 
   const getTypeColor = (type: string) => {
@@ -94,7 +97,7 @@ export default function History() {
         backgroundColor: twColor("background"),
       }}
     >
-      <PageHeader title="History" textPosition="center" textAlign="left" backPath="/dashboard" className=""/>
+      <PageHeader title={t("history.title")} textPosition="center" textAlign="left" backPath="/dashboard" className=""/>
 
       <View className="p-6">
         <View className="flex-row justify-end">
@@ -120,13 +123,13 @@ export default function History() {
           >
             <View className="flex-row">
               <FilterButton active={filter === "ALL"} onPress={() => setFilter("ALL")}>
-                All
+                {t("history.filters.all")}
               </FilterButton>
               <FilterButton active={filter === "OWING"} onPress={() => setFilter("OWING")}>
-                Owed
+                {t("history.filters.owed")}
               </FilterButton>
               <FilterButton active={filter === "OWED"} onPress={() => setFilter("OWED")}>
-                I owe
+                {t("history.filters.iOwe")}
               </FilterButton>
             </View>
           </View>
@@ -140,13 +143,13 @@ export default function History() {
           >
             <View className="flex-row">
               <FilterButton active={statusFilter === "ALL"} onPress={() => setStatusFilter("ALL")}>
-                All
+                {t("history.filters.all")}
               </FilterButton>
               <FilterButton active={statusFilter === "PENDING"} onPress={() => setStatusFilter("PENDING")}>
-                Pending
+                {t("history.filters.pending")}
               </FilterButton>
               <FilterButton active={statusFilter === "PAID"} onPress={() => setStatusFilter("PAID")}>
-                Paid
+                {t("history.filters.paid")}
               </FilterButton>
             </View>
           </View>
@@ -156,14 +159,14 @@ export default function History() {
       {/* Content */}
       {loading ? (
         <View className="flex-1 px-6">
-          <LoadingState message="Loading your debts..." />
+          <LoadingState message={t("history.loading")} />
         </View>
       ) : debts.length === 0 ? (
         <View className="flex-1 px-6">
           <EmptyState
-            title="No debts found"
-            description="Try adjusting your filters or add your first debt to get started."
-            buttonText="Add New Debt"
+            title={t("history.empty.title")}
+            description={t("history.empty.description")}
+            buttonText={t("history.empty.buttonText")}
             onButtonPress={() => router.push("/debt/add")}
             image={require("@/assets/images/empty.png")}
           />
@@ -189,7 +192,7 @@ export default function History() {
                     {getTypeText(debt.debt_type)} {formatCurrency(debt.amount, "XAF")}
                   </Text>
                   <Text style={{ color: twColor("muted-foreground") }} className="text-sm mt-1">
-                    Loan: {formatDate(debt.loan_date)} | Due: {formatDate(debt.due_date)}
+                    {t("history.dateLabels.loan")}: {formatDate(debt.loan_date)} | {t("history.dateLabels.due")}: {formatDate(debt.due_date)}
                   </Text>
                 </View>
                 <View className="flex-row items-center">

@@ -582,6 +582,34 @@ export const en = {
     }
   },
 
+  // History page
+  history: {
+    title: "History",
+    addDebt: "Add Debt",
+    loading: "Loading your debts...",
+    filters: {
+      all: "All",
+      owed: "Owed",
+      iOwe: "I owe",
+      pending: "Pending",
+      paid: "Paid"
+    },
+    empty: {
+      title: "No debts found",
+      description: "Try adjusting your filters or add your first debt to get started.",
+      buttonText: "Add New Debt"
+    },
+    debtType: {
+      owesYou: "Owes you",
+      youOwe: "You owe"
+    },
+    dateLabels: {
+      loan: "Loan",
+      due: "Due"
+    },
+    error: "Failed to load debts. Please try again."
+  },
+
   // General error messages
   errors: {
     network: "Network error. Check your internet connection.",

@@ -213,6 +213,24 @@ export interface TranslationKeys {
   'modals.changePin.updating': string;
   'modals.changePin.processing': string;
 
+  // History
+  'history.title': string;
+  'history.addDebt': string;
+  'history.loading': string;
+  'history.filters.all': string;
+  'history.filters.owed': string;
+  'history.filters.iOwe': string;
+  'history.filters.pending': string;
+  'history.filters.paid': string;
+  'history.empty.title': string;
+  'history.empty.description': string;
+  'history.empty.buttonText': string;
+  'history.debtType.owesYou': string;
+  'history.debtType.youOwe': string;
+  'history.dateLabels.loan': string;
+  'history.dateLabels.due': string;
+  'history.error': string;
+
   // Settings
   'settings.title': string;
   'settings.profile': string;

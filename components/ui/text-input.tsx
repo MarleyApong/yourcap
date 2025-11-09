@@ -28,8 +28,8 @@ export const TextInput = forwardRef<RNTextInput, Props>(
           <RNTextInput
             ref={ref}
             className={`flex-1 text-lg ${props.className}`}
-            style={{ color: twColor("text-foreground") }}
-            placeholderTextColor={twColor("text-gray-400")}
+            // style={{ color: twColor("text-foreground") }}
+            placeholderTextColor="#374151"
             {...props}
           />
         </View>

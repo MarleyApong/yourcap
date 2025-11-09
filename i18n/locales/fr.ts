@@ -122,8 +122,8 @@ export const fr = {
     add: {
       title: "Ajouter une dette",
       editTitle: "Modifier la dette",
-      name: "Nom de la personne",
-      namePlaceholder: "Ex: Jean Dupont",
+      name: "Nom complet",
+      namePlaceholder: "Ex: Kamga Jean",
       amount: "Montant",
       amountPlaceholder: "Ex: 50000",
       description: "Description",
@@ -580,6 +580,34 @@ export const fr = {
       updating: "Mise à jour...",
       processing: "Traitement..."
     }
+  },
+
+  // History page
+  history: {
+    title: "Historique",
+    addDebt: "Ajouter une dette",
+    loading: "Chargement de vos dettes...",
+    filters: {
+      all: "Tous",
+      owed: "On me doit",
+      iOwe: "Je dois",
+      pending: "En attente",
+      paid: "Payé"
+    },
+    empty: {
+      title: "Aucune dette trouvée",
+      description: "Essayez d'ajuster vos filtres ou ajoutez votre première dette pour commencer.",
+      buttonText: "Ajouter une nouvelle dette"
+    },
+    debtType: {
+      owesYou: "Vous doit",
+      youOwe: "Vous devez"
+    },
+    dateLabels: {
+      loan: "Prêt",
+      due: "Échéance"
+    },
+    error: "Échec du chargement des dettes. Veuillez réessayer."
   },
 
   // Messages d'erreur généraux
