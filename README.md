@@ -73,7 +73,7 @@ Join our community of developers creating universal apps.
 
 ### Installation rapide
 ```bash
-git clone <repository-url>
+git clone https://github.com/MarleyApong/yourcap.git
 cd yourcap
 npm install
 npx expo start
