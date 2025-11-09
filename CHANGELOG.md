@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/MarleyApong/yourcap/compare/v1.2.0...v1.3.0) (2025-11-09)
+
+
+### Features
+
+* Remove PROFILE_MANAGEMENT.md and integrate profile management features into the main application ([40a15d6](https://github.com/MarleyApong/yourcap/commit/40a15d6387d6ba7aa756f6503b55f90b602d0c9e))
+
 ## [1.2.0](https://github.com/MarleyApong/yourcap/compare/v1.1.0...v1.2.0) (2025-11-09)
 
 
