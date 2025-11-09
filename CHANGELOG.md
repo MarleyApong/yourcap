@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/MarleyApong/yourcap/compare/v1.1.0...v1.2.0) (2025-11-09)
+
+
+### Features
+
+* **auth:** add app lock and notification system ([cb7eb4c](https://github.com/MarleyApong/yourcap/commit/cb7eb4c21cc6f428ff51f2f07dc37b11c4d0b313))
+* **auth:** add session management with remember me functionality ([320406a](https://github.com/MarleyApong/yourcap/commit/320406a68bab70e1444560add4844dc01afdc95a))
+* **auth:** implement biometric authentication and PIN-based login ([b9b4677](https://github.com/MarleyApong/yourcap/commit/b9b467787520be4ff8580b0c161d2c1fef844088))
+* **auth:** implement quick auth flow and app lock improvements ([9a98ee9](https://github.com/MarleyApong/yourcap/commit/9a98ee93768b9907ca9b966d7d43c1dcf21c4222))
+* **debt:** enhance debt management with improved UI and functionality ([8be7edd](https://github.com/MarleyApong/yourcap/commit/8be7eddcc85c987b25a9e9ff23e90b20eae145ca))
+* **i18n:** add ESLint plugin for translation key validation and i18n parser script ([efde272](https://github.com/MarleyApong/yourcap/commit/efde2722fb5ca2ff47a7a0b62aa739ba3f1773f9))
+* **i18n:** update English and French translations for debt management features, session management, modals, and notifications ([d65abf0](https://github.com/MarleyApong/yourcap/commit/d65abf0d4fca8d3b3a6a701c8e656286af9714b3))
+* update app branding and theme colors ([0cb52b7](https://github.com/MarleyApong/yourcap/commit/0cb52b74c7647c6b4729841297e33b69bf888350))
+
+
+### Bug Fixes
+
+* **dashboard:** adjust summary card amount text size ([9967dfc](https://github.com/MarleyApong/yourcap/commit/9967dfc5f76cad70070f876bd0f47ae5c97dd069))
+* **debtServices:** add missing parameter in SQL query and add debug log ([b3b8878](https://github.com/MarleyApong/yourcap/commit/b3b8878cf97c7a0d2a6af4498b03fdfe9937db93))
+* update android adaptive icon to use white logo for better visibility ([a03d0f2](https://github.com/MarleyApong/yourcap/commit/a03d0f2f5913dc650ceb46b1d264df3eb2868e8c))
+
 ## 1.1.0 (2025-09-06)
 
 

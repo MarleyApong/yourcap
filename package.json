@@ -1,7 +1,7 @@
 {
   "name": "yourcap",
   "main": "expo-router/entry",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": "marlexapong90@gmail.com",
   "description": "A new way to manage your expenses",
   "scripts": {
