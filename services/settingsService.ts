@@ -53,8 +53,8 @@ export const createDefaultSettings = async (user_id: string): Promise<Settings> 
         inactivity_timeout, language, remember_session, session_duration,
         system_notifications, email_notifications, sms_notifications, notification_time,
         notification_times, summary_notifications, summary_notification_time, summary_frequency,
-        created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        background_lock_delay, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         user_id,
         DEFAULT_SETTINGS.notification_enabled ? 1 : 0,
@@ -71,6 +71,7 @@ export const createDefaultSettings = async (user_id: string): Promise<Settings> 
         DEFAULT_SETTINGS.summary_notifications ? 1 : 0,
         DEFAULT_SETTINGS.summary_notification_time,
         DEFAULT_SETTINGS.summary_frequency,
+        DEFAULT_SETTINGS.background_lock_delay,
         now,
         now,
       ],

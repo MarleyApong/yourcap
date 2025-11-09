@@ -246,6 +246,12 @@ export const fr = {
     rememberMeDescription: "Rester connecté sur cet appareil",
     sessionDuration: "Durée de session",
     autoLogout: "Déconnexion automatique après inactivité",
+    backgroundLockDelay: "Délai de verrouillage en arrière-plan",
+    lockImmediately: "Immédiatement",
+    lockFiveSeconds: "5 secondes",
+    lockTenSeconds: "10 secondes", 
+    lockThirtySeconds: "30 secondes",
+    lockOneMinute: "1 minute",
 
     // Modal texts
     termsOfService: "Conditions d'utilisation",
@@ -431,10 +437,18 @@ export const fr = {
     },
     summary: {
       title: "Résumé des dettes",
+      dailySummary: "📊 Résumé Quotidien",
+      weeklySummary: "📊 Résumé Hebdomadaire",
+      summaryContent: "Consultez votre résumé de dettes et rappels",
+      noPendingDebts: "🎉 Vous n'avez aucune dette en attente !",
+      debtSummaryTitle: "📊 Votre Résumé de Dettes",
       youOwe: "Vous devez à",
       youAreOwed: "On vous doit",
       totalPeople: "personnes au total",
       totalAmount: "pour un montant total de",
+      // Formats dynamiques
+      owingFormat: "💰 {count} personne{plural} vous doi{pluralOwes} {amount} {currency}",
+      owedFormat: "⚠️ Vous devez {amount} {currency} à {count} personne{plural}",
     },
     reminder: {
       title: "Rappel de dette",

@@ -246,6 +246,12 @@ export const en = {
     rememberMeDescription: "Keep me logged in on this device",
     sessionDuration: "Session Duration",
     autoLogout: "Auto-logout after inactivity",
+    backgroundLockDelay: "Background lock delay",
+    lockImmediately: "Immediately",
+    lockFiveSeconds: "5 seconds",
+    lockTenSeconds: "10 seconds", 
+    lockThirtySeconds: "30 seconds",
+    lockOneMinute: "1 minute",
 
     // Modal texts
     termsOfService: "Terms of Service",
@@ -431,10 +437,18 @@ export const en = {
     },
     summary: {
       title: "Debt summary",
+      dailySummary: "📊 Daily Summary",
+      weeklySummary: "📊 Weekly Summary",
+      summaryContent: "Check your debt summary and reminders",
+      noPendingDebts: "🎉 You have no pending debts!",
+      debtSummaryTitle: "📊 Your Debt Summary",
       youOwe: "You owe",
       youAreOwed: "You are owed",
       totalPeople: "people in total",
       totalAmount: "for a total amount of",
+      // Dynamic formats
+      owingFormat: "💰 {count} person{plural} owe{pluralOwes} you {amount} {currency}",
+      owedFormat: "⚠️ You owe {amount} {currency} to {count} person{plural}",
     },
     reminder: {
       title: "Debt reminder",

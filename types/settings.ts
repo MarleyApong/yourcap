@@ -4,6 +4,7 @@ export interface Settings {
   days_before_reminder: number
   language: string
   inactivity_timeout: number
+  background_lock_delay?: number // Délai en secondes avant verrouillage en arrière-plan
   remember_session: boolean
   session_duration: number // (en minutes)
   system_notifications?: boolean
@@ -23,6 +24,7 @@ export interface DefaultSettings {
   days_before_reminder: number
   language: string
   inactivity_timeout: number
+  background_lock_delay: number // Délai en secondes avant verrouillage en arrière-plan
   remember_session: boolean
   session_duration: number // (en minutes)
   system_notifications: boolean

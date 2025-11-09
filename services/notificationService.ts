@@ -1,6 +1,8 @@
 import * as Device from "expo-device"
 import * as Notifications from "expo-notifications"
 import { Platform } from "react-native"
+import { getTranslationFunction } from "../i18n"
+import { generateLocalizedSummaryContent } from "../lib/notification-utils"
 import { getUserDebts } from "./debtServices"
 import { getSettings } from "./settingsService"
 
@@ -153,7 +155,7 @@ export const cancelDebtReminder = async (notificationId: string): Promise<void> 
   }
 }
 
-// New function for summary notifications
+// New function for summary notifications with localization
 export const scheduleSummaryNotification = async (
   userId: string,
   summaryTime: string,
@@ -184,14 +186,22 @@ export const scheduleSummaryNotification = async (
       notificationId = `summary_weekly_${userId}`
     }
 
+    // Get user language for localized notifications
+    const settings = await getSettings(userId)
+    const language = settings?.language || 'en'
+    const t = getTranslationFunction(language as any)
+
     // Cancel existing summary notification
     await Notifications.cancelScheduledNotificationAsync(notificationId)
+
+    // Generate fresh localized content at the time of scheduling
+    const { title, body } = await generateLocalizedSummaryContent(userId, t, frequency)
 
     const identifier = await Notifications.scheduleNotificationAsync({
       identifier: notificationId,
       content: {
-        title: frequency === 'daily' ? "📊 Daily Summary" : "📊 Weekly Summary",
-        body: "Check your debt summary and reminders",
+        title,
+        body,
         data: {
           type: "summary_notification",
           frequency,
@@ -214,45 +224,7 @@ export const scheduleSummaryNotification = async (
   }
 }
 
-export const generateSummaryNotificationContent = async (userId: string): Promise<{title: string, body: string}> => {
-  try {
-    const debts = await getUserDebts(userId)
-    const pendingDebts = debts.filter(debt => debt.status === "PENDING")
-    
-    const owingDebts = pendingDebts.filter(debt => debt.debt_type === "OWING")
-    const owedDebts = pendingDebts.filter(debt => debt.debt_type === "OWED")
-    
-    const totalOwing = owingDebts.reduce((sum, debt) => sum + debt.amount, 0)
-    const totalOwed = owedDebts.reduce((sum, debt) => sum + debt.amount, 0)
-    
-    let title = "📊 Your Debt Summary"
-    let body = ""
-    
-    if (owingDebts.length === 0 && owedDebts.length === 0) {
-      body = "🎉 You have no pending debts!"
-    } else {
-      const parts = []
-      
-      if (owingDebts.length > 0) {
-        parts.push(`💰 ${owingDebts.length} person${owingDebts.length > 1 ? 's' : ''} owe${owingDebts.length === 1 ? 's' : ''} you ${totalOwing} XAF`)
-      }
-      
-      if (owedDebts.length > 0) {
-        parts.push(`⚠️ You owe ${owedDebts.length} person${owedDebts.length > 1 ? 's' : ''} ${totalOwed} XAF`)
-      }
-      
-      body = parts.join(" • ")
-    }
-    
-    return { title, body }
-  } catch (error) {
-    console.error("Error generating summary content:", error)
-    return {
-      title: "📊 Your Debt Summary",
-      body: "Tap to view your debts"
-    }
-  }
-}
+
 
 export const scheduleAllDebtReminders = async (userId: string): Promise<void> => {
   try {
@@ -335,7 +307,25 @@ export const handleNotificationResponse = (response: Notifications.NotificationR
   }
 }
 
-// New function to update just the summary notification content
+// Function to refresh summary notifications with updated content
+export const refreshSummaryNotifications = async (userId: string): Promise<void> => {
+  try {
+    const settings = await getSettings(userId)
+    if (!settings?.summary_notifications || settings.summary_frequency === 'none') {
+      return
+    }
+
+    // Reschedule summary notifications with fresh content
+    const summaryTime = settings.summary_notification_time || "20:00"
+    await scheduleSummaryNotification(userId, summaryTime, settings.summary_frequency || 'daily')
+    
+    console.log("Summary notifications refreshed with updated content")
+  } catch (error) {
+    console.error("Error refreshing summary notifications:", error)
+  }
+}
+
+// Function to send immediate summary notification content
 export const updateSummaryNotificationContent = async (userId: string): Promise<void> => {
   try {
     const settings = await getSettings(userId)
@@ -343,8 +333,12 @@ export const updateSummaryNotificationContent = async (userId: string): Promise<
       return
     }
 
-    // Generate fresh content for immediate notification
-    const { title, body } = await generateSummaryNotificationContent(userId)
+    // Get user language for localized notifications
+    const language = settings?.language || 'en'
+    const t = getTranslationFunction(language as any)
+
+    // Generate fresh localized content for immediate notification
+    const { title, body } = await generateLocalizedSummaryContent(userId, t, 'daily')
     
     // Send immediate summary notification
     await Notifications.scheduleNotificationAsync({

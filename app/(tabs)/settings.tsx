@@ -505,6 +505,29 @@ export default function Settings() {
                 onSelect={(minutes) => updateSetting("inactivity_timeout", minutes)}
               />
             </View>
+
+            {/* Background Lock Delay */}
+            <View
+              style={{
+                borderTopColor: twColor("border"),
+              }}
+              className="py-3 border-t"
+            >
+              <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
+                {t("settings.backgroundLockDelay")}
+              </Text>
+              <SelectionButtons
+                options={[
+                  { value: 0, label: t("settings.lockImmediately") },
+                  { value: 5, label: t("settings.lockFiveSeconds") },
+                  { value: 10, label: t("settings.lockTenSeconds") },
+                  { value: 30, label: t("settings.lockThirtySeconds") },
+                  { value: 60, label: t("settings.lockOneMinute") },
+                ]}
+                selectedValue={settings.background_lock_delay || 5}
+                onSelect={(seconds) => updateSetting("background_lock_delay", seconds)}
+              />
+            </View>
           </SettingCard>
 
           {/* Session Management Section */}

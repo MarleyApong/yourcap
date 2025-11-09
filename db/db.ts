@@ -131,6 +131,15 @@ export const initDb = async (): Promise<void> => {
       // Column might already exist, ignore
     }
 
+    try {
+      await db.execAsync(`
+        ALTER TABLE settings ADD COLUMN background_lock_delay INTEGER DEFAULT 5;
+      `)
+      console.log("✅ Added background_lock_delay column")
+    } catch (error) {
+      // Column might already exist, ignore
+    }
+
     console.log("✅ Schema executed successfully")
     console.log("✅ Database initialized successfully")
   } catch (error) {

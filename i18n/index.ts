@@ -70,6 +70,46 @@ export const hasTranslation = (key: string): key is TranslationKey => {
   return typeof value === 'string';
 };
 
+// Fonction utilitaire pour obtenir les traductions sans React Hook (pour les services)
+export const getTranslationFunction = (language: SupportedLanguage = DEFAULT_LANGUAGE) => {
+  return (key: TranslationKey, params?: Record<string, any>): string => {
+    const keys = key.split('.');
+    let value: any = translations[language];
+    
+    for (const k of keys) {
+      if (value && typeof value === 'object' && k in value) {
+        value = value[k];
+      } else {
+        // Fallback sur la langue par défaut si la clé n'existe pas
+        if (language !== DEFAULT_LANGUAGE) {
+          let fallbackValue: any = translations[DEFAULT_LANGUAGE];
+          for (const k of keys) {
+            if (fallbackValue && typeof fallbackValue === 'object' && k in fallbackValue) {
+              fallbackValue = fallbackValue[k];
+            } else {
+              return key; // Return the key if translation doesn't exist even in fallback
+            }
+          }
+          value = fallbackValue;
+        } else {
+          return key; // Return the key if translation doesn't exist
+        }
+      }
+    }
+    
+    let result = typeof value === 'string' ? value : key;
+    
+    // Simple parameter replacement
+    if (params && typeof result === 'string') {
+      Object.entries(params).forEach(([key, val]) => {
+        result = result.replace(new RegExp(`{${key}}`, 'g'), String(val));
+      });
+    }
+    
+    return result;
+  };
+};
+
 // Export des types
 export type { TranslationKey, TranslationKeys };
 

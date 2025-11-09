@@ -1,5 +1,5 @@
 // Types générés automatiquement - NE PAS MODIFIER MANUELLEMENT
-// Généré le 18/10/2025 17:45:43
+// Généré le 09/11/2025 17:20:15
 export interface TranslationKeys {
   'welcome.title': string;
   'welcome.subtitle': string;
@@ -116,6 +116,12 @@ export interface TranslationKeys {
   'settings.thirtyMin': string;
   'settings.sixtyMin': string;
   'settings.oneHundredTwentyMin': string;
+  'settings.backgroundLockDelay': string;
+  'settings.lockImmediately': string;
+  'settings.lockFiveSeconds': string;
+  'settings.lockTenSeconds': string;
+  'settings.lockThirtySeconds': string;
+  'settings.lockOneMinute': string;
   'settings.sessionManagement': string;
   'settings.rememberMe': string;
   'settings.rememberMeDescription': string;

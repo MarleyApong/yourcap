@@ -1,6 +1,7 @@
 import { getDb } from "@/db/db"
 import { Debt, DebtInput } from "@/types/debt"
 import { v4 as uuidv4 } from "uuid"
+import { refreshSummaryNotifications } from "./notificationService"
 
 export const createDebt = async (debt: DebtInput): Promise<Debt> => {
   const debt_id = uuidv4()
@@ -36,6 +37,10 @@ export const createDebt = async (debt: DebtInput): Promise<Debt> => {
 
     const newDebt = await getDebtById(debt_id)
     if (!newDebt) throw new Error("Failed to retrieve created debt")
+    
+    // Refresh summary notifications with updated debt count
+    await refreshSummaryNotifications(debt.user_id)
+    
     Toast.success("Debt created successfully!", "Success")
     return newDebt
   } catch (error) {
@@ -70,6 +75,10 @@ export const updateDebt = async (debt_id: string, updates: Partial<DebtInput>): 
     if (!updatedDebt) {
       throw new Error("Failed to retrieve updated debt")
     }
+    
+    // Refresh summary notifications with updated debt info
+    await refreshSummaryNotifications(updatedDebt.user_id)
+    
     Toast.success("Debt updated successfully!", "Success")
     return updatedDebt
   } catch (error) {
@@ -79,10 +88,14 @@ export const updateDebt = async (debt_id: string, updates: Partial<DebtInput>): 
   }
 }
 
-export const deleteDebt = async (debt_id: string): Promise<void> => {
+export const deleteDebt = async (debt_id: string, user_id: string): Promise<void> => {
   try {
     const db = getDb()
     await db.runAsync(`DELETE FROM debts WHERE debt_id = ?`, [debt_id])
+    
+    // Refresh summary notifications after deletion
+    await refreshSummaryNotifications(user_id)
+    
     Toast.success("Debt deleted successfully!", "Success")
   } catch (error) {
     Toast.error("Failed to delete debt. Please try again.", "Error")

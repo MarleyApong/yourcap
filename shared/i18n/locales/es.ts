@@ -208,7 +208,13 @@ export const es = {
     rescheduleNotifications: "settings.rescheduleNotifications",
     notificationsRescheduled: "settings.notificationsRescheduled",
     dangerZone: "settings.dangerZone",
-    deleteAccount: "settings.deleteAccount"
+    deleteAccount: "settings.deleteAccount",
+    backgroundLockDelay: "settings.backgroundLockDelay",
+    lockImmediately: "settings.lockImmediately",
+    lockFiveSeconds: "settings.lockFiveSeconds",
+    lockTenSeconds: "settings.lockTenSeconds",
+    lockThirtySeconds: "settings.lockThirtySeconds",
+    lockOneMinute: "settings.lockOneMinute"
   },
   history: {
     error: "history.error",
