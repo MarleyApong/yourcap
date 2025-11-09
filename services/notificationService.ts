@@ -41,16 +41,22 @@ export const requestNotificationPermissions = async (): Promise<boolean> => {
         name: "Debt Reminders",
         importance: Notifications.AndroidImportance.HIGH,
         vibrationPattern: [0, 250, 250, 250],
-        lightColor: "#FF231F7C",
+        lightColor: "#562d8f",
         sound: "default",
+        showBadge: true,
+        enableLights: true,
+        enableVibrate: true,
       })
 
       await Notifications.setNotificationChannelAsync("summary-notifications", {
         name: "Summary Notifications",
         importance: Notifications.AndroidImportance.DEFAULT,
         vibrationPattern: [0, 250, 250, 250],
-        lightColor: "#FF231F7C",
+        lightColor: "#562d8f",
         sound: "default",
+        showBadge: true,
+        enableLights: true,
+        enableVibrate: true,
       })
     }
 
@@ -116,6 +122,10 @@ export const scheduleDebtReminder = async (
             scheduledTime: time,
           },
           sound: "default",
+          color: "#562d8f",
+          ...(Platform.OS === "android" && {
+            channelId: "debt-reminders",
+          }),
         },
         trigger: {
           type: Notifications.SchedulableTriggerInputTypes.DATE,
@@ -188,6 +198,10 @@ export const scheduleSummaryNotification = async (
           userId,
         },
         sound: "default",
+        color: "#562d8f",
+        ...(Platform.OS === "android" && {
+          channelId: "summary-notifications",
+        }),
       },
       trigger,
     })
@@ -343,6 +357,10 @@ export const updateSummaryNotificationContent = async (userId: string): Promise<
           userId,
         },
         sound: "default",
+        color: "#562d8f",
+        ...(Platform.OS === "android" && {
+          channelId: "summary-notifications",
+        }),
       },
       trigger: null, // Send immediately
     })
