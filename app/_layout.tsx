@@ -1,6 +1,7 @@
 import AppLockScreen from "@/components/feature/app-lock-screen"
 import { InitialLoadingScreen } from "@/components/feature/initial-loading-screen"
 import { ToastProvider } from "@/components/ui/toast/toast-provider"
+import { ThemeProvider } from "@/core/providers/ThemeProvider"
 import { initDb } from "@/db/db"
 import { useAppStartup, useInactivityTimeout } from "@/hooks/useInactivityTimeout"
 import { useNotificationHandler } from "@/hooks/useNotificationHandler"
@@ -11,7 +12,6 @@ import { Stack } from "expo-router"
 import * as SplashScreen from "expo-splash-screen"
 import { useEffect, useState } from "react"
 import "react-native-get-random-values"
-import "../global.css"
 
 SplashScreen.preventAutoHideAsync()
 
@@ -72,32 +72,36 @@ export default function RootLayout() {
   // avant d'afficher quoi que ce soit pour éviter le flash
   if (user && !lockCheckComplete) {
     return (
-      <ToastProvider>
-        <InitialLoadingScreen />
-      </ToastProvider>
+      <ThemeProvider>
+        <ToastProvider>
+          <InitialLoadingScreen />
+        </ToastProvider>
+      </ThemeProvider>
     )
   }
 
   return (
-    <ToastProvider>
-      <Stack
-        screenOptions={{
-          contentStyle: {
-            backgroundColor: "#000000",
-          },
-          headerShown: false,
-        }}
-      >
-        {/* Routes principales */}
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="auth" options={{ headerShown: false }} />
-        <Stack.Screen name="debt" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" options={{ headerShown: false }} />
-      </Stack>
+    <ThemeProvider>
+      <ToastProvider>
+        <Stack
+          screenOptions={{
+            contentStyle: {
+              backgroundColor: "#000000",
+            },
+            headerShown: false,
+          }}
+        >
+          {/* Routes principales */}
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="auth" options={{ headerShown: false }} />
+          <Stack.Screen name="debt" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" options={{ headerShown: false }} />
+        </Stack>
 
-      {/* App Lock Screen - s'affiche par-dessus tout quand nécessaire */}
-      <AppLockScreen />
-    </ToastProvider>
+        {/* App Lock Screen - s'affiche par-dessus tout quand nécessaire */}
+        <AppLockScreen />
+      </ToastProvider>
+    </ThemeProvider>
   )
 }
