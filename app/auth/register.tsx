@@ -1,13 +1,13 @@
 import { FBackButton } from "@/components/ui/fback-button"
 import { Loader } from "@/components/ui/loader"
 import PinInput from "@/components/ui/pin-input"
+import { useTheme } from "@/core/theme"
 import { useTranslation } from "@/i18n"
-import { useTwColors } from "@/lib/tw-colors"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
-import { Image, Platform, Pressable, Text, TextInput, View } from "react-native"
+import { Image, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 export default function Register() {
@@ -22,7 +22,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false)
   const [resetKey, setResetKey] = useState(0)
 
-  const { twColor } = useTwColors()
+  const { colors } = useTheme()
   const { t } = useTranslation()
   const { register } = useAuthStore()
   const router = useRouter()
@@ -128,20 +128,30 @@ export default function Register() {
   if (step === 2) {
     return (
       <KeyboardAwareScrollView
-        className="h-full bg-primary-50"
+        style={[styles.scrollRoot, { backgroundColor: colors.primary[50] }]}
         contentContainerStyle={{ flexGrow: 1 }}
         enableOnAndroid
         extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View className="absolute top-28 left-6 z-10">
-          <Pressable onPress={() => setStep(1)} className="flex-row items-center justify-center p-2 bg-background/20 border border-primary rounded-full">
-            <Feather name="chevron-left" size={24} color={twColor("primary")} />
+        <View style={styles.backBtnWrapper}>
+          <Pressable
+            onPress={() => setStep(1)}
+            style={[styles.backCircleBtn, { backgroundColor: "rgba(255,255,255,0.2)", borderColor: colors.primary.default }]}
+          >
+            <Feather name="chevron-left" size={24} color={colors.primary.default} />
           </Pressable>
         </View>
 
-        <PinInput key="create-pin" title={t("auth.register.createPin")} subtitle={t("auth.register.createPinSubtitle")} onComplete={handlePinComplete} showBiometric={false} length={6} />
+        <PinInput
+          key="create-pin"
+          title={t("auth.register.createPin")}
+          subtitle={t("auth.register.createPinSubtitle")}
+          onComplete={handlePinComplete}
+          showBiometric={false}
+          length={6}
+        />
       </KeyboardAwareScrollView>
     )
   }
@@ -150,16 +160,19 @@ export default function Register() {
   if (step === 3) {
     return (
       <KeyboardAwareScrollView
-        className="h-full bg-primary-50"
+        style={[styles.scrollRoot, { backgroundColor: colors.primary[50] }]}
         contentContainerStyle={{ flexGrow: 1 }}
         enableOnAndroid
         extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View className="absolute top-28 left-6 z-10">
-          <Pressable onPress={() => setStep(2)} className="flex-row items-center justify-center p-2 bg-background/20 border border-primary rounded-full">
-            <Feather name="chevron-left" size={24} color={twColor("primary")} />
+        <View style={styles.backBtnWrapper}>
+          <Pressable
+            onPress={() => setStep(2)}
+            style={[styles.backCircleBtn, { backgroundColor: "rgba(255,255,255,0.2)", borderColor: colors.primary.default }]}
+          >
+            <Feather name="chevron-left" size={24} color={colors.primary.default} />
           </Pressable>
         </View>
 
@@ -173,10 +186,10 @@ export default function Register() {
         />
 
         {loading && (
-          <View className="absolute inset-0 bg-black/30 flex-1 justify-center items-center">
-            <View className="bg-primary rounded-xl p-6 items-center">
+          <View style={styles.overlay}>
+            <View style={[styles.loadingCard, { backgroundColor: colors.primary.default }]}>
               <Loader />
-              <Text className="mt-4 text-white">{t("auth.register.creatingAccount")}</Text>
+              <Text style={styles.loadingText}>{t("auth.register.creatingAccount")}</Text>
             </View>
           </View>
         )}
@@ -187,7 +200,7 @@ export default function Register() {
   // --- STEP 1: USER INFO ---
   return (
     <KeyboardAwareScrollView
-      className="h-full bg-primary-50"
+      style={[styles.scrollRoot, { backgroundColor: colors.primary[50] }]}
       contentContainerStyle={{ flexGrow: 1 }}
       enableOnAndroid
       extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
@@ -196,25 +209,33 @@ export default function Register() {
     >
       <FBackButton />
 
-      <View className="flex items-center justify-center h-screen w-full px-8">
-        <Image source={require("@/assets/images/logo/logo.png")} className="w-60 h-60 absolute opacity-5" />
-        <Text className="text-5xl text-primary font-bold">{t("auth.register.title")}</Text>
-        <Text className="text-2xl">{t("auth.register.subtitle")}</Text>
+      <View style={styles.formContainer}>
+        <Image source={require("@/assets/images/logo/logo.png")} style={styles.logoWatermark} />
 
-        {/* Step indicator */}
-        <View className="flex-row gap-2 my-6">
+        <Text style={[styles.title, { color: colors.primary.default }]}>{t("auth.register.title")}</Text>
+        <Text style={[styles.subtitle, { color: colors.foreground.primary }]}>{t("auth.register.subtitle")}</Text>
+
+        <View style={styles.stepIndicator}>
           {[1, 2, 3].map((i) => (
-            <View key={i} className={`h-2 rounded-full ${step >= i ? "bg-primary w-8" : "bg-gray-300 w-4"}`} />
+            <View
+              key={i}
+              style={[
+                styles.stepDot,
+                step >= i
+                  ? { backgroundColor: colors.primary.default, width: 32 }
+                  : { backgroundColor: "#d1d5db", width: 16 },
+              ]}
+            />
           ))}
         </View>
 
-        <View className="w-full mt-4 flex-col gap-4">
-          {/* Full name */}
-          <View className="bg-primary-50 border border-primary rounded-md flex-row gap-2 items-center px-3 py-1">
-            <Feather name="user" size={24} color={twColor("text-primary")} />
+        <View style={styles.inputs}>
+          <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
+            <Feather name="user" size={24} color={colors.primary.default} />
             <TextInput
-              className="text-xl flex-1"
+              style={[styles.inputText, { color: colors.foreground.primary }]}
               placeholder={t("auth.register.fullName")}
+              placeholderTextColor={colors.muted.foreground}
               value={formData.full_name}
               onChangeText={(text) => handleChange("full_name", text)}
               returnKeyType="next"
@@ -222,13 +243,13 @@ export default function Register() {
             />
           </View>
 
-          {/* Phone (required) */}
-          <View className="bg-primary-50 border border-primary rounded-md flex-row gap-2 items-center px-3 py-1">
-            <Feather name="phone" size={24} color={twColor("text-primary")} />
+          <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
+            <Feather name="phone" size={24} color={colors.primary.default} />
             <TextInput
               ref={phoneRef}
-              className="text-xl flex-1"
+              style={[styles.inputText, { color: colors.foreground.primary }]}
               placeholder={t("auth.register.phoneNumber")}
+              placeholderTextColor={colors.muted.foreground}
               value={formData.phone_number}
               onChangeText={(text) => handleChange("phone_number", text)}
               keyboardType="phone-pad"
@@ -237,13 +258,13 @@ export default function Register() {
             />
           </View>
 
-          {/* Email (optional) */}
-          <View className="bg-primary-50 border border-primary rounded-md flex-row gap-2 items-center px-3 py-1">
-            <Feather name="mail" size={24} color={twColor("text-primary")} />
+          <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
+            <Feather name="mail" size={24} color={colors.primary.default} />
             <TextInput
               ref={emailRef}
-              className="text-xl flex-1"
+              style={[styles.inputText, { color: colors.foreground.primary }]}
               placeholder={t("auth.register.email")}
+              placeholderTextColor={colors.muted.foreground}
               value={formData.email}
               onChangeText={(text) => handleChange("email", text)}
               autoCapitalize="none"
@@ -254,21 +275,20 @@ export default function Register() {
           </View>
         </View>
 
-        {/* Buttons */}
-        <View className="w-full px-10 mt-8 mb-10 absolute bottom-0">
+        <View style={styles.actions}>
           <Pressable
             onPress={handleContinue}
             disabled={loading}
-            className={`flex-row gap-2 justify-center items-center bg-primary p-4 rounded-xl w-full ${loading ? "opacity-70" : ""}`}
+            style={[styles.submitBtn, { backgroundColor: colors.primary.default, opacity: loading ? 0.7 : 1 }]}
           >
-            <Feather name="arrow-up-right" size={18} color={twColor("text-white")} />
-            <Text className="text-center text-white font-semibold text-lg">{t("common.continue")}</Text>
+            <Feather name="arrow-up-right" size={18} color="#ffffff" />
+            <Text style={styles.submitBtnText}>{t("common.continue")}</Text>
           </Pressable>
 
-          <View className="flex-row justify-center items-center gap-3 mt-3">
-            <Text>{t("auth.register.alreadyHaveAccount")}</Text>
-            <Link href="/auth/login" className="text-primary font-bold underline">
-              Sign in
+          <View style={styles.signinRow}>
+            <Text style={{ color: colors.foreground.primary }}>{t("auth.register.alreadyHaveAccount")}</Text>
+            <Link href="/auth/login">
+              <Text style={[styles.signinLink, { color: colors.primary.default }]}>Sign in</Text>
             </Link>
           </View>
         </View>
@@ -276,3 +296,68 @@ export default function Register() {
     </KeyboardAwareScrollView>
   )
 }
+
+const styles = StyleSheet.create({
+  scrollRoot: { flex: 1 },
+  backBtnWrapper: { position: "absolute", top: 112, left: 24, zIndex: 10 },
+  backCircleBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 8,
+    borderWidth: 1,
+    borderRadius: 999,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingCard: { borderRadius: 12, padding: 24, alignItems: "center" },
+  loadingText: { marginTop: 16, color: "#ffffff" },
+  formContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    paddingHorizontal: 32,
+  },
+  logoWatermark: { width: 240, height: 240, position: "absolute", opacity: 0.05 },
+  title: { fontSize: 48, fontWeight: "700" },
+  subtitle: { fontSize: 24 },
+  stepIndicator: { flexDirection: "row", gap: 8, marginVertical: 24 },
+  stepDot: { height: 8, borderRadius: 999 },
+  inputs: { width: "100%", marginTop: 16, gap: 16 },
+  inputRow: {
+    borderWidth: 1,
+    borderRadius: 6,
+    flexDirection: "row",
+    gap: 8,
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+  },
+  inputText: { fontSize: 20, flex: 1 },
+  actions: {
+    width: "100%",
+    paddingHorizontal: 40,
+    marginTop: 32,
+    marginBottom: 40,
+    position: "absolute",
+    bottom: 0,
+  },
+  submitBtn: {
+    flexDirection: "row",
+    gap: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
+    borderRadius: 12,
+    width: "100%",
+  },
+  submitBtnText: { textAlign: "center", color: "#ffffff", fontWeight: "600", fontSize: 18 },
+  signinRow: { flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 12, marginTop: 12 },
+  signinLink: { fontWeight: "700", textDecorationLine: "underline" },
+})

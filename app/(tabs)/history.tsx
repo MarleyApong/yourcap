@@ -1,9 +1,9 @@
 import { EmptyState } from "@/components/feature/empty-state"
 import { LoadingState } from "@/components/feature/loading-state"
 import { PageHeader } from "@/components/feature/page-header"
+import { useTheme } from "@/core/theme"
 import { useTranslation } from "@/i18n"
 import { Toast } from "@/lib/toast-global"
-import { useTwColors } from "@/lib/tw-colors"
 import { formatCurrency, formatDate } from "@/lib/utils"
 import { getUserDebts } from "@/services/debtServices"
 import { useAuthStore } from "@/stores/authStore"
@@ -11,16 +11,16 @@ import { Debt, DebtStatus, DebtType } from "@/types/debt"
 import { Feather } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { useEffect, useState } from "react"
-import { Pressable, ScrollView, Text, View } from "react-native"
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
 
 export default function History() {
   const { user } = useAuthStore()
+  const { colors } = useTheme()
   const [debts, setDebts] = useState<Debt[]>([])
   const [filter, setFilter] = useState<"ALL" | DebtType>("ALL")
   const [statusFilter, setStatusFilter] = useState<"ALL" | DebtStatus>("ALL")
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const { twColor } = useTwColors()
   const { t } = useTranslation()
 
   useEffect(() => {
@@ -34,7 +34,6 @@ export default function History() {
       setLoading(true)
       let allDebts = await getUserDebts(user!.user_id)
 
-      // Apply filters
       if (filter !== "ALL") {
         allDebts = allDebts.filter((d) => d.debt_type === filter)
       }
@@ -54,12 +53,9 @@ export default function History() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "PAID":
-        return twColor("success")
-      case "OVERDUE":
-        return twColor("destructive")
-      default:
-        return twColor("warning")
+      case "PAID": return colors.status.success
+      case "OVERDUE": return colors.status.destructive
+      default: return colors.status.warning
     }
   }
 
@@ -68,60 +64,37 @@ export default function History() {
   }
 
   const getTypeColor = (type: string) => {
-    return type === "OWING" ? twColor("success") : twColor("destructive")
+    return type === "OWING" ? colors.status.success : colors.status.destructive
   }
 
   const FilterButton = ({ active, onPress, children }: { active: boolean; onPress: () => void; children: React.ReactNode }) => (
     <Pressable
       onPress={onPress}
-      style={{
-        backgroundColor: active ? twColor("primary") : "transparent",
-      }}
-      className="px-3 py-2 rounded-md"
+      style={[styles.filterBtn, { backgroundColor: active ? colors.primary.default : "transparent" }]}
     >
-      <Text
-        style={{
-          color: active ? twColor("primary-foreground") : twColor("foreground"),
-        }}
-        className="text-sm font-medium"
-      >
+      <Text style={[styles.filterBtnText, { color: active ? colors.primary.foreground : colors.foreground.primary }]}>
         {children}
       </Text>
     </Pressable>
   )
 
   return (
-    <View
-      className="flex-1"
-      style={{
-        backgroundColor: twColor("background"),
-      }}
-    >
-      <PageHeader title={t("history.title")} textPosition="center" textAlign="left" backPath="/dashboard" className=""/>
+    <View style={[styles.container, { backgroundColor: colors.background.primary }]}>
+      <PageHeader title={t("history.title")} textPosition="center" textAlign="left" backPath="/dashboard" />
 
-      <View className="p-6">
-        <View className="flex-row justify-end">
+      <View style={styles.topBar}>
+        <View style={styles.topBarRight}>
           <Pressable
             onPress={() => router.push("/debt/add")}
-            style={{
-              backgroundColor: twColor("primary"),
-            }}
-            className="p-3 rounded-full shadow-sm"
+            style={[styles.addBtn, { backgroundColor: colors.primary.default }]}
           >
-            <Feather name="plus" size={24} color={twColor("primary-foreground")} />
+            <Feather name="plus" size={24} color={colors.primary.foreground} />
           </Pressable>
         </View>
 
-        {/* Filters */}
-        <View className="mt-6 flex-row justify-between gap-4">
-          <View
-            style={{
-              backgroundColor: twColor("card-background"),
-              borderColor: twColor("border"),
-            }}
-            className="flex-1 p-1 rounded-lg border shadow-sm"
-          >
-            <View className="flex-row">
+        <View style={styles.filtersRow}>
+          <View style={[styles.filterGroup, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+            <View style={styles.filterRow}>
               <FilterButton active={filter === "ALL"} onPress={() => setFilter("ALL")}>
                 {t("history.filters.all")}
               </FilterButton>
@@ -134,14 +107,8 @@ export default function History() {
             </View>
           </View>
 
-          <View
-            style={{
-              backgroundColor: twColor("card-background"),
-              borderColor: twColor("border"),
-            }}
-            className="flex-1 p-1 rounded-lg border shadow-sm"
-          >
-            <View className="flex-row">
+          <View style={[styles.filterGroup, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+            <View style={styles.filterRow}>
               <FilterButton active={statusFilter === "ALL"} onPress={() => setStatusFilter("ALL")}>
                 {t("history.filters.all")}
               </FilterButton>
@@ -156,13 +123,12 @@ export default function History() {
         </View>
       </View>
 
-      {/* Content */}
       {loading ? (
-        <View className="flex-1 px-6">
+        <View style={styles.stateContainer}>
           <LoadingState message={t("history.loading")} />
         </View>
       ) : debts.length === 0 ? (
-        <View className="flex-1 px-6">
+        <View style={styles.stateContainer}>
           <EmptyState
             title={t("history.empty.title")}
             description={t("history.empty.description")}
@@ -172,38 +138,32 @@ export default function History() {
           />
         </View>
       ) : (
-        <ScrollView className="flex-1 px-6 pb-20">
+        <ScrollView style={styles.list} contentContainerStyle={styles.listContent}>
           {debts.map((debt) => (
             <Pressable
               key={debt.debt_id}
               onPress={() => router.push(`/debt/${debt.debt_id}`)}
-              style={{
-                backgroundColor: twColor("card-background"),
-                borderColor: twColor("border"),
-              }}
-              className="p-4 rounded-xl shadow-sm mb-3 border"
+              style={[styles.debtCard, { backgroundColor: colors.card.background, borderColor: colors.border }]}
             >
-              <View className="flex-row justify-between items-start">
-                <View className="flex-1">
-                  <Text style={{ color: twColor("foreground") }} className="font-semibold text-lg">
-                    {debt.contact_name}
-                  </Text>
-                  <Text style={{ color: getTypeColor(debt.debt_type) }} className="font-medium mt-1">
+              <View style={styles.debtCardRow}>
+                <View style={styles.debtCardInfo}>
+                  <Text style={[styles.debtName, { color: colors.foreground.primary }]}>{debt.contact_name}</Text>
+                  <Text style={[styles.debtType, { color: getTypeColor(debt.debt_type) }]}>
                     {getTypeText(debt.debt_type)} {formatCurrency(debt.amount, "XAF")}
                   </Text>
-                  <Text style={{ color: twColor("muted-foreground") }} className="text-sm mt-1">
+                  <Text style={[styles.debtDate, { color: colors.muted.foreground }]}>
                     {t("history.dateLabels.loan")}: {formatDate(debt.loan_date)} | {t("history.dateLabels.due")}: {formatDate(debt.due_date)}
                   </Text>
                 </View>
-                <View className="flex-row items-center">
-                  <View style={{ backgroundColor: getStatusColor(debt.status) }} className="w-3 h-3 rounded-full mr-2" />
-                  <Text style={{ color: twColor("muted-foreground") }} className="capitalize text-sm">
+                <View style={styles.debtStatus}>
+                  <View style={[styles.statusDot, { backgroundColor: getStatusColor(debt.status) }]} />
+                  <Text style={[styles.statusText, { color: colors.muted.foreground }]}>
                     {debt.status.toLowerCase()}
                   </Text>
                 </View>
               </View>
               {debt.description && (
-                <Text style={{ color: twColor("muted-foreground") }} className="mt-2 text-sm" numberOfLines={2}>
+                <Text style={[styles.debtDesc, { color: colors.muted.foreground }]} numberOfLines={2}>
                   {debt.description}
                 </Text>
               )}
@@ -214,3 +174,33 @@ export default function History() {
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  topBar: { padding: 24 },
+  topBarRight: { flexDirection: "row", justifyContent: "flex-end" },
+  addBtn: { padding: 12, borderRadius: 999 },
+  filtersRow: { marginTop: 24, flexDirection: "row", justifyContent: "space-between", gap: 16 },
+  filterGroup: { flex: 1, padding: 4, borderRadius: 8, borderWidth: 1 },
+  filterRow: { flexDirection: "row" },
+  filterBtn: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 6 },
+  filterBtnText: { fontSize: 14, fontWeight: "500" },
+  stateContainer: { flex: 1, paddingHorizontal: 24 },
+  list: { flex: 1, paddingHorizontal: 24 },
+  listContent: { paddingBottom: 80 },
+  debtCard: {
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+  },
+  debtCardRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
+  debtCardInfo: { flex: 1 },
+  debtName: { fontWeight: "600", fontSize: 18 },
+  debtType: { fontWeight: "500", marginTop: 4 },
+  debtDate: { fontSize: 14, marginTop: 4 },
+  debtStatus: { flexDirection: "row", alignItems: "center" },
+  statusDot: { width: 12, height: 12, borderRadius: 6, marginRight: 8 },
+  statusText: { fontSize: 14, textTransform: "capitalize" },
+  debtDesc: { marginTop: 8, fontSize: 14 },
+})

@@ -1,23 +1,22 @@
 import { FBackButton } from "@/components/ui/fback-button"
 import { Loader } from "@/components/ui/loader"
 import PinInput from "@/components/ui/pin-input"
+import { useTheme } from "@/core/theme"
 import { useTranslation } from "@/i18n"
 import { hasValidSessionForQuickAuth, setAppLocked } from "@/lib/auth"
-import { useTwColors } from "@/lib/tw-colors"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { Link } from "expo-router"
 import { useEffect, useRef, useState } from "react"
-import { Image, Platform, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 export default function Login() {
   const { login, loginWithBiometric, biometricCapabilities, checkBiometricCapabilities } = useAuthStore()
-  const { twColor } = useTwColors()
+  const { colors } = useTheme()
   const { t } = useTranslation()
   const identifierRef = useRef<TextInput>(null)
 
-  // State
   const [identifier, setIdentifier] = useState("")
   const [showPinInput, setShowPinInput] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -115,13 +114,11 @@ export default function Login() {
 
   const handleBackFromPin = () => {
     if (isQuickAuth) {
-      // Si c'est l'authentification rapide et que l'utilisateur revient en arrière, tout réinitialiser
       setShowPinInput(false)
       setIdentifier("")
       setIsQuickAuth(false)
       setShouldShowBiometric(false)
     } else {
-      // Flux normal - juste retourner à la saisie de l'identifiant
       setShowPinInput(false)
     }
     setPinKey((prev) => prev + 1)
@@ -129,16 +126,20 @@ export default function Login() {
 
   if (showPinInput) {
     return (
-      <View className="flex-1 bg-primary-50">
+      <View style={[styles.root, { backgroundColor: colors.primary[50] }]}>
         {!isQuickAuth && <FBackButton onPress={handleBackFromPin} />}
 
         {isQuickAuth && (
-          <View className="pt-12 px-8">
-            <TouchableOpacity onPress={handleBackFromPin} className="flex-row items-center gap-2 mb-4">
-              <Feather name="chevron-left" size={24} color={twColor("primary")} />
-              <Text className="text-primary font-medium">{t("auth.login.useDifferentAccount")}</Text>
+          <View style={styles.quickAuthHeader}>
+            <TouchableOpacity onPress={handleBackFromPin} style={styles.quickAuthBack}>
+              <Feather name="chevron-left" size={24} color={colors.primary.default} />
+              <Text style={[styles.quickAuthBackText, { color: colors.primary.default }]}>
+                {t("auth.login.useDifferentAccount")}
+              </Text>
             </TouchableOpacity>
-            <Text className="text-lg text-gray-600 mb-4">Welcome back, {identifier}</Text>
+            <Text style={[styles.quickAuthWelcome, { color: colors.muted.foreground }]}>
+              Welcome back, {identifier}
+            </Text>
           </View>
         )}
 
@@ -153,10 +154,10 @@ export default function Login() {
         />
 
         {loading && (
-          <View className="absolute inset-0 bg-black/30 flex-1 justify-center items-center">
-            <View className="bg-primary rounded-xl p-6 items-center">
+          <View style={styles.overlay}>
+            <View style={[styles.loadingCard, { backgroundColor: colors.primary.default }]}>
               <Loader />
-              <Text className="mt-4 text-white">{t("auth.login.verifyIdentity")}</Text>
+              <Text style={styles.loadingText}>{t("auth.login.verifyIdentity")}</Text>
             </View>
           </View>
         )}
@@ -165,7 +166,7 @@ export default function Login() {
   }
 
   return (
-    <View className="flex-1 bg-primary-50">
+    <View style={[styles.root, { backgroundColor: colors.primary[50] }]}>
       <KeyboardAwareScrollView
         enableOnAndroid
         extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
@@ -175,25 +176,29 @@ export default function Login() {
       >
         <FBackButton path="/" />
 
-        <View className="relative">
-          <Image source={require("@/assets/images/bg/bg-login-2.png")} className="h-90 w-full" resizeMode="cover" />
-          <View className="absolute inset-0 bg-black/60" />
+        <View style={styles.heroImage}>
+          <Image source={require("@/assets/images/bg/bg-login-2.png")} style={styles.bgImage} resizeMode="cover" />
+          <View style={styles.bgOverlay} />
         </View>
 
-        <View className="flex-1 justify-between">
-          <View className="flex items-center w-full px-8 mt-10">
-            <Image source={require("@/assets/images/logo/logo.png")} className="w-60 h-60 absolute opacity-5" />
+        <View style={styles.formContainer}>
+          <View style={styles.formInner}>
+            <Image
+              source={require("@/assets/images/logo/logo.png")}
+              style={styles.logoWatermark}
+            />
 
-            <Text className="text-5xl text-primary font-bold">{t("auth.login.welcomeBack")}</Text>
-            <Text className="text-2xl">{t("auth.login.subtitle")}</Text>
+            <Text style={[styles.title, { color: colors.primary.default }]}>{t("auth.login.welcomeBack")}</Text>
+            <Text style={[styles.subtitle, { color: colors.foreground.primary }]}>{t("auth.login.subtitle")}</Text>
 
-            <View className="w-full mt-8 flex-col gap-4">
-              <View className="bg-primary-50 border border-primary rounded-md flex-row gap-2 items-center px-3 py-1">
-                <Feather name="mail" size={24} color={twColor("text-primary")} />
+            <View style={styles.inputs}>
+              <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
+                <Feather name="mail" size={24} color={colors.primary.default} />
                 <TextInput
                   ref={identifierRef}
-                  className="text-xl flex-1"
+                  style={[styles.inputText, { color: colors.foreground.primary }]}
                   placeholder={t("auth.login.emailOrPhone")}
+                  placeholderTextColor={colors.muted.foreground}
                   value={identifier}
                   onChangeText={setIdentifier}
                   keyboardType="default"
@@ -204,19 +209,19 @@ export default function Login() {
               </View>
             </View>
 
-            <View className="w-full px-10 pb-8 mt-8">
+            <View style={styles.actions}>
               <TouchableOpacity
                 onPress={handleIdentifierSubmit}
                 disabled={loading}
-                className={`flex-row gap-2 justify-center items-center bg-primary p-4 rounded-xl w-full ${loading ? "opacity-70" : ""}`}
+                style={[styles.submitBtn, { backgroundColor: colors.primary.default, opacity: loading ? 0.7 : 1 }]}
               >
-                <Text className="text-center text-white font-semibold text-lg">{t("common.continue")}</Text>
+                <Text style={styles.submitBtnText}>{t("common.continue")}</Text>
               </TouchableOpacity>
 
-              <View className="flex-row justify-center items-center gap-3 mt-3">
-                <Text>{t("auth.login.dontHaveAccount")}</Text>
-                <Link href="/auth/register" className="text-primary font-bold underline">
-                  Sign up
+              <View style={styles.signupRow}>
+                <Text style={{ color: colors.foreground.primary }}>{t("auth.login.dontHaveAccount")}</Text>
+                <Link href="/auth/register">
+                  <Text style={[styles.signupLink, { color: colors.primary.default }]}>Sign up</Text>
                 </Link>
               </View>
             </View>
@@ -226,3 +231,52 @@ export default function Login() {
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+  quickAuthHeader: { paddingTop: 48, paddingHorizontal: 32 },
+  quickAuthBack: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 16 },
+  quickAuthBackText: { fontWeight: "500" },
+  quickAuthWelcome: { fontSize: 18, marginBottom: 16 },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingCard: { borderRadius: 12, padding: 24, alignItems: "center" },
+  loadingText: { marginTop: 16, color: "#ffffff" },
+  heroImage: { position: "relative" },
+  bgImage: { height: 360, width: "100%" },
+  bgOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.6)" },
+  formContainer: { flex: 1, justifyContent: "space-between" },
+  formInner: { alignItems: "center", width: "100%", paddingHorizontal: 32, marginTop: 40 },
+  logoWatermark: { width: 240, height: 240, position: "absolute", opacity: 0.05 },
+  title: { fontSize: 48, fontWeight: "700" },
+  subtitle: { fontSize: 24 },
+  inputs: { width: "100%", marginTop: 32, gap: 16 },
+  inputRow: {
+    borderWidth: 1,
+    borderRadius: 6,
+    flexDirection: "row",
+    gap: 8,
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+  },
+  inputText: { fontSize: 20, flex: 1 },
+  actions: { width: "100%", paddingHorizontal: 40, paddingBottom: 32, marginTop: 32 },
+  submitBtn: {
+    flexDirection: "row",
+    gap: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
+    borderRadius: 12,
+    width: "100%",
+  },
+  submitBtnText: { textAlign: "center", color: "#ffffff", fontWeight: "600", fontSize: 18 },
+  signupRow: { flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 12, marginTop: 12 },
+  signupLink: { fontWeight: "700", textDecorationLine: "underline" },
+})

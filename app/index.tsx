@@ -1,36 +1,58 @@
+import { useTheme } from "@/core/theme"
 import { useAppStartup } from "@/hooks/useInactivityTimeout"
 import { useTranslation } from "@/i18n"
 import { Link } from "expo-router"
-import { Dimensions, ImageBackground, Text, View } from "react-native"
+import { Dimensions, ImageBackground, StyleSheet, Text, View } from "react-native"
 
 const { height: screenHeight } = Dimensions.get("window")
 
 export default function Index() {
   useAppStartup()
   const { t } = useTranslation()
-  
-  return (
-    <ImageBackground source={require("@/assets/images/bg/welcome.jpg")} className="flex-1 justify-center items-center" resizeMode="cover">
-      {/* Overlay sombre */}
-      <View className="absolute inset-0 bg-black/60" />
+  const { colors } = useTheme()
 
-      <View style={{ height: screenHeight - 400 }} className="w-full justify-between">
-        {/* Titre + sous-titre */}
-        <View className="px-10">
-          <Text className="text-white text-6xl font-bold leading-tight">{t("welcome.title")}</Text>
-          <Text className="text-white/80 text-lg mt-4">{t("welcome.subtitle")}</Text>
+  return (
+    <ImageBackground
+      source={require("@/assets/images/bg/welcome.jpg")}
+      style={styles.bg}
+      resizeMode="cover"
+    >
+      <View style={styles.overlay} />
+
+      <View style={[styles.inner, { height: screenHeight - 400 }]}>
+        <View style={styles.titleBlock}>
+          <Text style={styles.title}>{t("welcome.title")}</Text>
+          <Text style={styles.subtitle}>{t("welcome.subtitle")}</Text>
         </View>
 
-        {/* Boutons */}
-        <View className="w-full px-10" style={{ position: "absolute", bottom: 0 }}>
-          <Link href="/auth/login" className="bg-white/20 p-4 rounded-xl w-full mb-4">
-            <Text className="text-center text-white font-semibold text-lg">{t("welcome.signIn")}</Text>
+        <View style={styles.buttons}>
+          <Link href="/auth/login" style={styles.loginBtn}>
+            <Text style={styles.btnText}>{t("welcome.signIn")}</Text>
           </Link>
-          <Link href="/auth/register" className="w-full">
-            <Text className="text-center text-white font-semibold text-lg">{t("welcome.createAccount")}</Text>
+          <Link href="/auth/register" style={styles.registerBtn}>
+            <Text style={styles.btnText}>{t("welcome.createAccount")}</Text>
           </Link>
         </View>
       </View>
     </ImageBackground>
   )
 }
+
+const styles = StyleSheet.create({
+  bg: { flex: 1, justifyContent: "center", alignItems: "center" },
+  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.6)" },
+  inner: { width: "100%", justifyContent: "space-between" },
+  titleBlock: { paddingHorizontal: 40 },
+  title: { color: "#ffffff", fontSize: 60, fontWeight: "700", lineHeight: 72 },
+  subtitle: { color: "rgba(255,255,255,0.8)", fontSize: 18, marginTop: 16 },
+  buttons: { width: "100%", paddingHorizontal: 40, position: "absolute", bottom: 0 },
+  loginBtn: {
+    backgroundColor: "rgba(255,255,255,0.2)",
+    padding: 16,
+    borderRadius: 12,
+    width: "100%",
+    marginBottom: 16,
+  },
+  registerBtn: { width: "100%" },
+  btnText: { textAlign: "center", color: "#ffffff", fontWeight: "600", fontSize: 18 },
+})

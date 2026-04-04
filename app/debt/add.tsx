@@ -3,20 +3,20 @@ import { DateInput } from "@/components/ui/date-input"
 import { Loader } from "@/components/ui/loader"
 import { SelectInput } from "@/components/ui/select-input"
 import { TextInput } from "@/components/ui/text-input"
+import { useTheme } from "@/core/theme"
 import { useTranslation } from "@/i18n"
-import { useTwColors } from "@/lib/tw-colors"
 import { createDebt } from "@/services/debtServices"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { useRef, useState } from "react"
-import { Platform, Pressable, TextInput as RNTextInput, Text, View } from "react-native"
+import { Platform, Pressable, StyleSheet, Text, TextInput as RNTextInput, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 export default function AddDebt() {
   const { user } = useAuthStore()
   const router = useRouter()
-  const { twColor } = useTwColors()
+  const { colors } = useTheme()
   const { t } = useTranslation()
 
   const [form, setForm] = useState({
@@ -27,12 +27,11 @@ export default function AddDebt() {
     currency: "XAF",
     description: "",
     loan_date: new Date(),
-    due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // +30 jours par défaut
+    due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     debt_type: "OWING",
   })
   const [loading, setLoading] = useState(false)
 
-  // Refs pour navigation entre inputs
   const contactNameRef = useRef<RNTextInput>(null)
   const contactPhoneRef = useRef<RNTextInput>(null)
   const contactEmailRef = useRef<RNTextInput>(null)
@@ -97,8 +96,7 @@ export default function AddDebt() {
       })
 
       Toast.success(t("debt.add.success"), "Success")
-      
-      // Réinitialiser le formulaire après succès
+
       setForm({
         contact_name: "",
         contact_phone: "",
@@ -120,101 +118,65 @@ export default function AddDebt() {
     }
   }
 
-  // Descriptions pour chaque type de dette
   const getDebtTypeDescription = () => {
-    return form.debt_type === "OWING" 
+    return form.debt_type === "OWING"
       ? t("debt.add.debtType.owingDescription")
       : t("debt.add.debtType.owedDescription")
   }
 
   return (
     <KeyboardAwareScrollView
-      style={{
-        backgroundColor: twColor("background"),
-      }}
+      style={[styles.scroll, { backgroundColor: colors.background.primary }]}
       contentContainerStyle={{ paddingBottom: 40 }}
       enableOnAndroid
       extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
     >
-      {/* Fixed header */}
       <PageHeader title={t("debt.add.title")} textPosition="center" textAlign="left" />
 
-      <View className="px-6">
-        <View className="mt-8 gap-4">
-          {/* Debt Type Toggle with Description */}
-          <View
-            style={{
-              backgroundColor: twColor("card-background"),
-              borderColor: twColor("primary"),
-            }}
-            className="p-4 rounded-xl border"
-          >
-            <Text style={{ color: twColor("primary") }} className="text-lg font-bold mb-2">
+      <View style={styles.content}>
+        <View style={styles.formGroup}>
+          {/* Debt Type */}
+          <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.primary.default }]}>
+            <Text style={[styles.cardTitle, { color: colors.primary.default }]}>
               {t("debt.add.debtType.title")}
             </Text>
-            
-            <View className="flex-row justify-around p-1 rounded-xl border border-primary mb-3">
+
+            <View style={[styles.toggleRow, { borderColor: colors.primary.default }]}>
               <Pressable
                 onPress={() => setForm({ ...form, debt_type: "OWING" })}
-                style={{
-                  backgroundColor: form.debt_type === "OWING" ? twColor("primary") : "transparent",
-                }}
-                className="flex-1 items-center py-3 rounded-lg"
+                style={[
+                  styles.toggleBtn,
+                  { backgroundColor: form.debt_type === "OWING" ? colors.primary.default : "transparent" },
+                ]}
               >
-                <Text
-                  style={{
-                    color: form.debt_type === "OWING" ? twColor("primary-foreground") : twColor("foreground"),
-                  }}
-                  className="font-medium"
-                >
+                <Text style={{ color: form.debt_type === "OWING" ? colors.primary.foreground : colors.foreground.primary, fontWeight: "500" }}>
                   {t("debt.add.debtType.owing")}
                 </Text>
               </Pressable>
               <Pressable
                 onPress={() => setForm({ ...form, debt_type: "OWED" })}
-                style={{
-                  backgroundColor: form.debt_type === "OWED" ? twColor("primary") : "transparent",
-                }}
-                className="flex-1 items-center py-3 rounded-lg"
+                style={[
+                  styles.toggleBtn,
+                  { backgroundColor: form.debt_type === "OWED" ? colors.primary.default : "transparent" },
+                ]}
               >
-                <Text
-                  style={{
-                    color: form.debt_type === "OWED" ? twColor("primary-foreground") : twColor("foreground"),
-                  }}
-                  className="font-medium"
-                >
+                <Text style={{ color: form.debt_type === "OWED" ? colors.primary.foreground : colors.foreground.primary, fontWeight: "500" }}>
                   {t("debt.add.debtType.owed")}
                 </Text>
               </Pressable>
             </View>
 
-            {/* Description dynamique */}
-            <View 
-              style={{ backgroundColor: twColor("muted") + "40" }}
-              className="p-3 rounded-lg"
-            >
-              <Text style={{ color: twColor("muted-foreground") }} className="text-sm leading-5">
-                {getDebtTypeDescription()}
-              </Text>
+            <View style={[styles.descBox, { backgroundColor: colors.muted.default + "40" }]}>
+              <Text style={[styles.descText, { color: colors.muted.foreground }]}>{getDebtTypeDescription()}</Text>
             </View>
           </View>
 
           {/* Contact Info */}
-          <View
-            style={{
-              backgroundColor: twColor("card-background"),
-              borderColor: twColor("border"),
-            }}
-            className="p-4 rounded-xl shadow-sm border"
-          >
-            <Text style={{ color: twColor("primary") }} className="text-lg font-bold mb-2">
-              {t("debt.add.contact.title")}
-            </Text>
-            <Text style={{ color: twColor("muted-foreground") }} className="text-sm mb-4">
-              {t("debt.add.contact.subtitle")}
-            </Text>
+          <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+            <Text style={[styles.cardTitle, { color: colors.primary.default }]}>{t("debt.add.contact.title")}</Text>
+            <Text style={[styles.cardSubtitle, { color: colors.muted.foreground }]}>{t("debt.add.contact.subtitle")}</Text>
 
             <TextInput
               ref={contactNameRef}
@@ -250,26 +212,16 @@ export default function AddDebt() {
               keyboardType="email-address"
               autoCapitalize="none"
               icon="mail"
-              containerClassName="mb-0"
+              containerStyle={{ marginBottom: 0 }}
               returnKeyType="next"
               onSubmitEditing={() => amountRef.current?.focus()}
             />
           </View>
 
           {/* Debt Details */}
-          <View
-            style={{
-              backgroundColor: twColor("card-background"),
-              borderColor: twColor("border"),
-            }}
-            className="p-4 rounded-xl shadow-sm border"
-          >
-            <Text style={{ color: twColor("primary") }} className="text-lg font-bold mb-2">
-              {t("debt.add.financial.title")}
-            </Text>
-            <Text style={{ color: twColor("muted-foreground") }} className="text-sm mb-4">
-              {t("debt.add.financial.subtitle")}
-            </Text>
+          <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+            <Text style={[styles.cardTitle, { color: colors.primary.default }]}>{t("debt.add.financial.title")}</Text>
+            <Text style={[styles.cardSubtitle, { color: colors.muted.foreground }]}>{t("debt.add.financial.subtitle")}</Text>
 
             <TextInput
               ref={amountRef}
@@ -296,20 +248,20 @@ export default function AddDebt() {
               ]}
             />
 
-            <DateInput 
-              label={t("debt.add.financial.loanDate")} 
-              value={form.loan_date} 
-              onChange={handleDateChange("loan_date")} 
-              maximumDate={new Date()} 
-              required 
+            <DateInput
+              label={t("debt.add.financial.loanDate")}
+              value={form.loan_date}
+              onChange={handleDateChange("loan_date")}
+              maximumDate={new Date()}
+              required
             />
 
-            <DateInput 
-              label={t("debt.add.financial.dueDate")} 
-              value={form.due_date} 
-              onChange={handleDateChange("due_date")} 
-              minimumDate={form.loan_date} 
-              required 
+            <DateInput
+              label={t("debt.add.financial.dueDate")}
+              value={form.due_date}
+              onChange={handleDateChange("due_date")}
+              minimumDate={form.loan_date}
+              required
             />
 
             <TextInput
@@ -321,24 +273,20 @@ export default function AddDebt() {
               multiline
               numberOfLines={3}
               icon="file-text"
-              containerClassName="mb-0"
+              containerStyle={{ marginBottom: 0 }}
               returnKeyType="done"
               onSubmitEditing={handleSubmit}
             />
           </View>
 
-          {/* Submit Button */}
+          {/* Submit */}
           <Pressable
             onPress={handleSubmit}
             disabled={loading}
-            style={{
-              backgroundColor: twColor("primary"),
-              opacity: loading ? 0.7 : 1,
-            }}
-            className="p-4 rounded-xl flex-row gap-2 justify-center items-center"
+            style={[styles.submitBtn, { backgroundColor: colors.primary.default, opacity: loading ? 0.7 : 1 }]}
           >
-            {loading ? <Loader /> : <Feather name="plus" size={20} color={twColor("primary-foreground")} />}
-            <Text style={{ color: twColor("primary-foreground") }} className="text-center font-semibold text-lg">
+            {loading ? <Loader /> : <Feather name="plus" size={20} color={colors.primary.foreground} />}
+            <Text style={[styles.submitBtnText, { color: colors.primary.foreground }]}>
               {loading ? t("common.loading") : t("debt.add.save")}
             </Text>
           </Pressable>
@@ -347,3 +295,32 @@ export default function AddDebt() {
     </KeyboardAwareScrollView>
   )
 }
+
+const styles = StyleSheet.create({
+  scroll: { flex: 1 },
+  content: { paddingHorizontal: 24 },
+  formGroup: { marginTop: 32, gap: 16 },
+  card: { padding: 16, borderRadius: 12, borderWidth: 1 },
+  cardTitle: { fontSize: 18, fontWeight: "700", marginBottom: 8 },
+  cardSubtitle: { fontSize: 14, marginBottom: 16 },
+  toggleRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 4,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginBottom: 12,
+  },
+  toggleBtn: { flex: 1, alignItems: "center", paddingVertical: 12, borderRadius: 8 },
+  descBox: { padding: 12, borderRadius: 8 },
+  descText: { fontSize: 14, lineHeight: 20 },
+  submitBtn: {
+    padding: 16,
+    borderRadius: 12,
+    flexDirection: "row",
+    gap: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  submitBtnText: { textAlign: "center", fontWeight: "600", fontSize: 18 },
+})

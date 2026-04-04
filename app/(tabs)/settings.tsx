@@ -4,28 +4,28 @@ import { ImportExportSection } from "@/components/feature/import-export-section"
 import { LanguageSelector } from "@/components/feature/language-selector"
 import { LoadingState } from "@/components/feature/loading-state"
 import { PageHeader } from "@/components/feature/page-header"
+import { useTheme } from "@/core/theme"
 import { useSettings } from "@/hooks/useSettings"
 import { useTranslation } from "@/i18n"
 import { SupportedLanguage } from "@/i18n/locales"
-import { useTwColors } from "@/lib/tw-colors"
+import { Toast } from "@/lib/toast-global"
 import { BiometricCapabilities, checkBiometricCapabilities, getBiometricDisplayName } from "@/services/biometricService"
 import { requestNotificationPermissions, scheduleAllDebtReminders, updateNotificationSettings } from "@/services/notificationService"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather, MaterialIcons } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { useEffect, useState } from "react"
-import { Modal, Pressable, ScrollView, Switch, Text, View } from "react-native"
+import { Modal, Pressable, ScrollView, StyleSheet, Switch, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function Settings() {
   const { user, logout, updateBiometricSetting } = useAuthStore()
   const { settings, loading, updateSetting } = useSettings()
-  const { twColor } = useTwColors()
+  const { colors } = useTheme()
   const { t, currentLanguage } = useTranslation()
   const router = useRouter()
   const insets = useSafeAreaInsets()
 
-  // State
   const [localBiometricCapabilities, setLocalBiometricCapabilities] = useState<BiometricCapabilities | null>(null)
   const [modalVisible, setModalVisible] = useState(false)
   const [modalContent, setModalContent] = useState<React.ReactNode>(null)
@@ -72,7 +72,6 @@ export default function Settings() {
   const handleRememberSessionToggle = async (enabled: boolean) => {
     await updateSetting("remember_session", enabled)
 
-    // Si on désactive "remember session", on efface immédiatement l'expiration
     if (!enabled) {
       const { clearSessionExpiry } = await import("@/lib/auth")
       await clearSessionExpiry()
@@ -84,7 +83,6 @@ export default function Settings() {
     const success = await updateSetting("session_duration", minutes)
 
     if (success) {
-      // Mettre à jour immédiatement l'expiration si la session est active
       if (settings.remember_session) {
         const { setSessionExpiry } = await import("@/lib/auth")
         await setSessionExpiry()
@@ -114,34 +112,28 @@ export default function Settings() {
 
   const showTermsModal = () => {
     showModal(
-      <View className="p-6">
-        <Text style={{ color: twColor("foreground") }} className="text-2xl font-bold mb-4">
+      <View style={styles.modalBody}>
+        <Text style={[styles.modalBodyTitle, { color: colors.foreground.primary }]}>
           {t("settings.termsOfService")}
         </Text>
         <ScrollView>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>
             {t("settings.lastUpdated")} {new Date().toLocaleDateString()}
           </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            {t("settings.termsWelcome")}
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.termsWelcome")}</Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.termsAgreement")}</Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>
+            1. <Text style={styles.bold}>{t("settings.freeService")}</Text> {t("settings.freeServiceText")}
           </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            {t("settings.termsAgreement")}
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>
+            2. <Text style={styles.bold}>{t("settings.dataUsage")}</Text> {t("settings.dataUsageText")}
           </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            1. <Text className="font-semibold">{t("settings.freeService")}</Text> {t("settings.freeServiceText")}
-          </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            2. <Text className="font-semibold">{t("settings.dataUsage")}</Text> {t("settings.dataUsageText")}
-          </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            3. <Text className="font-semibold">{t("settings.userResponsibilities")}</Text> {t("settings.userResponsibilitiesText")}
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>
+            3. <Text style={styles.bold}>{t("settings.userResponsibilities")}</Text> {t("settings.userResponsibilitiesText")}
           </Text>
         </ScrollView>
-        <Pressable onPress={hideModal} style={{ backgroundColor: twColor("primary") }} className="p-4 rounded-xl mt-6">
-          <Text style={{ color: twColor("primary-foreground") }} className="text-center font-semibold">
-            {t("settings.iUnderstand")}
-          </Text>
+        <Pressable onPress={hideModal} style={[styles.modalCloseBtn, { backgroundColor: colors.primary.default }]}>
+          <Text style={[styles.modalCloseBtnText, { color: colors.primary.foreground }]}>{t("settings.iUnderstand")}</Text>
         </Pressable>
       </View>,
     )
@@ -149,46 +141,28 @@ export default function Settings() {
 
   const showPrivacyModal = () => {
     showModal(
-      <View className="p-6">
-        <Text style={{ color: twColor("foreground") }} className="text-2xl font-bold mb-4">
+      <View style={styles.modalBody}>
+        <Text style={[styles.modalBodyTitle, { color: colors.foreground.primary }]}>
           {t("settings.privacyPolicy")}
         </Text>
         <ScrollView>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            {t("settings.privacyImportant")}
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.privacyImportant")}</Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>
+            <Text style={styles.bold}>{t("settings.informationWeCollect")}</Text>
           </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            <Text className="font-semibold">{t("settings.informationWeCollect")}</Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.accountInfo")}</Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.debtRecords")}</Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.usageData")}</Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>
+            <Text style={styles.bold}>{t("settings.howWeUse")}</Text>
           </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            {t("settings.accountInfo")}
-          </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            {t("settings.debtRecords")}
-          </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            {t("settings.usageData")}
-          </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            <Text className="font-semibold">{t("settings.howWeUse")}</Text>
-          </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            {t("settings.provideServices")}
-          </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            {t("settings.sendNotifications")}
-          </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            {t("settings.analytics")}
-          </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            {t("settings.dataSecure")}
-          </Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.provideServices")}</Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.sendNotifications")}</Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.analytics")}</Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.dataSecure")}</Text>
         </ScrollView>
-        <Pressable onPress={hideModal} style={{ backgroundColor: twColor("primary") }} className="p-4 rounded-xl mt-6">
-          <Text style={{ color: twColor("primary-foreground") }} className="text-center font-semibold">
-            {t("settings.iUnderstand")}
-          </Text>
+        <Pressable onPress={hideModal} style={[styles.modalCloseBtn, { backgroundColor: colors.primary.default }]}>
+          <Text style={[styles.modalCloseBtnText, { color: colors.primary.foreground }]}>{t("settings.iUnderstand")}</Text>
         </Pressable>
       </View>,
     )
@@ -196,49 +170,27 @@ export default function Settings() {
 
   const showHelpModal = () => {
     showModal(
-      <View className="p-6">
-        <Text style={{ color: twColor("foreground") }} className="text-2xl font-bold mb-4">
+      <View style={styles.modalBody}>
+        <Text style={[styles.modalBodyTitle, { color: colors.foreground.primary }]}>
           {t("settings.helpSupport")}
         </Text>
         <ScrollView>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            {t("settings.helpIntro")}
-          </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4 font-semibold">
-            {t("settings.faq")}
-          </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-2">
-            {t("settings.howToAddDebt")}
-          </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            {t("settings.howToAddDebtAnswer")}
-          </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-2">
-            {t("settings.howToChangePin")}
-          </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            {t("settings.howToChangePinAnswer")}
-          </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4 font-semibold">
-            {t("settings.contactSupport")}
-          </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            {t("settings.supportEmail")}
-          </Text>
-          <Text style={{ color: twColor("foreground") }} className="text-base mb-4">
-            {t("settings.responseTime")}
-          </Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.helpIntro")}</Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary, fontWeight: "600" }]}>{t("settings.faq")}</Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.howToAddDebt")}</Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.howToAddDebtAnswer")}</Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.howToChangePin")}</Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.howToChangePinAnswer")}</Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary, fontWeight: "600" }]}>{t("settings.contactSupport")}</Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.supportEmail")}</Text>
+          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.responseTime")}</Text>
         </ScrollView>
-        <Pressable onPress={hideModal} style={{ backgroundColor: twColor("primary") }} className="p-4 rounded-xl mt-6">
-          <Text style={{ color: twColor("primary-foreground") }} className="text-center font-semibold">
-            {t("settings.close")}
-          </Text>
+        <Pressable onPress={hideModal} style={[styles.modalCloseBtn, { backgroundColor: colors.primary.default }]}>
+          <Text style={[styles.modalCloseBtnText, { color: colors.primary.foreground }]}>{t("settings.close")}</Text>
         </Pressable>
       </View>,
     )
   }
-
-
 
   const handleDeleteAccount = () => {
     Toast.confirm(
@@ -256,18 +208,15 @@ export default function Settings() {
 
   const SettingCard = ({ title, children, isDanger = false }: { title: string; children: React.ReactNode; isDanger?: boolean }) => (
     <View
-      style={{
-        backgroundColor: twColor("card-background"),
-        borderColor: isDanger ? twColor("destructive") : twColor("border"),
-      }}
-      className={`p-6 rounded-xl shadow-sm mb-6 border ${isDanger ? "border-opacity-20" : ""}`}
+      style={[
+        styles.settingCard,
+        {
+          backgroundColor: colors.card.background,
+          borderColor: isDanger ? colors.status.destructive : colors.border,
+        },
+      ]}
     >
-      <Text
-        style={{
-          color: isDanger ? twColor("destructive") : twColor("foreground"),
-        }}
-        className="text-lg font-semibold mb-4"
-      >
+      <Text style={[styles.settingCardTitle, { color: isDanger ? colors.status.destructive : colors.foreground.primary }]}>
         {title}
       </Text>
       {children}
@@ -289,51 +238,72 @@ export default function Settings() {
   }) => (
     <Pressable
       onPress={onPress}
-      style={{
-        borderTopColor: isDanger ? `${twColor("destructive")}20` : twColor("border"),
-      }}
-      className="flex-row items-center justify-between py-3 border-t"
+      style={[
+        styles.settingRow,
+        { borderTopColor: isDanger ? colors.status.destructive + "20" : colors.border },
+      ]}
     >
-      <View className="flex-row items-center">
+      <View style={styles.settingRowLeft}>
         {icon && (
           <View
-            style={{
-              backgroundColor: isDanger ? `${twColor("destructive")}15` : `${twColor("primary")}`,
-            }}
-            className="p-2 rounded-full mr-3"
+            style={[
+              styles.settingRowIcon,
+              { backgroundColor: isDanger ? colors.status.destructive + "15" : colors.primary.default },
+            ]}
           >
-            <Feather name={icon as any} size={20} color={isDanger ? twColor("destructive") : twColor("primary-foreground")} />
+            <Feather
+              name={icon as any}
+              size={20}
+              color={isDanger ? colors.status.destructive : colors.primary.foreground}
+            />
           </View>
         )}
-        <Text
-          style={{
-            color: isDanger ? twColor("destructive") : twColor("foreground"),
-          }}
-          className="flex-1"
-        >
+        <Text style={[styles.settingRowText, { color: isDanger ? colors.status.destructive : colors.foreground.primary }]}>
           {title}
         </Text>
       </View>
-      {showChevron && <Feather name="chevron-right" size={20} color={isDanger ? twColor("destructive") : twColor("muted-foreground")} />}
+      {showChevron && (
+        <Feather
+          name="chevron-right"
+          size={20}
+          color={isDanger ? colors.status.destructive : colors.muted.foreground}
+        />
+      )}
     </Pressable>
   )
 
-  const SelectionButtons = ({ options, selectedValue, onSelect }: { options: { value: any; label: string }[]; selectedValue: any; onSelect: (value: any) => void }) => (
-    <View className="flex-row flex-wrap gap-2">
+  const SelectionButtons = ({
+    options,
+    selectedValue,
+    onSelect,
+  }: {
+    options: { value: any; label: string }[]
+    selectedValue: any
+    onSelect: (value: any) => void
+  }) => (
+    <View style={styles.selectionButtons}>
       {options.map((option) => (
         <Pressable
           key={option.value}
           onPress={() => onSelect(option.value)}
-          style={{
-            backgroundColor: selectedValue === option.value ? twColor("primary") : twColor("secondary"),
-          }}
-          className="px-4 py-2 rounded-full"
+          style={[
+            styles.selectionBtn,
+            {
+              backgroundColor:
+                selectedValue === option.value ? colors.primary.default : colors.secondary.default,
+            },
+          ]}
         >
           <Text
-            style={{
-              color: selectedValue === option.value ? twColor("primary-foreground") : twColor("secondary-foreground"),
-            }}
-            className="text-sm font-medium"
+            style={[
+              styles.selectionBtnText,
+              {
+                color:
+                  selectedValue === option.value
+                    ? colors.primary.foreground
+                    : colors.secondary.foreground,
+              },
+            ]}
           >
             {option.label}
           </Text>
@@ -342,51 +312,51 @@ export default function Settings() {
     </View>
   )
 
-  const MultipleTimeSelection = ({ 
-    options, 
-    selectedValues, 
-    onSelectionChange 
-  }: { 
-    options: { value: string; label: string }[]; 
-    selectedValues: string[]; 
-    onSelectionChange: (values: string[]) => void 
+  const MultipleTimeSelection = ({
+    options,
+    selectedValues,
+    onSelectionChange,
+  }: {
+    options: { value: string; label: string }[]
+    selectedValues: string[]
+    onSelectionChange: (values: string[]) => void
   }) => {
     const toggleSelection = (value: string) => {
       let newSelection: string[]
       if (selectedValues.includes(value)) {
-        // Remove if already selected (but keep at least one)
         if (selectedValues.length > 1) {
-          newSelection = selectedValues.filter(v => v !== value)
+          newSelection = selectedValues.filter((v) => v !== value)
         } else {
-          return // Don't allow removing the last selected time
+          return
         }
       } else {
-        // Add if not selected
         newSelection = [...selectedValues, value]
       }
       onSelectionChange(newSelection)
     }
 
     return (
-      <View className="flex-row flex-wrap gap-2">
+      <View style={styles.selectionButtons}>
         {options.map((option) => {
           const isSelected = selectedValues.includes(option.value)
           return (
             <Pressable
               key={option.value}
               onPress={() => toggleSelection(option.value)}
-              style={{
-                backgroundColor: isSelected ? twColor("primary") : twColor("secondary"),
-                borderWidth: isSelected ? 2 : 1,
-                borderColor: isSelected ? twColor("primary") : twColor("border"),
-              }}
-              className="px-4 py-2 rounded-full"
+              style={[
+                styles.selectionBtn,
+                {
+                  backgroundColor: isSelected ? colors.primary.default : colors.secondary.default,
+                  borderWidth: isSelected ? 2 : 1,
+                  borderColor: isSelected ? colors.primary.default : colors.border,
+                },
+              ]}
             >
               <Text
-                style={{
-                  color: isSelected ? twColor("primary-foreground") : twColor("secondary-foreground"),
-                }}
-                className="text-sm font-medium"
+                style={[
+                  styles.selectionBtnText,
+                  { color: isSelected ? colors.primary.foreground : colors.secondary.foreground },
+                ]}
               >
                 {option.label}
                 {isSelected && " ✓"}
@@ -400,12 +370,7 @@ export default function Settings() {
 
   if (loading) {
     return (
-      <View
-        className="flex-1 px-6 pt-6"
-        style={{
-          backgroundColor: twColor("background"),
-        }}
-      >
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background.primary }]}>
         <LoadingState message="Loading settings..." />
       </View>
     )
@@ -414,35 +379,21 @@ export default function Settings() {
   return (
     <>
       <ScrollView
-        style={{
-          backgroundColor: twColor("background"),
-        }}
-        className="flex-1"
-        contentContainerStyle={{
-          paddingBottom: Math.max(40, insets.bottom + 20),
-        }}
+        style={[styles.scroll, { backgroundColor: colors.background.primary }]}
+        contentContainerStyle={{ paddingBottom: Math.max(40, insets.bottom + 20) }}
       >
         <PageHeader title={t("settings.title")} textPosition="center" textAlign="left" />
 
-        <View className="p-6">
-          {/* User Profile Section */}
+        <View style={styles.content}>
+          {/* Profile */}
           <SettingCard title={t("settings.profile")}>
-            <View className="flex-row items-center mb-4">
-              <View
-                style={{
-                  backgroundColor: `${twColor("primary")}`,
-                }}
-                className="p-3 rounded-full mr-4"
-              >
-                <Feather name="user" size={24} color={twColor("primary-foreground")} />
+            <View style={styles.profileRow}>
+              <View style={[styles.profileAvatar, { backgroundColor: colors.primary.default }]}>
+                <Feather name="user" size={24} color={colors.primary.foreground} />
               </View>
               <View>
-                <Text style={{ color: twColor("foreground") }} className="text-lg font-medium">
-                  {user?.full_name}
-                </Text>
-                <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
-                  {user?.email}
-                </Text>
+                <Text style={[styles.profileName, { color: colors.foreground.primary }]}>{user?.full_name}</Text>
+                <Text style={[styles.profileEmail, { color: colors.muted.foreground }]}>{user?.email}</Text>
               </View>
             </View>
 
@@ -450,22 +401,19 @@ export default function Settings() {
             <SettingRow icon="lock" title={t("settings.changePin")} onPress={() => setChangePinModalVisible(true)} />
           </SettingCard>
 
-          {/* Security Section */}
+          {/* Security */}
           <SettingCard title={t("settings.security")}>
             {localBiometricCapabilities?.isAvailable && (
-              <View className="flex-row items-center justify-between py-3">
-                <View className="flex-row items-center flex-1">
-                  <View
-                    style={{
-                      backgroundColor: `${twColor("primary")}`,
-                    }}
-                    className="p-2 rounded-full mr-3"
-                  >
-                    <MaterialIcons name="fingerprint" size={20} color={twColor("primary-foreground")} />
+              <View style={styles.switchRow}>
+                <View style={styles.switchRowLeft}>
+                  <View style={[styles.settingRowIcon, { backgroundColor: colors.primary.default }]}>
+                    <MaterialIcons name="fingerprint" size={20} color={colors.primary.foreground} />
                   </View>
-                  <View className="flex-1">
-                    <Text style={{ color: twColor("foreground") }}>{getBiometricDisplayName(localBiometricCapabilities.biometryType)} Authentication</Text>
-                    <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
+                  <View style={styles.switchRowText}>
+                    <Text style={{ color: colors.foreground.primary }}>
+                      {getBiometricDisplayName(localBiometricCapabilities.biometryType)} Authentication
+                    </Text>
+                    <Text style={[styles.switchRowDesc, { color: colors.muted.foreground }]}>
                       Use {getBiometricDisplayName(localBiometricCapabilities.biometryType).toLowerCase()} to unlock
                     </Text>
                   </View>
@@ -473,27 +421,21 @@ export default function Settings() {
                 <Switch
                   value={user?.biometric_enabled || false}
                   onValueChange={handleBiometricToggle}
-                  trackColor={{
-                    false: twColor("muted"),
-                    true: twColor("primary"),
-                  }}
-                  thumbColor={twColor("card-background")}
+                  trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                  thumbColor={colors.card.background}
                 />
               </View>
             )}
 
             <View
-              className={`py-3 ${localBiometricCapabilities?.isAvailable ? "border-t" : ""}`}
-              style={{
-                borderTopColor: twColor("border"),
-              }}
+              style={[
+                styles.settingSection,
+                localBiometricCapabilities?.isAvailable && { borderTopWidth: 1, borderTopColor: colors.border },
+              ]}
             >
-              <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                {t("settings.autoLogout")}
-              </Text>
+              <Text style={[styles.settingSectionLabel, { color: colors.foreground.primary }]}>{t("settings.autoLogout")}</Text>
               <SelectionButtons
                 options={[
-                  // { value: 0, label: "Immediately" },
                   { value: 1, label: t("settings.oneMin") },
                   { value: 5, label: t("settings.fiveMin") },
                   { value: 15, label: t("settings.fifteenMin") },
@@ -506,16 +448,8 @@ export default function Settings() {
               />
             </View>
 
-            {/* Background Lock Delay */}
-            <View
-              style={{
-                borderTopColor: twColor("border"),
-              }}
-              className="py-3 border-t"
-            >
-              <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                {t("settings.backgroundLockDelay")}
-              </Text>
+            <View style={[styles.settingSection, { borderTopWidth: 1, borderTopColor: colors.border }]}>
+              <Text style={[styles.settingSectionLabel, { color: colors.foreground.primary }]}>{t("settings.backgroundLockDelay")}</Text>
               <SelectionButtons
                 options={[
                   { value: 0, label: t("settings.lockImmediately") },
@@ -530,36 +464,24 @@ export default function Settings() {
             </View>
           </SettingCard>
 
-          {/* Session Management Section */}
+          {/* Session Management */}
           <SettingCard title={t("settings.sessionManagement")}>
-            <View className="flex-row items-center justify-between py-3">
-              <View className="flex-1">
-                <Text style={{ color: twColor("foreground") }}>{t("settings.rememberMe")}</Text>
-                <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
-                  {t("settings.rememberMeDescription")}
-                </Text>
+            <View style={styles.switchRow}>
+              <View style={styles.switchRowText}>
+                <Text style={{ color: colors.foreground.primary }}>{t("settings.rememberMe")}</Text>
+                <Text style={[styles.switchRowDesc, { color: colors.muted.foreground }]}>{t("settings.rememberMeDescription")}</Text>
               </View>
               <Switch
                 value={settings.remember_session}
                 onValueChange={handleRememberSessionToggle}
-                trackColor={{
-                  false: twColor("muted"),
-                  true: twColor("primary"),
-                }}
-                thumbColor={twColor("card-background")}
+                trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                thumbColor={colors.card.background}
               />
             </View>
 
             {settings.remember_session && (
-              <View
-                style={{
-                  borderTopColor: twColor("border"),
-                }}
-                className="py-3 border-t"
-              >
-                <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                  {t("settings.sessionDuration")}
-                </Text>
+              <View style={[styles.settingSection, { borderTopWidth: 1, borderTopColor: colors.border }]}>
+                <Text style={[styles.settingSectionLabel, { color: colors.foreground.primary }]}>{t("settings.sessionDuration")}</Text>
                 <SelectionButtons
                   options={[
                     { value: 1, label: t("settings.oneHour") },
@@ -567,23 +489,22 @@ export default function Settings() {
                     { value: 24, label: t("settings.twentyFourHours") },
                     { value: 168, label: t("settings.sevenDays") },
                   ]}
-                  selectedValue={settings.session_duration / 60} // Convert minutes to hours
+                  selectedValue={settings.session_duration / 60}
                   onSelect={handleSessionDurationChange}
                 />
               </View>
             )}
           </SettingCard>
 
-          {/* Notifications Section */}
+          {/* Notifications */}
           <SettingCard title={t("settings.notifications")}>
-            <View className="flex-row items-center justify-between py-3">
-              <Text style={{ color: twColor("foreground") }}>{t("settings.enableNotifications")}</Text>
+            <View style={styles.switchRow}>
+              <Text style={{ color: colors.foreground.primary }}>{t("settings.enableNotifications")}</Text>
               <Switch
                 value={settings.notification_enabled}
                 onValueChange={async (val) => {
                   const success = await updateSetting("notification_enabled", val)
                   if (success && val) {
-                    // Request permissions and schedule notifications
                     const hasPermission = await requestNotificationPermissions()
                     if (hasPermission && user?.user_id) {
                       await scheduleAllDebtReminders(user.user_id)
@@ -592,40 +513,25 @@ export default function Settings() {
                       Toast.error(t("settings.notificationPermissionsDenied"))
                     }
                   } else if (success && !val) {
-                    // Cancel all notifications
                     const Notifications = await import("expo-notifications")
                     await Notifications.cancelAllScheduledNotificationsAsync()
                     Toast.success(t("settings.notificationsDisabled"))
                   }
                 }}
-                trackColor={{
-                  false: twColor("muted"),
-                  true: twColor("primary"),
-                }}
-                thumbColor={twColor("card-background")}
+                trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                thumbColor={colors.card.background}
               />
             </View>
 
             {settings.notification_enabled && (
               <>
-                {/* Notification Types */}
-                <View
-                  style={{
-                    borderTopColor: twColor("border"),
-                  }}
-                  className="py-3 border-t"
-                >
-                  <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                    {t("settings.notificationTypes")}
-                  </Text>
+                <View style={[styles.settingSection, { borderTopWidth: 1, borderTopColor: colors.border }]}>
+                  <Text style={[styles.settingSectionLabel, { color: colors.foreground.primary }]}>{t("settings.notificationTypes")}</Text>
 
-                  {/* System Notifications */}
-                  <View className="flex-row items-center justify-between py-2">
-                    <View className="flex-1">
-                      <Text style={{ color: twColor("foreground") }}>{t("settings.systemNotifications")}</Text>
-                      <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
-                        {t("settings.systemNotificationsDesc")}
-                      </Text>
+                  <View style={styles.switchRowCompact}>
+                    <View style={styles.switchRowText}>
+                      <Text style={{ color: colors.foreground.primary }}>{t("settings.systemNotifications")}</Text>
+                      <Text style={[styles.switchRowDesc, { color: colors.muted.foreground }]}>{t("settings.systemNotificationsDesc")}</Text>
                     </View>
                     <Switch
                       value={settings.system_notifications}
@@ -636,63 +542,40 @@ export default function Settings() {
                           Toast.success(val ? t("settings.systemNotificationsEnabled") : t("settings.systemNotificationsDisabled"))
                         }
                       }}
-                      trackColor={{
-                        false: twColor("muted"),
-                        true: twColor("primary"),
-                      }}
-                      thumbColor={twColor("card-background")}
+                      trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                      thumbColor={colors.card.background}
                     />
                   </View>
 
-                  {/* Email Notifications */}
-                  <View className="flex-row items-center justify-between py-2">
-                    <View className="flex-1">
-                      <Text style={{ color: twColor("foreground") }}>{t("settings.emailNotifications")}</Text>
-                      <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
-                        {t("settings.emailNotificationsDesc")}
-                      </Text>
+                  <View style={styles.switchRowCompact}>
+                    <View style={styles.switchRowText}>
+                      <Text style={{ color: colors.foreground.primary }}>{t("settings.emailNotifications")}</Text>
+                      <Text style={[styles.switchRowDesc, { color: colors.muted.foreground }]}>{t("settings.emailNotificationsDesc")}</Text>
                     </View>
                     <Switch
                       value={settings.email_notifications}
                       onValueChange={() => Toast.info(t("settings.emailComingSoon"))}
-                      trackColor={{
-                        false: twColor("muted"),
-                        true: twColor("primary"),
-                      }}
-                      thumbColor={twColor("card-background")}
+                      trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                      thumbColor={colors.card.background}
                     />
                   </View>
 
-                  {/* SMS Notifications */}
-                  <View className="flex-row items-center justify-between py-2">
-                    <View className="flex-1">
-                      <Text style={{ color: twColor("foreground") }}>{t("settings.smsNotifications")}</Text>
-                      <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
-                        {t("settings.smsNotificationsDesc")}
-                      </Text>
+                  <View style={styles.switchRowCompact}>
+                    <View style={styles.switchRowText}>
+                      <Text style={{ color: colors.foreground.primary }}>{t("settings.smsNotifications")}</Text>
+                      <Text style={[styles.switchRowDesc, { color: colors.muted.foreground }]}>{t("settings.smsNotificationsDesc")}</Text>
                     </View>
                     <Switch
                       value={settings.sms_notifications}
                       onValueChange={() => Toast.info(t("settings.smsComingSoon"))}
-                      trackColor={{
-                        false: twColor("muted"),
-                        true: twColor("primary"),
-                      }}
-                      thumbColor={twColor("card-background")}
+                      trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                      thumbColor={colors.card.background}
                     />
                   </View>
                 </View>
 
-                {/* Days Before Reminder */}
-                <View
-                  style={{
-                    borderTopColor: twColor("border"),
-                  }}
-                  className="py-3 border-t"
-                >
-                  <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                    {t("settings.daysBeforeReminder")}
-                  </Text>
+                <View style={[styles.settingSection, { borderTopWidth: 1, borderTopColor: colors.border }]}>
+                  <Text style={[styles.settingSectionLabel, { color: colors.foreground.primary }]}>{t("settings.daysBeforeReminder")}</Text>
                   <SelectionButtons
                     options={[
                       { value: 1, label: t("settings.oneDay") },
@@ -711,19 +594,9 @@ export default function Settings() {
                   />
                 </View>
 
-                {/* Notification Times - Multiple Selection */}
-                <View
-                  style={{
-                    borderTopColor: twColor("border"),
-                  }}
-                  className="py-3 border-t"
-                >
-                  <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                    {t("settings.preferredNotificationTimes")}
-                  </Text>
-                  <Text style={{ color: twColor("muted-foreground") }} className="text-sm mb-3">
-                    {t("settings.selectMultipleTimes")}
-                  </Text>
+                <View style={[styles.settingSection, { borderTopWidth: 1, borderTopColor: colors.border }]}>
+                  <Text style={[styles.settingSectionLabel, { color: colors.foreground.primary }]}>{t("settings.preferredNotificationTimes")}</Text>
+                  <Text style={[styles.settingSectionDesc, { color: colors.muted.foreground }]}>{t("settings.selectMultipleTimes")}</Text>
                   <MultipleTimeSelection
                     options={[
                       { value: "05:00", label: t("settings.fiveAm") },
@@ -749,19 +622,11 @@ export default function Settings() {
                   />
                 </View>
 
-                {/* Summary Notifications */}
-                <View
-                  style={{
-                    borderTopColor: twColor("border"),
-                  }}
-                  className="py-3 border-t"
-                >
-                  <View className="flex-row items-center justify-between py-2">
-                    <View className="flex-1">
-                      <Text style={{ color: twColor("foreground") }}>{t("settings.summaryNotifications")}</Text>
-                      <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
-                        {t("settings.summaryNotificationsDesc")}
-                      </Text>
+                <View style={[styles.settingSection, { borderTopWidth: 1, borderTopColor: colors.border }]}>
+                  <View style={styles.switchRowCompact}>
+                    <View style={styles.switchRowText}>
+                      <Text style={{ color: colors.foreground.primary }}>{t("settings.summaryNotifications")}</Text>
+                      <Text style={[styles.switchRowDesc, { color: colors.muted.foreground }]}>{t("settings.summaryNotificationsDesc")}</Text>
                     </View>
                     <Switch
                       value={settings.summary_notifications}
@@ -772,28 +637,22 @@ export default function Settings() {
                           Toast.success(val ? t("settings.summaryNotificationsEnabled") : t("settings.summaryNotificationsDisabled"))
                         }
                       }}
-                      trackColor={{
-                        false: twColor("muted"),
-                        true: twColor("primary"),
-                      }}
-                      thumbColor={twColor("card-background")}
+                      trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                      thumbColor={colors.card.background}
                     />
                   </View>
 
                   {settings.summary_notifications && (
                     <>
-                      {/* Summary Frequency */}
-                      <View className="py-3">
-                        <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                          {t("settings.summaryFrequency")}
-                        </Text>
+                      <View style={styles.settingSection}>
+                        <Text style={[styles.settingSectionLabel, { color: colors.foreground.primary }]}>{t("settings.summaryFrequency")}</Text>
                         <SelectionButtons
                           options={[
-                            { value: 'daily', label: t("settings.daily") },
-                            { value: 'weekly', label: t("settings.weekly") },
-                            { value: 'none', label: t("common.none") },
+                            { value: "daily", label: t("settings.daily") },
+                            { value: "weekly", label: t("settings.weekly") },
+                            { value: "none", label: t("common.none") },
                           ]}
-                          selectedValue={settings.summary_frequency || 'daily'}
+                          selectedValue={settings.summary_frequency || "daily"}
                           onSelect={async (frequency) => {
                             const success = await updateSetting("summary_frequency", frequency)
                             if (success && user?.user_id) {
@@ -804,12 +663,9 @@ export default function Settings() {
                         />
                       </View>
 
-                      {/* Summary Time */}
-                      {settings.summary_frequency !== 'none' && (
-                        <View className="py-3">
-                          <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                            {t("settings.summaryTime")}
-                          </Text>
+                      {settings.summary_frequency !== "none" && (
+                        <View style={styles.settingSection}>
+                          <Text style={[styles.settingSectionLabel, { color: colors.foreground.primary }]}>{t("settings.summaryTime")}</Text>
                           <SelectionButtons
                             options={[
                               { value: "08:00", label: t("settings.eightAm") },
@@ -836,59 +692,54 @@ export default function Settings() {
             )}
           </SettingCard>
 
-          {/* Language Section */}
+          {/* Language */}
           <SettingCard title={t("settings.language")}>
-            <View className="py-3">
-              <Text style={{ color: twColor("foreground") }} className="mb-3 font-medium">
-                {t("settings.selectLanguage")}
-              </Text>
-              <LanguageSelector 
-                currentLanguage={currentLanguage}
-                onLanguageChange={handleLanguageChange}
-              />
+            <View style={styles.settingSection}>
+              <Text style={[styles.settingSectionLabel, { color: colors.foreground.primary }]}>{t("settings.selectLanguage")}</Text>
+              <LanguageSelector currentLanguage={currentLanguage} onLanguageChange={handleLanguageChange} />
             </View>
           </SettingCard>
 
-          {/* Data Management Section */}
+          {/* Data */}
           <SettingCard title={t("settings.data")}>
-            <ImportExportSection 
-              userId={user?.user_id || ''} 
+            <ImportExportSection
+              userId={user?.user_id || ""}
               onImportComplete={(imported, total) => {
                 Toast.success(`${imported}/${total} ${t("settings.debtsImported")}`)
               }}
             />
           </SettingCard>
 
-          {/* About Section */}
+          {/* About */}
           <SettingCard title={t("settings.about")}>
             <SettingRow icon="file-text" title={t("settings.termsOfServiceTitle")} onPress={showTermsModal} />
             <SettingRow icon="shield" title={t("settings.privacyPolicyTitle")} onPress={showPrivacyModal} />
             <SettingRow icon="help-circle" title={t("settings.helpSupportTitle")} onPress={showHelpModal} />
           </SettingCard>
 
-          {/* Testing Section - Only show in development */}
+          {/* Dev Tools */}
           {__DEV__ && (
             <SettingCard title={t("settings.developmentTools")}>
-              <SettingRow 
-                icon="bell" 
-                title={t("settings.testSummaryNotification")} 
+              <SettingRow
+                icon="bell"
+                title={t("settings.testSummaryNotification")}
                 onPress={async () => {
                   if (user?.user_id) {
                     const { updateSummaryNotificationContent } = await import("@/services/notificationService")
                     await updateSummaryNotificationContent(user.user_id)
                     Toast.success(t("settings.testNotificationSent"))
                   }
-                }} 
+                }}
               />
-              <SettingRow 
-                icon="refresh-cw" 
-                title={t("settings.rescheduleNotifications")} 
+              <SettingRow
+                icon="refresh-cw"
+                title={t("settings.rescheduleNotifications")}
                 onPress={async () => {
                   if (user?.user_id) {
                     await scheduleAllDebtReminders(user.user_id)
                     Toast.success(t("settings.notificationsRescheduled"))
                   }
-                }} 
+                }}
               />
             </SettingCard>
           )}
@@ -899,14 +750,16 @@ export default function Settings() {
 
             <Pressable
               onPress={handleLogout}
-              style={{
-                backgroundColor: twColor("destructive"),
-                borderTopColor: `${twColor("destructive")}20`,
-              }}
-              className="flex-row items-center justify-center py-3 border-t mt-4 rounded-lg"
+              style={[
+                styles.logoutBtn,
+                {
+                  backgroundColor: colors.status.destructive,
+                  borderTopColor: colors.status.destructive + "20",
+                },
+              ]}
             >
-              <Feather name="log-out" size={20} color={twColor("destructive-foreground")} />
-              <Text style={{ color: twColor("destructive-foreground") }} className="font-semibold ml-2">
+              <Feather name="log-out" size={20} color={colors.status.destructiveForeground} />
+              <Text style={[styles.logoutBtnText, { color: colors.status.destructiveForeground }]}>
                 {t("settings.logOut")}
               </Text>
             </Pressable>
@@ -914,29 +767,87 @@ export default function Settings() {
         </View>
       </ScrollView>
 
-      {/* Modal pour afficher le contenu */}
+      {/* Info Modal */}
       <Modal animationType="slide" transparent={false} visible={modalVisible} onRequestClose={hideModal}>
-        <View style={{ backgroundColor: twColor("background") }} className="flex-1 pt-14">
-          <View className="px-6 pb-4 border-b" style={{ borderBottomColor: twColor("border") }}>
-            <Pressable onPress={hideModal} className="self-start">
-              <Feather name="x" size={24} color={twColor("foreground")} />
+        <View style={[styles.infoModal, { backgroundColor: colors.background.primary }]}>
+          <View style={[styles.infoModalHeader, { borderBottomColor: colors.border }]}>
+            <Pressable onPress={hideModal} style={styles.infoModalClose}>
+              <Feather name="x" size={24} color={colors.foreground.primary} />
             </Pressable>
           </View>
           {modalContent}
         </View>
       </Modal>
 
-      {/* Edit Profile Modal */}
-      <EditProfileModal 
-        visible={editProfileModalVisible} 
-        onClose={() => setEditProfileModalVisible(false)} 
-      />
-
-      {/* Change PIN Modal */}
-      <ChangePinModal 
-        visible={changePinModalVisible} 
-        onClose={() => setChangePinModalVisible(false)} 
-      />
+      <EditProfileModal visible={editProfileModalVisible} onClose={() => setEditProfileModalVisible(false)} />
+      <ChangePinModal visible={changePinModalVisible} onClose={() => setChangePinModalVisible(false)} />
     </>
   )
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: { flex: 1, paddingHorizontal: 24, paddingTop: 24 },
+  scroll: { flex: 1 },
+  content: { padding: 24 },
+  settingCard: {
+    padding: 24,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginBottom: 24,
+  },
+  settingCardTitle: { fontSize: 18, fontWeight: "600", marginBottom: 16 },
+  settingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+    borderTopWidth: 1,
+  },
+  settingRowLeft: { flexDirection: "row", alignItems: "center" },
+  settingRowIcon: { padding: 8, borderRadius: 999, marginRight: 12 },
+  settingRowText: { flex: 1 },
+  profileRow: { flexDirection: "row", alignItems: "center", marginBottom: 16 },
+  profileAvatar: { padding: 12, borderRadius: 999, marginRight: 16 },
+  profileName: { fontSize: 18, fontWeight: "500" },
+  profileEmail: { fontSize: 14 },
+  switchRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+  },
+  switchRowCompact: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 8,
+  },
+  switchRowLeft: { flexDirection: "row", alignItems: "center", flex: 1 },
+  switchRowText: { flex: 1 },
+  switchRowDesc: { fontSize: 14, marginTop: 2 },
+  settingSection: { paddingVertical: 12 },
+  settingSectionLabel: { fontWeight: "500", marginBottom: 12 },
+  settingSectionDesc: { fontSize: 14, marginBottom: 12 },
+  selectionButtons: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  selectionBtn: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 999 },
+  selectionBtnText: { fontSize: 14, fontWeight: "500" },
+  logoutBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    marginTop: 16,
+    borderRadius: 8,
+  },
+  logoutBtnText: { fontWeight: "600", marginLeft: 8 },
+  infoModal: { flex: 1, paddingTop: 56 },
+  infoModalHeader: { paddingHorizontal: 24, paddingBottom: 16, borderBottomWidth: 1 },
+  infoModalClose: { alignSelf: "flex-start" },
+  modalBody: { padding: 24 },
+  modalBodyTitle: { fontSize: 24, fontWeight: "700", marginBottom: 16 },
+  modalBodyText: { fontSize: 16, marginBottom: 16 },
+  bold: { fontWeight: "600" },
+  modalCloseBtn: { padding: 16, borderRadius: 12, marginTop: 24 },
+  modalCloseBtnText: { textAlign: "center", fontWeight: "600" },
+})

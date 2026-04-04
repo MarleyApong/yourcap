@@ -1,12 +1,12 @@
-import { useTwColors } from "@/lib/tw-colors"
+import { useTheme } from "@/core/theme"
 import { Stack } from "expo-router"
 import { SafeAreaView } from "react-native-safe-area-context"
 
 export default function DebtLayout() {
-  const { twColor } = useTwColors()
+  const { colors } = useTheme()
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: twColor("background") }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.primary }}>
       <Stack
         screenOptions={{
           headerShown: false,

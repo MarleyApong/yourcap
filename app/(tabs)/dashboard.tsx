@@ -4,9 +4,10 @@ import { SummaryCard } from "@/components/feature/dashboard/summary-card"
 import { EmptyState } from "@/components/feature/empty-state"
 import { LoadingState } from "@/components/feature/loading-state"
 import { PageHeader } from "@/components/feature/page-header"
+import { useTheme } from "@/core/theme"
 import { isDatabaseReady } from "@/db/db"
 import { useTranslation } from "@/i18n"
-import { useTwColors } from "@/lib/tw-colors"
+import { Toast } from "@/lib/toast-global"
 import { formatCurrency } from "@/lib/utils"
 import { getDebtsSummary, getUserDebts } from "@/services/debtServices"
 import { useAuthStore } from "@/stores/authStore"
@@ -14,18 +15,18 @@ import { Debt } from "@/types/debt"
 import { useFocusEffect } from "@react-navigation/core"
 import { Link, useRouter } from "expo-router"
 import { useCallback, useState } from "react"
-import { ScrollView, Text, View } from "react-native"
+import { ScrollView, StyleSheet, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function Dashboard() {
   const { user } = useAuthStore()
   const { t } = useTranslation()
+  const { colors } = useTheme()
   const [summary, setSummary] = useState({ owing: 0, owed: 0, balance: 0 })
   const [recentDebts, setRecentDebts] = useState<Debt[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
-  const { twColor } = useTwColors()
   const insets = useSafeAreaInsets()
 
   const loadData = useCallback(async () => {
@@ -35,7 +36,6 @@ export default function Dashboard() {
       return
     }
 
-    // Vérifier que la DB est prête
     if (!isDatabaseReady()) {
       console.error("Database not ready")
       setError("Database not ready. Please restart the app.")
@@ -73,7 +73,6 @@ export default function Dashboard() {
     }, [loadData]),
   )
 
-  // Quick action handlers
   const handleAddDebt = () => router.push("/debt/add")
   const handleViewHistory = () => router.push("/(tabs)/history")
   const handleViewSettings = () => router.push("/(tabs)/settings")
@@ -81,78 +80,65 @@ export default function Dashboard() {
   const handleRetry = () => loadData()
 
   return (
-    <View
-      className="flex-1"
-      style={{
-        backgroundColor: twColor("background"),
-      }}
-    >
-      {/* Fixed header */}
+    <View style={[styles.container, { backgroundColor: colors.background.primary }]}>
       <PageHeader title={t("dashboard.title")} fbackButton={false} textPosition="center" textAlign="left" />
 
-      {/* Scrollable content with padding-top to avoid header */}
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="px-6 pb-6">
-          {/* Error State */}
+      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+        <View style={styles.content}>
           {error && (
             <View
-              className="mt-6 p-4 rounded-xl border"
-              style={{
-                backgroundColor: twColor("destructive"),
-                borderColor: twColor("destructive-foreground"),
-              }}
+              style={[
+                styles.errorBox,
+                {
+                  backgroundColor: colors.status.destructive,
+                  borderColor: colors.status.destructiveForeground,
+                },
+              ]}
             >
-              <Text style={{ color: twColor("destructive-foreground") }} className="text-sm">
-                {error}
-              </Text>
-              <Text style={{ color: twColor("destructive-foreground") }} className="text-sm font-medium mt-2" onPress={handleRetry}>
+              <Text style={[styles.errorText, { color: colors.status.destructiveForeground }]}>{error}</Text>
+              <Text style={[styles.errorRetry, { color: colors.status.destructiveForeground }]} onPress={handleRetry}>
                 Tap to retry
               </Text>
             </View>
           )}
 
-          {/* Summary Cards */}
           {!error && (
-            <View className="flex-row justify-between mt-6">
+            <View style={styles.summaryRow}>
               <SummaryCard label={t("dashboard.summary.totalLent")} amount={formatCurrency(summary.owed, "XAF")} type="negative" />
-
               <SummaryCard label={t("dashboard.summary.totalOwed")} amount={formatCurrency(summary.owing, "XAF")} type="positive" />
-
               <SummaryCard label="Balance" amount={formatCurrency(summary.balance, "XAF")} type={summary.balance >= 0 ? "positive" : "negative"} />
             </View>
           )}
 
-          {/* Quick Actions */}
           <View
-            style={{
-              backgroundColor: twColor("card-background"),
-              borderColor: twColor("border"),
-            }}
-            className="flex-row justify-around px-6 py-6 mx-0 mt-6 rounded-xl shadow-sm border"
+            style={[
+              styles.quickActions,
+              {
+                backgroundColor: colors.card.background,
+                borderColor: colors.border,
+              },
+            ]}
           >
             <QuickActionButton icon="plus" label={t("dashboard.addDebt")} onPress={handleAddDebt} />
             <QuickActionButton icon="list" label={t("tabs.history")} onPress={handleViewHistory} />
             <QuickActionButton icon="settings" label={t("tabs.settings")} onPress={handleViewSettings} />
           </View>
 
-          {/* Recent Debts Section */}
           {!error && (
-            <View className="mt-6">
-              <View className="flex-row justify-between items-center mb-4">
-                <Text style={{ color: twColor("foreground") }} className="text-lg font-semibold">
+            <View style={styles.recentSection}>
+              <View style={styles.recentHeader}>
+                <Text style={[styles.recentTitle, { color: colors.foreground.primary }]}>
                   {t("dashboard.quickActions")}
                 </Text>
                 <Link href="/(tabs)/history">
-                  <Text style={{ color: twColor("primary") }} className="text-sm font-medium">
+                  <Text style={[styles.recentLink, { color: colors.primary.default }]}>
                     {t("tabs.history")}
                   </Text>
                 </Link>
               </View>
 
-              {/* Loading State */}
               {loading && <LoadingState message={t("common.loading")} />}
 
-              {/* Empty State */}
               {!loading && recentDebts.length === 0 && (
                 <EmptyState
                   title={t("dashboard.empty.title")}
@@ -163,17 +149,24 @@ export default function Dashboard() {
                 />
               )}
 
-              {/* Debts List */}
               {!loading && recentDebts.length > 0 && (
                 <View
-                  style={{
-                    backgroundColor: twColor("card-background"),
-                    borderColor: twColor("border"),
-                  }}
-                  className="rounded-xl shadow-sm border"
+                  style={[
+                    styles.debtList,
+                    {
+                      backgroundColor: colors.card.background,
+                      borderColor: colors.border,
+                    },
+                  ]}
                 >
                   {recentDebts.map((debt, index) => (
-                    <DebtItem key={debt.debt_id} debt={debt} currency={"XAF"} onPress={() => handleDebtPress(debt.debt_id)} showBorder={index !== recentDebts.length - 1} />
+                    <DebtItem
+                      key={debt.debt_id}
+                      debt={debt}
+                      currency={"XAF"}
+                      onPress={() => handleDebtPress(debt.debt_id)}
+                      showBorder={index !== recentDebts.length - 1}
+                    />
                   ))}
                 </View>
               )}
@@ -181,9 +174,46 @@ export default function Dashboard() {
           )}
         </View>
 
-        {/* Bottom spacing to avoid content being hidden by tab bar */}
         <View style={{ height: insets.bottom + 80 }} />
       </ScrollView>
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  scroll: { flex: 1 },
+  content: { paddingHorizontal: 24, paddingBottom: 24 },
+  errorBox: {
+    marginTop: 24,
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  errorText: { fontSize: 14 },
+  errorRetry: { fontSize: 14, fontWeight: "500", marginTop: 8 },
+  summaryRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 24,
+  },
+  quickActions: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingHorizontal: 24,
+    paddingVertical: 24,
+    marginTop: 24,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  recentSection: { marginTop: 24 },
+  recentHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  recentTitle: { fontSize: 18, fontWeight: "600" },
+  recentLink: { fontSize: 14, fontWeight: "500" },
+  debtList: { borderRadius: 12, borderWidth: 1 },
+})

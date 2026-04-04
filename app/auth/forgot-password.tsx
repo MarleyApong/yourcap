@@ -1,12 +1,12 @@
 import { FBackButton } from "@/components/ui/fback-button"
 import { Loader } from "@/components/ui/loader"
 import PinInput from "@/components/ui/pin-input"
-import { useTwColors } from "@/lib/tw-colors"
+import { useTheme } from "@/core/theme"
 import { resetPin } from "@/services/userService"
 import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
-import { Platform, Pressable, TextInput as RNTextInput, Text, View } from "react-native"
+import { Platform, Pressable, StyleSheet, Text, TextInput as RNTextInput, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 export default function ForgotPassword() {
@@ -21,11 +21,10 @@ export default function ForgotPassword() {
   const [confirmKey, setConfirmKey] = useState(0)
 
   const router = useRouter()
-  const { twColor } = useTwColors()
+  const { colors } = useTheme()
 
   const identifierRef = useRef<RNTextInput>(null)
 
-  // Effect pour gérer la soumission quand confirmPin est saisi complètement
   useEffect(() => {
     if (step === 3 && formData.confirmPin.length === 6) {
       handleSubmitPin()
@@ -111,20 +110,30 @@ export default function ForgotPassword() {
   if (step === 2) {
     return (
       <KeyboardAwareScrollView
-        className="h-full bg-primary-50"
+        style={[styles.scrollRoot, { backgroundColor: colors.primary[50] }]}
         contentContainerStyle={{ flexGrow: 1 }}
         enableOnAndroid
         extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View className="absolute top-28 left-6 z-10">
-          <Pressable onPress={() => setStep(1)} className="flex-row items-center justify-center p-2 bg-background/20 border border-primary rounded-full">
-            <Feather name="chevron-left" size={24} color={twColor("primary")} />
+        <View style={styles.backBtnWrapper}>
+          <Pressable
+            onPress={() => setStep(1)}
+            style={[styles.backCircleBtn, { backgroundColor: "rgba(255,255,255,0.2)", borderColor: colors.primary.default }]}
+          >
+            <Feather name="chevron-left" size={24} color={colors.primary.default} />
           </Pressable>
         </View>
 
-        <PinInput key="new-pin" title="New PIN" subtitle="Create a new 6-digit PIN" onComplete={handlePinComplete} showBiometric={false} length={6} />
+        <PinInput
+          key="new-pin"
+          title="New PIN"
+          subtitle="Create a new 6-digit PIN"
+          onComplete={handlePinComplete}
+          showBiometric={false}
+          length={6}
+        />
       </KeyboardAwareScrollView>
     )
   }
@@ -133,16 +142,19 @@ export default function ForgotPassword() {
   if (step === 3) {
     return (
       <KeyboardAwareScrollView
-        className="h-full bg-primary-50"
+        style={[styles.scrollRoot, { backgroundColor: colors.primary[50] }]}
         contentContainerStyle={{ flexGrow: 1 }}
         enableOnAndroid
         extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View className="absolute top-28 left-6 z-10">
-          <Pressable onPress={() => setStep(2)} className="flex-row items-center justify-center p-2 bg-background/20 border border-primary rounded-full">
-            <Feather name="chevron-left" size={24} color={twColor("primary")} />
+        <View style={styles.backBtnWrapper}>
+          <Pressable
+            onPress={() => setStep(2)}
+            style={[styles.backCircleBtn, { backgroundColor: "rgba(255,255,255,0.2)", borderColor: colors.primary.default }]}
+          >
+            <Feather name="chevron-left" size={24} color={colors.primary.default} />
           </Pressable>
         </View>
 
@@ -156,10 +168,10 @@ export default function ForgotPassword() {
         />
 
         {loading && (
-          <View className="absolute inset-0 bg-black/30 flex-1 justify-center items-center">
-            <View className="bg-primary rounded-xl p-6 items-center">
+          <View style={styles.overlay}>
+            <View style={[styles.loadingCard, { backgroundColor: colors.primary.default }]}>
               <Loader />
-              <Text className="mt-4 text-white">Resetting PIN...</Text>
+              <Text style={styles.loadingText}>Resetting PIN...</Text>
             </View>
           </View>
         )}
@@ -170,7 +182,7 @@ export default function ForgotPassword() {
   // --- STEP 1: USER INFO ---
   return (
     <KeyboardAwareScrollView
-      className="h-full bg-primary-50"
+      style={[styles.scrollRoot, { backgroundColor: colors.primary[50] }]}
       contentContainerStyle={{ flexGrow: 1 }}
       enableOnAndroid
       extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
@@ -179,24 +191,31 @@ export default function ForgotPassword() {
     >
       <FBackButton />
 
-      <View className="flex items-center justify-center h-screen w-full px-8">
-        <Text className="text-4xl text-primary font-bold">Forgot PIN</Text>
-        <Text className="text-lg text-gray-600">Reset your PIN securely</Text>
+      <View style={styles.formContainer}>
+        <Text style={[styles.title, { color: colors.primary.default }]}>Forgot PIN</Text>
+        <Text style={[styles.subtitle, { color: colors.muted.foreground }]}>Reset your PIN securely</Text>
 
-        {/* Step indicator */}
-        <View className="flex-row gap-2 my-6">
+        <View style={styles.stepIndicator}>
           {[1, 2, 3].map((i) => (
-            <View key={i} className={`h-2 rounded-full ${step >= i ? "bg-primary w-8" : "bg-gray-300 w-4"}`} />
+            <View
+              key={i}
+              style={[
+                styles.stepDot,
+                step >= i
+                  ? { backgroundColor: colors.primary.default, width: 32 }
+                  : { backgroundColor: "#d1d5db", width: 16 },
+              ]}
+            />
           ))}
         </View>
 
-        <View className="w-full mt-4 flex-col gap-4">
-          {/* Full name */}
-          <View className="bg-primary-50 border border-primary rounded-md flex-row gap-2 items-center px-3 py-1">
-            <Feather name="user" size={24} color={twColor("text-primary")} />
+        <View style={styles.inputs}>
+          <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
+            <Feather name="user" size={24} color={colors.primary.default} />
             <RNTextInput
-              className="text-xl flex-1"
+              style={[styles.inputText, { color: colors.foreground.primary }]}
               placeholder="Full name"
+              placeholderTextColor={colors.muted.foreground}
               value={formData.full_name}
               onChangeText={(text) => handleChange("full_name", text)}
               returnKeyType="next"
@@ -204,13 +223,13 @@ export default function ForgotPassword() {
             />
           </View>
 
-          {/* Email or Phone */}
-          <View className="bg-primary-50 border border-primary rounded-md flex-row gap-2 items-center px-3 py-1">
-            <Feather name="mail" size={24} color={twColor("text-primary")} />
+          <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
+            <Feather name="mail" size={24} color={colors.primary.default} />
             <RNTextInput
               ref={identifierRef}
-              className="text-xl flex-1"
+              style={[styles.inputText, { color: colors.foreground.primary }]}
               placeholder="you@example.com or 6xx xxx xxx"
+              placeholderTextColor={colors.muted.foreground}
               value={formData.identifier}
               onChangeText={(text) => handleChange("identifier", text)}
               autoCapitalize="none"
@@ -221,21 +240,20 @@ export default function ForgotPassword() {
           </View>
         </View>
 
-        {/* Bottom buttons */}
-        <View className="w-full px-10 mt-8 mb-10 absolute bottom-0">
+        <View style={styles.actions}>
           <Pressable
             onPress={handleContinue}
             disabled={loading}
-            className={`flex-row gap-2 justify-center items-center bg-primary p-4 rounded-xl w-full ${loading ? "opacity-70" : ""}`}
+            style={[styles.submitBtn, { backgroundColor: colors.primary.default, opacity: loading ? 0.7 : 1 }]}
           >
-            <Feather name="arrow-up-right" size={24} color={twColor("text-white")} />
-            <Text className="text-center text-white font-semibold text-lg">Continue</Text>
+            <Feather name="arrow-up-right" size={24} color="#ffffff" />
+            <Text style={styles.submitBtnText}>Continue</Text>
           </Pressable>
 
-          <View className="flex-row justify-center items-center gap-3 mt-3">
-            <Text>Remember your PIN?</Text>
-            <Link href="/auth/login" className="text-primary font-bold underline">
-              Sign In
+          <View style={styles.signinRow}>
+            <Text style={{ color: colors.foreground.primary }}>Remember your PIN?</Text>
+            <Link href="/auth/login">
+              <Text style={[styles.signinLink, { color: colors.primary.default }]}>Sign In</Text>
             </Link>
           </View>
         </View>
@@ -243,3 +261,67 @@ export default function ForgotPassword() {
     </KeyboardAwareScrollView>
   )
 }
+
+const styles = StyleSheet.create({
+  scrollRoot: { flex: 1 },
+  backBtnWrapper: { position: "absolute", top: 112, left: 24, zIndex: 10 },
+  backCircleBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 8,
+    borderWidth: 1,
+    borderRadius: 999,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingCard: { borderRadius: 12, padding: 24, alignItems: "center" },
+  loadingText: { marginTop: 16, color: "#ffffff" },
+  formContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    paddingHorizontal: 32,
+  },
+  title: { fontSize: 36, fontWeight: "700" },
+  subtitle: { fontSize: 18 },
+  stepIndicator: { flexDirection: "row", gap: 8, marginVertical: 24 },
+  stepDot: { height: 8, borderRadius: 999 },
+  inputs: { width: "100%", marginTop: 16, gap: 16 },
+  inputRow: {
+    borderWidth: 1,
+    borderRadius: 6,
+    flexDirection: "row",
+    gap: 8,
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+  },
+  inputText: { fontSize: 20, flex: 1 },
+  actions: {
+    width: "100%",
+    paddingHorizontal: 40,
+    marginTop: 32,
+    marginBottom: 40,
+    position: "absolute",
+    bottom: 0,
+  },
+  submitBtn: {
+    flexDirection: "row",
+    gap: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
+    borderRadius: 12,
+    width: "100%",
+  },
+  submitBtnText: { textAlign: "center", color: "#ffffff", fontWeight: "600", fontSize: 18 },
+  signinRow: { flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 12, marginTop: 12 },
+  signinLink: { fontWeight: "700", textDecorationLine: "underline" },
+})

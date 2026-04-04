@@ -1,52 +1,47 @@
-import { useTwColors } from "@/lib/tw-colors"
+import { useTheme } from "@/core/theme"
 import { Feather } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
-import { Pressable } from "react-native"
+import { Pressable, StyleSheet } from "react-native"
 
-// Custom back button component
 export const CustomBackButton = ({ onPress, color }: { onPress: () => void; color: string }) => (
-  <Pressable onPress={onPress} className="p-2">
+  <Pressable onPress={onPress} style={styles.backBtn}>
     <Feather name="arrow-left" size={24} color={color} />
   </Pressable>
 )
 
-// Default header options factory
 export const useDefaultHeaderOptions = () => {
-  const { twColor } = useTwColors()
+  const { colors } = useTheme()
   const router = useRouter()
 
   return {
     headerShown: true,
     headerStyle: {
-      backgroundColor: twColor("white"),
-      elevation: 3, // Android shadow
-      shadowColor: "#000", // iOS shadow
+      backgroundColor: "#ffffff",
+      elevation: 3,
+      shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 3,
     },
-    headerTintColor: twColor("primary"),
+    headerTintColor: colors.primary.default,
     headerTitleStyle: {
       fontSize: 20,
       fontWeight: "bold" as const,
-      color: twColor("primary"),
+      color: colors.primary.default,
     },
     headerTitleAlign: "left" as const,
     headerLeft: (props: any) => {
       if (props.canGoBack) {
-        return <CustomBackButton onPress={() => router.back()} color={twColor("primary")} />
+        return <CustomBackButton onPress={() => router.back()} color={colors.primary.default} />
       }
       return null
     },
-    headerBackVisible: false, // Hide default back button
+    headerBackVisible: false,
   }
 }
 
-// Specific configurations for different screens
 export const headerConfigs = {
-  // For screens without back button (like main dashboard)
   noBack: (title: string) => {
-    const { twColor } = useTwColors()
     return {
       ...useDefaultHeaderOptions(),
       title,
@@ -54,19 +49,19 @@ export const headerConfigs = {
     }
   },
 
-  // For screens with back button
   withBack: (title: string, customBackAction?: () => void) => {
-    const { twColor } = useTwColors()
+    const { colors } = useTheme()
     const router = useRouter()
 
     return {
       ...useDefaultHeaderOptions(),
       title,
-      headerLeft: () => <CustomBackButton onPress={customBackAction || (() => router.back())} color={twColor("primary")} />,
+      headerLeft: () => (
+        <CustomBackButton onPress={customBackAction || (() => router.back())} color={colors.primary.default} />
+      ),
     }
   },
 
-  // For centered titles
   centered: (title: string) => {
     const options = useDefaultHeaderOptions()
     return {
@@ -76,7 +71,6 @@ export const headerConfigs = {
     }
   },
 
-  // For screens with custom right actions
   withActions: (title: string, rightComponent: () => React.ReactNode) => {
     const options = useDefaultHeaderOptions()
     return {
@@ -86,3 +80,7 @@ export const headerConfigs = {
     }
   },
 }
+
+const styles = StyleSheet.create({
+  backBtn: { padding: 8 },
+})
