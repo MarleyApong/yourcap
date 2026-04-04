@@ -1,9 +1,9 @@
-import { useTwColors } from "@/lib/tw-colors"
+import { useTheme } from "@/core/theme"
 import { Feather } from "@expo/vector-icons"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { format } from "date-fns"
 import { useState } from "react"
-import { Pressable, Text, View } from "react-native"
+import { Pressable, StyleSheet, Text, View } from "react-native"
 
 interface DateInputProps {
   label: string
@@ -15,7 +15,7 @@ interface DateInputProps {
 }
 
 export const DateInput = ({ label, value, onChange, minimumDate, maximumDate, required = false }: DateInputProps) => {
-  const { twColor } = useTwColors()
+  const { colors } = useTheme()
   const [showPicker, setShowPicker] = useState(false)
 
   const handleDateChange = (event: any, selectedDate?: Date) => {
@@ -26,28 +26,61 @@ export const DateInput = ({ label, value, onChange, minimumDate, maximumDate, re
   }
 
   return (
-    <View className="mb-4">
-      <Text style={{ color: twColor("foreground") }} className="font-bold text-lg">
+    <View style={styles.container}>
+      <Text style={[styles.label, { color: colors.foreground.primary }]}>
         {label}
-        {required ? <Text className="text-red-600"> *</Text> : ""}
+        {required ? <Text style={styles.required}> *</Text> : ""}
       </Text>
       <Pressable
         onPress={() => setShowPicker(true)}
-        style={{
-          borderBottomColor: twColor("primary"),
-        }}
-        className="flex-row items-center justify-between border-b p-3"
+        style={[styles.field, { borderBottomColor: colors.primary.default }]}
       >
-        <View className="flex-row items-center">
-          <Feather name="calendar" size={20} color={twColor("primary")} />
-          <Text style={{ color: twColor("foreground") }} className="ml-2">
+        <View style={styles.fieldLeft}>
+          <Feather name="calendar" size={20} color={colors.primary.default} />
+          <Text style={[styles.fieldText, { color: colors.foreground.primary }]}>
             {format(value, "MMM dd, yyyy")}
           </Text>
         </View>
-        <Feather name="chevron-down" size={20} color={twColor("muted-foreground")} />
+        <Feather name="chevron-down" size={20} color={colors.muted.foreground} />
       </Pressable>
 
-      {showPicker && <DateTimePicker value={value} mode="date" display="default" onChange={handleDateChange} minimumDate={minimumDate} maximumDate={maximumDate} />}
+      {showPicker && (
+        <DateTimePicker
+          value={value}
+          mode="date"
+          display="default"
+          onChange={handleDateChange}
+          minimumDate={minimumDate}
+          maximumDate={maximumDate}
+        />
+      )}
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    marginBottom: 16,
+  },
+  label: {
+    fontWeight: "700",
+    fontSize: 18,
+  },
+  required: {
+    color: "#dc2626",
+  },
+  field: {
+    borderBottomWidth: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 12,
+  },
+  fieldLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  fieldText: {
+    marginLeft: 8,
+  },
+})

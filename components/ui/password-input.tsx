@@ -1,40 +1,55 @@
-import { cn } from "@/lib/utils"
+import { useTheme } from "@/core/theme"
 import { Feather } from "@expo/vector-icons"
 import { forwardRef, useState } from "react"
-import { TextInput, TextInputProps, View } from "react-native"
+import { StyleSheet, TextInput, TextInputProps, View, ViewStyle } from "react-native"
 
 type PasswordInputProps = TextInputProps & {
-  containerClassName?: string
+  containerStyle?: ViewStyle
   iconColor?: string
 }
 
-// Export direct sans wrapper
 export const PasswordInput = forwardRef<TextInput, PasswordInputProps>(
-  ({ className, containerClassName, iconColor = "green", ...props }, ref) => {
+  ({ containerStyle, iconColor, ...props }, ref) => {
     const [showPassword, setShowPassword] = useState(false)
+    const { colors } = useTheme()
+    const resolvedIconColor = iconColor ?? colors.primary.default
 
     return (
-      <View className={cn("flex-1 flex-row items-center", containerClassName)}>
+      <View style={[styles.container, containerStyle]}>
         <TextInput
           ref={ref}
-          className={cn("flex-1", className)}
+          style={[styles.input, { color: colors.foreground.primary }]}
           secureTextEntry={!showPassword}
           placeholder="Password"
+          placeholderTextColor={colors.muted.foreground}
           autoCapitalize="none"
           {...props}
         />
-
         <Feather
           name={showPassword ? "eye-off" : "eye"}
           size={22}
-          color={iconColor}
+          color={resolvedIconColor}
           onPress={() => setShowPassword((prev) => !prev)}
-          style={{ marginLeft: 8 }}
+          style={styles.icon}
         />
       </View>
     )
   }
 )
 
-// Assurez-vous d'avoir le displayName
 PasswordInput.displayName = "PasswordInput"
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  input: {
+    flex: 1,
+    fontSize: 18,
+  },
+  icon: {
+    marginLeft: 8,
+  },
+})

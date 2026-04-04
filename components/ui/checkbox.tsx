@@ -1,18 +1,49 @@
 import React from "react"
-import { Text, TouchableOpacity, View } from "react-native"
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { Feather } from "@expo/vector-icons"
-import { cn } from "@/lib/utils"
-import { useTwColors } from "@/lib/tw-colors"
+import { useTheme } from "@/core/theme"
 
 export const Checkbox = ({ label, checked, onChange }: { label: string; checked: boolean; onChange: (newValue: boolean) => void }) => {
-  const { twColor } = useTwColors()
+  const { colors } = useTheme()
 
   return (
-    <TouchableOpacity className="flex-row items-center gap-2" onPress={() => onChange(!checked)} accessibilityRole="checkbox" accessibilityState={{ checked }}>
-      <View className={cn("w-5 h-5 rounded-md border items-center justify-center  bg-primary/10 border-primary", checked ? "border-2" : "")}>
-        {checked && <Feather name="check" size={14} color={twColor("text-primary")} />}
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => onChange(!checked)}
+      accessibilityRole="checkbox"
+      accessibilityState={{ checked }}
+    >
+      <View
+        style={[
+          styles.box,
+          {
+            backgroundColor: colors.primary.default + "1a",
+            borderColor: colors.primary.default,
+            borderWidth: checked ? 2 : 1,
+          },
+        ]}
+      >
+        {checked && <Feather name="check" size={14} color={colors.primary.default} />}
       </View>
-      <Text className="text-base text-gray-800">{label}</Text>
+      <Text style={[styles.label, { color: colors.foreground.primary }]}>{label}</Text>
     </TouchableOpacity>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  box: {
+    width: 20,
+    height: 20,
+    borderRadius: 6,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  label: {
+    fontSize: 16,
+  },
+})

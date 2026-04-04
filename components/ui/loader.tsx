@@ -1,8 +1,13 @@
 import { ActivityIndicator } from "react-native"
-import { useTwColors } from "@/lib/tw-colors"
+import { useTheme } from "@/core/theme"
 
-export const Loader = ({ size = "small", color = "text-white" }) => {
-  const { twColor } = useTwColors()
+interface LoaderProps {
+  size?: "small" | "large"
+  color?: string
+}
 
-  return <ActivityIndicator size={size as "small" | "large"} color={twColor(color)} />
+export const Loader = ({ size = "small", color }: LoaderProps) => {
+  const { colors } = useTheme()
+
+  return <ActivityIndicator size={size} color={color ?? "#ffffff"} />
 }

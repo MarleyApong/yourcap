@@ -1,27 +1,26 @@
-import { useTwColors } from "@/lib/tw-colors"
+import { useTheme } from "@/core/theme"
 import { Feather } from "@expo/vector-icons"
-import { Href } from "expo-router"
-import { useRouter } from "expo-router"
-import { TouchableOpacity } from "react-native"
+import { Href, useRouter } from "expo-router"
+import { StyleSheet, TouchableOpacity, ViewStyle } from "react-native"
 
 type FBackButtonProps = {
   path?: Href
   isAbsolute?: boolean
-  className?: string
+  style?: ViewStyle
   color?: string
-  onPress?: () => void // ✅ ajout
+  onPress?: () => void
 }
 
-export const FBackButton = ({ path, isAbsolute = true, className, color = "white", onPress }: FBackButtonProps) => {
+export const FBackButton = ({ path, isAbsolute = true, style, color, onPress }: FBackButtonProps) => {
   const router = useRouter()
-  const { twColor } = useTwColors()
+  const { colors } = useTheme()
+  const resolvedColor = color ?? "#ffffff"
 
   const handlePress = () => {
     if (onPress) {
       onPress()
       return
     }
-
     if (path) {
       router.replace(path)
     } else {
@@ -35,13 +34,33 @@ export const FBackButton = ({ path, isAbsolute = true, className, color = "white
 
   return (
     <TouchableOpacity
-      style={{
-        borderColor: twColor(color),
-      }}
-      className={`flex-row items-center justify-center bg-primary w-14 p-2 ${isAbsolute ? "absolute top-28 left-6" : ""} bg-background/20 border z-10 rounded-full ${className}`}
+      style={[
+        styles.button,
+        isAbsolute && styles.absolute,
+        { borderColor: resolvedColor, backgroundColor: colors.background.primary + "33" },
+        style,
+      ]}
       onPress={handlePress}
     >
-      <Feather name="chevron-left" size={24} color={twColor(color)} />
+      <Feather name="chevron-left" size={24} color={resolvedColor} />
     </TouchableOpacity>
   )
 }
+
+const styles = StyleSheet.create({
+  button: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 56,
+    padding: 8,
+    borderWidth: 1,
+    borderRadius: 999,
+    zIndex: 10,
+  },
+  absolute: {
+    position: "absolute",
+    top: 112,
+    left: 24,
+  },
+})

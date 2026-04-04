@@ -1,7 +1,7 @@
-import { useState } from "react"
-import { Modal, Pressable, Text, View, FlatList } from "react-native"
+import { useTheme } from "@/core/theme"
 import { Feather } from "@expo/vector-icons"
-import { useTwColors } from "@/lib/tw-colors"
+import { useState } from "react"
+import { FlatList, Modal, Pressable, StyleSheet, Text, View } from "react-native"
 
 interface Option {
   label: string
@@ -17,39 +17,34 @@ interface SelectInputProps {
 }
 
 export const SelectInput = ({ label, value, onChange, options, required = false }: SelectInputProps) => {
-  const { twColor } = useTwColors()
+  const { colors } = useTheme()
   const [open, setOpen] = useState(false)
 
   const selected = options.find((opt) => opt.value === value)
 
   return (
-    <View className="mb-4">
-      <Text style={{ color: twColor("foreground") }} className="font-bold text-lg">
+    <View style={styles.container}>
+      <Text style={[styles.label, { color: colors.foreground.primary }]}>
         {label}
-        {required ? <Text className="text-red-600"> *</Text> : ""}
+        {required ? <Text style={styles.required}> *</Text> : ""}
       </Text>
 
-      {/* Field */}
       <Pressable
         onPress={() => setOpen(true)}
-        style={{
-          borderBottomColor: twColor("primary"),
-        }}
-        className="flex-row items-center justify-between border-b p-3"
+        style={[styles.field, { borderBottomColor: colors.primary.default }]}
       >
-        <View className="flex-row items-center">
-          <Feather name="dollar-sign" size={20} color={twColor("primary")} />
-          <Text style={{ color: twColor("foreground") }} className="ml-2">
+        <View style={styles.fieldLeft}>
+          <Feather name="dollar-sign" size={20} color={colors.primary.default} />
+          <Text style={[styles.fieldText, { color: colors.foreground.primary }]}>
             {selected ? selected.label : "Select..."}
           </Text>
         </View>
-        <Feather name="chevron-down" size={20} color={twColor("muted-foreground")} />
+        <Feather name="chevron-down" size={20} color={colors.muted.foreground} />
       </Pressable>
 
-      {/* Modal dropdown */}
       <Modal visible={open} transparent animationType="slide">
-        <View className="flex-1 bg-black/40 justify-center">
-          <View style={{ backgroundColor: twColor("card-background") }} className="mx-6 rounded-xl p-4">
+        <View style={styles.backdrop}>
+          <View style={[styles.sheet, { backgroundColor: colors.card.background }]}>
             <FlatList
               data={options}
               keyExtractor={(item) => item.value}
@@ -59,16 +54,17 @@ export const SelectInput = ({ label, value, onChange, options, required = false 
                     onChange(item.value)
                     setOpen(false)
                   }}
-                  className="p-3 border-b border-gray-200"
+                  style={[styles.option, { borderBottomColor: colors.border }]}
                 >
-                  <Text style={{ color: twColor("foreground") }}>{item.label}</Text>
+                  <Text style={{ color: colors.foreground.primary }}>{item.label}</Text>
                 </Pressable>
               )}
             />
-            <Pressable onPress={() => setOpen(false)} className="mt-4 p-3 rounded-lg" style={{ backgroundColor: twColor("primary") }}>
-              <Text style={{ color: twColor("primary-foreground") }} className="text-center font-semibold">
-                Cancel
-              </Text>
+            <Pressable
+              onPress={() => setOpen(false)}
+              style={[styles.cancelBtn, { backgroundColor: colors.primary.default }]}
+            >
+              <Text style={[styles.cancelText, { color: colors.primary.foreground }]}>Cancel</Text>
             </Pressable>
           </View>
         </View>
@@ -76,3 +72,53 @@ export const SelectInput = ({ label, value, onChange, options, required = false 
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    marginBottom: 16,
+  },
+  label: {
+    fontWeight: "700",
+    fontSize: 18,
+  },
+  required: {
+    color: "#dc2626",
+  },
+  field: {
+    borderBottomWidth: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 12,
+  },
+  fieldLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  fieldText: {
+    marginLeft: 8,
+  },
+  backdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+  },
+  sheet: {
+    marginHorizontal: 24,
+    borderRadius: 12,
+    padding: 16,
+  },
+  option: {
+    padding: 12,
+    borderBottomWidth: 1,
+  },
+  cancelBtn: {
+    marginTop: 16,
+    padding: 12,
+    borderRadius: 8,
+  },
+  cancelText: {
+    textAlign: "center",
+    fontWeight: "600",
+  },
+})
