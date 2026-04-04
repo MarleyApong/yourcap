@@ -1,45 +1,37 @@
-import { SupportedLanguage, supportedLanguages } from '@/i18n/locales'
-import { useTwColors } from '@/lib/tw-colors'
-import React from 'react'
-import { Pressable, Text, View } from 'react-native'
+import { useTheme } from "@/core/theme"
+import { SupportedLanguage, supportedLanguages } from "@/i18n/locales"
+import React from "react"
+import { Pressable, StyleSheet, Text, View } from "react-native"
 
 interface LanguageSelectorProps {
   currentLanguage: SupportedLanguage
   onLanguageChange: (language: SupportedLanguage) => void
 }
 
-export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
-  currentLanguage,
-  onLanguageChange
-}) => {
-  const { twColor } = useTwColors()
-
-  const handleLanguageChange = (language: SupportedLanguage) => {
-    console.log('🌐 LanguageSelector: Changing language from', currentLanguage, 'to', language);
-    onLanguageChange(language);
-  };
+export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ currentLanguage, onLanguageChange }) => {
+  const { colors } = useTheme()
 
   return (
-    <View className="flex-row flex-wrap gap-2">
+    <View style={styles.container}>
       {Object.entries(supportedLanguages).map(([key, config]) => {
         const isSelected = key === currentLanguage
         const language = key as SupportedLanguage
-        
+
         return (
           <Pressable
             key={key}
-            onPress={() => handleLanguageChange(language)}
-            style={{
-              backgroundColor: isSelected ? twColor("primary") : twColor("secondary"),
-            }}
-            className="px-4 py-2 rounded-full flex-row items-center gap-2"
+            onPress={() => onLanguageChange(language)}
+            style={[
+              styles.item,
+              { backgroundColor: isSelected ? colors.primary.default : colors.secondary.default },
+            ]}
           >
-            <Text className="text-lg">{config.flag}</Text>
+            <Text style={styles.flag}>{config.flag}</Text>
             <Text
-              style={{
-                color: isSelected ? twColor("primary-foreground") : twColor("secondary-foreground"),
-              }}
-              className="text-sm font-medium"
+              style={[
+                styles.name,
+                { color: isSelected ? colors.primary.foreground : colors.secondary.foreground },
+              ]}
             >
               {config.name}
             </Text>
@@ -49,3 +41,26 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  item: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 999,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  flag: {
+    fontSize: 18,
+  },
+  name: {
+    fontSize: 14,
+    fontWeight: "500",
+  },
+})

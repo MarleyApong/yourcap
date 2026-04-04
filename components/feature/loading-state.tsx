@@ -1,5 +1,5 @@
-import { useTwColors } from "@/lib/tw-colors"
-import { ActivityIndicator, Text, View } from "react-native"
+import { useTheme } from "@/core/theme"
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native"
 
 interface LoadingStateProps {
   message?: string
@@ -8,30 +8,50 @@ interface LoadingStateProps {
 }
 
 export const LoadingState = ({ message = "Loading...", size = "large", showCard = true }: LoadingStateProps) => {
-  const { twColor } = useTwColors()
+  const { colors } = useTheme()
 
   const content = (
     <>
-      <ActivityIndicator size={size} color={twColor("primary")} />
-      <Text style={{ color: twColor("muted-foreground") }} className="mt-4 text-center">
-        {message}
-      </Text>
+      <ActivityIndicator size={size} color={colors.primary.default} />
+      <Text style={[styles.message, { color: colors.muted.foreground }]}>{message}</Text>
     </>
   )
 
   if (!showCard) {
-    return <View className="flex-1 items-center justify-center py-8">{content}</View>
+    return <View style={styles.bare}>{content}</View>
   }
 
   return (
     <View
-      style={{
-        backgroundColor: twColor("card-background"),
-        borderColor: twColor("border"),
-      }}
-      className="rounded-xl p-8 shadow-sm items-center justify-center border"
+      style={[
+        styles.card,
+        {
+          backgroundColor: colors.card.background,
+          borderColor: colors.border,
+        },
+      ]}
     >
       {content}
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  bare: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 32,
+  },
+  card: {
+    borderRadius: 12,
+    padding: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+  },
+  message: {
+    marginTop: 16,
+    textAlign: "center",
+  },
+})

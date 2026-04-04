@@ -1,12 +1,12 @@
-import { Loader } from '@/components/ui/loader'
-import { useTranslation } from '@/i18n'
-import { Toast } from '@/lib/toast-global'
-import { useTwColors } from '@/lib/tw-colors'
-import { useAuthStore } from '@/stores/authStore'
-import { Feather } from '@expo/vector-icons'
-import React, { useRef, useState } from 'react'
-import { Modal, Platform, Pressable, Text, TextInput, View } from 'react-native'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { Loader } from "@/components/ui/loader"
+import { useTheme } from "@/core/theme"
+import { useTranslation } from "@/i18n"
+import { Toast } from "@/lib/toast-global"
+import { useAuthStore } from "@/stores/authStore"
+import { Feather } from "@expo/vector-icons"
+import React, { useRef, useState } from "react"
+import { Modal, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native"
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 interface EditProfileModalProps {
   visible: boolean
@@ -15,23 +15,21 @@ interface EditProfileModalProps {
 
 export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onClose }) => {
   const { user, updateProfile } = useAuthStore()
-  const { twColor } = useTwColors()
+  const { colors } = useTheme()
   const { t } = useTranslation()
-  
-  // Refs
+
   const phoneRef = useRef<TextInput>(null)
   const emailRef = useRef<TextInput>(null)
 
-  // State
   const [formData, setFormData] = useState({
-    full_name: user?.full_name || '',
-    email: user?.email || '',
-    phone_number: user?.phone_number || ''
+    full_name: user?.full_name || "",
+    email: user?.email || "",
+    phone_number: user?.phone_number || "",
   })
   const [loading, setLoading] = useState(false)
 
   const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+    setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
   const validateForm = (): boolean => {
@@ -39,44 +37,37 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
       Toast.error(t("modals.editProfile.validation.fullNameRequired"))
       return false
     }
-
     if (!formData.phone_number.trim()) {
       Toast.error(t("modals.editProfile.validation.phoneRequired"))
       return false
     }
-
     if (!/^(6|2)(2|3|[5-9])[0-9]{7}$/.test(formData.phone_number)) {
       Toast.error(t("modals.editProfile.validation.invalidPhone"))
       return false
     }
-
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       Toast.error(t("modals.editProfile.validation.invalidEmail"))
       return false
     }
-
     return true
   }
 
   const handleSave = async () => {
     if (!validateForm()) return
-
     setLoading(true)
     try {
       const success = await updateProfile({
         full_name: formData.full_name.trim(),
         email: formData.email.trim(),
-        phone_number: formData.phone_number.trim()
+        phone_number: formData.phone_number.trim(),
       })
-
       if (success) {
         Toast.success(t("modals.editProfile.success"))
         onClose()
       } else {
         Toast.error(t("modals.editProfile.error"))
       }
-    } catch (error) {
-      console.error("Update profile error:", error)
+    } catch {
       Toast.error(t("modals.editProfile.unexpectedError"))
     } finally {
       setLoading(false)
@@ -84,11 +75,10 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
   }
 
   const handleCancel = () => {
-    // Reset form data to original values
     setFormData({
-      full_name: user?.full_name || '',
-      email: user?.email || '',
-      phone_number: user?.phone_number || ''
+      full_name: user?.full_name || "",
+      email: user?.email || "",
+      phone_number: user?.phone_number || "",
     })
     onClose()
   }
@@ -101,7 +91,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
       onRequestClose={onClose}
       presentationStyle="pageSheet"
     >
-      <View style={{ backgroundColor: twColor("background") }} className="flex-1">
+      <View style={[styles.root, { backgroundColor: colors.background.primary }]}>
         <KeyboardAwareScrollView
           enableOnAndroid
           extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
@@ -110,64 +100,57 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
           contentContainerStyle={{ flexGrow: 1 }}
         >
           {/* Header */}
-          <View className="px-6 pb-4 pt-14 border-b" style={{ borderBottomColor: twColor("border") }}>
-            <View className="flex-row items-center justify-between">
-              <Pressable onPress={handleCancel} className="p-2">
-                <Feather name="x" size={24} color={twColor("foreground")} />
-              </Pressable>
-              <Text style={{ color: twColor("foreground") }} className="text-xl font-bold">
-                {t("modals.editProfile.title")}
-              </Text>
-              <View className="w-8" />
-            </View>
+          <View style={[styles.header, { borderBottomColor: colors.border }]}>
+            <Pressable onPress={handleCancel} style={styles.closeBtn}>
+              <Feather name="x" size={24} color={colors.foreground.primary} />
+            </Pressable>
+            <Text style={[styles.headerTitle, { color: colors.foreground.primary }]}>
+              {t("modals.editProfile.title")}
+            </Text>
+            <View style={styles.spacer} />
           </View>
 
           {/* Content */}
-          <View className="flex-1 px-8 py-8">
-            {/* Profile Icon */}
-            <View className="items-center mb-8">
-              <View
-                style={{ backgroundColor: twColor("primary") }}
-                className="w-24 h-24 rounded-full items-center justify-center mb-4"
-              >
-                <Feather name="user" size={40} color={twColor("primary-foreground")} />
+          <View style={styles.content}>
+            {/* Avatar */}
+            <View style={styles.avatarSection}>
+              <View style={[styles.avatar, { backgroundColor: colors.primary.default }]}>
+                <Feather name="user" size={40} color={colors.primary.foreground} />
               </View>
-              <Text style={{ color: twColor("foreground") }} className="text-2xl font-bold">
+              <Text style={[styles.avatarTitle, { color: colors.foreground.primary }]}>
                 {t("modals.editProfile.title")}
               </Text>
-              <Text style={{ color: twColor("muted-foreground") }} className="text-base mt-2">
+              <Text style={[styles.avatarSubtitle, { color: colors.muted.foreground }]}>
                 {t("modals.editProfile.subtitle")}
               </Text>
             </View>
 
-            {/* Form Fields */}
-            <View className="w-full flex-col gap-4">
+            {/* Fields */}
+            <View style={styles.fields}>
               {/* Full Name */}
-              <View className="border rounded-xl flex-row gap-2 items-center px-4 py-3" style={{ borderColor: twColor("primary") }}>
-                <Feather name="user" size={24} color={twColor("primary")} />
+              <View style={[styles.field, { borderColor: colors.primary.default }]}>
+                <Feather name="user" size={24} color={colors.primary.default} />
                 <TextInput
-                  className="text-xl flex-1"
-                  style={{ color: twColor("foreground") }}
+                  style={[styles.input, { color: colors.foreground.primary }]}
                   placeholder={t("modals.editProfile.fullNamePlaceholder")}
-                  placeholderTextColor={twColor("muted-foreground")}
+                  placeholderTextColor={colors.muted.foreground}
                   value={formData.full_name}
-                  onChangeText={(text) => handleChange('full_name', text)}
+                  onChangeText={(text) => handleChange("full_name", text)}
                   returnKeyType="next"
                   onSubmitEditing={() => phoneRef.current?.focus()}
                 />
               </View>
 
-              {/* Phone Number */}
-              <View className="border rounded-xl flex-row gap-2 items-center px-4 py-3" style={{ borderColor: twColor("primary") }}>
-                <Feather name="phone" size={24} color={twColor("primary")} />
+              {/* Phone */}
+              <View style={[styles.field, { borderColor: colors.primary.default }]}>
+                <Feather name="phone" size={24} color={colors.primary.default} />
                 <TextInput
                   ref={phoneRef}
-                  className="text-xl flex-1"
-                  style={{ color: twColor("foreground") }}
+                  style={[styles.input, { color: colors.foreground.primary }]}
                   placeholder={t("modals.editProfile.phonePlaceholder")}
-                  placeholderTextColor={twColor("muted-foreground")}
+                  placeholderTextColor={colors.muted.foreground}
                   value={formData.phone_number}
-                  onChangeText={(text) => handleChange('phone_number', text)}
+                  onChangeText={(text) => handleChange("phone_number", text)}
                   keyboardType="phone-pad"
                   returnKeyType="next"
                   onSubmitEditing={() => emailRef.current?.focus()}
@@ -175,16 +158,15 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
               </View>
 
               {/* Email */}
-              <View className="border rounded-xl flex-row gap-2 items-center px-4 py-3" style={{ borderColor: twColor("primary") }}>
-                <Feather name="mail" size={24} color={twColor("primary")} />
+              <View style={[styles.field, { borderColor: colors.primary.default }]}>
+                <Feather name="mail" size={24} color={colors.primary.default} />
                 <TextInput
                   ref={emailRef}
-                  className="text-xl flex-1"
-                  style={{ color: twColor("foreground") }}
+                  style={[styles.input, { color: colors.foreground.primary }]}
                   placeholder={t("modals.editProfile.emailPlaceholder")}
-                  placeholderTextColor={twColor("muted-foreground")}
+                  placeholderTextColor={colors.muted.foreground}
                   value={formData.email}
-                  onChangeText={(text) => handleChange('email', text)}
+                  onChangeText={(text) => handleChange("email", text)}
                   autoCapitalize="none"
                   keyboardType="email-address"
                   returnKeyType="done"
@@ -194,52 +176,100 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
             </View>
           </View>
 
-          {/* Action Buttons */}
-          <View className="px-8 pb-8 border-t" style={{ borderTopColor: twColor("border") }}>
-            <View className="flex-row gap-3 pt-6">
-              <Pressable
-                onPress={handleCancel}
-                disabled={loading}
-                className="flex-1 p-4 rounded-xl border"
-                style={{ 
-                  backgroundColor: twColor("card-background"),
-                  borderColor: twColor("border")
-                }}
-              >
-                <Text 
-                  style={{ color: twColor("foreground") }} 
-                  className="text-center font-semibold text-lg"
-                >
-                  {t("modals.editProfile.cancel")}
-                </Text>
-              </Pressable>
+          {/* Actions */}
+          <View style={[styles.actions, { borderTopColor: colors.border }]}>
+            <Pressable
+              onPress={handleCancel}
+              disabled={loading}
+              style={[styles.cancelBtn, { backgroundColor: colors.card.background, borderColor: colors.border }]}
+            >
+              <Text style={[styles.cancelText, { color: colors.foreground.primary }]}>
+                {t("modals.editProfile.cancel")}
+              </Text>
+            </Pressable>
 
-              <Pressable
-                onPress={handleSave}
-                disabled={loading}
-                className={`flex-1 p-4 rounded-xl flex-row items-center justify-center ${loading ? "opacity-70" : ""}`}
-                style={{ 
-                  backgroundColor: twColor("primary")
-                }}
-              >
-                {loading ? (
-                  <Loader />
-                ) : (
-                  <>
-                    <Feather name="check" size={18} color={twColor("primary-foreground")} />
-                    <Text 
-                      style={{ color: twColor("primary-foreground") }} 
-                      className="text-center font-semibold text-lg ml-2"
-                    >
-                      {t("modals.editProfile.save")}
-                    </Text>
-                  </>
-                )}
-              </Pressable>
-            </View>
+            <Pressable
+              onPress={handleSave}
+              disabled={loading}
+              style={[styles.saveBtn, { backgroundColor: colors.primary.default, opacity: loading ? 0.7 : 1 }]}
+            >
+              {loading ? (
+                <Loader />
+              ) : (
+                <>
+                  <Feather name="check" size={18} color={colors.primary.foreground} />
+                  <Text style={[styles.saveText, { color: colors.primary.foreground }]}>
+                    {t("modals.editProfile.save")}
+                  </Text>
+                </>
+              )}
+            </Pressable>
           </View>
         </KeyboardAwareScrollView>
       </View>
     </Modal>
   )
 }
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+  header: {
+    paddingHorizontal: 24,
+    paddingBottom: 16,
+    paddingTop: 56,
+    borderBottomWidth: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  closeBtn: { padding: 8 },
+  headerTitle: { fontSize: 20, fontWeight: "700" },
+  spacer: { width: 32 },
+  content: { flex: 1, paddingHorizontal: 32, paddingVertical: 32 },
+  avatarSection: { alignItems: "center", marginBottom: 32 },
+  avatar: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
+  },
+  avatarTitle: { fontSize: 24, fontWeight: "700" },
+  avatarSubtitle: { fontSize: 16, marginTop: 8 },
+  fields: { gap: 16 },
+  field: {
+    borderWidth: 1,
+    borderRadius: 12,
+    flexDirection: "row",
+    gap: 8,
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  input: { fontSize: 20, flex: 1 },
+  actions: {
+    paddingHorizontal: 32,
+    paddingBottom: 32,
+    paddingTop: 24,
+    borderTopWidth: 1,
+    flexDirection: "row",
+    gap: 12,
+  },
+  cancelBtn: {
+    flex: 1,
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  cancelText: { textAlign: "center", fontWeight: "600", fontSize: 18 },
+  saveBtn: {
+    flex: 1,
+    padding: 16,
+    borderRadius: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  saveText: { textAlign: "center", fontWeight: "600", fontSize: 18, marginLeft: 8 },
+})

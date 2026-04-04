@@ -1,8 +1,7 @@
-import { View, Text, TouchableOpacity } from "react-native"
-import { useTwColors } from "@/lib/tw-colors"
+import { useTheme } from "@/core/theme"
 import { Feather } from "@expo/vector-icons"
 import { Href, useRouter } from "expo-router"
-// import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 
 type PageHeaderProps = {
   title: string
@@ -10,13 +9,17 @@ type PageHeaderProps = {
   fbackButton?: boolean
   textAlign?: "center" | "left" | "right"
   textPosition?: "bottom" | "center"
-  textColor?: string
-  className?: string
 }
 
-export const PageHeader = ({ title, backPath, fbackButton = true, textAlign = "center", textPosition = "bottom", className = "" }: PageHeaderProps) => {
+export const PageHeader = ({
+  title,
+  backPath,
+  fbackButton = true,
+  textAlign = "center",
+  textPosition = "bottom",
+}: PageHeaderProps) => {
   const router = useRouter()
-  const { twColor } = useTwColors()
+  const { colors } = useTheme()
 
   const handlePress = () => {
     if (backPath) {
@@ -25,43 +28,84 @@ export const PageHeader = ({ title, backPath, fbackButton = true, textAlign = "c
       router.back()
     }
   }
-  // const insets = useSafeAreaInsets()
 
   return (
     <View
-      className={`h-15 ${className}`}
-      style={{
-        backgroundColor: twColor("background"),
-        borderBottomWidth: 1,
-        borderColor: twColor("navigation-border"),
-        shadowColor: twColor("navigation-shadow"),
-        paddingTop: 20,
-        paddingBottom: 10,
-        position: "relative",
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1000,
-        elevation: 3, // Pour Android
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      }}
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.background.primary,
+          borderBottomColor: colors.navigation.border,
+          shadowColor: colors.navigation.shadow,
+        },
+      ]}
     >
-      <View className={`${textPosition === "center" ? "flex-row items-center" : "flex-col"} px-3 pb-0`} style={{ position: "relative" }}>
-        {fbackButton ? (
-          <TouchableOpacity className={`flex-row items-center justify-center z-10 rounded-md mt-1 ${className}`} onPress={handlePress}>
-            <Feather name="chevron-left" size={24} color={twColor("foreground")} />
+      <View
+        style={[
+          styles.inner,
+          textPosition === "center" ? styles.row : styles.col,
+        ]}
+      >
+        {fbackButton && (
+          <TouchableOpacity style={styles.backBtn} onPress={handlePress}>
+            <Feather name="chevron-left" size={24} color={colors.foreground.primary} />
           </TouchableOpacity>
-        ) : null}
+        )}
         <Text
-          className={`text-2xl font-bold flex-1 mt-2 ${textAlign === "center" ? "text-center" : textAlign === "left" ? "text-left ml-4" : "text-right mr-4"}`}
-          style={{ color: twColor("foreground") }}
+          style={[
+            styles.title,
+            { color: colors.foreground.primary },
+            textAlign === "center" && styles.textCenter,
+            textAlign === "left" && styles.textLeft,
+            textAlign === "right" && styles.textRight,
+          ]}
         >
           {title}
         </Text>
-        {fbackButton && <View style={{ width: 24 }} />}
+        {fbackButton && <View style={styles.spacer} />}
       </View>
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    borderBottomWidth: 1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+    zIndex: 1000,
+    paddingTop: 20,
+    paddingBottom: 10,
+  },
+  inner: {
+    paddingHorizontal: 12,
+    position: "relative",
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  col: {
+    flexDirection: "column",
+  },
+  backBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 6,
+    marginTop: 4,
+    zIndex: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    flex: 1,
+    marginTop: 8,
+  },
+  textCenter: { textAlign: "center" },
+  textLeft: { textAlign: "left", marginLeft: 16 },
+  textRight: { textAlign: "right", marginRight: 16 },
+  spacer: { width: 24 },
+})

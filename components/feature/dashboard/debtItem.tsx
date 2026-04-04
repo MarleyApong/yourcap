@@ -1,7 +1,7 @@
-import { useTwColors } from "@/lib/tw-colors"
+import { useTheme } from "@/core/theme"
 import { formatCurrency } from "@/lib/utils"
 import { Debt } from "@/types/debt"
-import { Pressable, Text, View } from "react-native"
+import { Pressable, StyleSheet, Text, View } from "react-native"
 
 interface DebtItemProps {
   debt: Debt
@@ -11,69 +11,60 @@ interface DebtItemProps {
 }
 
 export const DebtItem = ({ debt, currency, onPress, showBorder }: DebtItemProps) => {
-  const { twColor } = useTwColors()
+  const { colors } = useTheme()
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "PAID":
-        return twColor("success")
+        return colors.status.success
       case "OVERDUE":
-        return twColor("destructive")
+        return colors.status.destructive
       default:
-        return twColor("warning")
+        return colors.status.warning
     }
   }
 
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case "PAID":
-        return twColor("badge-bg-1")
+        return colors.badge.bg1
       case "OVERDUE":
-        return twColor("badge-bg-5")
+        return colors.badge.bg5
       default:
-        return twColor("badge-bg-3")
+        return colors.badge.bg3
     }
   }
 
   const getStatusTextColor = (status: string) => {
     switch (status) {
       case "PAID":
-        return twColor("badge-fg-1")
+        return colors.badge.fg1
       case "OVERDUE":
-        return twColor("badge-fg-5")
+        return colors.badge.fg5
       default:
-        return twColor("badge-fg-3")
+        return colors.badge.fg3
     }
   }
 
   return (
     <Pressable
       onPress={onPress}
-      style={{
-        borderBottomColor: showBorder ? twColor("border") : "transparent",
-      }}
-      className={`p-4 ${showBorder ? "border-b" : ""}`}
+      style={[
+        styles.container,
+        { borderBottomColor: showBorder ? colors.border : "transparent" },
+      ]}
     >
-      <View className="flex-row justify-between items-center">
-        <View className="flex-1">
-          <Text style={{ color: twColor("foreground") }} className="font-semibold">
-            {debt.contact_name}
-          </Text>
-          <Text style={{ color: twColor("muted-foreground") }} className="text-sm mt-1">
+      <View style={styles.row}>
+        <View style={styles.info}>
+          <Text style={[styles.name, { color: colors.foreground.primary }]}>{debt.contact_name}</Text>
+          <Text style={[styles.sub, { color: colors.muted.foreground }]}>
             {debt.debt_type === "OWING" ? "Owes you" : "You owe"} {formatCurrency(debt.amount, currency)}
           </Text>
         </View>
-        <View className="flex-row items-center">
-          <View style={{ backgroundColor: getStatusColor(debt.status) }} className="w-3 h-3 rounded-full mr-3" />
-          <View
-            style={{
-              backgroundColor: getStatusBadgeColor(debt.status),
-              paddingHorizontal: 8,
-              paddingVertical: 4,
-              borderRadius: 12,
-            }}
-          >
-            <Text style={{ color: getStatusTextColor(debt.status) }} className="text-xs font-medium capitalize">
+        <View style={styles.status}>
+          <View style={[styles.dot, { backgroundColor: getStatusColor(debt.status) }]} />
+          <View style={[styles.badge, { backgroundColor: getStatusBadgeColor(debt.status) }]}>
+            <Text style={[styles.badgeText, { color: getStatusTextColor(debt.status) }]}>
               {debt.status.toLowerCase()}
             </Text>
           </View>
@@ -82,3 +73,45 @@ export const DebtItem = ({ debt, currency, onPress, showBorder }: DebtItemProps)
     </Pressable>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+    borderBottomWidth: 1,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  info: {
+    flex: 1,
+  },
+  name: {
+    fontWeight: "600",
+  },
+  sub: {
+    fontSize: 14,
+    marginTop: 4,
+  },
+  status: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  dot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 12,
+  },
+  badge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  badgeText: {
+    fontSize: 12,
+    fontWeight: "500",
+    textTransform: "capitalize",
+  },
+})

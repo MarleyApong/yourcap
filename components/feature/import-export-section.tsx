@@ -1,5 +1,6 @@
-import { useTranslation } from '@/i18n'
-import { useTwColors } from '@/lib/tw-colors'
+import { useTheme } from "@/core/theme"
+import { useTranslation } from "@/i18n"
+import { Toast } from "@/lib/toast-global"
 import {
   generateExportData,
   generateTemplateData,
@@ -7,122 +8,74 @@ import {
   importDebtsFromFile,
   parseCSV,
   shareExportData,
-  validateImportData
-} from '@/services/importExportService'
-import { Feather } from '@expo/vector-icons'
-import React, { useState } from 'react'
-import { ActivityIndicator, Alert, Pressable, Text, TextInput, View } from 'react-native'
-import { DataStructureModal } from './data-structure-modal'
+  validateImportData,
+} from "@/services/importExportService"
+import { Feather } from "@expo/vector-icons"
+import React, { useState } from "react"
+import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, TextInput, View } from "react-native"
+import { DataStructureModal } from "./data-structure-modal"
 
 interface ImportExportSectionProps {
   userId: string
   onImportComplete?: (imported: number, total: number) => void
 }
 
-export const ImportExportSection: React.FC<ImportExportSectionProps> = ({ 
-  userId, 
-  onImportComplete 
-}) => {
-  const { twColor } = useTwColors()
+export const ImportExportSection: React.FC<ImportExportSectionProps> = ({ userId, onImportComplete }) => {
+  const { colors } = useTheme()
   const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [showStructureModal, setShowStructureModal] = useState(false)
   const [showImportModal, setShowImportModal] = useState(false)
-  const [csvInput, setCsvInput] = useState('')
+  const [csvInput, setCsvInput] = useState("")
 
-  // Exporter les données utilisateur
   const handleExport = async () => {
     setLoading(true)
     try {
       const result = await generateExportData(userId)
-      
       if (result.success && result.csvData) {
         await shareExportData(result.csvData)
         Toast.success(t("importExport.export.success"))
       } else {
         Toast.error(result.error || t("importExport.export.error"))
       }
-    } catch (error) {
+    } catch {
       Toast.error(t("importExport.export.dataError"))
     } finally {
       setLoading(false)
     }
   }
 
-  // Télécharger le template
   const handleDownloadTemplate = async () => {
     try {
       const templateData = generateTemplateData()
-      await shareExportData(templateData, 'yourcap_template.csv')
+      await shareExportData(templateData, "yourcap_template.csv")
       Toast.success(t("importExport.import.templateSuccess"))
-    } catch (error) {
+    } catch {
       Toast.error(t("importExport.import.templateError"))
     }
   }
 
-  // Importer depuis un fichier
   const handleImportFromFile = async () => {
     setLoading(true)
     try {
       const result = await importDebtsFromFile(userId)
-      
       if (result.success) {
         Toast.success(`${result.imported}/${result.total} ${t("importExport.import.importedFromFile")}`)
         onImportComplete?.(result.imported, result.total)
-        
         if (result.errors.length > 0) {
           Alert.alert(
             t("importExport.import.importCompletedWarnings"),
-            `${t("importExport.import.errorsEncountered")}\n${result.errors.slice(0, 5).join('\n')}${result.errors.length > 5 ? '\n...' : ''}`
+            `${t("importExport.import.errorsEncountered")}\n${result.errors.slice(0, 5).join("\n")}${result.errors.length > 5 ? "\n..." : ""}`
           )
         }
       } else {
         Toast.error(t("importExport.import.importFileError"))
         if (result.errors.length > 0) {
-          Alert.alert(t("importExport.import.importErrors"), result.errors.slice(0, 5).join('\n'))
+          Alert.alert(t("importExport.import.importErrors"), result.errors.slice(0, 5).join("\n"))
         }
       }
-    } catch (error) {
+    } catch {
       Toast.error(t("importExport.import.importFileGeneralError"))
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // Importer depuis du texte CSV
-  const handleImportFromText = async () => {
-    if (!csvInput.trim()) {
-      Toast.error(t("importExport.import.pleaseEnterCSV"))
-      return
-    }
-
-    setLoading(true)
-    try {
-      // Valider d'abord les données
-      const parsedData = parseCSV(csvInput)
-      const { valid, invalid } = validateImportData(parsedData)
-
-      if (invalid.length > 0) {
-        const errorMessage = invalid.slice(0, 3).map(item => 
-          `${t("importExport.import.line")} ${item.index}: ${item.errors.join(', ')}`
-        ).join('\n')
-        
-        Alert.alert(
-          t("importExport.import.validationErrors"),
-          `${invalid.length} ${t("importExport.import.validationMessage")}\n${errorMessage}${invalid.length > 3 ? '\n...' : ''}\n\n${t("importExport.import.continueWithValid")} ${valid.length} ${t("importExport.import.validLines")}`,
-          [
-            { text: t("importExport.import.cancelButton"), style: "cancel" },
-            { 
-              text: t("importExport.import.continueButton"), 
-              onPress: () => proceedWithImport(csvInput)
-            }
-          ]
-        )
-      } else {
-        await proceedWithImport(csvInput)
-      }
-    } catch (error) {
-      Toast.error(t("importExport.import.errors.invalidCSVFormat"))
     } finally {
       setLoading(false)
     }
@@ -131,201 +84,199 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
   const proceedWithImport = async (csvContent: string) => {
     try {
       const result = await importDebtsFromCSV(userId, csvContent)
-      
       if (result.success) {
         Toast.success(`${result.imported}/${result.total} ${t("importExport.import.importedSuccess")}`)
-        setCsvInput('')
+        setCsvInput("")
         setShowImportModal(false)
         onImportComplete?.(result.imported, result.total)
-        
         if (result.errors.length > 0) {
           Alert.alert(
             t("importExport.import.importCompletedWarnings"),
-            `${t("importExport.import.errorsEncountered")}\n${result.errors.slice(0, 5).join('\n')}${result.errors.length > 5 ? '\n...' : ''}`
+            `${t("importExport.import.errorsEncountered")}\n${result.errors.slice(0, 5).join("\n")}${result.errors.length > 5 ? "\n..." : ""}`
           )
         }
       } else {
         Toast.error(t("importExport.import.importTextError"))
         if (result.errors.length > 0) {
-          Alert.alert(t("importExport.import.importErrors"), result.errors.slice(0, 5).join('\n'))
+          Alert.alert(t("importExport.import.importErrors"), result.errors.slice(0, 5).join("\n"))
         }
       }
-    } catch (error) {
+    } catch {
       Toast.error(t("importExport.import.importGeneralError"))
+    }
+  }
+
+  const handleImportFromText = async () => {
+    if (!csvInput.trim()) {
+      Toast.error(t("importExport.import.pleaseEnterCSV"))
+      return
+    }
+    setLoading(true)
+    try {
+      const parsedData = parseCSV(csvInput)
+      const { valid, invalid } = validateImportData(parsedData)
+      if (invalid.length > 0) {
+        const errorMessage = invalid
+          .slice(0, 3)
+          .map((item) => `${t("importExport.import.line")} ${item.index}: ${item.errors.join(", ")}`)
+          .join("\n")
+        Alert.alert(
+          t("importExport.import.validationErrors"),
+          `${invalid.length} ${t("importExport.import.validationMessage")}\n${errorMessage}${invalid.length > 3 ? "\n..." : ""}\n\n${t("importExport.import.continueWithValid")} ${valid.length} ${t("importExport.import.validLines")}`,
+          [
+            { text: t("importExport.import.cancelButton"), style: "cancel" },
+            { text: t("importExport.import.continueButton"), onPress: () => proceedWithImport(csvInput) },
+          ]
+        )
+      } else {
+        await proceedWithImport(csvInput)
+      }
+    } catch {
+      Toast.error(t("importExport.import.errors.invalidCSVFormat"))
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
     <>
-      {/* Section Export */}
-      <View className="mb-4">
-        <Text style={{ color: twColor("foreground") }} className="font-medium mb-3">
+      {/* Export */}
+      <View style={styles.section}>
+        <Text style={[styles.sectionTitle, { color: colors.foreground.primary }]}>
           {t("importExport.export.sectionTitle")}
         </Text>
-        <Text style={{ color: twColor("muted-foreground") }} className="text-sm mb-3">
+        <Text style={[styles.sectionDesc, { color: colors.muted.foreground }]}>
           {t("importExport.export.description")}
         </Text>
-        
         <Pressable
           onPress={handleExport}
           disabled={loading}
-          style={{
-            backgroundColor: loading ? twColor("muted") : twColor("primary"),
-          }}
-          className="flex-row items-center justify-center p-3 rounded-lg mb-2"
+          style={[styles.btn, { backgroundColor: loading ? colors.muted.default : colors.primary.default }]}
         >
           {loading ? (
-            <ActivityIndicator size="small" color={twColor("primary-foreground")} />
+            <ActivityIndicator size="small" color={colors.primary.foreground} />
           ) : (
-            <Feather name="download" size={16} color={twColor("primary-foreground")} />
+            <Feather name="download" size={16} color={colors.primary.foreground} />
           )}
-          <Text style={{ color: twColor("primary-foreground") }} className="font-medium ml-2">
+          <Text style={[styles.btnText, { color: colors.primary.foreground }]}>
             {t("importExport.export.button")}
           </Text>
         </Pressable>
       </View>
 
-      {/* Section Import */}
-      <View className="mb-4">
-        <Text style={{ color: twColor("foreground") }} className="font-medium mb-3">
+      {/* Import */}
+      <View style={styles.section}>
+        <Text style={[styles.sectionTitle, { color: colors.foreground.primary }]}>
           {t("importExport.import.sectionTitle")}
         </Text>
-        <Text style={{ color: twColor("muted-foreground") }} className="text-sm mb-3">
+        <Text style={[styles.sectionDesc, { color: colors.muted.foreground }]}>
           {t("importExport.import.description")}
         </Text>
 
-        {/* Boutons d'aide */}
-        <View className="flex-row gap-2 mb-3">
+        <View style={styles.row}>
           <Pressable
             onPress={() => setShowStructureModal(true)}
-            style={{ backgroundColor: twColor("secondary") }}
-            className="flex-row items-center px-3 py-2 rounded-lg flex-1"
+            style={[styles.halfBtn, { backgroundColor: colors.secondary.default }]}
           >
-            <Feather name="info" size={14} color={twColor("secondary-foreground")} />
-            <Text style={{ color: twColor("secondary-foreground") }} className="text-sm font-medium ml-1">
+            <Feather name="info" size={14} color={colors.secondary.foreground} />
+            <Text style={[styles.halfBtnText, { color: colors.secondary.foreground }]}>
               {t("importExport.import.structureButton")}
             </Text>
           </Pressable>
-
           <Pressable
             onPress={handleDownloadTemplate}
-            style={{ backgroundColor: twColor("secondary") }}
-            className="flex-row items-center px-3 py-2 rounded-lg flex-1"
+            style={[styles.halfBtn, { backgroundColor: colors.secondary.default }]}
           >
-            <Feather name="file-text" size={14} color={twColor("secondary-foreground")} />
-            <Text style={{ color: twColor("secondary-foreground") }} className="text-sm font-medium ml-1">
+            <Feather name="file-text" size={14} color={colors.secondary.foreground} />
+            <Text style={[styles.halfBtnText, { color: colors.secondary.foreground }]}>
               {t("importExport.import.templateButton")}
             </Text>
           </Pressable>
         </View>
 
-        <View className="flex-row gap-2">
+        <View style={[styles.row, { marginTop: 0 }]}>
           <Pressable
             onPress={() => setShowImportModal(true)}
-            style={{ backgroundColor: twColor("primary") }}
-            className="flex-row items-center justify-center p-3 rounded-lg flex-1"
+            style={[styles.halfBtn, { backgroundColor: colors.primary.default }]}
           >
-            <Feather name="edit-3" size={16} color={twColor("primary-foreground")} />
-            <Text style={{ color: twColor("primary-foreground") }} className="font-medium ml-2">
+            <Feather name="edit-3" size={16} color={colors.primary.foreground} />
+            <Text style={[styles.halfBtnText, { color: colors.primary.foreground }]}>
               {t("importExport.import.pasteCSV")}
             </Text>
           </Pressable>
-
           <Pressable
             onPress={handleImportFromFile}
             disabled={loading}
-            style={{ 
-              backgroundColor: loading ? twColor("muted") : twColor("secondary") 
-            }}
-            className="flex-row items-center justify-center p-3 rounded-lg flex-1"
+            style={[styles.halfBtn, { backgroundColor: loading ? colors.muted.default : colors.secondary.default }]}
           >
             {loading ? (
-              <ActivityIndicator size="small" color={twColor("secondary-foreground")} />
+              <ActivityIndicator size="small" color={colors.secondary.foreground} />
             ) : (
-              <Feather name="upload" size={16} color={twColor("secondary-foreground")} />
+              <Feather name="upload" size={16} color={colors.secondary.foreground} />
             )}
-            <Text style={{ color: twColor("secondary-foreground") }} className="font-medium ml-2">
+            <Text style={[styles.halfBtnText, { color: colors.secondary.foreground }]}>
               {t("importExport.import.fileButton")}
             </Text>
           </Pressable>
         </View>
       </View>
 
-      {/* Modal de structure de données */}
       {showStructureModal && (
-        <DataStructureModal
-          visible={showStructureModal}
-          onClose={() => setShowStructureModal(false)}
-        />
+        <DataStructureModal visible={showStructureModal} onClose={() => setShowStructureModal(false)} />
       )}
 
-      {/* Modal d'import */}
       {showImportModal && (
-        <View className="absolute inset-0 bg-black bg-opacity-50 z-50">
-          <View className="flex-1 justify-center items-center p-6">
-            <View 
-              className="w-full max-w-md p-6 rounded-xl"
-              style={{ backgroundColor: twColor("card-background") }}
-            >
-              <View className="flex-row items-center justify-between mb-4">
-                <Text style={{ color: twColor("foreground") }} className="text-lg font-bold">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalInner}>
+            <View style={[styles.modalCard, { backgroundColor: colors.card.background }]}>
+              <View style={styles.modalHeader}>
+                <Text style={[styles.modalTitle, { color: colors.foreground.primary }]}>
                   {t("importExport.import.modalTitle")}
                 </Text>
-                <Pressable 
-                  onPress={() => {
-                    setShowImportModal(false)
-                    setCsvInput('')
-                  }}
-                >
-                  <Feather name="x" size={20} color={twColor("foreground")} />
+                <Pressable onPress={() => { setShowImportModal(false); setCsvInput("") }}>
+                  <Feather name="x" size={20} color={colors.foreground.primary} />
                 </Pressable>
               </View>
-
-              <Text style={{ color: twColor("muted-foreground") }} className="text-sm mb-3">
+              <Text style={[styles.modalDesc, { color: colors.muted.foreground }]}>
                 {t("importExport.import.modalDescription")}
               </Text>
-
               <TextInput
-                style={{
-                  backgroundColor: twColor("background"),
-                  borderColor: twColor("border"),
-                  color: twColor("foreground"),
-                }}
-                className="border rounded-lg p-3 mb-4 h-32"
+                style={[
+                  styles.textArea,
+                  {
+                    backgroundColor: colors.background.primary,
+                    borderColor: colors.border,
+                    color: colors.foreground.primary,
+                  },
+                ]}
                 placeholder={t("importExport.import.modalPlaceholder")}
-                placeholderTextColor={twColor("muted-foreground")}
+                placeholderTextColor={colors.muted.foreground}
                 multiline
                 textAlignVertical="top"
                 value={csvInput}
                 onChangeText={setCsvInput}
               />
-
-              <View className="flex-row gap-2">
+              <View style={styles.row}>
                 <Pressable
-                  onPress={() => {
-                    setShowImportModal(false)
-                    setCsvInput('')
-                  }}
-                  style={{ backgroundColor: twColor("secondary") }}
-                  className="flex-1 p-3 rounded-lg"
+                  onPress={() => { setShowImportModal(false); setCsvInput("") }}
+                  style={[styles.halfBtn, { backgroundColor: colors.secondary.default }]}
                 >
-                  <Text style={{ color: twColor("secondary-foreground") }} className="text-center font-medium">
+                  <Text style={[styles.halfBtnText, { color: colors.secondary.foreground }]}>
                     {t("importExport.import.modalCancel")}
                   </Text>
                 </Pressable>
-
                 <Pressable
                   onPress={handleImportFromText}
                   disabled={loading || !csvInput.trim()}
-                  style={{
-                    backgroundColor: loading || !csvInput.trim() ? twColor("muted") : twColor("primary"),
-                  }}
-                  className="flex-1 p-3 rounded-lg"
+                  style={[
+                    styles.halfBtn,
+                    { backgroundColor: loading || !csvInput.trim() ? colors.muted.default : colors.primary.default },
+                  ]}
                 >
                   {loading ? (
-                    <ActivityIndicator size="small" color={twColor("primary-foreground")} />
+                    <ActivityIndicator size="small" color={colors.primary.foreground} />
                   ) : (
-                    <Text style={{ color: twColor("primary-foreground") }} className="text-center font-medium">
+                    <Text style={[styles.halfBtnText, { color: colors.primary.foreground }]}>
                       {t("importExport.import.modalImport")}
                     </Text>
                   )}
@@ -338,3 +289,63 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({
     </>
   )
 }
+
+const styles = StyleSheet.create({
+  section: { marginBottom: 16 },
+  sectionTitle: { fontWeight: "500", marginBottom: 12 },
+  sectionDesc: { fontSize: 14, marginBottom: 12 },
+  btn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    gap: 8,
+  },
+  btnText: { fontWeight: "500" },
+  row: { flexDirection: "row", gap: 8, marginBottom: 8 },
+  halfBtn: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    borderRadius: 8,
+    gap: 6,
+  },
+  halfBtnText: { fontSize: 14, fontWeight: "500" },
+  modalOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    zIndex: 50,
+  },
+  modalInner: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+  modalCard: {
+    width: "100%",
+    maxWidth: 448,
+    padding: 24,
+    borderRadius: 12,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 16,
+  },
+  modalTitle: { fontSize: 18, fontWeight: "700" },
+  modalDesc: { fontSize: 14, marginBottom: 12 },
+  textArea: {
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    height: 128,
+  },
+})

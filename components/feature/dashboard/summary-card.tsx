@@ -1,5 +1,5 @@
-import { useTwColors } from "@/lib/tw-colors"
-import { Text, View } from "react-native"
+import { useTheme } from "@/core/theme"
+import { StyleSheet, Text, View } from "react-native"
 
 interface SummaryCardProps {
   label: string
@@ -8,33 +8,49 @@ interface SummaryCardProps {
 }
 
 export const SummaryCard = ({ label, amount, type }: SummaryCardProps) => {
-  const { twColor } = useTwColors()
+  const { colors } = useTheme()
 
   const getAmountColor = () => {
     switch (type) {
       case "positive":
-        return twColor("success")
+        return colors.status.success
       case "negative":
-        return twColor("destructive")
+        return colors.status.destructive
       default:
-        return twColor("foreground")
+        return colors.foreground.primary
     }
   }
 
   return (
     <View
-      style={{
-        backgroundColor: twColor("card-background"),
-        borderColor: twColor("border"),
-      }}
-      className="p-4 rounded-xl shadow-sm w-[30%] items-center border"
+      style={[
+        styles.card,
+        {
+          backgroundColor: colors.card.background,
+          borderColor: colors.border,
+        },
+      ]}
     >
-      <Text style={{ color: twColor("muted-foreground") }} className="text-sm">
-        {label}
-      </Text>
-      <Text style={{ color: getAmountColor() }} className="text-xs font-bold mt-1">
-        {amount}
-      </Text>
+      <Text style={[styles.label, { color: colors.muted.foreground }]}>{label}</Text>
+      <Text style={[styles.amount, { color: getAmountColor() }]}>{amount}</Text>
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  card: {
+    padding: 16,
+    borderRadius: 12,
+    width: "30%",
+    alignItems: "center",
+    borderWidth: 1,
+  },
+  label: {
+    fontSize: 14,
+  },
+  amount: {
+    fontSize: 12,
+    fontWeight: "700",
+    marginTop: 4,
+  },
+})

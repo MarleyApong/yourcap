@@ -1,14 +1,14 @@
-import { Loader } from '@/components/ui/loader'
-import PinInput from '@/components/ui/pin-input'
-import { useTranslation } from '@/i18n'
-import { Toast } from '@/lib/toast-global'
-import { useTwColors } from '@/lib/tw-colors'
-import { updateUserPin, verifyUserPin } from '@/services/userService'
-import { useAuthStore } from '@/stores/authStore'
-import { Feather } from '@expo/vector-icons'
-import React, { useEffect, useState } from 'react'
-import { Modal, Platform, Pressable, Text, View } from 'react-native'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { Loader } from "@/components/ui/loader"
+import PinInput from "@/components/ui/pin-input"
+import { useTheme } from "@/core/theme"
+import { useTranslation } from "@/i18n"
+import { Toast } from "@/lib/toast-global"
+import { updateUserPin, verifyUserPin } from "@/services/userService"
+import { useAuthStore } from "@/stores/authStore"
+import { Feather } from "@expo/vector-icons"
+import React, { useEffect, useState } from "react"
+import { Modal, Platform, Pressable, StyleSheet, Text, View } from "react-native"
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 interface ChangePinModalProps {
   visible: boolean
@@ -17,46 +17,38 @@ interface ChangePinModalProps {
 
 export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose }) => {
   const { user } = useAuthStore()
-  const { twColor } = useTwColors()
+  const { colors } = useTheme()
   const { t } = useTranslation()
-  
-  // State
-  const [step, setStep] = useState(1) // 1: Current PIN, 2: New PIN, 3: Confirm PIN
-  const [currentPin, setCurrentPin] = useState('')
-  const [newPin, setNewPin] = useState('')
-  const [confirmPin, setConfirmPin] = useState('')
+
+  const [step, setStep] = useState(1)
+  const [currentPin, setCurrentPin] = useState("")
+  const [newPin, setNewPin] = useState("")
   const [loading, setLoading] = useState(false)
   const [resetKey, setResetKey] = useState(0)
 
-  // Reset modal state when it opens/closes
   useEffect(() => {
     if (visible) {
       setStep(1)
-      setCurrentPin('')
-      setNewPin('')
-      setConfirmPin('')
-      setResetKey(prev => prev + 1)
+      setCurrentPin("")
+      setNewPin("")
+      setResetKey((prev) => prev + 1)
     }
   }, [visible])
 
   const verifyCurrentPin = async (pin: string): Promise<boolean> => {
     if (!user?.user_id) return false
-    
     try {
       return await verifyUserPin(user.user_id, pin)
-    } catch (error) {
-      console.error("PIN verification error:", error)
+    } catch {
       return false
     }
   }
 
-  const updatePin = async (newPin: string): Promise<boolean> => {
+  const updatePin = async (pin: string): Promise<boolean> => {
     if (!user?.user_id) return false
-    
     try {
-      return await updateUserPin(user.user_id, newPin)
-    } catch (error) {
-      console.error("PIN update error:", error)
+      return await updateUserPin(user.user_id, pin)
+    } catch {
       return false
     }
   }
@@ -71,12 +63,11 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
         Toast.success("PIN actuel vérifié")
       } else {
         Toast.error(t("modals.changePin.validation.invalidCurrentPin"))
-        setResetKey(prev => prev + 1)
+        setResetKey((prev) => prev + 1)
       }
-    } catch (error) {
-      console.error("Current PIN verification error:", error)
+    } catch {
       Toast.error(t("modals.changePin.error"))
-      setResetKey(prev => prev + 1)
+      setResetKey((prev) => prev + 1)
     } finally {
       setLoading(false)
     }
@@ -85,10 +76,9 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
   const handleNewPinComplete = (pin: string) => {
     if (pin === currentPin) {
       Toast.error(t("modals.changePin.validation.pinMustBeDifferent"))
-      setResetKey(prev => prev + 1)
+      setResetKey((prev) => prev + 1)
       return
     }
-    
     setNewPin(pin)
     setStep(3)
   }
@@ -96,11 +86,9 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
   const handleConfirmPinComplete = async (pin: string) => {
     if (pin !== newPin) {
       Toast.error(t("modals.changePin.validation.pinMismatch"))
-      setConfirmPin('')
-      setResetKey(prev => prev + 1)
+      setResetKey((prev) => prev + 1)
       return
     }
-
     setLoading(true)
     try {
       const success = await updatePin(pin)
@@ -110,17 +98,14 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
       } else {
         Toast.error(t("modals.changePin.error"))
         setStep(2)
-        setNewPin('')
-        setConfirmPin('')
-        setResetKey(prev => prev + 1)
+        setNewPin("")
+        setResetKey((prev) => prev + 1)
       }
-    } catch (error) {
-      console.error("PIN update error:", error)
+    } catch {
       Toast.error(t("modals.changePin.error"))
       setStep(2)
-      setNewPin('')
-      setConfirmPin('')
-      setResetKey(prev => prev + 1)
+      setNewPin("")
+      setResetKey((prev) => prev + 1)
     } finally {
       setLoading(false)
     }
@@ -131,12 +116,20 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
       onClose()
     } else if (step === 2) {
       setStep(1)
-      setCurrentPin('')
-      setResetKey(prev => prev + 1)
-    } else if (step === 3) {
+      setCurrentPin("")
+      setResetKey((prev) => prev + 1)
+    } else {
       setStep(2)
-      setNewPin('')
-      setResetKey(prev => prev + 1)
+      setNewPin("")
+      setResetKey((prev) => prev + 1)
+    }
+  }
+
+  const handlePinComplete = (pin: string) => {
+    switch (step) {
+      case 1: handleCurrentPinComplete(pin); break
+      case 2: handleNewPinComplete(pin); break
+      case 3: handleConfirmPinComplete(pin); break
     }
   }
 
@@ -158,20 +151,6 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
     }
   }
 
-  const handlePinComplete = (pin: string) => {
-    switch (step) {
-      case 1:
-        handleCurrentPinComplete(pin)
-        break
-      case 2:
-        handleNewPinComplete(pin)
-        break
-      case 3:
-        handleConfirmPinComplete(pin)
-        break
-    }
-  }
-
   return (
     <Modal
       animationType="slide"
@@ -180,7 +159,7 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
       onRequestClose={onClose}
       presentationStyle="pageSheet"
     >
-      <View style={{ backgroundColor: twColor("background") }} className="flex-1">
+      <View style={[styles.root, { backgroundColor: colors.background.primary }]}>
         <KeyboardAwareScrollView
           enableOnAndroid
           extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
@@ -189,72 +168,72 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
           contentContainerStyle={{ flexGrow: 1 }}
         >
           {/* Header */}
-          <View className="px-6 pb-4 pt-14 border-b" style={{ borderBottomColor: twColor("border") }}>
-            <View className="flex-row items-center justify-between">
-              <Pressable onPress={handleBack} className="p-2">
-                <Feather name="chevron-left" size={24} color={twColor("foreground")} />
-              </Pressable>
-              <Text style={{ color: twColor("foreground") }} className="text-xl font-bold">
-                {t("modals.changePin.title")}
-              </Text>
-              <View className="w-8" />
-            </View>
+          <View style={[styles.header, { borderBottomColor: colors.border }]}>
+            <Pressable onPress={handleBack} style={styles.backBtn}>
+              <Feather name="chevron-left" size={24} color={colors.foreground.primary} />
+            </Pressable>
+            <Text style={[styles.headerTitle, { color: colors.foreground.primary }]}>
+              {t("modals.changePin.title")}
+            </Text>
+            <View style={styles.spacer} />
           </View>
 
-          {/* Progress Indicator */}
-          <View className="px-8 py-6">
-            <View className="flex-row items-center justify-center gap-2">
+          {/* Progress */}
+          <View style={styles.progress}>
+            <View style={styles.progressRow}>
               {[1, 2, 3].map((i) => (
-                <View key={i} className="flex-row items-center">
-                  <View 
-                    className={`w-8 h-8 rounded-full items-center justify-center ${
-                      step >= i ? 'border-2' : ''
-                    }`}
-                    style={{ 
-                      backgroundColor: step >= i ? twColor("primary") : twColor("muted"),
-                      borderColor: step >= i ? twColor("primary") : 'transparent'
-                    }}
+                <View key={i} style={styles.stepWrapper}>
+                  <View
+                    style={[
+                      styles.stepCircle,
+                      {
+                        backgroundColor: step >= i ? colors.primary.default : colors.muted.default,
+                        borderColor: step >= i ? colors.primary.default : "transparent",
+                        borderWidth: step >= i ? 2 : 0,
+                      },
+                    ]}
                   >
-                    <Text 
-                      style={{ color: step >= i ? twColor("primary-foreground") : twColor("muted-foreground") }}
-                      className="text-sm font-bold"
+                    <Text
+                      style={[
+                        styles.stepNum,
+                        { color: step >= i ? colors.primary.foreground : colors.muted.foreground },
+                      ]}
                     >
                       {i}
                     </Text>
                   </View>
                   {i < 3 && (
-                    <View 
-                      className="w-8 h-0.5 mx-2"
-                      style={{ backgroundColor: step > i ? twColor("primary") : twColor("muted") }}
+                    <View
+                      style={[
+                        styles.stepLine,
+                        { backgroundColor: step > i ? colors.primary.default : colors.muted.default },
+                      ]}
                     />
                   )}
                 </View>
               ))}
             </View>
-            <View className="flex-row justify-between mt-3 px-1">
-              <Text 
-                style={{ color: step >= 1 ? twColor("foreground") : twColor("muted-foreground") }}
-                className="text-xs text-center"
-              >
-                {t("modals.changePin.steps.current")}
-              </Text>
-              <Text 
-                style={{ color: step >= 2 ? twColor("foreground") : twColor("muted-foreground") }}
-                className="text-xs text-center"
-              >
-                {t("modals.changePin.steps.new")}
-              </Text>
-              <Text 
-                style={{ color: step >= 3 ? twColor("foreground") : twColor("muted-foreground") }}
-                className="text-xs text-center"
-              >
-                {t("modals.changePin.steps.confirm")}
-              </Text>
+            <View style={styles.stepLabels}>
+              {[
+                t("modals.changePin.steps.current"),
+                t("modals.changePin.steps.new"),
+                t("modals.changePin.steps.confirm"),
+              ].map((label, i) => (
+                <Text
+                  key={i}
+                  style={[
+                    styles.stepLabel,
+                    { color: step >= i + 1 ? colors.foreground.primary : colors.muted.foreground },
+                  ]}
+                >
+                  {label}
+                </Text>
+              ))}
             </View>
           </View>
 
-          {/* PIN Input Content */}
-          <View className="flex-1">
+          {/* PIN Input */}
+          <View style={styles.pinWrapper}>
             <PinInput
               key={`pin-${step}-${resetKey}`}
               title={getTitle()}
@@ -267,14 +246,15 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
 
           {/* Loading Overlay */}
           {loading && (
-            <View className="absolute inset-0 bg-black/30 flex-1 justify-center items-center">
-              <View 
-                style={{ backgroundColor: twColor("primary") }}
-                className="rounded-xl p-6 items-center"
-              >
+            <View style={styles.overlay}>
+              <View style={[styles.loadingCard, { backgroundColor: colors.primary.default }]}>
                 <Loader />
-                <Text style={{ color: twColor("primary-foreground") }} className="mt-4">
-                  {step === 1 ? t("modals.changePin.verifying") : step === 3 ? t("modals.changePin.updating") : t("modals.changePin.processing")}
+                <Text style={[styles.loadingText, { color: colors.primary.foreground }]}>
+                  {step === 1
+                    ? t("modals.changePin.verifying")
+                    : step === 3
+                    ? t("modals.changePin.updating")
+                    : t("modals.changePin.processing")}
                 </Text>
               </View>
             </View>
@@ -284,3 +264,86 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
     </Modal>
   )
 }
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+  header: {
+    paddingHorizontal: 24,
+    paddingBottom: 16,
+    paddingTop: 56,
+    borderBottomWidth: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  backBtn: {
+    padding: 8,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+  },
+  spacer: {
+    width: 32,
+  },
+  progress: {
+    paddingHorizontal: 32,
+    paddingVertical: 24,
+  },
+  progressRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  stepWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  stepCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  stepNum: {
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  stepLine: {
+    width: 32,
+    height: 2,
+    marginHorizontal: 8,
+  },
+  stepLabels: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 12,
+    paddingHorizontal: 4,
+  },
+  stepLabel: {
+    fontSize: 12,
+    textAlign: "center",
+  },
+  pinWrapper: {
+    flex: 1,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingCard: {
+    borderRadius: 12,
+    padding: 24,
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 16,
+  },
+})

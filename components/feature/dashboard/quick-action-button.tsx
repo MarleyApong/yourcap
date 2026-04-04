@@ -1,6 +1,6 @@
-import { useTwColors } from "@/lib/tw-colors"
+import { useTheme } from "@/core/theme"
 import { Feather } from "@expo/vector-icons"
-import { Pressable, Text, View } from "react-native"
+import { Pressable, StyleSheet, Text, View } from "react-native"
 
 interface QuickActionButtonProps {
   icon: string
@@ -9,21 +9,28 @@ interface QuickActionButtonProps {
 }
 
 export const QuickActionButton = ({ icon, label, onPress }: QuickActionButtonProps) => {
-  const { twColor } = useTwColors()
+  const { colors } = useTheme()
 
   return (
-    <Pressable onPress={onPress} className="items-center">
-      <View
-        style={{
-          backgroundColor: `${twColor("primary")}15`, // 15 for 15% opacity
-        }}
-        className="p-3 rounded-full"
-      >
-        <Feather name={icon as any} size={24} color={twColor("primary")} />
+    <Pressable onPress={onPress} style={styles.container}>
+      <View style={[styles.iconWrapper, { backgroundColor: colors.primary.default + "15" }]}>
+        <Feather name={icon as any} size={24} color={colors.primary.default} />
       </View>
-      <Text style={{ color: twColor("muted-foreground") }} className="mt-2 text-sm">
-        {label}
-      </Text>
+      <Text style={[styles.label, { color: colors.muted.foreground }]}>{label}</Text>
     </Pressable>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+  },
+  iconWrapper: {
+    padding: 12,
+    borderRadius: 999,
+  },
+  label: {
+    marginTop: 8,
+    fontSize: 14,
+  },
+})
