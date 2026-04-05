@@ -496,7 +496,7 @@ export const en = {
       totalAmount: "for a total amount of",
       // Dynamic formats
       owingFormat: "💰 {count} person{plural} owe{pluralOwes} you {amount} {currency}",
-      owedFormat: "⚠️ You owe {amount} {currency} to {count} person{plural}",
+      owedFormat: "You owe {amount} {currency} to {count} person{plural}",
     },
     reminder: {
       title: "Debt reminder",
@@ -681,31 +681,31 @@ export const en = {
     required: "You must accept the terms and conditions to continue",
     sections: {
       storage: {
-        title: "📱 Local Data Storage",
+        title: "Local Data Storage",
         content: "All your data (debts, contacts, settings) is stored exclusively on your device. YourCap does not currently have synchronization servers. Your data never leaves your phone and does not reach our servers.",
       },
       responsibility: {
-        title: "⚠️ Your Data Responsibility",
+        title: "Your Data Responsibility",
         content: "In the absence of cloud synchronization, you are solely responsible for backing up your data. Uninstalling the app or resetting your phone will result in the permanent loss of all your data. YourCap cannot recover lost data.",
       },
       security: {
-        title: "🔐 Security",
+        title: "Security",
         content: "YourCap protects access via a 6-digit PIN code and/or biometric authentication. You are solely responsible for the confidentiality of your PIN. Do not share it with anyone. A reset mechanism is available if forgotten.",
       },
       usage: {
-        title: "✅ Acceptable Use",
+        title: "Acceptable Use",
         content: "YourCap is a personal debt tracking tool. You agree to use it in compliance with applicable laws in Cameroon and your country of residence. Any use for fraudulent, harassment or illegal purposes is strictly prohibited.",
       },
       privacy: {
-        title: "🔒 Privacy",
+        title: "Privacy",
         content: "Your data stays on your phone. YourCap does not collect, transmit or sell your personal or financial data to third parties. No advertising tracking is performed.",
       },
       limitation: {
-        title: "⚖️ Limitation of Liability",
+        title: "Limitation of Liability",
         content: "YourCap is provided as-is, without warranty of any kind. We disclaim all liability for data loss, display errors or financial decisions made based on information displayed in the app. The application is an aid tool, not certified accounting software.",
       },
       evolution: {
-        title: "🚀 Service Evolution",
+        title: "Service Evolution",
         content: "YourCap is under active development. Cloud synchronization features and new options may be introduced. You will be notified before any major change affecting the processing of your data. Continued use of the application constitutes acceptance of the new conditions.",
       },
     },

@@ -365,16 +365,30 @@ export default function Register() {
               {([
                 "storage", "responsibility", "security",
                 "usage", "privacy", "limitation", "evolution",
-              ] as const).map((section) => (
-                <View key={section} style={styles.termSection}>
-                  <Text style={[styles.termSectionTitle, { color: colors.primary.default }]}>
-                    {t(`terms.sections.${section}.title` as any)}
-                  </Text>
-                  <Text style={[styles.termSectionContent, { color: colors.foreground.primary }]}>
-                    {t(`terms.sections.${section}.content` as any)}
-                  </Text>
-                </View>
-              ))}
+              ] as const).map((section) => {
+                const sectionIcons: Record<string, string> = {
+                  storage: "smartphone",
+                  responsibility: "alert-triangle",
+                  security: "lock",
+                  usage: "check-circle",
+                  privacy: "shield",
+                  limitation: "info",
+                  evolution: "zap",
+                };
+                return (
+                  <View key={section} style={styles.termSection}>
+                    <View style={styles.termSectionHeader}>
+                      <Feather name={sectionIcons[section] as any} size={15} color={colors.primary.default} />
+                      <Text style={[styles.termSectionTitle, { color: colors.primary.default }]}>
+                        {t(`terms.sections.${section}.title` as any)}
+                      </Text>
+                    </View>
+                    <Text style={[styles.termSectionContent, { color: colors.foreground.primary }]}>
+                      {t(`terms.sections.${section}.content` as any)}
+                    </Text>
+                  </View>
+                );
+              })}
               <View style={{ height: 24 }} />
             </ScrollView>
 
@@ -505,7 +519,8 @@ const styles = StyleSheet.create({
   modalDate: { fontSize: 12, paddingHorizontal: 24, paddingTop: 8, marginBottom: 4 },
   modalScroll: { paddingHorizontal: 24 },
   termSection: { marginTop: 20 },
-  termSectionTitle: { fontSize: 15, fontWeight: "700", marginBottom: 6 },
+  termSectionHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 6 },
+  termSectionTitle: { fontSize: 15, fontWeight: "700", flex: 1 },
   termSectionContent: { fontSize: 14, lineHeight: 21 },
   modalAcceptBtn: {
     marginHorizontal: 24,
