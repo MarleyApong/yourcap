@@ -15,7 +15,7 @@ import { useAuthStore } from "@/stores/authStore"
 import { Feather, MaterialIcons } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { useEffect, useState } from "react"
-import { Modal, Pressable, ScrollView, StyleSheet, Switch, Text, View } from "react-native"
+import { Linking, Modal, Pressable, ScrollView, StyleSheet, Switch, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function Settings() {
@@ -61,11 +61,38 @@ export default function Settings() {
       return
     }
 
+    if (enabled) {
+      // Vérifie que la permission Face ID / biométrie est accordée
+      const { LocalAuthentication } = await import("expo-local-authentication")
+      const result = await LocalAuthentication.authenticateAsync({
+        promptMessage: "Confirmer pour activer la biométrie",
+        cancelLabel: "Annuler",
+        disableDeviceFallback: true,
+      })
+
+      if (!result.success) {
+        if (result.error === "user_cancel" || result.error === "system_cancel") {
+          return // L'user a annulé — on ne fait rien
+        }
+        // Permission refusée ou non disponible → proposer les réglages
+        Toast.confirm(
+          "La permission biométrique a été refusée. Activez-la dans les réglages de votre téléphone.",
+          () => Linking.openSettings(),
+          {
+            title: "Permission requise",
+            confirmText: "Ouvrir les réglages",
+            cancelText: "Annuler",
+          },
+        )
+        return
+      }
+    }
+
     const success = await updateBiometricSetting(enabled)
     if (!success) {
       Toast.error("Failed to update biometric setting", "Error")
     } else {
-      Toast.success(enabled ? "Biometric enabled" : "Biometric disabled")
+      Toast.success(enabled ? "Biométrie activée" : "Biométrie désactivée")
     }
   }
 
@@ -503,16 +530,29 @@ export default function Settings() {
               <Switch
                 value={settings.notification_enabled}
                 onValueChange={async (val) => {
-                  const success = await updateSetting("notification_enabled", val)
-                  if (success && val) {
+                  if (val) {
+                    // Demander la permission AVANT de sauvegarder
                     const hasPermission = await requestNotificationPermissions()
-                    if (hasPermission && user?.user_id) {
-                      await scheduleAllDebtReminders(user.user_id)
-                      Toast.success(t("settings.notificationsEnabled"))
-                    } else {
-                      Toast.error(t("settings.notificationPermissionsDenied"))
+                    if (!hasPermission) {
+                      // Permission refusée — proposer d'ouvrir les réglages
+                      Toast.confirm(
+                        "Les notifications ont été refusées. Activez-les dans les réglages de votre téléphone.",
+                        () => Linking.openSettings(),
+                        {
+                          title: "Permission requise",
+                          confirmText: "Ouvrir les réglages",
+                          cancelText: "Annuler",
+                        },
+                      )
+                      return // Ne pas sauvegarder
                     }
-                  } else if (success && !val) {
+                    await updateSetting("notification_enabled", true)
+                    if (user?.user_id) {
+                      await scheduleAllDebtReminders(user.user_id)
+                    }
+                    Toast.success(t("settings.notificationsEnabled"))
+                  } else {
+                    await updateSetting("notification_enabled", false)
                     const Notifications = await import("expo-notifications")
                     await Notifications.cancelAllScheduledNotificationsAsync()
                     Toast.success(t("settings.notificationsDisabled"))
