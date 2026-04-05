@@ -7,8 +7,10 @@ import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
-import { Image, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native"
+import { Dimensions, Image, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+
+const { height: SCREEN_HEIGHT } = Dimensions.get("window")
 
 export default function Register() {
   const [step, setStep] = useState(1)
@@ -209,72 +211,76 @@ export default function Register() {
     >
       <FBackButton />
 
-      <View style={styles.formContainer}>
+      {/* Conteneur plein écran : contenu centré + boutons absolute en bas */}
+      <View style={styles.screen}>
         <Image source={require("@/assets/images/logo/logo.png")} style={styles.logoWatermark} />
 
-        <Text style={[styles.title, { color: colors.primary.default }]}>{t("auth.register.title")}</Text>
-        <Text style={[styles.subtitle, { color: colors.foreground.primary }]}>{t("auth.register.subtitle")}</Text>
+        <View style={styles.formContainer}>
+          <Text style={[styles.title, { color: colors.primary.default }]}>{t("auth.register.title")}</Text>
+          <Text style={[styles.subtitle, { color: colors.foreground.primary }]}>{t("auth.register.subtitle")}</Text>
 
-        <View style={styles.stepIndicator}>
-          {[1, 2, 3].map((i) => (
-            <View
-              key={i}
-              style={[
-                styles.stepDot,
-                step >= i
-                  ? { backgroundColor: colors.primary.default, width: 32 }
-                  : { backgroundColor: "#d1d5db", width: 16 },
-              ]}
-            />
-          ))}
+          <View style={styles.stepIndicator}>
+            {[1, 2, 3].map((i) => (
+              <View
+                key={i}
+                style={[
+                  styles.stepDot,
+                  step >= i
+                    ? { backgroundColor: colors.primary.default, width: 32 }
+                    : { backgroundColor: "#d1d5db", width: 16 },
+                ]}
+              />
+            ))}
+          </View>
+
+          <View style={styles.inputs}>
+            <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
+              <Feather name="user" size={22} color={colors.primary.default} />
+              <TextInput
+                style={[styles.inputText, { color: colors.foreground.primary }]}
+                placeholder={t("auth.register.fullName")}
+                placeholderTextColor={colors.muted.foreground}
+                value={formData.full_name}
+                onChangeText={(text) => handleChange("full_name", text)}
+                returnKeyType="next"
+                onSubmitEditing={() => phoneRef.current?.focus()}
+              />
+            </View>
+
+            <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
+              <Feather name="phone" size={22} color={colors.primary.default} />
+              <TextInput
+                ref={phoneRef}
+                style={[styles.inputText, { color: colors.foreground.primary }]}
+                placeholder={t("auth.register.phoneNumber")}
+                placeholderTextColor={colors.muted.foreground}
+                value={formData.phone_number}
+                onChangeText={(text) => handleChange("phone_number", text)}
+                keyboardType="phone-pad"
+                returnKeyType="next"
+                onSubmitEditing={() => emailRef.current?.focus()}
+              />
+            </View>
+
+            <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
+              <Feather name="mail" size={22} color={colors.primary.default} />
+              <TextInput
+                ref={emailRef}
+                style={[styles.inputText, { color: colors.foreground.primary }]}
+                placeholder={t("auth.register.email")}
+                placeholderTextColor={colors.muted.foreground}
+                value={formData.email}
+                onChangeText={(text) => handleChange("email", text)}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                returnKeyType="done"
+                onSubmitEditing={handleContinue}
+              />
+            </View>
+          </View>
         </View>
 
-        <View style={styles.inputs}>
-          <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
-            <Feather name="user" size={24} color={colors.primary.default} />
-            <TextInput
-              style={[styles.inputText, { color: colors.foreground.primary }]}
-              placeholder={t("auth.register.fullName")}
-              placeholderTextColor={colors.muted.foreground}
-              value={formData.full_name}
-              onChangeText={(text) => handleChange("full_name", text)}
-              returnKeyType="next"
-              onSubmitEditing={() => phoneRef.current?.focus()}
-            />
-          </View>
-
-          <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
-            <Feather name="phone" size={24} color={colors.primary.default} />
-            <TextInput
-              ref={phoneRef}
-              style={[styles.inputText, { color: colors.foreground.primary }]}
-              placeholder={t("auth.register.phoneNumber")}
-              placeholderTextColor={colors.muted.foreground}
-              value={formData.phone_number}
-              onChangeText={(text) => handleChange("phone_number", text)}
-              keyboardType="phone-pad"
-              returnKeyType="next"
-              onSubmitEditing={() => emailRef.current?.focus()}
-            />
-          </View>
-
-          <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
-            <Feather name="mail" size={24} color={colors.primary.default} />
-            <TextInput
-              ref={emailRef}
-              style={[styles.inputText, { color: colors.foreground.primary }]}
-              placeholder={t("auth.register.email")}
-              placeholderTextColor={colors.muted.foreground}
-              value={formData.email}
-              onChangeText={(text) => handleChange("email", text)}
-              autoCapitalize="none"
-              keyboardType="email-address"
-              returnKeyType="done"
-              onSubmitEditing={handleContinue}
-            />
-          </View>
-        </View>
-
+        {/* Boutons absolute en bas — scrollent avec le contenu quand clavier ouvert */}
         <View style={styles.actions}>
           <Pressable
             onPress={handleContinue}
@@ -317,47 +323,48 @@ const styles = StyleSheet.create({
   },
   loadingCard: { borderRadius: 12, padding: 24, alignItems: "center" },
   loadingText: { marginTop: 16, color: "#ffffff" },
-  formContainer: {
-    flex: 1,
+  // Plein écran : FBackButton est absolute top:112, le contenu est centré dessous
+  screen: {
+    height: SCREEN_HEIGHT,
     alignItems: "center",
     justifyContent: "center",
-    width: "100%",
     paddingHorizontal: 32,
   },
-  logoWatermark: { width: 240, height: 240, position: "absolute", opacity: 0.05 },
-  title: { fontSize: 48, fontWeight: "700" },
-  subtitle: { fontSize: 24 },
-  stepIndicator: { flexDirection: "row", gap: 8, marginVertical: 24 },
+  logoWatermark: { width: 160, height: 160, position: "absolute", opacity: 0.05 },
+  formContainer: { alignItems: "center", width: "100%" },
+  title: { fontSize: 32, fontWeight: "700" },
+  subtitle: { fontSize: 15, marginTop: 4 },
+  stepIndicator: { flexDirection: "row", gap: 8, marginVertical: 20 },
   stepDot: { height: 8, borderRadius: 999 },
-  inputs: { width: "100%", marginTop: 16, gap: 16 },
+  inputs: { width: "100%", gap: 12, marginTop: 4 },
   inputRow: {
     borderWidth: 1,
-    borderRadius: 6,
+    borderRadius: 8,
     flexDirection: "row",
     gap: 8,
     alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
   },
-  inputText: { fontSize: 20, flex: 1 },
+  inputText: { fontSize: 15, flex: 1 },
+  // Absolute dans screen → scrolle avec le contenu, ne chevauche pas les inputs
   actions: {
-    width: "100%",
-    paddingHorizontal: 40,
-    marginTop: 32,
-    marginBottom: 40,
     position: "absolute",
-    bottom: 0,
+    bottom: 40,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 32,
   },
   submitBtn: {
     flexDirection: "row",
     gap: 8,
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
+    padding: 14,
     borderRadius: 12,
     width: "100%",
   },
-  submitBtnText: { textAlign: "center", color: "#ffffff", fontWeight: "600", fontSize: 18 },
+  submitBtnText: { textAlign: "center", color: "#ffffff", fontWeight: "600", fontSize: 16 },
   signinRow: { flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 12, marginTop: 12 },
   signinLink: { fontWeight: "700", textDecorationLine: "underline" },
 })

@@ -92,7 +92,7 @@ export default function DebtDetails() {
       "This action cannot be undone. The debt record will be permanently deleted.",
       async () => {
         try {
-          await deleteDebt(debt!.debt_id)
+          await deleteDebt(debt!.debt_id, user!.user_id)
           Toast.success("Debt deleted successfully", "Success")
           router.back()
         } catch (error) {

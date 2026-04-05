@@ -6,8 +6,10 @@ import { resetPin } from "@/services/userService"
 import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
-import { Platform, Pressable, StyleSheet, Text, TextInput as RNTextInput, View } from "react-native"
+import { Dimensions, Platform, Pressable, StyleSheet, Text, TextInput as RNTextInput, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+
+const { height: SCREEN_HEIGHT } = Dimensions.get("window")
 
 export default function ForgotPassword() {
   const [step, setStep] = useState(1)
@@ -191,52 +193,54 @@ export default function ForgotPassword() {
     >
       <FBackButton />
 
-      <View style={styles.formContainer}>
-        <Text style={[styles.title, { color: colors.primary.default }]}>Forgot PIN</Text>
-        <Text style={[styles.subtitle, { color: colors.muted.foreground }]}>Reset your PIN securely</Text>
+      <View style={styles.screen}>
+        <View style={styles.formContainer}>
+          <Text style={[styles.title, { color: colors.primary.default }]}>Forgot PIN</Text>
+          <Text style={[styles.subtitle, { color: colors.muted.foreground }]}>Reset your PIN securely</Text>
 
-        <View style={styles.stepIndicator}>
-          {[1, 2, 3].map((i) => (
-            <View
-              key={i}
-              style={[
-                styles.stepDot,
-                step >= i
-                  ? { backgroundColor: colors.primary.default, width: 32 }
-                  : { backgroundColor: "#d1d5db", width: 16 },
-              ]}
-            />
-          ))}
-        </View>
-
-        <View style={styles.inputs}>
-          <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
-            <Feather name="user" size={24} color={colors.primary.default} />
-            <RNTextInput
-              style={[styles.inputText, { color: colors.foreground.primary }]}
-              placeholder="Full name"
-              placeholderTextColor={colors.muted.foreground}
-              value={formData.full_name}
-              onChangeText={(text) => handleChange("full_name", text)}
-              returnKeyType="next"
-              onSubmitEditing={() => identifierRef.current?.focus()}
-            />
+          <View style={styles.stepIndicator}>
+            {[1, 2, 3].map((i) => (
+              <View
+                key={i}
+                style={[
+                  styles.stepDot,
+                  step >= i
+                    ? { backgroundColor: colors.primary.default, width: 32 }
+                    : { backgroundColor: "#d1d5db", width: 16 },
+                ]}
+              />
+            ))}
           </View>
 
-          <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
-            <Feather name="mail" size={24} color={colors.primary.default} />
-            <RNTextInput
-              ref={identifierRef}
-              style={[styles.inputText, { color: colors.foreground.primary }]}
-              placeholder="you@example.com or 6xx xxx xxx"
-              placeholderTextColor={colors.muted.foreground}
-              value={formData.identifier}
-              onChangeText={(text) => handleChange("identifier", text)}
-              autoCapitalize="none"
-              keyboardType="email-address"
-              returnKeyType="done"
-              onSubmitEditing={handleContinue}
-            />
+          <View style={styles.inputs}>
+            <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
+              <Feather name="user" size={22} color={colors.primary.default} />
+              <RNTextInput
+                style={[styles.inputText, { color: colors.foreground.primary }]}
+                placeholder="Full name"
+                placeholderTextColor={colors.muted.foreground}
+                value={formData.full_name}
+                onChangeText={(text) => handleChange("full_name", text)}
+                returnKeyType="next"
+                onSubmitEditing={() => identifierRef.current?.focus()}
+              />
+            </View>
+
+            <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
+              <Feather name="mail" size={22} color={colors.primary.default} />
+              <RNTextInput
+                ref={identifierRef}
+                style={[styles.inputText, { color: colors.foreground.primary }]}
+                placeholder="you@example.com or 6xx xxx xxx"
+                placeholderTextColor={colors.muted.foreground}
+                value={formData.identifier}
+                onChangeText={(text) => handleChange("identifier", text)}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                returnKeyType="done"
+                onSubmitEditing={handleContinue}
+              />
+            </View>
           </View>
         </View>
 
@@ -282,46 +286,45 @@ const styles = StyleSheet.create({
   },
   loadingCard: { borderRadius: 12, padding: 24, alignItems: "center" },
   loadingText: { marginTop: 16, color: "#ffffff" },
-  formContainer: {
-    flex: 1,
+  screen: {
+    height: SCREEN_HEIGHT,
     alignItems: "center",
     justifyContent: "center",
-    width: "100%",
     paddingHorizontal: 32,
   },
-  title: { fontSize: 36, fontWeight: "700" },
-  subtitle: { fontSize: 18 },
-  stepIndicator: { flexDirection: "row", gap: 8, marginVertical: 24 },
+  formContainer: { alignItems: "center", width: "100%" },
+  title: { fontSize: 32, fontWeight: "700" },
+  subtitle: { fontSize: 15, marginTop: 4 },
+  stepIndicator: { flexDirection: "row", gap: 8, marginVertical: 20 },
   stepDot: { height: 8, borderRadius: 999 },
-  inputs: { width: "100%", marginTop: 16, gap: 16 },
+  inputs: { width: "100%", gap: 12, marginTop: 4 },
   inputRow: {
     borderWidth: 1,
-    borderRadius: 6,
+    borderRadius: 8,
     flexDirection: "row",
     gap: 8,
     alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
   },
-  inputText: { fontSize: 20, flex: 1 },
+  inputText: { fontSize: 15, flex: 1 },
   actions: {
-    width: "100%",
-    paddingHorizontal: 40,
-    marginTop: 32,
-    marginBottom: 40,
     position: "absolute",
-    bottom: 0,
+    bottom: 40,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 32,
   },
   submitBtn: {
     flexDirection: "row",
     gap: 8,
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
+    padding: 14,
     borderRadius: 12,
     width: "100%",
   },
-  submitBtnText: { textAlign: "center", color: "#ffffff", fontWeight: "600", fontSize: 18 },
+  submitBtnText: { textAlign: "center", color: "#ffffff", fontWeight: "600", fontSize: 16 },
   signinRow: { flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 12, marginTop: 12 },
   signinLink: { fontWeight: "700", textDecorationLine: "underline" },
 })
