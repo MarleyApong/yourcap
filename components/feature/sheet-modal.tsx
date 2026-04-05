@@ -1,6 +1,6 @@
 import { useTheme } from "@/core/theme"
 import { Feather } from "@expo/vector-icons"
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
+import { Modal, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native"
 
 interface SheetModalProps {
   visible: boolean
@@ -10,10 +10,12 @@ interface SheetModalProps {
   actionLabel: string
   /** Called when the action button is pressed (before closing) */
   onAction?: () => void
+  /** Hide the status bar when the modal is open (default: false) */
+  hideStatusBar?: boolean
   children: React.ReactNode
 }
 
-export function SheetModal({ visible, onClose, title, actionLabel, onAction, children }: SheetModalProps) {
+export function SheetModal({ visible, onClose, title, actionLabel, onAction, hideStatusBar = false, children }: SheetModalProps) {
   const { colors } = useTheme()
 
   const handleAction = () => {
@@ -22,7 +24,8 @@ export function SheetModal({ visible, onClose, title, actionLabel, onAction, chi
   }
 
   return (
-    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
+    <Modal visible={visible} animationType="slide" transparent statusBarTranslucent onRequestClose={onClose}>
+      <StatusBar hidden={hideStatusBar && visible} animated />
       <View style={styles.overlay}>
         <View style={[styles.card, { backgroundColor: colors.background.primary }]}>
           <View style={[styles.header, { borderBottomColor: colors.border }]}>
