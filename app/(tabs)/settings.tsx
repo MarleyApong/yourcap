@@ -4,6 +4,7 @@ import { ImportExportSection } from "@/components/feature/import-export-section"
 import { LanguageSelector } from "@/components/feature/language-selector"
 import { LoadingState } from "@/components/feature/loading-state"
 import { PageHeader } from "@/components/feature/page-header"
+import { SheetModal, sheetSectionStyles } from "@/components/feature/sheet-modal"
 import { useTheme } from "@/core/theme"
 import { useSettings } from "@/hooks/useSettings"
 import { useTranslation } from "@/i18n"
@@ -16,8 +17,18 @@ import { Feather, MaterialIcons } from "@expo/vector-icons"
 import * as LocalAuthentication from "expo-local-authentication"
 import { useRouter } from "expo-router"
 import { useEffect, useState } from "react"
-import { Linking, Modal, Pressable, ScrollView, StyleSheet, Switch, Text, View } from "react-native"
+import { Linking, Pressable, ScrollView, StyleSheet, Switch, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+
+const TERMS_ICONS = {
+  storage: "smartphone",
+  responsibility: "alert-triangle",
+  security: "lock",
+  usage: "check-circle",
+  privacy: "shield",
+  limitation: "info",
+  evolution: "zap",
+} as const
 
 export default function Settings() {
   const { user, logout, updateBiometricSetting } = useAuthStore()
@@ -28,8 +39,7 @@ export default function Settings() {
   const insets = useSafeAreaInsets()
 
   const [localBiometricCapabilities, setLocalBiometricCapabilities] = useState<BiometricCapabilities | null>(null)
-  const [modalVisible, setModalVisible] = useState(false)
-  const [modalContent, setModalContent] = useState<React.ReactNode>(null)
+  const [termsModalVisible, setTermsModalVisible] = useState(false)
   const [editProfileModalVisible, setEditProfileModalVisible] = useState(false)
   const [changePinModalVisible, setChangePinModalVisible] = useState(false)
 
@@ -127,97 +137,8 @@ export default function Settings() {
     }
   }
 
-  const showModal = (content: React.ReactNode) => {
-    setModalContent(content)
-    setModalVisible(true)
-  }
-
-  const hideModal = () => {
-    setModalVisible(false)
-    setModalContent(null)
-  }
-
-  const showTermsModal = () => {
-    showModal(
-      <View style={styles.modalBody}>
-        <Text style={[styles.modalBodyTitle, { color: colors.foreground.primary }]}>
-          {t("settings.termsOfService")}
-        </Text>
-        <ScrollView>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>
-            {t("settings.lastUpdated")} {new Date().toLocaleDateString()}
-          </Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.termsWelcome")}</Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.termsAgreement")}</Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>
-            1. <Text style={styles.bold}>{t("settings.freeService")}</Text> {t("settings.freeServiceText")}
-          </Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>
-            2. <Text style={styles.bold}>{t("settings.dataUsage")}</Text> {t("settings.dataUsageText")}
-          </Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>
-            3. <Text style={styles.bold}>{t("settings.userResponsibilities")}</Text> {t("settings.userResponsibilitiesText")}
-          </Text>
-        </ScrollView>
-        <Pressable onPress={hideModal} style={[styles.modalCloseBtn, { backgroundColor: colors.primary.default }]}>
-          <Text style={[styles.modalCloseBtnText, { color: colors.primary.foreground }]}>{t("settings.iUnderstand")}</Text>
-        </Pressable>
-      </View>,
-    )
-  }
-
-  const showPrivacyModal = () => {
-    showModal(
-      <View style={styles.modalBody}>
-        <Text style={[styles.modalBodyTitle, { color: colors.foreground.primary }]}>
-          {t("settings.privacyPolicy")}
-        </Text>
-        <ScrollView>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.privacyImportant")}</Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>
-            <Text style={styles.bold}>{t("settings.informationWeCollect")}</Text>
-          </Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.accountInfo")}</Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.debtRecords")}</Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.usageData")}</Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>
-            <Text style={styles.bold}>{t("settings.howWeUse")}</Text>
-          </Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.provideServices")}</Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.sendNotifications")}</Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.analytics")}</Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.dataSecure")}</Text>
-        </ScrollView>
-        <Pressable onPress={hideModal} style={[styles.modalCloseBtn, { backgroundColor: colors.primary.default }]}>
-          <Text style={[styles.modalCloseBtnText, { color: colors.primary.foreground }]}>{t("settings.iUnderstand")}</Text>
-        </Pressable>
-      </View>,
-    )
-  }
-
-  const showHelpModal = () => {
-    showModal(
-      <View style={styles.modalBody}>
-        <Text style={[styles.modalBodyTitle, { color: colors.foreground.primary }]}>
-          {t("settings.helpSupport")}
-        </Text>
-        <ScrollView>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.helpIntro")}</Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary, fontWeight: "600" }]}>{t("settings.faq")}</Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.howToAddDebt")}</Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.howToAddDebtAnswer")}</Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.howToChangePin")}</Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.howToChangePinAnswer")}</Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary, fontWeight: "600" }]}>{t("settings.contactSupport")}</Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.supportEmail")}</Text>
-          <Text style={[styles.modalBodyText, { color: colors.foreground.primary }]}>{t("settings.responseTime")}</Text>
-        </ScrollView>
-        <Pressable onPress={hideModal} style={[styles.modalCloseBtn, { backgroundColor: colors.primary.default }]}>
-          <Text style={[styles.modalCloseBtnText, { color: colors.primary.foreground }]}>{t("settings.close")}</Text>
-        </Pressable>
-      </View>,
-    )
-  }
+  const [privacyModalVisible, setPrivacyModalVisible] = useState(false)
+  const [helpModalVisible, setHelpModalVisible] = useState(false)
 
   const handleDeleteAccount = () => {
     Toast.confirm(
@@ -762,9 +683,9 @@ export default function Settings() {
 
           {/* About */}
           <SettingCard title={t("settings.about")}>
-            <SettingRow icon="file-text" title={t("settings.termsOfServiceTitle")} onPress={showTermsModal} />
-            <SettingRow icon="shield" title={t("settings.privacyPolicyTitle")} onPress={showPrivacyModal} />
-            <SettingRow icon="help-circle" title={t("settings.helpSupportTitle")} onPress={showHelpModal} />
+            <SettingRow icon="file-text" title={t("settings.termsOfServiceTitle")} onPress={() => setTermsModalVisible(true)} />
+            <SettingRow icon="shield" title={t("settings.privacyPolicyTitle")} onPress={() => setPrivacyModalVisible(true)} />
+            <SettingRow icon="help-circle" title={t("settings.helpSupportTitle")} onPress={() => setHelpModalVisible(true)} />
           </SettingCard>
 
           {/* Dev Tools */}
@@ -817,17 +738,91 @@ export default function Settings() {
         </View>
       </ScrollView>
 
-      {/* Info Modal */}
-      <Modal animationType="slide" transparent={false} visible={modalVisible} onRequestClose={hideModal}>
-        <View style={[styles.infoModal, { backgroundColor: colors.background.primary }]}>
-          <View style={[styles.infoModalHeader, { borderBottomColor: colors.border }]}>
-            <Pressable onPress={hideModal} style={styles.infoModalClose}>
-              <Feather name="x" size={24} color={colors.foreground.primary} />
-            </Pressable>
+      <SheetModal
+        visible={termsModalVisible}
+        onClose={() => setTermsModalVisible(false)}
+        title={t("terms.title")}
+        actionLabel={t("settings.iUnderstand")}
+      >
+        <Text style={[sheetSectionStyles.sectionContent, { color: colors.muted.foreground, paddingTop: 8, marginBottom: 4 }]}>
+          {t("terms.lastUpdated")}
+        </Text>
+        {(Object.keys(TERMS_ICONS) as (keyof typeof TERMS_ICONS)[]).map((section) => (
+          <View key={section} style={sheetSectionStyles.section}>
+            <View style={sheetSectionStyles.sectionHeader}>
+              <Feather name={TERMS_ICONS[section]} size={15} color={colors.primary.default} />
+              <Text style={[sheetSectionStyles.sectionTitle, { color: colors.primary.default }]}>
+                {t(`terms.sections.${section}.title` as any)}
+              </Text>
+            </View>
+            <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>
+              {t(`terms.sections.${section}.content` as any)}
+            </Text>
           </View>
-          {modalContent}
+        ))}
+      </SheetModal>
+
+      <SheetModal
+        visible={privacyModalVisible}
+        onClose={() => setPrivacyModalVisible(false)}
+        title={t("settings.privacyPolicy")}
+        actionLabel={t("settings.iUnderstand")}
+      >
+        <View style={sheetSectionStyles.section}>
+          <View style={sheetSectionStyles.sectionHeader}>
+            <Feather name="database" size={15} color={colors.primary.default} />
+            <Text style={[sheetSectionStyles.sectionTitle, { color: colors.primary.default }]}>{t("settings.informationWeCollect")}</Text>
+          </View>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.accountInfo")}</Text>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.debtRecords")}</Text>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.usageData")}</Text>
         </View>
-      </Modal>
+        <View style={sheetSectionStyles.section}>
+          <View style={sheetSectionStyles.sectionHeader}>
+            <Feather name="eye" size={15} color={colors.primary.default} />
+            <Text style={[sheetSectionStyles.sectionTitle, { color: colors.primary.default }]}>{t("settings.howWeUse")}</Text>
+          </View>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.provideServices")}</Text>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.sendNotifications")}</Text>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.analytics")}</Text>
+        </View>
+        <View style={sheetSectionStyles.section}>
+          <View style={sheetSectionStyles.sectionHeader}>
+            <Feather name="shield" size={15} color={colors.primary.default} />
+            <Text style={[sheetSectionStyles.sectionTitle, { color: colors.primary.default }]}>{t("settings.dataSecure")}</Text>
+          </View>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.privacyImportant")}</Text>
+        </View>
+      </SheetModal>
+
+      <SheetModal
+        visible={helpModalVisible}
+        onClose={() => setHelpModalVisible(false)}
+        title={t("settings.helpSupport")}
+        actionLabel={t("settings.close")}
+      >
+        <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary, paddingTop: 12, marginBottom: 8 }]}>
+          {t("settings.helpIntro")}
+        </Text>
+        <View style={sheetSectionStyles.section}>
+          <View style={sheetSectionStyles.sectionHeader}>
+            <Feather name="help-circle" size={15} color={colors.primary.default} />
+            <Text style={[sheetSectionStyles.sectionTitle, { color: colors.primary.default }]}>{t("settings.faq")}</Text>
+          </View>
+          <Text style={[sheetSectionStyles.sectionTitle, { color: colors.foreground.primary, marginBottom: 4, fontWeight: "600" }]}>{t("settings.howToAddDebt")}</Text>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.howToAddDebtAnswer")}</Text>
+          <Text style={[sheetSectionStyles.sectionTitle, { color: colors.foreground.primary, marginTop: 12, marginBottom: 4, fontWeight: "600" }]}>{t("settings.howToChangePin")}</Text>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.howToChangePinAnswer")}</Text>
+        </View>
+        <View style={sheetSectionStyles.section}>
+          <View style={sheetSectionStyles.sectionHeader}>
+            <Feather name="mail" size={15} color={colors.primary.default} />
+            <Text style={[sheetSectionStyles.sectionTitle, { color: colors.primary.default }]}>{t("settings.contactSupport")}</Text>
+          </View>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.supportEmail")}</Text>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.responseTime")}</Text>
+        </View>
+      </SheetModal>
 
       <EditProfileModal visible={editProfileModalVisible} onClose={() => setEditProfileModalVisible(false)} />
       <ChangePinModal visible={changePinModalVisible} onClose={() => setChangePinModalVisible(false)} />
@@ -891,13 +886,4 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   logoutBtnText: { fontWeight: "600", marginLeft: 8 },
-  infoModal: { flex: 1, paddingTop: 56 },
-  infoModalHeader: { paddingHorizontal: 24, paddingBottom: 16, borderBottomWidth: 1 },
-  infoModalClose: { alignSelf: "flex-start" },
-  modalBody: { padding: 24 },
-  modalBodyTitle: { fontSize: 24, fontWeight: "700", marginBottom: 16 },
-  modalBodyText: { fontSize: 16, marginBottom: 16 },
-  bold: { fontWeight: "600" },
-  modalCloseBtn: { padding: 16, borderRadius: 12, marginTop: 24 },
-  modalCloseBtnText: { textAlign: "center", fontWeight: "600" },
 })

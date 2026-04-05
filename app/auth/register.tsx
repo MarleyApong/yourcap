@@ -1,3 +1,4 @@
+import { SheetModal, sheetSectionStyles } from "@/components/feature/sheet-modal"
 import { FBackButton } from "@/components/ui/fback-button"
 import { Loader } from "@/components/ui/loader"
 import PinInput from "@/components/ui/pin-input"
@@ -7,8 +8,18 @@ import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
-import { Dimensions, Image, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
+import { Dimensions, Image, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+
+const TERMS_SECTION_ICONS = {
+  storage: "smartphone",
+  responsibility: "alert-triangle",
+  security: "lock",
+  usage: "check-circle",
+  privacy: "shield",
+  limitation: "info",
+  evolution: "zap",
+} as const
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window")
 
@@ -338,74 +349,30 @@ export default function Register() {
         </View>
       </View>
 
-      {/* Modal Termes et Conditions */}
-      <Modal
+      <SheetModal
         visible={termsModalVisible}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setTermsModalVisible(false)}
+        onClose={() => setTermsModalVisible(false)}
+        onAction={() => setTermsAccepted(true)}
+        title={t("terms.title")}
+        actionLabel={t("common.confirm")}
       >
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalCard, { backgroundColor: colors.background.primary }]}>
-            {/* Header */}
-            <View style={[styles.modalHeader, { borderBottomColor: colors.border }]}>
-              <Text style={[styles.modalTitle, { color: colors.primary.default }]}>
-                {t("terms.title")}
+        <Text style={[styles.termsDate, { color: colors.muted.foreground }]}>
+          {t("terms.lastUpdated")}
+        </Text>
+        {(Object.keys(TERMS_SECTION_ICONS) as (keyof typeof TERMS_SECTION_ICONS)[]).map((section) => (
+          <View key={section} style={sheetSectionStyles.section}>
+            <View style={sheetSectionStyles.sectionHeader}>
+              <Feather name={TERMS_SECTION_ICONS[section]} size={15} color={colors.primary.default} />
+              <Text style={[sheetSectionStyles.sectionTitle, { color: colors.primary.default }]}>
+                {t(`terms.sections.${section}.title` as any)}
               </Text>
-              <Pressable onPress={() => setTermsModalVisible(false)}>
-                <Feather name="x" size={22} color={colors.foreground.primary} />
-              </Pressable>
             </View>
-
-            <Text style={[styles.modalDate, { color: colors.muted.foreground }]}>
-              {t("terms.lastUpdated")}
+            <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>
+              {t(`terms.sections.${section}.content` as any)}
             </Text>
-
-            <ScrollView showsVerticalScrollIndicator={false} style={styles.modalScroll}>
-              {([
-                "storage", "responsibility", "security",
-                "usage", "privacy", "limitation", "evolution",
-              ] as const).map((section) => {
-                const sectionIcons: Record<string, string> = {
-                  storage: "smartphone",
-                  responsibility: "alert-triangle",
-                  security: "lock",
-                  usage: "check-circle",
-                  privacy: "shield",
-                  limitation: "info",
-                  evolution: "zap",
-                };
-                return (
-                  <View key={section} style={styles.termSection}>
-                    <View style={styles.termSectionHeader}>
-                      <Feather name={sectionIcons[section] as any} size={15} color={colors.primary.default} />
-                      <Text style={[styles.termSectionTitle, { color: colors.primary.default }]}>
-                        {t(`terms.sections.${section}.title` as any)}
-                      </Text>
-                    </View>
-                    <Text style={[styles.termSectionContent, { color: colors.foreground.primary }]}>
-                      {t(`terms.sections.${section}.content` as any)}
-                    </Text>
-                  </View>
-                );
-              })}
-              <View style={{ height: 24 }} />
-            </ScrollView>
-
-            {/* Bouton accepter */}
-            <Pressable
-              onPress={() => {
-                setTermsAccepted(true)
-                setTermsModalVisible(false)
-              }}
-              style={[styles.modalAcceptBtn, { backgroundColor: colors.primary.default }]}
-            >
-              <Feather name="check" size={18} color="#ffffff" />
-              <Text style={styles.modalAcceptText}>{t("common.confirm")}</Text>
-            </Pressable>
           </View>
-        </View>
-      </Modal>
+        ))}
+      </SheetModal>
     </KeyboardAwareScrollView>
   )
 }
@@ -494,43 +461,6 @@ const styles = StyleSheet.create({
   },
   termsText: { fontSize: 14 },
   termsLink: { fontSize: 14, fontWeight: "600", textDecorationLine: "underline" },
+  termsDate: { fontSize: 12, paddingTop: 8, marginBottom: 4 },
 
-  // Terms modal
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "flex-end",
-  },
-  modalCard: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: "85%",
-    paddingBottom: 24,
-  },
-  modalHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 24,
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-  },
-  modalTitle: { fontSize: 20, fontWeight: "700" },
-  modalDate: { fontSize: 12, paddingHorizontal: 24, paddingTop: 8, marginBottom: 4 },
-  modalScroll: { paddingHorizontal: 24 },
-  termSection: { marginTop: 20 },
-  termSectionHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 6 },
-  termSectionTitle: { fontSize: 15, fontWeight: "700", flex: 1 },
-  termSectionContent: { fontSize: 14, lineHeight: 21 },
-  modalAcceptBtn: {
-    marginHorizontal: 24,
-    marginTop: 16,
-    padding: 14,
-    borderRadius: 12,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 8,
-  },
-  modalAcceptText: { color: "#ffffff", fontWeight: "700", fontSize: 16 },
 })
