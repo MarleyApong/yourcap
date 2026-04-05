@@ -533,6 +533,27 @@ export interface TranslationKeys {
   'importExport.dataStructure.rules.typeValid': string;
   'importExport.dataStructure.rules.dateFormat': string;
 
+  // Terms
+  'terms.title': string;
+  'terms.lastUpdated': string;
+  'terms.accept': string;
+  'terms.link': string;
+  'terms.required': string;
+  'terms.sections.storage.title': string;
+  'terms.sections.storage.content': string;
+  'terms.sections.responsibility.title': string;
+  'terms.sections.responsibility.content': string;
+  'terms.sections.security.title': string;
+  'terms.sections.security.content': string;
+  'terms.sections.usage.title': string;
+  'terms.sections.usage.content': string;
+  'terms.sections.privacy.title': string;
+  'terms.sections.privacy.content': string;
+  'terms.sections.limitation.title': string;
+  'terms.sections.limitation.content': string;
+  'terms.sections.evolution.title': string;
+  'terms.sections.evolution.content': string;
+
   // Errors
   'errors.network': string;
   'errors.server': string;

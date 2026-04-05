@@ -672,6 +672,45 @@ export const fr = {
     error: "Échec du chargement des dettes. Veuillez réessayer."
   },
 
+  // Termes et conditions
+  terms: {
+    title: "Termes et Conditions",
+    lastUpdated: "Dernière mise à jour : Avril 2026",
+    accept: "J'accepte les",
+    link: "termes et conditions",
+    required: "Vous devez accepter les termes et conditions pour continuer",
+    sections: {
+      storage: {
+        title: "📱 Stockage local des données",
+        content: "Toutes vos données (dettes, contacts, paramètres) sont stockées exclusivement sur votre appareil. YourCap ne dispose pas actuellement de serveurs de synchronisation. Vos données ne quittent jamais votre téléphone et n'arrivent pas sur nos serveurs.",
+      },
+      responsibility: {
+        title: "⚠️ Responsabilité de vos données",
+        content: "En l'absence de synchronisation cloud, vous êtes seul responsable de la sauvegarde de vos données. La désinstallation de l'application ou la réinitialisation de votre téléphone entraînera la perte définitive de toutes vos données. YourCap ne pourra pas récupérer des données perdues.",
+      },
+      security: {
+        title: "🔐 Sécurité",
+        content: "YourCap protège l'accès via un code PIN à 6 chiffres et/ou l'authentification biométrique. Vous êtes seul responsable de la confidentialité de votre PIN. Ne le communiquez à personne. En cas d'oubli, un mécanisme de réinitialisation est disponible.",
+      },
+      usage: {
+        title: "✅ Utilisation acceptable",
+        content: "YourCap est un outil de suivi de dettes personnelles. Vous vous engagez à l'utiliser dans le respect des lois en vigueur au Cameroun et dans votre pays de résidence. Toute utilisation à des fins frauduleuses, de harcèlement ou illégales est strictement interdite.",
+      },
+      privacy: {
+        title: "🔒 Vie privée",
+        content: "Vos données restent sur votre téléphone. YourCap ne collecte pas, ne transmet pas et ne vend pas vos données personnelles ou financières à des tiers. Aucun tracking publicitaire n'est effectué.",
+      },
+      limitation: {
+        title: "⚖️ Limitation de responsabilité",
+        content: "YourCap est fourni tel quel, sans garantie d'aucune sorte. Nous déclinons toute responsabilité pour les pertes de données, erreurs d'affichage ou décisions financières prises sur la base des informations affichées dans l'application. L'application est un outil d'aide, non un logiciel comptable certifié.",
+      },
+      evolution: {
+        title: "🚀 Évolution du service",
+        content: "YourCap est en développement actif. Des fonctionnalités de synchronisation cloud et de nouvelles options pourraient être introduites. Vous serez informé avant tout changement majeur affectant le traitement de vos données. L'utilisation continue de l'application vaut acceptation des nouvelles conditions.",
+      },
+    },
+  },
+
   // Messages d'erreur généraux
   errors: {
     network: "Erreur de connexion. Vérifiez votre connexion internet.",

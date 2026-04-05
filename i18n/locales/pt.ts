@@ -603,6 +603,23 @@ export const pt = {
     error: "Falha ao carregar dívidas. Tente novamente.",
   },
 
+  terms: {
+    title: "Termos e Condições",
+    lastUpdated: "Última atualização: Abril 2026",
+    accept: "Aceito os",
+    link: "termos e condições",
+    required: "Você deve aceitar os termos e condições para continuar",
+    sections: {
+      storage: { title: "📱 Armazenamento local", content: "Todos os seus dados são armazenados exclusivamente no seu dispositivo. O YourCap não possui servidores de sincronização atualmente. Seus dados nunca saem do seu telefone." },
+      responsibility: { title: "⚠️ Responsabilidade pelos seus dados", content: "Sem sincronização na nuvem, você é o único responsável pelo backup dos seus dados. Desinstalar o app ou redefinir o telefone resultará na perda permanente de todos os dados." },
+      security: { title: "🔐 Segurança", content: "O YourCap protege o acesso via PIN de 6 dígitos e/ou autenticação biométrica. Você é responsável pela confidencialidade do seu PIN." },
+      usage: { title: "✅ Uso aceitável", content: "O YourCap é uma ferramenta de rastreamento de dívidas pessoais. Você concorda em usá-lo em conformidade com as leis aplicáveis. Qualquer uso fraudulento ou ilegal é estritamente proibido." },
+      privacy: { title: "🔒 Privacidade", content: "Seus dados ficam no seu telefone. O YourCap não coleta, transmite nem vende seus dados pessoais ou financeiros a terceiros." },
+      limitation: { title: "⚖️ Limitação de responsabilidade", content: "O YourCap é fornecido como está, sem garantias. Não somos responsáveis por perda de dados ou decisões financeiras tomadas com base nas informações exibidas." },
+      evolution: { title: "🚀 Evolução do serviço", content: "O YourCap está em desenvolvimento ativo. Recursos de sincronização na nuvem poderão ser introduzidos. Você será notificado antes de qualquer mudança importante." },
+    },
+  },
+
   errors: {
     network: "Erro de rede. Verifique sua conexão com a internet.",
     server: "Erro de servidor. Tente novamente mais tarde.",

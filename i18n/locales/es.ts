@@ -603,6 +603,23 @@ export const es = {
     error: "Error al cargar las deudas. Inténtalo de nuevo.",
   },
 
+  terms: {
+    title: "Términos y Condiciones",
+    lastUpdated: "Última actualización: Abril 2026",
+    accept: "Acepto los",
+    link: "términos y condiciones",
+    required: "Debes aceptar los términos y condiciones para continuar",
+    sections: {
+      storage: { title: "📱 Almacenamiento local", content: "Todos tus datos se almacenan exclusivamente en tu dispositivo. YourCap no tiene servidores de sincronización actualmente. Tus datos nunca salen de tu teléfono." },
+      responsibility: { title: "⚠️ Responsabilidad de tus datos", content: "Sin sincronización en la nube, eres el único responsable de hacer copias de seguridad. Desinstalar la app o resetear tu teléfono resultará en la pérdida permanente de todos tus datos." },
+      security: { title: "🔐 Seguridad", content: "YourCap protege el acceso mediante un PIN de 6 dígitos y/o autenticación biométrica. Eres responsable de la confidencialidad de tu PIN." },
+      usage: { title: "✅ Uso aceptable", content: "YourCap es una herramienta de seguimiento de deudas personales. Te comprometes a usarla respetando las leyes aplicables. Cualquier uso fraudulento o ilegal está estrictamente prohibido." },
+      privacy: { title: "🔒 Privacidad", content: "Tus datos permanecen en tu teléfono. YourCap no recopila, transmite ni vende tus datos personales o financieros a terceros." },
+      limitation: { title: "⚖️ Limitación de responsabilidad", content: "YourCap se proporciona tal cual, sin garantías. No somos responsables de pérdidas de datos o decisiones financieras tomadas en base a la información mostrada." },
+      evolution: { title: "🚀 Evolución del servicio", content: "YourCap está en desarrollo activo. Se podrían introducir funciones de sincronización en la nube. Serás notificado antes de cualquier cambio importante." },
+    },
+  },
+
   errors: {
     network: "Error de red. Verifica tu conexión a internet.",
     server: "Error del servidor. Inténtalo más tarde.",

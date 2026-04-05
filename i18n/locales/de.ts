@@ -603,6 +603,23 @@ export const de = {
     error: "Schulden konnten nicht geladen werden. Bitte erneut versuchen.",
   },
 
+  terms: {
+    title: "Nutzungsbedingungen",
+    lastUpdated: "Zuletzt aktualisiert: April 2026",
+    accept: "Ich akzeptiere die",
+    link: "Nutzungsbedingungen",
+    required: "Du musst die Nutzungsbedingungen akzeptieren, um fortzufahren",
+    sections: {
+      storage: { title: "📱 Lokale Datenspeicherung", content: "Alle deine Daten werden ausschließlich auf deinem Gerät gespeichert. YourCap hat derzeit keine Synchronisierungsserver. Deine Daten verlassen dein Telefon nie." },
+      responsibility: { title: "⚠️ Deine Datenverantwortung", content: "Ohne Cloud-Synchronisierung bist du allein für die Datensicherung verantwortlich. Die Deinstallation der App oder das Zurücksetzen deines Telefons führt zum dauerhaften Verlust aller Daten." },
+      security: { title: "🔐 Sicherheit", content: "YourCap schützt den Zugang über einen 6-stelligen PIN und/oder biometrische Authentifizierung. Du bist für die Vertraulichkeit deines PINs verantwortlich." },
+      usage: { title: "✅ Akzeptable Nutzung", content: "YourCap ist ein persönliches Schulden-Tracking-Tool. Du verpflichtest dich, es im Einklang mit den geltenden Gesetzen zu nutzen. Jede betrügerische oder illegale Nutzung ist streng verboten." },
+      privacy: { title: "🔒 Datenschutz", content: "Deine Daten bleiben auf deinem Telefon. YourCap erhebt, überträgt oder verkauft keine persönlichen oder finanziellen Daten an Dritte." },
+      limitation: { title: "⚖️ Haftungsbeschränkung", content: "YourCap wird ohne jegliche Garantie bereitgestellt. Wir übernehmen keine Haftung für Datenverluste oder finanzielle Entscheidungen basierend auf angezeigten Informationen." },
+      evolution: { title: "🚀 Serviceentwicklung", content: "YourCap befindet sich in aktiver Entwicklung. Cloud-Synchronisierungsfunktionen könnten eingeführt werden. Du wirst vor wesentlichen Änderungen benachrichtigt." },
+    },
+  },
+
   errors: {
     network: "Netzwerkfehler. Überprüfe deine Internetverbindung.",
     server: "Serverfehler. Bitte später erneut versuchen.",

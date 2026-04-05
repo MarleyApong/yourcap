@@ -7,7 +7,7 @@ import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
-import { Dimensions, Image, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native"
+import { Dimensions, Image, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window")
@@ -23,6 +23,8 @@ export default function Register() {
   })
   const [loading, setLoading] = useState(false)
   const [resetKey, setResetKey] = useState(0)
+  const [termsAccepted, setTermsAccepted] = useState(false)
+  const [termsModalVisible, setTermsModalVisible] = useState(false)
 
   const { colors } = useTheme()
   const { t } = useTranslation()
@@ -106,6 +108,10 @@ export default function Register() {
   }
 
   const handleContinue = () => {
+    if (!termsAccepted) {
+      Toast.error(t("terms.required"))
+      return
+    }
     if (validateStep1()) {
       setStep(2)
     }
@@ -282,6 +288,30 @@ export default function Register() {
 
         {/* Boutons absolute en bas — scrollent avec le contenu quand clavier ouvert */}
         <View style={styles.actions}>
+          {/* Checkbox termes et conditions */}
+          <Pressable
+            onPress={() => setTermsAccepted((v) => !v)}
+            style={styles.termsRow}
+          >
+            <View style={[
+              styles.checkbox,
+              {
+                backgroundColor: termsAccepted ? colors.primary.default : "transparent",
+                borderColor: termsAccepted ? colors.primary.default : colors.muted.foreground,
+              },
+            ]}>
+              {termsAccepted && <Feather name="check" size={12} color="#ffffff" />}
+            </View>
+            <Text style={[styles.termsText, { color: colors.foreground.primary }]}>
+              {t("terms.accept")}{" "}
+            </Text>
+            <Pressable onPress={() => setTermsModalVisible(true)}>
+              <Text style={[styles.termsLink, { color: colors.primary.default }]}>
+                {t("terms.link")}
+              </Text>
+            </Pressable>
+          </Pressable>
+
           <Pressable
             onPress={handleContinue}
             disabled={loading}
@@ -299,6 +329,61 @@ export default function Register() {
           </View>
         </View>
       </View>
+
+      {/* Modal Termes et Conditions */}
+      <Modal
+        visible={termsModalVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setTermsModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalCard, { backgroundColor: colors.background.primary }]}>
+            {/* Header */}
+            <View style={[styles.modalHeader, { borderBottomColor: colors.border }]}>
+              <Text style={[styles.modalTitle, { color: colors.primary.default }]}>
+                {t("terms.title")}
+              </Text>
+              <Pressable onPress={() => setTermsModalVisible(false)}>
+                <Feather name="x" size={22} color={colors.foreground.primary} />
+              </Pressable>
+            </View>
+
+            <Text style={[styles.modalDate, { color: colors.muted.foreground }]}>
+              {t("terms.lastUpdated")}
+            </Text>
+
+            <ScrollView showsVerticalScrollIndicator={false} style={styles.modalScroll}>
+              {([
+                "storage", "responsibility", "security",
+                "usage", "privacy", "limitation", "evolution",
+              ] as const).map((section) => (
+                <View key={section} style={styles.termSection}>
+                  <Text style={[styles.termSectionTitle, { color: colors.primary.default }]}>
+                    {t(`terms.sections.${section}.title` as any)}
+                  </Text>
+                  <Text style={[styles.termSectionContent, { color: colors.foreground.primary }]}>
+                    {t(`terms.sections.${section}.content` as any)}
+                  </Text>
+                </View>
+              ))}
+              <View style={{ height: 24 }} />
+            </ScrollView>
+
+            {/* Bouton accepter */}
+            <Pressable
+              onPress={() => {
+                setTermsAccepted(true)
+                setTermsModalVisible(false)
+              }}
+              style={[styles.modalAcceptBtn, { backgroundColor: colors.primary.default }]}
+            >
+              <Feather name="check" size={18} color="#ffffff" />
+              <Text style={styles.modalAcceptText}>{t("common.confirm")}</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </KeyboardAwareScrollView>
   )
 }
@@ -367,4 +452,62 @@ const styles = StyleSheet.create({
   submitBtnText: { textAlign: "center", color: "#ffffff", fontWeight: "600", fontSize: 16 },
   signinRow: { flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 12, marginTop: 12 },
   signinLink: { fontWeight: "700", textDecorationLine: "underline" },
+
+  // Terms checkbox
+  termsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+    flexWrap: "wrap",
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 2,
+    marginRight: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  termsText: { fontSize: 14 },
+  termsLink: { fontSize: 14, fontWeight: "600", textDecorationLine: "underline" },
+
+  // Terms modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "flex-end",
+  },
+  modalCard: {
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    maxHeight: "85%",
+    paddingBottom: 24,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+    borderBottomWidth: 1,
+  },
+  modalTitle: { fontSize: 20, fontWeight: "700" },
+  modalDate: { fontSize: 12, paddingHorizontal: 24, paddingTop: 8, marginBottom: 4 },
+  modalScroll: { paddingHorizontal: 24 },
+  termSection: { marginTop: 20 },
+  termSectionTitle: { fontSize: 15, fontWeight: "700", marginBottom: 6 },
+  termSectionContent: { fontSize: 14, lineHeight: 21 },
+  modalAcceptBtn: {
+    marginHorizontal: 24,
+    marginTop: 16,
+    padding: 14,
+    borderRadius: 12,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+  },
+  modalAcceptText: { color: "#ffffff", fontWeight: "700", fontSize: 16 },
 })
