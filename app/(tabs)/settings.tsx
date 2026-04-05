@@ -434,7 +434,17 @@ export default function Settings() {
               <View style={styles.switchRow}>
                 <View style={styles.switchRowLeft}>
                   <View style={[styles.settingRowIcon, { backgroundColor: colors.primary.default }]}>
-                    <MaterialIcons name="fingerprint" size={20} color={colors.primary.foreground} />
+                    <MaterialIcons
+                      name={
+                        localBiometricCapabilities.biometryType === "face"
+                          ? "face"
+                          : localBiometricCapabilities.biometryType === "iris"
+                          ? "remove-red-eye"
+                          : "fingerprint"
+                      }
+                      size={20}
+                      color={colors.primary.foreground}
+                    />
                   </View>
                   <View style={styles.switchRowText}>
                     <Text style={{ color: colors.foreground.primary }}>

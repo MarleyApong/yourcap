@@ -1,4 +1,5 @@
 import * as LocalAuthentication from "expo-local-authentication"
+import { Platform } from "react-native"
 
 export interface BiometricCapabilities {
   isAvailable: boolean
@@ -107,7 +108,8 @@ export const authenticateWithBiometric = async (): Promise<{ success: boolean; e
 export const getBiometricDisplayName = (biometryType: string | null): string => {
   switch (biometryType) {
     case "fingerprint":
-      return "Fingerprint"
+      // iOS utilise Touch ID, Android utilise l'empreinte digitale
+      return Platform.OS === "ios" ? "Touch ID" : "Fingerprint"
     case "face":
       return "Face ID"
     case "iris":
