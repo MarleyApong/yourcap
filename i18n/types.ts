@@ -296,6 +296,9 @@ export interface TranslationKeys {
   'settings.selectLanguage': string;
   'settings.french': string;
   'settings.english': string;
+  'settings.spanish': string;
+  'settings.german': string;
+  'settings.portuguese': string;
   'settings.exportData': string;
   'settings.importData': string;
   'settings.dataStructure': string;

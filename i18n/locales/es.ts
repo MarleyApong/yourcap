@@ -1,392 +1,619 @@
-// Traducciones en español
+// Traducciones en español para YourCap
 export const es = {
-  onboarding: {
-    welcome: {
-      features: {
-        quality: "onboarding.welcome.features.quality",
-        delivery: "onboarding.welcome.features.delivery",
-        support: "onboarding.welcome.features.support"
-      },
-      title: "onboarding.welcome.title",
-      subtitle: "onboarding.welcome.subtitle",
-      description: "onboarding.welcome.description",
-      getStarted: "onboarding.welcome.getStarted"
-    },
-    interests: {
-      categories: {
-        clothes: "onboarding.interests.categories.clothes",
-        electronics: "onboarding.interests.categories.electronics",
-        accessories: "onboarding.interests.categories.accessories",
-        beauty: "onboarding.interests.categories.beauty"
-      },
-      title: "onboarding.interests.title",
-      save: "onboarding.interests.save"
-    }
-  },
-  terms: {
-    sections: {
-      object: {
-        title: "terms.sections.object.title",
-        content: "terms.sections.object.content"
-      },
-      acceptance: {
-        title: "terms.sections.acceptance.title",
-        content: "terms.sections.acceptance.content"
-      },
-      access: {
-        title: "terms.sections.access.title",
-        content: "terms.sections.access.content"
-      },
-      intellectualProperty: {
-        title: "terms.sections.intellectualProperty.title",
-        content: "terms.sections.intellectualProperty.content"
-      },
-      authorizedUse: {
-        title: "terms.sections.authorizedUse.title",
-        content: "terms.sections.authorizedUse.content"
-      },
-      responsibilities: {
-        title: "terms.sections.responsibilities.title",
-        content: "terms.sections.responsibilities.content"
-      },
-      updates: {
-        title: "terms.sections.updates.title",
-        content: "terms.sections.updates.content"
-      },
-      personalData: {
-        title: "terms.sections.personalData.title",
-        content: "terms.sections.personalData.content"
-      },
-      durationTermination: {
-        title: "terms.sections.durationTermination.title",
-        content: "terms.sections.durationTermination.content"
-      },
-      cguModification: {
-        title: "terms.sections.cguModification.title",
-        content: "terms.sections.cguModification.content"
-      },
-      governingLaw: {
-        title: "terms.sections.governingLaw.title",
-        content: "terms.sections.governingLaw.content"
-      }
-    },
-    title: "terms.title",
-    refuse: "terms.refuse",
-    accept: "terms.accept"
-  },
   common: {
-    loading: "common.loading",
-    error: "common.error",
-    retry: "common.retry",
-    success: "common.success",
-    ok: "common.ok"
+    loading: "Cargando...",
+    save: "Guardar",
+    cancel: "Cancelar",
+    continue: "Continuar",
+    back: "Atrás",
+    edit: "Editar",
+    delete: "Eliminar",
+    close: "Cerrar",
+    confirm: "Confirmar",
+    yes: "Sí",
+    no: "No",
+    error: "Error",
+    success: "Éxito",
+    warning: "Advertencia",
+    info: "Información",
+    retry: "Reintentar",
+    done: "Listo",
+    none: "Ninguno",
+    next: "Siguiente",
+    previous: "Anterior",
+    search: "Buscar",
+    filter: "Filtrar",
+    clear: "Limpiar",
+    select: "Seleccionar",
+    add: "Añadir",
+    remove: "Eliminar",
+    required: "Requerido",
+    optional: "Opcional",
   },
+
+  welcome: {
+    title: "Nunca olvides quién te debe",
+    subtitle: "Controla tus deudas fácilmente y de forma segura.",
+    signIn: "Iniciar sesión",
+    createAccount: "Crear una cuenta",
+  },
+
   auth: {
-    register: {
-      firstName: "auth.register.firstName",
-      name: "auth.register.name",
-      email: "auth.register.email",
-      password: "auth.register.password",
-      phone: "auth.register.phone",
-      confirmPassword: "auth.register.confirmPassword",
-      registerButton: "auth.register.registerButton",
-      orRegisterWith: "auth.register.orRegisterWith",
-      hasAccount: "auth.register.hasAccount"
-    },
     login: {
-      emailRequired: "auth.login.emailRequired",
-      passwordRequired: "auth.login.passwordRequired",
-      error: "auth.login.error",
-      email: "auth.login.email",
-      password: "auth.login.password",
-      forgotPassword: "auth.login.forgotPassword",
-      loginButton: "auth.login.loginButton",
-      orLoginWith: "auth.login.orLoginWith",
-      noAccount: "auth.login.noAccount"
-    }
-  },
-  home: {
-    searchPlaceholder: "Buscar productos...",
-    featured: "Destacados",
-    seeAll: "Ver Todo",
-    searchByCategories: "Buscar por categorías",
-    recommendedIn: "Recomendado en",
-    categories: {
-      clothes: "Ropa",
-      electronics: "Electrónicos",
-      all: "Todo",
-      accessories: "Accesorios",
-      beauty: "Belleza"
+      title: "Bienvenido de nuevo",
+      subtitle: "Introduce tus credenciales",
+      emailOrPhone: "Email o número de teléfono",
+      pinTitle: "Introduce el PIN",
+      pinSubtitle: "Introduce tu PIN de 6 dígitos para continuar",
+      verifyIdentity: "Verificar identidad",
+      biometricSubtitle: "Usa tu PIN o biometría para continuar",
+      welcomeBack: "¡Bienvenido de nuevo!",
+      welcomeBackUser: "Bienvenido de nuevo, {name}",
+      dontHaveAccount: "¿No tienes una cuenta?",
+      signUp: "Registrarse",
+      useDifferentAccount: "Usar otra cuenta",
     },
-    tabs: {
-      all: "Ver Todo",
-      men: "Hombres",
-      women: "Mujeres",
-      children: "Niños",
-      electronics: "Electrónicos"
+    register: {
+      title: "Registrarse",
+      subtitle: "Crea tu cuenta",
+      fullName: "Nombre completo",
+      phoneNumber: "6xx xxx xxx o 2xx xxx xxx",
+      email: "Email (opcional)",
+      createPin: "Crear PIN",
+      createPinSubtitle: "Crea un PIN de 6 dígitos para tu cuenta",
+      confirmPin: "Confirmar PIN",
+      confirmPinSubtitle: "Introduce tu PIN de 6 dígitos de nuevo para confirmar",
+      creatingAccount: "Creando tu cuenta...",
+      accountCreated: "¡Cuenta creada con éxito!",
+      alreadyHaveAccount: "¿Ya tienes una cuenta?",
+      signIn: "Iniciar sesión",
     },
-    tabCategories: {
-      men: {
-        clothes: "Ropa",
-        shoes: "Zapatos",
-        accessories: "Accesorios",
-        care: "Cuidado"
-      },
-      women: {
-        clothes: "Ropa",
-        shoes: "Zapatos",
-        accessories: "Accesorios",
-        care: "Cuidado"
-      },
-      children: {
-        clothes: "Ropa",
-        shoes: "Zapatos",
-        accessories: "Accesorios",
-        care: "Cuidado"
-      },
-      electronics: {
-        gaming: "Juegos y Consolas",
-        computers: "Computadoras y Accesorios",
-        phones: "Teléfonos y Auriculares",
-        audio: "Audio y Hi-Fi"
-      }
-    }
-  },
-  profile: {
-    title: "profile.title",
-    name: "profile.name",
-    subtitle: "profile.subtitle",
-    addProduct: {
-      _value: "profile.sell",
-      title: "profile.sell.title",
-      addPhotos: "profile.sell.addPhotos",
-      productName: "profile.sell.productName",
-      productNamePlaceholder: "profile.sell.productNamePlaceholder",
-      description: "profile.sell.description",
-      descriptionPlaceholder: "profile.sell.descriptionPlaceholder",
-      category: "profile.sell.category",
-      price: "profile.sell.price",
-      pricePlaceholder: "profile.sell.pricePlaceholder",
-      addButton: "profile.sell.addButton"
-    },
-    addProductPage: {
-      addPhotos: "profile.addProductPage.addPhotos",
-      maxPhotos: "profile.addProductPage.maxPhotos",
-      category: "profile.addProductPage.category",
-      selectCategory: "profile.addProductPage.selectCategory",
-      fillAllFields: "profile.addProductPage.fillAllFields",
-      productAdded: "profile.addProductPage.productAdded"
-    },
-    wallet: "profile.wallet",
-    sell: {
-      category: "profile.sell.category",
-      title: "profile.sell.title",
-      addPhotos: "profile.sell.addPhotos",
-      productName: "profile.sell.productName",
-      productNamePlaceholder: "profile.sell.productNamePlaceholder",
-      description: "profile.sell.description",
-      descriptionPlaceholder: "profile.sell.descriptionPlaceholder",
-      price: "profile.sell.price",
-      pricePlaceholder: "profile.sell.pricePlaceholder",
-      addButton: "profile.sell.addButton",
-      addProduct: "profile.sell.addProduct"
-    },
-    subscription: "profile.subscription",
-    orders: "profile.orders",
-    favorites: "profile.favorites",
-    dashboard: "profile.dashboard",
-    dashboardModal: {
-      title: "Elegir tipo de panel",
-      full: "Panel completo",
-      reduced: "Panel reducido",
-      fullDescription: "Vista completa con todas las métricas de ventas",
-      reducedDescription: "Vista simplificada con estadísticas de contenido"
-    },
-    dashboardReduced: {
-      tabs: {
-        content: "Contenido",
-        subscribers: "Suscriptores",
-        viewers: "Espectadores"
-      },
-      content: {
-        title: "Tus mejores publicaciones",
-        mostViewed: "Más vistos",
-        recentViewers: "Espectadores más recientes",
-        noPublication: "Ninguna mejor publicación",
-        noPublicationDescription: "El número de vistas de tus publicaciones no ha aumentado durante el período seleccionado."
-      },
-      subscribers: {
-        notice: "Obtén más detalles después de alcanzar 100 suscriptores",
-        keyIndicators: "Indicadores clave",
-        totalFollowers: "Total de seguidores",
-        sinceStart: "Desde el principio",
-        netSubscribers: "Suscriptores netos",
-        followerData: "Datos de seguidores",
-        gender: "Género",
-        age: "Edad",
-        locations: "Ubicaciones"
-      },
-      viewers: {
-        keyIndicators: "Indicadores clave",
-        totalViewers: "Total de espectadores",
-        newViewers: "Nuevos espectadores",
-        newViewersLegend: "Nuevos espectadores",
-        returningViewersLegend: "Espectadores recurrentes",
-        followerData: "Datos de seguidores",
-        highActivity: "Horas de alta actividad",
-        hours: "Horas",
-        days: "Días",
-        activityNotice: "La información aparecerá cuando haya suficientes datos disponibles."
-      },
-      period: {
-        days7: "7 días",
-        days28: "28 días",
-        days30: "30 días",
-        days365: "365 días"
-      }
-    },
-    dashboardFull: {
-      title: "Panel general",
-      totalSales: "Ventas totales",
-      lastDays: "Últimos 7 días",
-      sales: "Ventas",
-      previous: "Anterior",
-      details: "Detalles",
-      visitors: "Total de visitantes de la tienda en línea",
-      viewReport: "Ver informe",
-      visitorsOverTime: "Visitantes a lo largo del tiempo",
-      today: "Hoy",
-      yesterday: "Ayer",
-      deviceVisits: "Visitas a la tienda en línea por tipo de dispositivo",
-      mobile: "Móvil",
-      desktop: "Escritorio",
-      tablet: "Tableta",
-      salesByCampaigns: "Ventas totales atribuidas a campañas de marketing",
-      topProducts: "Productos principales",
-      allProduct: "Todos los productos",
-      search: "Buscar",
-      totalOrders: "Pedidos totales",
-      newOrder: "Nuevo pedido",
-      totalCustomers: "Clientes totales",
-      newCustomer: "Nuevo cliente",
-      paymentMethod: "Método de pago",
-      status: "Estado",
-      active: "Activo",
-      transactions: "Transacciones",
-      revenue: "Ingresos",
-      viewTransactions: "Ver transacciones",
-      deactivate: "Desactivar",
-      addCard: "Agregar tarjeta",
-      reportWeek: "Informe de esta semana",
-      thisWeek: "Esta semana",
-      lastWeek: "Semana pasada",
-      totalVisitors: "Visitantes totales",
-      activeCustomers: "Clientes activos",
-      repeatCustomers: "Clientes recurrentes",
-      customerOverview: "Resumen de clientes"
-    }
-  },
-  settings: {
-    language: "settings.language"
-  },
-  sell: {
-    title: "sell.title",
-    subtitle: "sell.subtitle",
-    permissions: {
-      title: "sell.permissions.title",
-      message: "sell.permissions.message"
+    forgotPassword: {
+      identifierRequired: "Se requiere el nombre completo y el email/teléfono",
+      resetFailed: "Error al restablecer el PIN. Inténtalo de nuevo.",
     },
     validation: {
-      title: "sell.validation.title",
-      message: "sell.validation.message"
+      fullNameRequired: "El nombre completo es requerido",
+      phoneRequired: "El número de teléfono es requerido",
+      invalidPhone: "Introduce un número de teléfono camerunés válido",
+      invalidEmail: "Introduce una dirección de email válida",
+      pinLength: "El PIN debe tener 6 dígitos",
+      pinMismatch: "Los PINs no coinciden",
+      invalidCredentials: "Credenciales inválidas. Inténtalo de nuevo.",
+      pleaseEnterEmailOrPhone: "Introduce tu email o número de teléfono",
     },
-    success: {
-      title: "sell.success.title",
-      message: "sell.success.message"
+    errors: {
+      registrationFailed: "Error en el registro. Inténtalo de nuevo.",
+      unexpectedError: "Ocurrió un error inesperado. Inténtalo más tarde.",
+      biometricFailed: "Error en la autenticación biométrica",
+      biometricError: "Error de autenticación biométrica",
     },
-    images: {
-      title: "sell.images.title"
-    },
-    details: {
-      title: "sell.details.title",
-      productTitle: "sell.details.productTitle",
-      productTitlePlaceholder: "sell.details.productTitlePlaceholder",
-      description: "sell.details.description",
-      descriptionPlaceholder: "sell.details.descriptionPlaceholder",
-      price: "sell.details.price",
-      condition: "sell.details.condition",
-      conditionPlaceholder: "sell.details.conditionPlaceholder"
-    },
-    publish: "sell.publish",
-    addProductItem: {
-      title: "sell.addProductItem.title",
-      subtitle: "sell.addProductItem.subtitle"
-    },
-    quickActions: "sell.quickActions",
-    manage: "sell.manage",
-    makeOffer: {
-      title: "sell.makeOffer.title"
-    }
   },
-  product: {
-    details: {
-      title: "product.details.title"
-    }
+
+  tabs: {
+    dashboard: "Panel",
+    history: "Historial",
+    settings: "Configuración",
   },
-  checkout: {
-    title: "checkout.title",
-    priceBreakdown: "checkout.priceBreakdown",
-    order: "checkout.order",
-    shipping: "checkout.shipping",
-    total: "checkout.total",
-    pay: "checkout.pay"
-  },
-  messages: {
-    details: {
-      title: "messages.details.title",
-      content: "messages.details.content"
+
+  dashboard: {
+    title: "Panel",
+    quickActions: "Acciones rápidas",
+    addDebt: "Añadir deuda",
+    addCredit: "Añadir crédito",
+    summary: {
+      totalOwed: "Total prestado",
+      totalLent: "Total debido",
+      balance: "Saldo",
+      people: "personas",
+      person: "persona",
     },
-    title: "messages.title",
-    tabs: {
-      messages: "messages.tabs.messages",
-      notifications: "messages.tabs.notifications"
+    errors: {
+      databaseNotReady: "Base de datos no lista. Reinicia la aplicación.",
+      failedToLoad: "Error al cargar los datos. Inténtalo de nuevo.",
+      tapToRetry: "Toca para reintentar",
     },
     empty: {
-      title: "messages.empty.title",
-      description: "messages.empty.description"
-    }
+      title: "No hay deudas registradas",
+      subtitle: "Comienza añadiendo tu primera deuda o crédito",
+      addFirst: "Añadir la primera",
+    },
+    debt: {
+      owes: "debe",
+      owed: "te debe",
+    },
   },
-  notifications: {
-    empty: {
-      title: "notifications.empty.title",
-      description: "notifications.empty.description"
-    }
+
+  debt: {
+    add: {
+      title: "Añadir deuda",
+      editTitle: "Editar deuda",
+      name: "Nombre de la persona",
+      namePlaceholder: "Ej: Juan García",
+      amount: "Monto",
+      amountPlaceholder: "Ej: 50000",
+      description: "Descripción",
+      descriptionPlaceholder: "Ej: Préstamo para emergencia médica",
+      descriptionOptional: "Descripción (Opcional)",
+      type: "Tipo",
+      typeIOwed: "Me deben (alguien me debe)",
+      typeIOwe: "Debo (debo a alguien)",
+      save: "Guardar deuda",
+      delete: "Eliminar esta deuda",
+      debtType: {
+        title: "Tipo de deuda",
+        owing: "Alguien me debe",
+        owed: "Debo a alguien",
+        owingDescription: "Registra dinero que alguien te debe - sigue cuándo prestaste y cuándo debe devolverse.",
+        owedDescription: "Registra dinero que debes a alguien - controla tus obligaciones y fechas de vencimiento.",
+      },
+      contact: {
+        title: "Información de contacto",
+        subtitle: "Añade los datos de la persona para identificarla y contactarla fácilmente.",
+        fullName: "Nombre completo",
+        phone: "Número de teléfono",
+        phonePlaceholder: "6XX XXX XXX",
+        email: "Email (Opcional)",
+        emailPlaceholder: "xxx@xxx.xx",
+      },
+      financial: {
+        title: "Detalles financieros",
+        subtitle: "Especifica el monto, la moneda y las fechas importantes.",
+        currency: "Moneda",
+        loanDate: "Fecha del préstamo",
+        dueDate: "Fecha de vencimiento",
+      },
+      validation: {
+        nameRequired: "El nombre del contacto es requerido",
+        phoneRequired: "El número de teléfono es requerido",
+        amountRequired: "El monto es requerido",
+        amountPositive: "El monto debe ser positivo",
+        invalidAmount: "Introduce un monto válido mayor que 0",
+        invalidDueDate: "La fecha de vencimiento no puede ser anterior a la del préstamo",
+      },
+      success: "¡Deuda registrada con éxito!",
+      error: "Error al crear la deuda. Inténtalo de nuevo.",
+    },
+    list: {
+      filterAll: "Todos",
+      filterOwed: "Me deben",
+      filterIowe: "Debo",
+      searchPlaceholder: "Buscar por nombre...",
+      empty: "No se encontraron deudas",
+      emptyFilter: "No se encontraron deudas para este filtro",
+    },
+    item: {
+      you: "Tú",
+      owes: "debe",
+      owed: "te debe",
+      viewDetails: "Ver detalles",
+    },
+    details: {
+      title: "Detalles de la deuda",
+      loading: "Cargando detalles de la deuda...",
+      notFound: "Deuda no encontrada o acceso denegado",
+      failedToLoad: "Error al cargar los detalles de la deuda",
+      statusUpdated: "Estado de la deuda actualizado con éxito",
+      statusUpdateFailed: "Error al actualizar el estado",
+      deleteSuccess: "Deuda eliminada con éxito",
+      deleteFailed: "Error al eliminar la deuda",
+      updateSuccess: "Deuda actualizada con éxito",
+      updateFailed: "Error al actualizar la deuda. Inténtalo de nuevo.",
+      infoTitle: "Información de la deuda",
+      statusActions: "Acciones de estado",
+      markAsPaid: "Marcar como pagado",
+      markAsOverdue: "Marcar como vencido",
+      markAsPending: "Marcar como pendiente",
+      editDebt: "Editar deuda",
+      deleteDebt: "Eliminar deuda",
+      editTitle: "Editar deuda",
+      saving: "Guardando...",
+      saveChanges: "Guardar cambios",
+      call: "Llamar",
+      sms: "SMS",
+      email: "Email",
+      dueDate: "Fecha de vencimiento",
+      loanDate: "Fecha del préstamo",
+      phoneNumber: "Número de teléfono",
+      createdOn: "Creado el",
+      amount: "Monto",
+      description: "Descripción",
+      createdAt: "Creado el",
+      updatedAt: "Actualizado el",
+      edit: "Editar",
+      delete: "Eliminar",
+    },
+    status: {
+      paid: "Pagado",
+      pending: "Pendiente",
+      overdue: "Vencido",
+    },
+    delete: {
+      title: "¿Eliminar registro?",
+      confirmMessage: "Esta acción no se puede deshacer. El registro de la deuda será eliminado permanentemente.",
+      message: "¿Estás seguro de que quieres eliminar esta deuda? Esta acción no se puede deshacer.",
+      confirm: "Eliminar",
+      cancel: "Cancelar",
+    },
   },
-  search: {
-    placeholder: "Buscar un artículo o miembro",
+
+  settings: {
+    title: "Configuración",
+    profile: "Perfil",
+    security: "Seguridad",
+    notifications: "Notificaciones",
+    language: "Idioma",
+    data: "Datos",
+    about: "Acerca de",
+    logout: "Cerrar sesión",
+    editProfile: "Editar perfil",
+    changePin: "Cambiar PIN",
+    biometric: "Autenticación biométrica",
+    biometricDescription: "Usar huella dactilar o Face ID",
+    enableNotifications: "Activar notificaciones",
+    reminderTime: "Hora de recordatorio",
+    reminderDays: "Días antes del recordatorio",
+    multipleTimes: "Varias horas",
+    summaryNotifications: "Notificaciones de resumen",
+    daily: "Diario",
+    weekly: "Semanal",
+    selectLanguage: "Seleccionar idioma",
+    french: "Français",
+    english: "English",
+    spanish: "Español",
+    german: "Deutsch",
+    portuguese: "Português",
+    exportData: "Exportar datos",
+    importData: "Importar datos",
+    dataStructure: "Estructura de datos",
+    logoutConfirm: "¿Estás seguro de que quieres cerrar sesión?",
+    logoutTitle: "Confirmar cierre de sesión",
+    logoutCancel: "Cancelar",
+    sessionManagement: "Gestión de sesiones",
+    rememberMe: "Recordarme",
+    rememberMeDescription: "Mantenerme conectado en este dispositivo",
+    sessionDuration: "Duración de la sesión",
+    autoLogout: "Cierre de sesión automático tras inactividad",
+    backgroundLockDelay: "Retraso de bloqueo en segundo plano",
+    lockImmediately: "Inmediatamente",
+    lockFiveSeconds: "5 segundos",
+    lockTenSeconds: "10 segundos",
+    lockThirtySeconds: "30 segundos",
+    lockOneMinute: "1 minuto",
+    termsOfService: "Términos de servicio",
+    privacyPolicy: "Política de privacidad",
+    helpSupport: "Ayuda y soporte",
+    deleteAccount: "Eliminar cuenta",
+    iUnderstand: "Entendido",
     close: "Cerrar",
+    lastUpdated: "Última actualización:",
+    termsWelcome: "¡Bienvenido a YourCap! Estos Términos de servicio rigen tu uso de nuestra aplicación.",
+    termsAgreement: "Al usar nuestra app, aceptas estos términos. Por favor léelos detenidamente.",
+    freeService: "Servicio gratuito:",
+    freeServiceText: "Actualmente YourCap es completamente gratuito. Podrían introducirse funciones premium en el futuro.",
+    dataUsage: "Uso de datos:",
+    dataUsageText: "Para mejorar nuestros servicios, podemos recopilar datos de uso anonimizados. La información personal nunca se venderá a terceros.",
+    userResponsibilities: "Responsabilidades del usuario:",
+    userResponsibilitiesText: "Eres responsable de mantener la confidencialidad de tu cuenta y la exactitud de tus registros.",
+    privacyImportant: "Tu privacidad es importante para nosotros.",
+    informationWeCollect: "Información que recopilamos:",
+    accountInfo: "• Información de cuenta (nombre, email, teléfono)",
+    debtRecords: "• Registros de deudas e información financiera",
+    usageData: "• Datos de uso de la app para mejora",
+    howWeUse: "Cómo usamos tu información:",
+    provideServices: "• Para proporcionar y mejorar nuestros servicios",
+    sendNotifications: "• Para enviar notificaciones importantes sobre tus deudas",
+    analytics: "• Para análisis y mejorar la experiencia del usuario",
+    dataSecure: "Tus datos se almacenan de forma segura y nunca se comparten con terceros sin tu consentimiento.",
+    helpIntro: "¿Necesitas ayuda con YourCap? Aquí tienes algunos recursos:",
+    faq: "Preguntas frecuentes:",
+    howToAddDebt: "• ¿Cómo añadir una nueva deuda?",
+    howToAddDebtAnswer: "Ve a la pestaña Panel y pulsa el botón \"+\" para añadir un registro.",
+    howToChangePin: "• ¿Cómo cambiar mi PIN?",
+    howToChangePinAnswer: "Ve a Configuración → Perfil → Cambiar PIN.",
+    contactSupport: "Contactar soporte:",
+    supportEmail: "Email: support@yourcap.app",
+    responseTime: "Normalmente respondemos en 24 horas.",
+    deleteAccountConfirm: "Esto eliminará permanentemente tu cuenta y todos los datos asociados.",
+    deleteAccountTitle: "¿Eliminar cuenta?",
+    deleteAccountButton: "Eliminar",
+    accountDeletionSoon: "¡Función de eliminación de cuenta próximamente!",
+    developmentTools: "Herramientas de desarrollo",
+    testSummaryNotification: "Probar notificación de resumen",
+    testNotificationSent: "¡Notificación de prueba enviada!",
+    rescheduleNotifications: "Reprogramar todas las notificaciones",
+    notificationsRescheduled: "¡Todas las notificaciones reprogramadas!",
+    dangerZone: "Zona de peligro",
+    logOut: "Cerrar sesión",
+    notificationsEnabled: "Notificaciones activadas",
+    notificationsDisabled: "Notificaciones desactivadas",
+    notificationPermissionsDenied: "Permisos de notificación denegados",
+    notificationTypes: "Tipos de notificaciones",
+    systemNotifications: "Notificaciones del sistema",
+    systemNotificationsDesc: "Notificaciones push en tu dispositivo",
+    systemNotificationsEnabled: "Notificaciones del sistema activadas",
+    systemNotificationsDisabled: "Notificaciones del sistema desactivadas",
+    emailNotifications: "Notificaciones por email",
+    emailNotificationsDesc: "Enviar recordatorios a tu email",
+    emailComingSoon: "¡Notificaciones por email próximamente!",
+    smsNotifications: "Notificaciones SMS",
+    smsNotificationsDesc: "Enviar recordatorios por SMS",
+    smsComingSoon: "¡Notificaciones SMS próximamente!",
+    daysBeforeReminder: "Días antes del recordatorio",
+    reminderScheduleUpdated: "Calendario de recordatorios actualizado",
+    preferredNotificationTimes: "Horas preferidas para notificaciones",
+    immediately: "Inmediatamente",
+    oneMin: "1 min",
+    fiveMin: "5 min",
+    fifteenMin: "15 min",
+    thirtyMin: "30 min",
+    sixtyMin: "60 min",
+    oneHundredTwentyMin: "120 min",
+    oneHour: "1 hora",
+    eightHours: "8 horas",
+    twentyFourHours: "24 horas",
+    sevenDays: "7 días",
+    oneDay: "1 día",
+    threeDays: "3 días",
+    fiveDays: "5 días",
+    fiveAm: "5:00",
+    sixAm: "6:00",
+    sevenAm: "7:00",
+    eightAm: "8:00",
+    nineAm: "9:00",
+    twelvePm: "12:00",
+    onePm: "13:00",
+    twoPm: "14:00",
+    threePm: "15:00",
+    sixPm: "18:00",
+    eightPm: "20:00",
+    ninePm: "21:00",
+    summaryNotificationsDesc: "Resumen regular de tus deudas",
+    summaryNotificationsEnabled: "Notificaciones de resumen activadas",
+    summaryNotificationsDisabled: "Notificaciones de resumen desactivadas",
+    summaryFrequency: "Frecuencia del resumen",
+    summaryTime: "Hora del resumen",
+    summaryFrequencyUpdated: "Frecuencia del resumen actualizada",
+    summaryTimeUpdated: "Hora del resumen actualizada",
+    selectMultipleTimes: "Selecciona varias horas para los recordatorios",
+    notificationTimesUpdated: "Horas de notificación actualizadas",
+    termsOfServiceTitle: "Términos de servicio",
+    privacyPolicyTitle: "Política de privacidad",
+    helpSupportTitle: "Ayuda y soporte",
+    debtsImported: "deudas importadas!",
+  },
+
+  profile: {
+    edit: {
+      title: "Editar perfil",
+      subtitle: "Información personal",
+      description: "Edita tu información de perfil",
+      fullName: "Nombre completo",
+      phoneNumber: "6xx xxx xxx o 2xx xxx xxx",
+      email: "Email (opcional)",
+      requiredFields: "* Campos obligatorios",
+      success: "¡Perfil actualizado con éxito!",
+      error: "Error al actualizar el perfil",
+      validation: {
+        fullNameRequired: "El nombre completo es requerido",
+        phoneRequired: "El número de teléfono es requerido",
+        invalidPhone: "Introduce un número de teléfono camerunés válido",
+        invalidEmail: "Introduce una dirección de email válida",
+      },
+    },
+    changePin: {
+      title: "Cambiar PIN",
+      currentPin: "PIN actual",
+      currentPinSubtitle: "Introduce tu PIN actual para continuar",
+      newPin: "Nuevo PIN",
+      newPinSubtitle: "Crea tu nuevo PIN de 6 dígitos",
+      confirmPin: "Confirmar PIN",
+      confirmPinSubtitle: "Confirma tu nuevo PIN",
+      steps: { current: "Actual", new: "Nuevo", confirm: "Confirmar" },
+      verifying: "Verificando...",
+      updating: "Actualizando...",
+      processing: "Procesando...",
+      success: "¡PIN cambiado con éxito!",
+      validation: {
+        incorrectPin: "El PIN actual es incorrecto",
+        pinMustBeDifferent: "El nuevo PIN debe ser diferente al actual",
+        pinMismatch: "Los PINs no coinciden",
+      },
+      errors: {
+        updateFailed: "Error al cambiar el PIN",
+        unexpectedError: "Ocurrió un error inesperado",
+      },
+    },
+  },
+
+  notifications: {
+    permission: {
+      title: "Activar notificaciones",
+      message: "Permite las notificaciones para recibir recordatorios de deudas.",
+      allow: "Permitir",
+      later: "Más tarde",
+    },
+    summary: {
+      title: "Resumen de deudas",
+      dailySummary: "📊 Resumen diario",
+      weeklySummary: "📊 Resumen semanal",
+      summaryContent: "Consulta tu resumen de deudas y recordatorios",
+      noPendingDebts: "🎉 ¡No tienes deudas pendientes!",
+      debtSummaryTitle: "📊 Tu resumen de deudas",
+      youOwe: "Debes a",
+      youAreOwed: "Te deben",
+      totalPeople: "personas en total",
+      totalAmount: "por un monto total de",
+      owingFormat: "💰 {count} persona{plural} te debe{pluralOwes} {amount} {currency}",
+      owedFormat: "⚠️ Debes {amount} {currency} a {count} persona{plural}",
+    },
+    reminder: {
+      title: "Recordatorio de deuda",
+      message: "No olvides tu deuda con",
+    },
+  },
+
+  importExport: {
+    title: "Gestión de datos",
+    export: {
+      title: "Exportar",
+      sectionTitle: "📤 Exportar tus datos",
+      description: "Guarda todas tus deudas en formato CSV",
+      button: "Exportar mis deudas",
+      buttonAlt: "Exportar a CSV",
+      success: "¡Datos exportados con éxito!",
+      error: "Error al exportar",
+      dataError: "Error al exportar los datos",
+    },
+    import: {
+      title: "Importar",
+      sectionTitle: "📥 Importar datos",
+      description: "Importa deudas desde un archivo CSV",
+      fromText: "Desde texto",
+      fromFile: "Desde archivo",
+      pasteCSV: "Pegar CSV",
+      fileButton: "Archivo",
+      structureButton: "Estructura",
+      templateButton: "Plantilla",
+      templateSuccess: "¡Plantilla descargada!",
+      templateError: "Error al descargar la plantilla",
+      textPlaceholder: "Pega tu contenido CSV aquí...",
+      selectFile: "Seleccionar archivo CSV",
+      success: "¡Datos importados con éxito!",
+      importedSuccess: "deudas importadas con éxito!",
+      importedFromFile: "deudas importadas desde el archivo!",
+      validation: "Validando datos...",
+      pleaseEnterCSV: "Por favor pega el contenido CSV",
+      modalTitle: "Importar CSV",
+      modalDescription: "Pega el contenido de tu archivo CSV aquí:",
+      modalPlaceholder: "contact_name,contact_phone,amount,currency,loan_date,due_date,status,debt_type",
+      modalCancel: "Cancelar",
+      modalImport: "Importar",
+      importFileError: "No se pudo importar ninguna deuda del archivo",
+      importFileGeneralError: "Error al importar el archivo",
+      importTextError: "No se pudo importar ninguna deuda",
+      importGeneralError: "Error al importar",
+      importCompletedWarnings: "Importación completada con advertencias",
+      importErrors: "Errores de importación",
+      errorsEncountered: "Errores encontrados:",
+      validationErrors: "Errores de validación",
+      validationMessage: "línea(s) contienen errores:",
+      continueWithValid: "¿Deseas continuar con las",
+      validLines: "líneas válidas?",
+      continueButton: "Continuar",
+      cancelButton: "Cancelar",
+      line: "Línea",
+      errors: {
+        invalidFormat: "Formato de archivo inválido",
+        invalidCSVFormat: "Formato CSV inválido",
+        parseError: "Error al analizar el archivo",
+        validationError: "Error de validación de datos",
+      },
+    },
+    dataStructure: {
+      title: "Estructura de datos CSV",
+      description: "Formato requerido para importar deudas:",
+      example: "Ejemplo:",
+      fields: { name: "nombre", amount: "monto", type: "tipo", description: "descripción", date: "fecha" },
+      typeValues: { owed: "owed (te deben)", owe: "owe (debes)" },
+      rules: {
+        title: "Reglas de validación:",
+        nameRequired: "El nombre es obligatorio",
+        amountPositive: "El monto debe ser un número positivo",
+        typeValid: "El tipo debe ser 'owed' u 'owe'",
+        dateFormat: "La fecha debe estar en formato YYYY-MM-DD (opcional)",
+      },
+    },
+  },
+
+  modals: {
+    editProfile: {
+      title: "Editar perfil",
+      fullName: "Nombre completo",
+      fullNamePlaceholder: "Tu nombre completo",
+      email: "Correo electrónico",
+      emailPlaceholder: "tu@email.com",
+      phoneNumber: "Número de teléfono",
+      phonePlaceholder: "6XXXXXXXX",
+      subtitle: "Edita tu información de perfil",
+      save: "Guardar",
+      cancel: "Cancelar",
+      validation: {
+        fullNameRequired: "El nombre completo es requerido",
+        phoneRequired: "El número de teléfono es requerido",
+        invalidPhone: "Introduce un número de teléfono camerunés válido",
+        invalidEmail: "Introduce una dirección de email válida",
+      },
+      success: "¡Perfil actualizado con éxito!",
+      error: "Error al actualizar el perfil",
+      unexpectedError: "Ocurrió un error inesperado",
+    },
+    changePin: {
+      title: "Cambiar código PIN",
+      currentPin: "PIN actual",
+      newPin: "Nuevo PIN",
+      confirmPin: "Confirmar nuevo PIN",
+      change: "Cambiar",
+      cancel: "Cancelar",
+      steps: {
+        current: "PIN actual",
+        new: "Nuevo PIN",
+        confirm: "Confirmar PIN",
+        currentSubtitle: "Introduce tu PIN actual para continuar",
+        newSubtitle: "Crea tu nuevo PIN de 6 dígitos",
+        confirmSubtitle: "Confirma tu nuevo PIN",
+      },
+      validation: {
+        currentPinRequired: "El PIN actual es requerido",
+        newPinRequired: "El nuevo PIN es requerido",
+        confirmPinRequired: "La confirmación del PIN es requerida",
+        pinMismatch: "Los PINs no coinciden",
+        invalidCurrentPin: "El PIN actual es incorrecto",
+        pinMustBeDifferent: "El nuevo PIN debe ser diferente al actual",
+      },
+      success: "¡PIN cambiado con éxito!",
+      error: "Error al cambiar el PIN",
+      verifying: "Verificando...",
+      updating: "Actualizando...",
+      processing: "Procesando...",
+    },
+  },
+
+  history: {
+    title: "Historial",
+    addDebt: "Añadir deuda",
+    loading: "Cargando tus deudas...",
+    filters: {
+      all: "Todos",
+      owed: "Me deben",
+      iOwe: "Debo",
+      pending: "Pendiente",
+      paid: "Pagado",
+    },
     empty: {
-      title: "Encuentra artículos que te gusten",
-      description: "Descubre artículos de moda y accesorios. Cómpralos ahora o agrégalos a favoritos"
+      title: "No se encontraron deudas",
+      description: "Ajusta los filtros o añade tu primera deuda para empezar.",
+      buttonText: "Añadir nueva deuda",
     },
-    emptyMembers: {
-      title: "Encuentra miembros para seguir",
-      description: "Busca miembros de la comunidad Elite y descubre sus armarios"
+    debtType: {
+      owesYou: "Te debe",
+      youOwe: "Debes",
     },
-    results: "Resultados de búsqueda",
-    membersEmpty: "No se encontraron miembros",
-    tabs: {
-      articles: "Artículos",
-      members: "Miembros"
-    },
-    recentSearches: "Tus búsquedas",
-    noResults: {
-      title: "No se encontraron resultados",
-      description: "Intenta con otras palabras clave o navega por nuestras categorías"
-    },
-    noResultsMembers: {
-      title: "No se encontraron miembros",
-      description: "Intenta con otro nombre o usuario"
-    }
-  }
-};
+    dateLabels: { loan: "Préstamo", due: "Vencimiento" },
+    error: "Error al cargar las deudas. Inténtalo de nuevo.",
+  },
+
+  errors: {
+    network: "Error de red. Verifica tu conexión a internet.",
+    server: "Error del servidor. Inténtalo más tarde.",
+    unknown: "Ocurrió un error inesperado.",
+    validation: "Error de validación de datos.",
+  },
+
+  success: {
+    saved: "¡Guardado con éxito!",
+    updated: "¡Actualizado con éxito!",
+    deleted: "¡Eliminado con éxito!",
+    created: "¡Creado con éxito!",
+  },
+}

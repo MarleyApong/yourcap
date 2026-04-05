@@ -1,4 +1,5 @@
 import { useAuthStore } from '@/stores/authStore';
+import { useLanguageStore } from '@/stores/languageStore';
 import React from 'react';
 import { DEFAULT_LANGUAGE, translations as localeTranslations, SupportedLanguage } from './locales';
 import type { TranslationKey, TranslationKeys } from './types';
@@ -8,9 +9,10 @@ export const translations = localeTranslations;
 // Hook avec type-safety et support de la langue utilisateur
 export const useTranslation = () => {
   const { user } = useAuthStore();
-  
-  // Utiliser la langue de l'utilisateur ou la langue par défaut
-  const currentLanguage: SupportedLanguage = (user?.settings?.language as SupportedLanguage) || DEFAULT_LANGUAGE;
+  const { guestLanguage } = useLanguageStore();
+
+  // Priorité : langue du compte > langue invité > langue par défaut
+  const currentLanguage: SupportedLanguage = (user?.settings?.language as SupportedLanguage) || guestLanguage || DEFAULT_LANGUAGE;
   
   // Debug: Log language changes
   React.useEffect(() => {

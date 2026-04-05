@@ -274,6 +274,9 @@ export const en = {
     selectLanguage: "Select language",
     french: "Français",
     english: "English",
+    spanish: "Español",
+    german: "Deutsch",
+    portuguese: "Português",
 
     // Data section
     exportData: "Export data",
