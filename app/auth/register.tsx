@@ -38,22 +38,22 @@ export default function Register() {
 
   const validateStep1 = (): boolean => {
     if (!formData.full_name.trim()) {
-      Toast.error("Full name is required")
+      Toast.error(t("auth.validation.fullNameRequired"))
       return false
     }
 
     if (!formData.phone_number.trim()) {
-      Toast.error("Phone number is required")
+      Toast.error(t("auth.validation.phoneRequired"))
       return false
     }
 
     if (!/^(6|2)(2|3|[5-9])[0-9]{7}$/.test(formData.phone_number)) {
-      Toast.error("Please enter a valid Cameroonian phone number")
+      Toast.error(t("auth.validation.invalidPhone"))
       return false
     }
 
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      Toast.error("Please enter a valid email address")
+      Toast.error(t("auth.validation.invalidEmail"))
       return false
     }
 
@@ -62,12 +62,12 @@ export default function Register() {
 
   const validatePin = (): boolean => {
     if (formData.pin.length !== 6) {
-      Toast.error("PIN must be 6 digits")
+      Toast.error(t("auth.validation.pinLength"))
       return false
     }
 
     if (formData.pin !== formData.confirmPin) {
-      Toast.error("PINs do not match")
+      Toast.error(t("auth.validation.pinMismatch"))
       return false
     }
 
@@ -92,12 +92,12 @@ export default function Register() {
       })
 
       if (success) {
-        Toast.success("Account created successfully!")
+        Toast.success(t("auth.register.accountCreated"))
         router.replace("/(tabs)/dashboard")
       }
     } catch (error) {
       console.error("Registration error:", error)
-      Toast.error("Registration failed. Please try again.")
+      Toast.error(t("auth.errors.registrationFailed"))
       setFormData((prev) => ({ ...prev, confirmPin: "" }))
       setResetKey((k) => k + 1)
     } finally {
@@ -294,7 +294,7 @@ export default function Register() {
           <View style={styles.signinRow}>
             <Text style={{ color: colors.foreground.primary }}>{t("auth.register.alreadyHaveAccount")}</Text>
             <Link href="/auth/login">
-              <Text style={[styles.signinLink, { color: colors.primary.default }]}>Sign in</Text>
+              <Text style={[styles.signinLink, { color: colors.primary.default }]}>{t("auth.register.signIn")}</Text>
             </Link>
           </View>
         </View>

@@ -158,7 +158,7 @@ export default function History() {
                 <View style={styles.debtStatus}>
                   <View style={[styles.statusDot, { backgroundColor: getStatusColor(debt.status) }]} />
                   <Text style={[styles.statusText, { color: colors.muted.foreground }]}>
-                    {debt.status.toLowerCase()}
+                    {debt.status === "PAID" ? t("debt.status.paid") : debt.status === "OVERDUE" ? t("debt.status.overdue") : t("debt.status.pending")}
                   </Text>
                 </View>
               </View>

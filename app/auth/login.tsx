@@ -50,18 +50,18 @@ export default function Login() {
 
   const validateIdentifier = (value: string): boolean => {
     if (!value.trim()) {
-      Toast.error("Please enter your email or phone number")
+      Toast.error(t("auth.validation.pleaseEnterEmailOrPhone"))
       return false
     }
 
     if (value.includes("@")) {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        Toast.error("Please enter a valid email address")
+        Toast.error(t("auth.validation.invalidEmail"))
         return false
       }
     } else {
       if (!/^(6|2)(2|3|[5-9])[0-9]{7}$/.test(value)) {
-        Toast.error("Please enter a valid Cameroonian phone number")
+        Toast.error(t("auth.validation.invalidPhone"))
         return false
       }
     }
@@ -81,14 +81,14 @@ export default function Login() {
     try {
       const success = await login({ identifier: identifier.trim(), pin })
       if (success) {
-        Toast.success("Welcome back!")
+        Toast.success(t("auth.login.welcomeBack"))
       } else {
-        Toast.error("Invalid credentials. Please try again.")
+        Toast.error(t("auth.validation.invalidCredentials"))
         setPinKey((prev) => prev + 1)
       }
     } catch (err) {
       console.error("Login error:", err)
-      Toast.error("An unexpected error occurred. Please try again later.")
+      Toast.error(t("auth.errors.unexpectedError"))
       setPinKey((prev) => prev + 1)
     } finally {
       setLoading(false)
@@ -100,13 +100,13 @@ export default function Login() {
     try {
       const success = await loginWithBiometric()
       if (success) {
-        Toast.success("Welcome back!")
+        Toast.success(t("auth.login.welcomeBack"))
       } else {
-        Toast.error("Biometric authentication failed")
+        Toast.error(t("auth.errors.biometricFailed"))
       }
     } catch (err) {
       console.error("Biometric error:", err)
-      Toast.error("Biometric authentication error")
+      Toast.error(t("auth.errors.biometricError"))
     } finally {
       setLoading(false)
     }
@@ -138,7 +138,7 @@ export default function Login() {
               </Text>
             </TouchableOpacity>
             <Text style={[styles.quickAuthWelcome, { color: colors.muted.foreground }]}>
-              Welcome back, {identifier}
+              {t("auth.login.welcomeBackUser").replace("{name}", identifier)}
             </Text>
           </View>
         )}
@@ -221,7 +221,7 @@ export default function Login() {
               <View style={styles.signupRow}>
                 <Text style={{ color: colors.foreground.primary }}>{t("auth.login.dontHaveAccount")}</Text>
                 <Link href="/auth/register">
-                  <Text style={[styles.signupLink, { color: colors.primary.default }]}>Sign up</Text>
+                  <Text style={[styles.signupLink, { color: colors.primary.default }]}>{t("auth.login.signUp")}</Text>
                 </Link>
               </View>
             </View>

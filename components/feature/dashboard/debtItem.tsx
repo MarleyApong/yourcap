@@ -1,4 +1,5 @@
 import { useTheme } from "@/core/theme"
+import { useTranslation } from "@/i18n"
 import { formatCurrency } from "@/lib/utils"
 import { Debt } from "@/types/debt"
 import { Pressable, StyleSheet, Text, View } from "react-native"
@@ -12,6 +13,7 @@ interface DebtItemProps {
 
 export const DebtItem = ({ debt, currency, onPress, showBorder }: DebtItemProps) => {
   const { colors } = useTheme()
+  const { t } = useTranslation()
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -58,14 +60,14 @@ export const DebtItem = ({ debt, currency, onPress, showBorder }: DebtItemProps)
         <View style={styles.info}>
           <Text style={[styles.name, { color: colors.foreground.primary }]}>{debt.contact_name}</Text>
           <Text style={[styles.sub, { color: colors.muted.foreground }]}>
-            {debt.debt_type === "OWING" ? "Owes you" : "You owe"} {formatCurrency(debt.amount, currency)}
+            {debt.debt_type === "OWING" ? t("history.debtType.owesYou") : t("history.debtType.youOwe")} {formatCurrency(debt.amount, currency)}
           </Text>
         </View>
         <View style={styles.status}>
           <View style={[styles.dot, { backgroundColor: getStatusColor(debt.status) }]} />
           <View style={[styles.badge, { backgroundColor: getStatusBadgeColor(debt.status) }]}>
             <Text style={[styles.badgeText, { color: getStatusTextColor(debt.status) }]}>
-              {debt.status.toLowerCase()}
+              {debt.status === "PAID" ? t("debt.status.paid") : debt.status === "OVERDUE" ? t("debt.status.overdue") : t("debt.status.pending")}
             </Text>
           </View>
         </View>

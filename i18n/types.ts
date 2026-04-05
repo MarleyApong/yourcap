@@ -46,6 +46,7 @@ export interface TranslationKeys {
   'auth.login.verifyIdentity': string;
   'auth.login.biometricSubtitle': string;
   'auth.login.welcomeBack': string;
+  'auth.login.welcomeBackUser': string;
   'auth.login.dontHaveAccount': string;
   'auth.login.signUp': string;
   'auth.login.useDifferentAccount': string;
@@ -75,6 +76,10 @@ export interface TranslationKeys {
   'auth.validation.invalidCredentials': string;
   'auth.validation.pleaseEnterEmailOrPhone': string;
 
+  // Auth - Forgot Password
+  'auth.forgotPassword.identifierRequired': string;
+  'auth.forgotPassword.resetFailed': string;
+
   // Auth - Errors
   'auth.errors.registrationFailed': string;
   'auth.errors.unexpectedError': string;
@@ -93,8 +98,12 @@ export interface TranslationKeys {
   'dashboard.addCredit': string;
   'dashboard.summary.totalOwed': string;
   'dashboard.summary.totalLent': string;
+  'dashboard.summary.balance': string;
   'dashboard.summary.people': string;
   'dashboard.summary.person': string;
+  'dashboard.errors.databaseNotReady': string;
+  'dashboard.errors.failedToLoad': string;
+  'dashboard.errors.tapToRetry': string;
   'dashboard.empty.title': string;
   'dashboard.empty.subtitle': string;
   'dashboard.empty.addFirst': string;
@@ -124,6 +133,7 @@ export interface TranslationKeys {
   
   'debt.add.contact.title': string;
   'debt.add.contact.subtitle': string;
+  'debt.add.contact.fullName': string;
   'debt.add.contact.phone': string;
   'debt.add.contact.phonePlaceholder': string;
   'debt.add.contact.email': string;
@@ -142,6 +152,7 @@ export interface TranslationKeys {
   'debt.add.validation.invalidAmount': string;
   'debt.add.validation.invalidDueDate': string;
   
+  'debt.add.descriptionOptional': string;
   'debt.add.success': string;
   'debt.add.error': string;
 
@@ -157,15 +168,46 @@ export interface TranslationKeys {
   'debt.item.owed': string;
   'debt.item.viewDetails': string;
 
+  'debt.details.title': string;
+  'debt.details.loading': string;
+  'debt.details.notFound': string;
+  'debt.details.failedToLoad': string;
+  'debt.details.statusUpdated': string;
+  'debt.details.statusUpdateFailed': string;
+  'debt.details.deleteSuccess': string;
+  'debt.details.deleteFailed': string;
+  'debt.details.updateSuccess': string;
+  'debt.details.updateFailed': string;
+  'debt.details.infoTitle': string;
+  'debt.details.statusActions': string;
+  'debt.details.markAsPaid': string;
+  'debt.details.markAsOverdue': string;
+  'debt.details.markAsPending': string;
+  'debt.details.editDebt': string;
+  'debt.details.deleteDebt': string;
+  'debt.details.editTitle': string;
+  'debt.details.saving': string;
+  'debt.details.saveChanges': string;
+  'debt.details.call': string;
+  'debt.details.sms': string;
+  'debt.details.email': string;
+  'debt.details.dueDate': string;
+  'debt.details.loanDate': string;
+  'debt.details.phoneNumber': string;
+  'debt.details.createdOn': string;
   'debt.details.amount': string;
   'debt.details.description': string;
   'debt.details.createdAt': string;
   'debt.details.updatedAt': string;
-  'debt.details.markAsPaid': string;
   'debt.details.edit': string;
   'debt.details.delete': string;
 
+  'debt.status.paid': string;
+  'debt.status.pending': string;
+  'debt.status.overdue': string;
+
   'debt.delete.title': string;
+  'debt.delete.confirmMessage': string;
   'debt.delete.message': string;
   'debt.delete.confirm': string;
   'debt.delete.cancel': string;
@@ -265,6 +307,12 @@ export interface TranslationKeys {
   'settings.rememberMeDescription': string;
   'settings.sessionDuration': string;
   'settings.autoLogout': string;
+  'settings.backgroundLockDelay': string;
+  'settings.lockImmediately': string;
+  'settings.lockFiveSeconds': string;
+  'settings.lockTenSeconds': string;
+  'settings.lockThirtySeconds': string;
+  'settings.lockOneMinute': string;
   'settings.termsOfService': string;
   'settings.privacyPolicy': string;
   'settings.helpSupport': string;

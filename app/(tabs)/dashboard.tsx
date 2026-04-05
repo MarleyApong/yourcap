@@ -38,7 +38,7 @@ export default function Dashboard() {
 
     if (!isDatabaseReady()) {
       console.error("Database not ready")
-      setError("Database not ready. Please restart the app.")
+      setError(t("dashboard.errors.databaseNotReady"))
       setLoading(false)
       return
     }
@@ -58,8 +58,8 @@ export default function Dashboard() {
       setRecentDebts(debts.slice(0, 5))
     } catch (error) {
       console.error("Dashboard load error:", error)
-      setError("Failed to load data. Please try again.")
-      Toast.error("Failed to load data. Please try again.", "Error")
+      setError(t("dashboard.errors.failedToLoad"))
+      Toast.error(t("dashboard.errors.failedToLoad"), t("common.error"))
     } finally {
       setLoading(false)
     }
@@ -97,7 +97,7 @@ export default function Dashboard() {
             >
               <Text style={[styles.errorText, { color: colors.status.destructiveForeground }]}>{error}</Text>
               <Text style={[styles.errorRetry, { color: colors.status.destructiveForeground }]} onPress={handleRetry}>
-                Tap to retry
+                {t("dashboard.errors.tapToRetry")}
               </Text>
             </View>
           )}
@@ -106,7 +106,7 @@ export default function Dashboard() {
             <View style={styles.summaryRow}>
               <SummaryCard label={t("dashboard.summary.totalLent")} amount={formatCurrency(summary.owed, "XAF")} type="negative" />
               <SummaryCard label={t("dashboard.summary.totalOwed")} amount={formatCurrency(summary.owing, "XAF")} type="positive" />
-              <SummaryCard label="Balance" amount={formatCurrency(summary.balance, "XAF")} type={summary.balance >= 0 ? "positive" : "negative"} />
+              <SummaryCard label={t("dashboard.summary.balance")} amount={formatCurrency(summary.balance, "XAF")} type={summary.balance >= 0 ? "positive" : "negative"} />
             </View>
           )}
 

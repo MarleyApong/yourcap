@@ -66,11 +66,11 @@ export default function DebtDetails() {
           debt_type: debtData.debt_type,
         })
       } else {
-        Toast.error("Debt not found or access denied", "Error")
+        Toast.error(t("debt.details.notFound"), t("common.error"))
         router.back()
       }
     } catch (error) {
-      Toast.error("Failed to load debt details", "Error")
+      Toast.error(t("debt.details.failedToLoad"), t("common.error"))
       router.back()
     } finally {
       setLoading(false)
@@ -81,28 +81,28 @@ export default function DebtDetails() {
     try {
       await updateDebt(debt!.debt_id, { status: newStatus })
       loadDebt()
-      Toast.success("Debt status updated successfully", "Success")
+      Toast.success(t("debt.details.statusUpdated"), t("common.success"))
     } catch (error) {
-      Toast.error("Failed to update status", "Error")
+      Toast.error(t("debt.details.statusUpdateFailed"), t("common.error"))
     }
   }
 
   const handleDelete = () => {
     Toast.confirm(
-      "This action cannot be undone. The debt record will be permanently deleted.",
+      t("debt.delete.confirmMessage"),
       async () => {
         try {
           await deleteDebt(debt!.debt_id, user!.user_id)
-          Toast.success("Debt deleted successfully", "Success")
+          Toast.success(t("debt.details.deleteSuccess"), t("common.success"))
           router.back()
         } catch (error) {
-          Toast.error("Failed to delete debt", "Error")
+          Toast.error(t("debt.details.deleteFailed"), t("common.error"))
         }
       },
       {
-        title: "Delete Debt Record?",
-        confirmText: "Delete",
-        cancelText: "Cancel",
+        title: t("debt.delete.title"),
+        confirmText: t("debt.delete.confirm"),
+        cancelText: t("debt.delete.cancel"),
       },
     )
   }
@@ -150,28 +150,28 @@ export default function DebtDetails() {
 
   const validateEditForm = () => {
     if (!editForm.contact_name.trim()) {
-      Toast.error("Contact name is required", "Validation Error")
+      Toast.error(t("debt.add.validation.nameRequired"), t("common.error"))
       return false
     }
 
     if (!editForm.contact_phone.trim()) {
-      Toast.error("Phone number is required", "Validation Error")
+      Toast.error(t("debt.add.validation.phoneRequired"), t("common.error"))
       return false
     }
 
     if (!editForm.amount.trim()) {
-      Toast.error("Amount is required", "Validation Error")
+      Toast.error(t("debt.add.validation.amountRequired"), t("common.error"))
       return false
     }
 
     const amount = Number(editForm.amount)
     if (isNaN(amount) || amount <= 0) {
-      Toast.error("Please enter a valid amount greater than 0", "Validation Error")
+      Toast.error(t("debt.add.validation.invalidAmount"), t("common.error"))
       return false
     }
 
     if (editForm.due_date < editForm.loan_date) {
-      Toast.error("Due date cannot be before loan date", "Validation Error")
+      Toast.error(t("debt.add.validation.invalidDueDate"), t("common.error"))
       return false
     }
 
@@ -195,12 +195,12 @@ export default function DebtDetails() {
         debt_type: editForm.debt_type,
       })
 
-      Toast.success("Debt updated successfully", "Success")
+      Toast.success(t("debt.details.updateSuccess"), t("common.success"))
       setEditModalVisible(false)
       loadDebt()
     } catch (error) {
       console.error("Error updating debt:", error)
-      Toast.error("Failed to update debt. Please try again.", "Error")
+      Toast.error(t("debt.details.updateFailed"), t("common.error"))
     } finally {
       setEditLoading(false)
     }
@@ -215,7 +215,15 @@ export default function DebtDetails() {
   }
 
   const getTypeText = () => {
-    return debt?.debt_type === "OWING" ? "Owes you" : "You owe"
+    return debt?.debt_type === "OWING" ? t("history.debtType.owesYou") : t("history.debtType.youOwe")
+  }
+
+  const getStatusText = () => {
+    switch (debt?.status) {
+      case "PAID": return t("debt.status.paid")
+      case "OVERDUE": return t("debt.status.overdue")
+      default: return t("debt.status.pending")
+    }
   }
 
   const getTypeColor = () => {
@@ -226,14 +234,14 @@ export default function DebtDetails() {
     return (
       <View style={[styles.loadingContainer, { backgroundColor: colors.background.primary }]}>
         <Loader />
-        <Text style={[styles.loadingText, { color: colors.foreground.primary }]}>Loading debt details...</Text>
+        <Text style={[styles.loadingText, { color: colors.foreground.primary }]}>{t("debt.details.loading")}</Text>
       </View>
     )
   }
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background.primary }]}>
-      <PageHeader title="Debt Details" textPosition="center" textAlign="left" />
+      <PageHeader title={t("debt.details.title")} textPosition="center" textAlign="left" />
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
@@ -250,7 +258,7 @@ export default function DebtDetails() {
               <View style={[styles.statusBadge, { backgroundColor: colors.background.primary, borderColor: colors.border }]}>
                 <View style={[styles.statusDot, { backgroundColor: getStatusColor() }]} />
                 <Text style={[styles.statusText, { color: colors.foreground.primary }]}>
-                  {debt.status.toLowerCase()}
+                  {getStatusText()}
                 </Text>
               </View>
             </View>
@@ -263,7 +271,7 @@ export default function DebtDetails() {
                     style={[styles.contactBtn, { backgroundColor: colors.status.success + "20" }]}
                   >
                     <Feather name="phone" size={16} color={colors.status.success} />
-                    <Text style={[styles.contactBtnText, { color: colors.status.success }]}>Call</Text>
+                    <Text style={[styles.contactBtnText, { color: colors.status.success }]}>{t("debt.details.call")}</Text>
                   </Pressable>
 
                   <Pressable
@@ -271,7 +279,7 @@ export default function DebtDetails() {
                     style={[styles.contactBtn, { backgroundColor: colors.primary.default + "20" }]}
                   >
                     <Feather name="message-square" size={16} color={colors.primary.default} />
-                    <Text style={[styles.contactBtnText, { color: colors.primary.default }]}>SMS</Text>
+                    <Text style={[styles.contactBtnText, { color: colors.primary.default }]}>{t("debt.details.sms")}</Text>
                   </Pressable>
                 </>
               )}
@@ -282,7 +290,7 @@ export default function DebtDetails() {
                   style={[styles.contactBtn, { backgroundColor: colors.status.warning + "20" }]}
                 >
                   <Feather name="mail" size={16} color={colors.status.warning} />
-                  <Text style={[styles.contactBtnText, { color: colors.status.warning }]}>Email</Text>
+                  <Text style={[styles.contactBtnText, { color: colors.status.warning }]}>{t("debt.details.email")}</Text>
                 </Pressable>
               )}
             </View>
@@ -290,48 +298,48 @@ export default function DebtDetails() {
 
           {/* Details Card */}
           <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
-            <Text style={[styles.sectionTitle, { color: colors.primary.default }]}>Debt Information</Text>
+            <Text style={[styles.sectionTitle, { color: colors.primary.default }]}>{t("debt.details.infoTitle")}</Text>
 
             <View style={styles.detailRow}>
-              <Text style={[styles.detailLabel, { color: colors.muted.foreground }]}>Due Date</Text>
+              <Text style={[styles.detailLabel, { color: colors.muted.foreground }]}>{t("debt.details.dueDate")}</Text>
               <Text style={[styles.detailValue, { color: colors.foreground.primary }]}>{formatDate(debt.due_date)}</Text>
             </View>
 
             <View style={styles.detailRow}>
-              <Text style={[styles.detailLabel, { color: colors.muted.foreground }]}>Loan Date</Text>
+              <Text style={[styles.detailLabel, { color: colors.muted.foreground }]}>{t("debt.details.loanDate")}</Text>
               <Text style={[styles.detailValue, { color: colors.foreground.primary }]}>{formatDate(debt.loan_date)}</Text>
             </View>
 
             {debt.contact_phone && (
               <View style={styles.detailRow}>
-                <Text style={[styles.detailLabel, { color: colors.muted.foreground }]}>Phone Number</Text>
+                <Text style={[styles.detailLabel, { color: colors.muted.foreground }]}>{t("debt.details.phoneNumber")}</Text>
                 <Text style={[styles.detailValue, { color: colors.foreground.primary }]}>{debt.contact_phone}</Text>
               </View>
             )}
 
             {debt.contact_email && (
               <View style={styles.detailRow}>
-                <Text style={[styles.detailLabel, { color: colors.muted.foreground }]}>Email</Text>
+                <Text style={[styles.detailLabel, { color: colors.muted.foreground }]}>{t("debt.details.email")}</Text>
                 <Text style={[styles.detailValue, { color: colors.foreground.primary }]}>{debt.contact_email}</Text>
               </View>
             )}
 
             {debt.description && (
               <View style={styles.detailRow}>
-                <Text style={[styles.detailLabel, { color: colors.muted.foreground }]}>Description</Text>
+                <Text style={[styles.detailLabel, { color: colors.muted.foreground }]}>{t("debt.details.description")}</Text>
                 <Text style={[styles.detailValue, { color: colors.foreground.primary }]}>{debt.description}</Text>
               </View>
             )}
 
             <View style={styles.detailRow}>
-              <Text style={[styles.detailLabel, { color: colors.muted.foreground }]}>Created On</Text>
+              <Text style={[styles.detailLabel, { color: colors.muted.foreground }]}>{t("debt.details.createdOn")}</Text>
               <Text style={[styles.detailValue, { color: colors.foreground.primary }]}>{formatDate(debt.created_at)}</Text>
             </View>
           </View>
 
           {/* Status Actions */}
           <View style={styles.actionsSection}>
-            <Text style={[styles.sectionTitle, { color: colors.primary.default, marginBottom: 8 }]}>Status Actions</Text>
+            <Text style={[styles.sectionTitle, { color: colors.primary.default, marginBottom: 8 }]}>{t("debt.details.statusActions")}</Text>
 
             {debt.status !== "PAID" && (
               <Pressable
@@ -339,7 +347,7 @@ export default function DebtDetails() {
                 style={[styles.actionBtn, { backgroundColor: colors.status.success }]}
               >
                 <Feather name="check-circle" size={20} color={colors.status.successForeground} />
-                <Text style={[styles.actionBtnText, { color: colors.status.successForeground }]}>Mark as Paid</Text>
+                <Text style={[styles.actionBtnText, { color: colors.status.successForeground }]}>{t("debt.details.markAsPaid")}</Text>
               </Pressable>
             )}
 
@@ -349,7 +357,7 @@ export default function DebtDetails() {
                 style={[styles.actionBtn, { backgroundColor: colors.status.warning }]}
               >
                 <Feather name="alert-triangle" size={20} color={colors.status.warningForeground} />
-                <Text style={[styles.actionBtnText, { color: colors.status.warningForeground }]}>Mark as Overdue</Text>
+                <Text style={[styles.actionBtnText, { color: colors.status.warningForeground }]}>{t("debt.details.markAsOverdue")}</Text>
               </Pressable>
             )}
 
@@ -359,7 +367,7 @@ export default function DebtDetails() {
                 style={[styles.actionBtn, { backgroundColor: colors.primary.default }]}
               >
                 <Feather name="clock" size={20} color={colors.primary.foreground} />
-                <Text style={[styles.actionBtnText, { color: colors.primary.foreground }]}>Mark as Pending</Text>
+                <Text style={[styles.actionBtnText, { color: colors.primary.foreground }]}>{t("debt.details.markAsPending")}</Text>
               </Pressable>
             )}
 
@@ -368,7 +376,7 @@ export default function DebtDetails() {
               style={[styles.actionBtn, { backgroundColor: colors.primary.default }]}
             >
               <Feather name="edit" size={20} color={colors.primary.foreground} />
-              <Text style={[styles.actionBtnText, { color: colors.primary.foreground }]}>Edit Debt</Text>
+              <Text style={[styles.actionBtnText, { color: colors.primary.foreground }]}>{t("debt.details.editDebt")}</Text>
             </Pressable>
 
             <Pressable
@@ -376,7 +384,7 @@ export default function DebtDetails() {
               style={[styles.actionBtn, { backgroundColor: colors.status.destructive }]}
             >
               <Feather name="trash-2" size={20} color={colors.status.destructiveForeground} />
-              <Text style={[styles.actionBtnText, { color: colors.status.destructiveForeground }]}>Delete Debt</Text>
+              <Text style={[styles.actionBtnText, { color: colors.status.destructiveForeground }]}>{t("debt.details.deleteDebt")}</Text>
             </Pressable>
           </View>
         </View>
@@ -391,7 +399,7 @@ export default function DebtDetails() {
       >
         <View style={[styles.container, { backgroundColor: colors.background.primary }]}>
           <View style={[styles.modalHeader, { backgroundColor: colors.header.background, borderBottomColor: colors.border }]}>
-            <Text style={[styles.modalTitle, { color: colors.header.foreground }]}>Edit Debt</Text>
+            <Text style={[styles.modalTitle, { color: colors.header.foreground }]}>{t("debt.details.editTitle")}</Text>
             <Pressable onPress={() => setEditModalVisible(false)}>
               <Feather name="x" size={24} color={colors.foreground.primary} />
             </Pressable>
@@ -408,7 +416,7 @@ export default function DebtDetails() {
               <View style={styles.formGroup}>
                 {/* Debt Type Display */}
                 <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.primary.default }]}>
-                  <Text style={[styles.cardTitle, { color: colors.primary.default }]}>Debt Type</Text>
+                  <Text style={[styles.cardTitle, { color: colors.primary.default }]}>{t("debt.add.debtType.title")}</Text>
 
                   <View style={[styles.toggleRow, { borderColor: colors.primary.default }]}>
                     <View
@@ -418,7 +426,7 @@ export default function DebtDetails() {
                       ]}
                     >
                       <Text style={{ color: editForm.debt_type === "OWING" ? colors.primary.default : colors.muted.foreground, fontWeight: "500" }}>
-                        Someone owes me
+                        {t("debt.add.debtType.owing")}
                       </Text>
                     </View>
                     <View
@@ -428,7 +436,7 @@ export default function DebtDetails() {
                       ]}
                     >
                       <Text style={{ color: editForm.debt_type === "OWED" ? colors.primary.default : colors.muted.foreground, fontWeight: "500" }}>
-                        I owe someone
+                        {t("debt.add.debtType.owed")}
                       </Text>
                     </View>
                   </View>
@@ -436,31 +444,31 @@ export default function DebtDetails() {
                   <View style={[styles.descBox, { backgroundColor: colors.muted.default + "40" }]}>
                     <Text style={[styles.descText, { color: colors.muted.foreground }]}>
                       {editForm.debt_type === "OWING"
-                        ? "Record money that someone owes you - track when you lent money and when it should be repaid."
-                        : "Record money that you owe to someone - keep track of your borrowing obligations and due dates."}
+                        ? t("debt.add.debtType.owingDescription")
+                        : t("debt.add.debtType.owedDescription")}
                     </Text>
                   </View>
                 </View>
 
                 {/* Contact Info */}
                 <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
-                  <Text style={[styles.cardTitle, { color: colors.primary.default }]}>Contact Information</Text>
+                  <Text style={[styles.cardTitle, { color: colors.primary.default }]}>{t("debt.add.contact.title")}</Text>
                   <Text style={[styles.cardSubtitle, { color: colors.muted.foreground }]}>
-                    Add the person's details for easy identification and contact.
+                    {t("debt.add.contact.subtitle")}
                   </Text>
 
                   <TextInput
-                    label="Full Name"
+                    label={t("debt.add.contact.fullName")}
                     required
-                    placeholder="John Doe"
+                    placeholder={t("debt.add.namePlaceholder")}
                     value={editForm.contact_name}
                     onChangeText={(text) => handleEditChange("contact_name", text)}
                     icon="user"
                   />
 
                   <TextInput
-                    label="Phone Number"
-                    placeholder="6XX XXX XXX"
+                    label={t("debt.add.contact.phone")}
+                    placeholder={t("debt.add.contact.phonePlaceholder")}
                     value={editForm.contact_phone}
                     onChangeText={(text) => handleEditChange("contact_phone", text)}
                     keyboardType="phone-pad"
@@ -469,8 +477,8 @@ export default function DebtDetails() {
                   />
 
                   <TextInput
-                    label="Email (Optional)"
-                    placeholder="xxx@xxx.xx"
+                    label={t("debt.add.contact.email")}
+                    placeholder={t("debt.add.contact.emailPlaceholder")}
                     value={editForm.contact_email}
                     onChangeText={(text) => handleEditChange("contact_email", text)}
                     keyboardType="email-address"
@@ -482,15 +490,15 @@ export default function DebtDetails() {
 
                 {/* Debt Details */}
                 <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
-                  <Text style={[styles.cardTitle, { color: colors.primary.default }]}>Financial Details</Text>
+                  <Text style={[styles.cardTitle, { color: colors.primary.default }]}>{t("debt.add.financial.title")}</Text>
                   <Text style={[styles.cardSubtitle, { color: colors.muted.foreground }]}>
-                    Specify the amount, currency and important dates for this debt.
+                    {t("debt.add.financial.subtitle")}
                   </Text>
 
                   <TextInput
-                    label="Amount"
+                    label={t("debt.add.amount")}
                     required
-                    placeholder="Eg: 50000"
+                    placeholder={t("debt.add.amountPlaceholder")}
                     value={editForm.amount}
                     onChangeText={(text) => handleEditChange("amount", text)}
                     keyboardType="numeric"
@@ -498,7 +506,7 @@ export default function DebtDetails() {
                   />
 
                   <SelectInput
-                    label="Currency"
+                    label={t("debt.add.financial.currency")}
                     value={editForm.currency}
                     onChange={(val) => handleEditChange("currency", val)}
                     options={[
@@ -510,7 +518,7 @@ export default function DebtDetails() {
                   />
 
                   <DateInput
-                    label="Loan Date"
+                    label={t("debt.add.financial.loanDate")}
                     value={editForm.loan_date}
                     onChange={handleEditDateChange("loan_date")}
                     maximumDate={new Date()}
@@ -518,7 +526,7 @@ export default function DebtDetails() {
                   />
 
                   <DateInput
-                    label="Due Date"
+                    label={t("debt.add.financial.dueDate")}
                     value={editForm.due_date}
                     onChange={handleEditDateChange("due_date")}
                     minimumDate={editForm.loan_date}
@@ -526,8 +534,8 @@ export default function DebtDetails() {
                   />
 
                   <TextInput
-                    label="Description (Optional)"
-                    placeholder="Eg: Car repair loan, business investment, etc."
+                    label={t("debt.add.descriptionOptional")}
+                    placeholder={t("debt.add.descriptionPlaceholder")}
                     value={editForm.description}
                     onChangeText={(text) => handleEditChange("description", text)}
                     multiline
@@ -544,7 +552,7 @@ export default function DebtDetails() {
                 >
                   {editLoading ? <Loader /> : <Feather name="check" size={20} color={colors.primary.foreground} />}
                   <Text style={[styles.submitBtnText, { color: colors.primary.foreground }]}>
-                    {editLoading ? "Saving..." : "Save Changes"}
+                    {editLoading ? t("debt.details.saving") : t("debt.details.saveChanges")}
                   </Text>
                 </Pressable>
               </View>

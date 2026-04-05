@@ -31,7 +31,8 @@ export const fr = {
         phone: "debt.add.contact.phone",
         phonePlaceholder: "debt.add.contact.phonePlaceholder",
         email: "debt.add.contact.email",
-        emailPlaceholder: "debt.add.contact.emailPlaceholder"
+        emailPlaceholder: "debt.add.contact.emailPlaceholder",
+        fullName: "debt.add.contact.fullName"
       },
       name: "debt.add.name",
       namePlaceholder: "debt.add.namePlaceholder",
@@ -46,14 +47,57 @@ export const fr = {
       amountPlaceholder: "debt.add.amountPlaceholder",
       description: "debt.add.description",
       descriptionPlaceholder: "debt.add.descriptionPlaceholder",
-      save: "debt.add.save"
+      save: "debt.add.save",
+      descriptionOptional: "debt.add.descriptionOptional"
+    },
+    details: {
+      notFound: "debt.details.notFound",
+      failedToLoad: "debt.details.failedToLoad",
+      statusUpdated: "debt.details.statusUpdated",
+      statusUpdateFailed: "debt.details.statusUpdateFailed",
+      deleteSuccess: "debt.details.deleteSuccess",
+      deleteFailed: "debt.details.deleteFailed",
+      updateSuccess: "debt.details.updateSuccess",
+      updateFailed: "debt.details.updateFailed",
+      loading: "debt.details.loading",
+      title: "debt.details.title",
+      call: "debt.details.call",
+      sms: "debt.details.sms",
+      email: "debt.details.email",
+      infoTitle: "debt.details.infoTitle",
+      dueDate: "debt.details.dueDate",
+      loanDate: "debt.details.loanDate",
+      phoneNumber: "debt.details.phoneNumber",
+      description: "debt.details.description",
+      createdOn: "debt.details.createdOn",
+      statusActions: "debt.details.statusActions",
+      markAsPaid: "debt.details.markAsPaid",
+      markAsOverdue: "debt.details.markAsOverdue",
+      markAsPending: "debt.details.markAsPending",
+      editDebt: "debt.details.editDebt",
+      deleteDebt: "debt.details.deleteDebt",
+      editTitle: "debt.details.editTitle",
+      saving: "debt.details.saving",
+      saveChanges: "debt.details.saveChanges"
+    },
+    delete: {
+      confirmMessage: "debt.delete.confirmMessage",
+      title: "debt.delete.title",
+      confirm: "debt.delete.confirm",
+      cancel: "debt.delete.cancel"
+    },
+    status: {
+      paid: "debt.status.paid",
+      overdue: "debt.status.overdue",
+      pending: "debt.status.pending"
     }
   },
   common: {
     loading: "common.loading",
     continue: "common.continue",
     error: "common.error",
-    none: "common.none"
+    none: "common.none",
+    success: "common.success"
   },
   auth: {
     register: {
@@ -67,7 +111,9 @@ export const fr = {
       fullName: "auth.register.fullName",
       phoneNumber: "auth.register.phoneNumber",
       email: "auth.register.email",
-      alreadyHaveAccount: "auth.register.alreadyHaveAccount"
+      alreadyHaveAccount: "auth.register.alreadyHaveAccount",
+      accountCreated: "auth.register.accountCreated",
+      signIn: "auth.register.signIn"
     },
     login: {
       useDifferentAccount: "auth.login.useDifferentAccount",
@@ -78,7 +124,29 @@ export const fr = {
       welcomeBack: "auth.login.welcomeBack",
       subtitle: "auth.login.subtitle",
       emailOrPhone: "auth.login.emailOrPhone",
-      dontHaveAccount: "auth.login.dontHaveAccount"
+      dontHaveAccount: "auth.login.dontHaveAccount",
+      welcomeBackUser: "auth.login.welcomeBackUser",
+      signUp: "auth.login.signUp"
+    },
+    validation: {
+      fullNameRequired: "auth.validation.fullNameRequired",
+      phoneRequired: "auth.validation.phoneRequired",
+      invalidPhone: "auth.validation.invalidPhone",
+      invalidEmail: "auth.validation.invalidEmail",
+      pinLength: "auth.validation.pinLength",
+      pinMismatch: "auth.validation.pinMismatch",
+      pleaseEnterEmailOrPhone: "auth.validation.pleaseEnterEmailOrPhone",
+      invalidCredentials: "auth.validation.invalidCredentials"
+    },
+    errors: {
+      registrationFailed: "auth.errors.registrationFailed",
+      unexpectedError: "auth.errors.unexpectedError",
+      biometricFailed: "auth.errors.biometricFailed",
+      biometricError: "auth.errors.biometricError"
+    },
+    forgotPassword: {
+      identifierRequired: "auth.forgotPassword.identifierRequired",
+      resetFailed: "auth.forgotPassword.resetFailed"
     }
   },
   tabs: {
@@ -245,7 +313,8 @@ export const fr = {
     title: "dashboard.title",
     summary: {
       totalLent: "dashboard.summary.totalLent",
-      totalOwed: "dashboard.summary.totalOwed"
+      totalOwed: "dashboard.summary.totalOwed",
+      balance: "dashboard.summary.balance"
     },
     addDebt: "dashboard.addDebt",
     quickActions: "dashboard.quickActions",
@@ -253,6 +322,11 @@ export const fr = {
       title: "dashboard.empty.title",
       subtitle: "dashboard.empty.subtitle",
       addFirst: "dashboard.empty.addFirst"
+    },
+    errors: {
+      databaseNotReady: "dashboard.errors.databaseNotReady",
+      failedToLoad: "dashboard.errors.failedToLoad",
+      tapToRetry: "dashboard.errors.tapToRetry"
     }
   }
 };

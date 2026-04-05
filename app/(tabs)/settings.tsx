@@ -13,6 +13,7 @@ import { BiometricCapabilities, checkBiometricCapabilities, getBiometricDisplayN
 import { requestNotificationPermissions, scheduleAllDebtReminders, updateNotificationSettings } from "@/services/notificationService"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather, MaterialIcons } from "@expo/vector-icons"
+import * as LocalAuthentication from "expo-local-authentication"
 import { useRouter } from "expo-router"
 import { useEffect, useState } from "react"
 import { Linking, Modal, Pressable, ScrollView, StyleSheet, Switch, Text, View } from "react-native"
@@ -63,7 +64,6 @@ export default function Settings() {
 
     if (enabled) {
       // Vérifie que la permission Face ID / biométrie est accordée
-      const { LocalAuthentication } = await import("expo-local-authentication")
       const result = await LocalAuthentication.authenticateAsync({
         promptMessage: "Confirmer pour activer la biométrie",
         cancelLabel: "Annuler",

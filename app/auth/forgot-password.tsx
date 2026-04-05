@@ -2,6 +2,7 @@ import { FBackButton } from "@/components/ui/fback-button"
 import { Loader } from "@/components/ui/loader"
 import PinInput from "@/components/ui/pin-input"
 import { useTheme } from "@/core/theme"
+import { useTranslation } from "@/i18n"
 import { resetPin } from "@/services/userService"
 import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
@@ -24,6 +25,7 @@ export default function ForgotPassword() {
 
   const router = useRouter()
   const { colors } = useTheme()
+  const { t } = useTranslation()
 
   const identifierRef = useRef<RNTextInput>(null)
 
@@ -39,18 +41,18 @@ export default function ForgotPassword() {
 
   const validateStep1 = () => {
     if (!formData.full_name || !formData.identifier) {
-      Toast.error("Full name and email/phone are required", "Error")
+      Toast.error(t("auth.forgotPassword.identifierRequired"), t("common.error"))
       return false
     }
 
     if (formData.identifier.includes("@")) {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.identifier)) {
-        Toast.error("Please enter a valid email address", "Error")
+        Toast.error(t("auth.validation.invalidEmail"), t("common.error"))
         return false
       }
     } else {
       if (!/^(6|2)(2|3|[5-9])[0-9]{7}$/.test(formData.identifier)) {
-        Toast.error("Please enter a valid Cameroonian phone number", "Error")
+        Toast.error(t("auth.validation.invalidPhone"), t("common.error"))
         return false
       }
     }
@@ -60,11 +62,11 @@ export default function ForgotPassword() {
 
   const validatePin = () => {
     if (formData.newPin.length !== 6) {
-      Toast.error("PIN must be 6 digits", "Error")
+      Toast.error(t("auth.validation.pinLength"), t("common.error"))
       return false
     }
     if (formData.newPin !== formData.confirmPin) {
-      Toast.error("PINs do not match", "Error")
+      Toast.error(t("auth.validation.pinMismatch"), t("common.error"))
       return false
     }
     return true
@@ -98,7 +100,7 @@ export default function ForgotPassword() {
         router.replace("/auth/login")
       }
     } catch (err) {
-      Toast.error("Failed to reset PIN. Try again.", "Error")
+      Toast.error(t("auth.forgotPassword.resetFailed"), t("common.error"))
     } finally {
       setLoading(false)
     }
