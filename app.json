@@ -7,23 +7,34 @@
     "icon": "./assets/images/logo/logo.png",
     "scheme": "yourcap",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Yourcap utilise Face ID pour vous authentifier de manière sécurisée.",
+        "NSLocalAuthenticationUsageDescription": "Yourcap utilise la biométrie pour sécuriser l'accès à vos données.",
+        "NSDocumentsFolderUsageDescription": "Yourcap accède à vos documents pour l'import/export de données.",
+        "UIBackgroundModes": ["remote-notification"]
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo/logo.png",
         "backgroundColor": "#562d8f"
       },
-      "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.yourcap"
-    },
-    "notification": {
-      "icon": "./assets/images/logo/logo-white.png",
-      "color": "#562d8f",
-      "androidMode": "default",
-      "androidCollapsedTitle": "#{unread_notifications} nouvelle(s) notification(s)"
+      "package": "com.anonymous.yourcap",
+      "permissions": [
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT",
+        "android.permission.VIBRATE",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_MEDIA_VIDEO",
+        "android.permission.READ_MEDIA_AUDIO",
+        "android.permission.SCHEDULE_EXACT_ALARM"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -51,9 +62,24 @@
         {
           "icon": "./assets/images/logo/logo-white.png",
           "color": "#562d8f",
-          "defaultChannel": "default"
+          "defaultChannel": "default",
+          "androidMode": "default",
+          "androidCollapsedTitle": "#{unread_notifications} nouvelle(s) notification(s)"
         }
-      ]
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Yourcap utilise Face ID pour vous authentifier de manière sécurisée."
+        }
+      ],
+      [
+        "expo-secure-store",
+        {
+          "faceIDPermission": "Yourcap utilise Face ID pour sécuriser vos données stockées."
+        }
+      ],
+      "expo-document-picker"
     ],
     "experiments": {
       "typedRoutes": true
