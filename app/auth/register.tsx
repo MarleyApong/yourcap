@@ -279,8 +279,8 @@ export default function Register() {
                 onChangeText={(text) => handleChange("email", text)}
                 autoCapitalize="none"
                 keyboardType="email-address"
-                returnKeyType="done"
-                onSubmitEditing={handleContinue}
+                returnKeyType={termsAccepted ? "done" : "next"}
+                onSubmitEditing={termsAccepted ? handleContinue : undefined}
               />
             </View>
           </View>
@@ -314,11 +314,19 @@ export default function Register() {
 
           <Pressable
             onPress={handleContinue}
-            disabled={loading}
-            style={[styles.submitBtn, { backgroundColor: colors.primary.default, opacity: loading ? 0.7 : 1 }]}
+            disabled={loading || !termsAccepted}
+            style={[
+              styles.submitBtn,
+              {
+                backgroundColor: termsAccepted ? colors.primary.default : colors.muted.default,
+                opacity: loading ? 0.7 : 1,
+              },
+            ]}
           >
-            <Feather name="arrow-up-right" size={18} color="#ffffff" />
-            <Text style={styles.submitBtnText}>{t("common.continue")}</Text>
+            <Feather name="arrow-up-right" size={18} color={termsAccepted ? "#ffffff" : colors.muted.foreground} />
+            <Text style={[styles.submitBtnText, { color: termsAccepted ? "#ffffff" : colors.muted.foreground }]}>
+              {t("common.continue")}
+            </Text>
           </Pressable>
 
           <View style={styles.signinRow}>
