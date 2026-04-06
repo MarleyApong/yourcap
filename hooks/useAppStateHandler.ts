@@ -16,6 +16,7 @@ export const useAppStateHandler = () => {
 
       // Application va en arrière-plan
       if (appState.current === "active" && nextAppState.match(/inactive|background/)) {
+        if (settings?.require_auth === false) return
         const delaySeconds = settings?.background_lock_delay ?? 5
         console.log(`AppStateHandler - Scheduling lock in ${delaySeconds} seconds`)
         

@@ -277,6 +277,15 @@ export interface TranslationKeys {
   'settings.title': string;
   'settings.profile': string;
   'settings.security': string;
+  'settings.requireAuth': string;
+  'settings.requireAuthDesc': string;
+  'settings.disableProtectionTitle': string;
+  'settings.disableProtectionConfirm': string;
+  'settings.protectionEnabled': string;
+  'settings.protectionDisabled': string;
+  'settings.securityOptionsDisabledHint': string;
+  'settings.verifyIdentity': string;
+  'settings.enterPinToDisable': string;
   'settings.notifications': string;
   'settings.language': string;
   'settings.data': string;

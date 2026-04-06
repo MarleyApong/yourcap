@@ -24,6 +24,7 @@ export const getSettings = async (user_id: string): Promise<Settings | null> => 
       return {
         ...settings,
         notification_enabled: Boolean(settings.notification_enabled),
+        require_auth: settings.require_auth !== undefined ? Boolean(settings.require_auth) : true,
         remember_session: Boolean(settings.remember_session),
         system_notifications: settings.system_notifications !== undefined ? Boolean(settings.system_notifications) : true,
         email_notifications: Boolean(settings.email_notifications),

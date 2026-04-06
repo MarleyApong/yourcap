@@ -6,8 +6,8 @@ interface SheetModalProps {
   visible: boolean
   onClose: () => void
   title: string
-  /** Label of the action button at the bottom */
-  actionLabel: string
+  /** Label of the action button at the bottom. If omitted, no button is shown. */
+  actionLabel?: string
   /** Called when the action button is pressed (before closing) */
   onAction?: () => void
   /** Hide the status bar when the modal is open (default: false) */
@@ -40,12 +40,14 @@ export function SheetModal({ visible, onClose, title, actionLabel, onAction, hid
             <View style={{ height: 24 }} />
           </ScrollView>
 
-          <Pressable
-            onPress={handleAction}
-            style={[styles.btn, { backgroundColor: colors.primary.default }]}
-          >
-            <Text style={[styles.btnText, { color: colors.primary.foreground }]}>{actionLabel}</Text>
-          </Pressable>
+          {actionLabel ? (
+            <Pressable
+              onPress={handleAction}
+              style={[styles.btn, { backgroundColor: colors.primary.default }]}
+            >
+              <Text style={[styles.btnText, { color: colors.primary.foreground }]}>{actionLabel}</Text>
+            </Pressable>
+          ) : null}
         </View>
       </View>
     </Modal>

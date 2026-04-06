@@ -1,5 +1,6 @@
 import PinInput from "@/components/ui/pin-input"
 import { useTheme } from "@/core/theme"
+import { useSettings } from "@/hooks/useSettings"
 import { isAppLocked } from "@/lib/auth"
 import { useAuthStore } from "@/stores/authStore"
 import React, { useEffect, useState } from "react"
@@ -7,6 +8,7 @@ import { AppState, AppStateStatus, Modal, StyleSheet, Text, View } from "react-n
 
 export default function AppLockScreen() {
   const { user, loginWithBiometric, login, biometricCapabilities, checkBiometricCapabilities, appLocked } = useAuthStore()
+  const { settings } = useSettings()
   const [showLock, setShowLock] = useState(false)
   const [loading, setLoading] = useState(false)
   const [appState, setAppState] = useState(AppState.currentState)
@@ -14,7 +16,7 @@ export default function AppLockScreen() {
 
   useEffect(() => {
     const checkLockStatus = async () => {
-      if (!user) {
+      if (!user || settings?.require_auth === false) {
         setShowLock(false)
         return
       }
@@ -27,7 +29,7 @@ export default function AppLockScreen() {
       }
     }
     checkLockStatus()
-  }, [user, appState])
+  }, [user, appState, settings?.require_auth])
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {

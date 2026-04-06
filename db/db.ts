@@ -140,6 +140,15 @@ export const initDb = async (): Promise<void> => {
       // Column might already exist, ignore
     }
 
+    try {
+      await db.execAsync(`
+        ALTER TABLE settings ADD COLUMN require_auth INTEGER DEFAULT 1;
+      `)
+      console.log("✅ Added require_auth column")
+    } catch (error) {
+      // Column might already exist, ignore
+    }
+
     console.log("✅ Schema executed successfully")
     console.log("✅ Database initialized successfully")
   } catch (error) {

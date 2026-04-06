@@ -3,6 +3,7 @@ export interface Settings {
   notification_enabled: boolean
   days_before_reminder: number
   language: string
+  require_auth?: boolean // Whether authentication is required on app open (default: true)
   inactivity_timeout: number
   background_lock_delay?: number // Délai en secondes avant verrouillage en arrière-plan
   remember_session: boolean
@@ -23,6 +24,7 @@ export interface DefaultSettings {
   notification_enabled: boolean
   days_before_reminder: number
   language: string
+  require_auth: boolean
   inactivity_timeout: number
   background_lock_delay: number // Délai en secondes avant verrouillage en arrière-plan
   remember_session: boolean

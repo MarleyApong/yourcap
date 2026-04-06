@@ -18,6 +18,7 @@ export const useInactivityTimeout = () => {
 
       // Quand l'app passe en arrière-plan - VERROUILLER AVEC DÉLAI
       if (appState.current === "active" && nextAppState.match(/inactive|background/)) {
+        if (settings?.require_auth === false) return
         const delaySeconds = settings?.background_lock_delay ?? 5
         console.log(`InactivityTimeout - Scheduling lock in ${delaySeconds} seconds`)
         

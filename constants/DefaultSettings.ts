@@ -1,7 +1,8 @@
 export const DEFAULT_SETTINGS = {
-  notification_enabled: false, 
+  notification_enabled: false,
   days_before_reminder: 3,
   language: 'en',
+  require_auth: true,
   inactivity_timeout: 30,
   background_lock_delay: 5, // Délai en secondes avant verrouillage en arrière-plan
   remember_session: true,

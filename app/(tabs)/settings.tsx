@@ -1,4 +1,5 @@
 import { ChangePinModal } from "@/components/feature/change-pin-modal"
+import PinInput from "@/components/ui/pin-input"
 import { EditProfileModal } from "@/components/feature/edit-profile-modal"
 import { ImportExportSection } from "@/components/feature/import-export-section"
 import { LanguageSelector } from "@/components/feature/language-selector"
@@ -17,7 +18,7 @@ import { Feather, MaterialIcons } from "@expo/vector-icons"
 import * as LocalAuthentication from "expo-local-authentication"
 import { useRouter } from "expo-router"
 import { useEffect, useState } from "react"
-import { Linking, Pressable, ScrollView, StyleSheet, Switch, Text, View } from "react-native"
+import { Linking, Modal, Pressable, ScrollView, StyleSheet, Switch, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const TERMS_ICONS = {
@@ -31,7 +32,7 @@ const TERMS_ICONS = {
 } as const
 
 export default function Settings() {
-  const { user, logout, updateBiometricSetting } = useAuthStore()
+  const { user, logout, updateBiometricSetting, login } = useAuthStore()
   const { settings, loading, updateSetting } = useSettings()
   const { colors } = useTheme()
   const { t, currentLanguage } = useTranslation()
@@ -42,6 +43,8 @@ export default function Settings() {
   const [termsModalVisible, setTermsModalVisible] = useState(false)
   const [editProfileModalVisible, setEditProfileModalVisible] = useState(false)
   const [changePinModalVisible, setChangePinModalVisible] = useState(false)
+  const [disableAuthModalVisible, setDisableAuthModalVisible] = useState(false)
+  const [disableAuthLoading, setDisableAuthLoading] = useState(false)
 
   useEffect(() => {
     const checkCapabilities = async () => {
@@ -103,6 +106,61 @@ export default function Settings() {
       Toast.error("Failed to update biometric setting", "Error")
     } else {
       Toast.success(enabled ? "Biométrie activée" : "Biométrie désactivée")
+    }
+  }
+
+  const handleRequireAuthToggle = async (enabled: boolean) => {
+    if (enabled) {
+      // Re-enabling: just save, no verification needed
+      await updateSetting("require_auth", true)
+      Toast.success(t("settings.protectionEnabled"))
+      return
+    }
+    // Disabling: show confirmation toast then open verification modal
+    Toast.confirm(
+      t("settings.disableProtectionConfirm"),
+      () => setDisableAuthModalVisible(true),
+      {
+        title: t("settings.disableProtectionTitle"),
+        confirmText: t("common.confirm"),
+        cancelText: t("common.cancel"),
+      },
+    )
+  }
+
+  const handleDisableAuthPin = async (pin: string) => {
+    if (!user) return
+    setDisableAuthLoading(true)
+    try {
+      const identifier = user.email || user.phone_number
+      const success = await login({ identifier, pin })
+      if (success) {
+        setDisableAuthModalVisible(false)
+        await updateSetting("require_auth", false)
+        Toast.success(t("settings.protectionDisabled"))
+      } else {
+        Toast.error(t("auth.login.invalidPin"))
+      }
+    } finally {
+      setDisableAuthLoading(false)
+    }
+  }
+
+  const handleDisableAuthBiometric = async () => {
+    setDisableAuthLoading(true)
+    try {
+      const result = await LocalAuthentication.authenticateAsync({
+        promptMessage: t("settings.verifyIdentity"),
+        cancelLabel: t("common.cancel"),
+        disableDeviceFallback: false,
+      })
+      if (result.success) {
+        setDisableAuthModalVisible(false)
+        await updateSetting("require_auth", false)
+        Toast.success(t("settings.protectionDisabled"))
+      }
+    } finally {
+      setDisableAuthLoading(false)
     }
   }
 
@@ -350,77 +408,122 @@ export default function Settings() {
           </SettingCard>
 
           {/* Security */}
-          <SettingCard title={t("settings.security")}>
-            {localBiometricCapabilities?.isAvailable && (
-              <View style={styles.switchRow}>
-                <View style={styles.switchRowLeft}>
-                  <View style={[styles.settingRowIcon, { backgroundColor: colors.primary.default }]}>
-                    <MaterialIcons
-                      name={
-                        localBiometricCapabilities.biometryType === "face"
-                          ? "face"
-                          : localBiometricCapabilities.biometryType === "iris"
-                          ? "remove-red-eye"
-                          : "fingerprint"
-                      }
-                      size={20}
-                      color={colors.primary.foreground}
+          {(() => {
+            const requireAuth = settings.require_auth !== false
+            const dimmed = !requireAuth
+            const dimStyle = dimmed ? { opacity: 0.4 } : {}
+            return (
+              <SettingCard title={t("settings.security")}>
+                {/* App Protection toggle — always active */}
+                <View style={styles.switchRow}>
+                  <View style={[styles.switchRowLeft, { flex: 1 }]}>
+                    <View style={[styles.settingRowIcon, { backgroundColor: colors.primary.default }]}>
+                      <Feather name="shield" size={20} color={colors.primary.foreground} />
+                    </View>
+                    <View style={[styles.switchRowText, { flex: 1 }]}>
+                      <Text style={{ color: colors.foreground.primary }}>{t("settings.requireAuth")}</Text>
+                      <Text style={[styles.switchRowDesc, { color: colors.muted.foreground }]}>{t("settings.requireAuthDesc")}</Text>
+                    </View>
+                  </View>
+                  <Switch
+                    value={requireAuth}
+                    onValueChange={handleRequireAuthToggle}
+                    trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                    thumbColor={colors.card.background}
+                  />
+                </View>
+
+                {/* Hint when disabled */}
+                {dimmed && (
+                  <View style={[styles.disabledHint, { backgroundColor: colors.muted.default + "40", borderColor: colors.border }]}>
+                    <Feather name="info" size={13} color={colors.muted.foreground} />
+                    <Text style={[styles.disabledHintText, { color: colors.muted.foreground }]}>
+                      {t("settings.securityOptionsDisabledHint")}
+                    </Text>
+                  </View>
+                )}
+
+                {/* Biometric */}
+                {localBiometricCapabilities?.isAvailable && (
+                  <View style={[styles.switchRow, { borderTopWidth: 1, borderTopColor: colors.border }, dimStyle]}
+                    pointerEvents={dimmed ? "none" : "auto"}>
+                    <View style={styles.switchRowLeft}>
+                      <View style={[styles.settingRowIcon, { backgroundColor: colors.primary.default }]}>
+                        <MaterialIcons
+                          name={
+                            localBiometricCapabilities.biometryType === "face"
+                              ? "face"
+                              : localBiometricCapabilities.biometryType === "iris"
+                              ? "remove-red-eye"
+                              : "fingerprint"
+                          }
+                          size={20}
+                          color={colors.primary.foreground}
+                        />
+                      </View>
+                      <View style={styles.switchRowText}>
+                        <Text style={{ color: colors.foreground.primary }}>
+                          {getBiometricDisplayName(localBiometricCapabilities.biometryType)} Authentication
+                        </Text>
+                        <Text style={[styles.switchRowDesc, { color: colors.muted.foreground }]}>
+                          Use {getBiometricDisplayName(localBiometricCapabilities.biometryType).toLowerCase()} to unlock
+                        </Text>
+                      </View>
+                    </View>
+                    <Switch
+                      value={user?.biometric_enabled || false}
+                      onValueChange={handleBiometricToggle}
+                      trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                      thumbColor={colors.card.background}
                     />
                   </View>
-                  <View style={styles.switchRowText}>
-                    <Text style={{ color: colors.foreground.primary }}>
-                      {getBiometricDisplayName(localBiometricCapabilities.biometryType)} Authentication
-                    </Text>
-                    <Text style={[styles.switchRowDesc, { color: colors.muted.foreground }]}>
-                      Use {getBiometricDisplayName(localBiometricCapabilities.biometryType).toLowerCase()} to unlock
-                    </Text>
-                  </View>
+                )}
+
+                {/* Auto-logout */}
+                <View
+                  style={[
+                    styles.settingSection,
+                    { borderTopWidth: 1, borderTopColor: colors.border },
+                    dimStyle,
+                  ]}
+                  pointerEvents={dimmed ? "none" : "auto"}
+                >
+                  <Text style={[styles.settingSectionLabel, { color: colors.foreground.primary }]}>{t("settings.autoLogout")}</Text>
+                  <SelectionButtons
+                    options={[
+                      { value: 1, label: t("settings.oneMin") },
+                      { value: 5, label: t("settings.fiveMin") },
+                      { value: 15, label: t("settings.fifteenMin") },
+                      { value: 30, label: t("settings.thirtyMin") },
+                      { value: 60, label: t("settings.sixtyMin") },
+                      { value: 120, label: t("settings.oneHundredTwentyMin") },
+                    ]}
+                    selectedValue={settings.inactivity_timeout}
+                    onSelect={(minutes) => updateSetting("inactivity_timeout", minutes)}
+                  />
                 </View>
-                <Switch
-                  value={user?.biometric_enabled || false}
-                  onValueChange={handleBiometricToggle}
-                  trackColor={{ false: colors.muted.default, true: colors.primary.default }}
-                  thumbColor={colors.card.background}
-                />
-              </View>
-            )}
 
-            <View
-              style={[
-                styles.settingSection,
-                localBiometricCapabilities?.isAvailable && { borderTopWidth: 1, borderTopColor: colors.border },
-              ]}
-            >
-              <Text style={[styles.settingSectionLabel, { color: colors.foreground.primary }]}>{t("settings.autoLogout")}</Text>
-              <SelectionButtons
-                options={[
-                  { value: 1, label: t("settings.oneMin") },
-                  { value: 5, label: t("settings.fiveMin") },
-                  { value: 15, label: t("settings.fifteenMin") },
-                  { value: 30, label: t("settings.thirtyMin") },
-                  { value: 60, label: t("settings.sixtyMin") },
-                  { value: 120, label: t("settings.oneHundredTwentyMin") },
-                ]}
-                selectedValue={settings.inactivity_timeout}
-                onSelect={(minutes) => updateSetting("inactivity_timeout", minutes)}
-              />
-            </View>
-
-            <View style={[styles.settingSection, { borderTopWidth: 1, borderTopColor: colors.border }]}>
-              <Text style={[styles.settingSectionLabel, { color: colors.foreground.primary }]}>{t("settings.backgroundLockDelay")}</Text>
-              <SelectionButtons
-                options={[
-                  { value: 0, label: t("settings.lockImmediately") },
-                  { value: 5, label: t("settings.lockFiveSeconds") },
-                  { value: 10, label: t("settings.lockTenSeconds") },
-                  { value: 30, label: t("settings.lockThirtySeconds") },
-                  { value: 60, label: t("settings.lockOneMinute") },
-                ]}
-                selectedValue={settings.background_lock_delay || 5}
-                onSelect={(seconds) => updateSetting("background_lock_delay", seconds)}
-              />
-            </View>
-          </SettingCard>
+                {/* Background lock delay */}
+                <View
+                  style={[styles.settingSection, { borderTopWidth: 1, borderTopColor: colors.border }, dimStyle]}
+                  pointerEvents={dimmed ? "none" : "auto"}
+                >
+                  <Text style={[styles.settingSectionLabel, { color: colors.foreground.primary }]}>{t("settings.backgroundLockDelay")}</Text>
+                  <SelectionButtons
+                    options={[
+                      { value: 0, label: t("settings.lockImmediately") },
+                      { value: 5, label: t("settings.lockFiveSeconds") },
+                      { value: 10, label: t("settings.lockTenSeconds") },
+                      { value: 30, label: t("settings.lockThirtySeconds") },
+                      { value: 60, label: t("settings.lockOneMinute") },
+                    ]}
+                    selectedValue={settings.background_lock_delay || 5}
+                    onSelect={(seconds) => updateSetting("background_lock_delay", seconds)}
+                  />
+                </View>
+              </SettingCard>
+            )
+          })()}
 
           {/* Session Management */}
           <SettingCard title={t("settings.sessionManagement")}>
@@ -824,6 +927,29 @@ export default function Settings() {
         </View>
       </SheetModal>
 
+      {/* Disable app protection — PIN/biometric verification */}
+      <Modal
+        visible={disableAuthModalVisible}
+        animationType="slide"
+        presentationStyle="formSheet"
+        statusBarTranslucent
+        onRequestClose={() => setDisableAuthModalVisible(false)}
+      >
+        <View style={[styles.verifyModal, { backgroundColor: colors.background.primary }]}>
+          <Pressable style={styles.verifyModalClose} onPress={() => setDisableAuthModalVisible(false)}>
+            <Feather name="x" size={24} color={colors.foreground.primary} />
+          </Pressable>
+          <PinInput
+            title={t("settings.verifyIdentity")}
+            subtitle={t("settings.enterPinToDisable")}
+            onComplete={handleDisableAuthPin}
+            onBiometric={user?.biometric_enabled && localBiometricCapabilities?.isAvailable ? handleDisableAuthBiometric : undefined}
+            biometricAvailable={!!(user?.biometric_enabled && localBiometricCapabilities?.isAvailable)}
+            showBiometric={!!(user?.biometric_enabled && localBiometricCapabilities?.isAvailable)}
+          />
+        </View>
+      </Modal>
+
       <EditProfileModal visible={editProfileModalVisible} onClose={() => setEditProfileModalVisible(false)} />
       <ChangePinModal visible={changePinModalVisible} onClose={() => setChangePinModalVisible(false)} />
     </>
@@ -886,4 +1012,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   logoutBtnText: { fontWeight: "600", marginLeft: 8 },
+  disabledHint: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    marginTop: 8,
+  },
+  disabledHintText: { fontSize: 12, flex: 1 },
+  verifyModal: { flex: 1, justifyContent: "center" },
+  verifyModalClose: { position: "absolute", top: 56, right: 24, zIndex: 10 },
 })
