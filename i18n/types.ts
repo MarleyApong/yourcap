@@ -288,6 +288,18 @@ export interface TranslationKeys {
   'settings.enterPinToDisable': string;
   'settings.notifications': string;
   'settings.language': string;
+  'settings.appearance': string;
+  'settings.themeMode': string;
+  'settings.themeLight': string;
+  'settings.themeDark': string;
+  'settings.themeSystem': string;
+  'settings.accentColor': string;
+  'settings.accentPurple': string;
+  'settings.accentBlue': string;
+  'settings.accentGreen': string;
+  'settings.accentOrange': string;
+  'settings.accentRose': string;
+  'settings.accentTeal': string;
   'settings.data': string;
   'settings.about': string;
   'settings.logout': string;

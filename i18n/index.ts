@@ -1,4 +1,3 @@
-import { useAuthStore } from '@/stores/authStore';
 import { useLanguageStore } from '@/stores/languageStore';
 import React from 'react';
 import { DEFAULT_LANGUAGE, translations as localeTranslations, SupportedLanguage } from './locales';
@@ -8,16 +7,14 @@ export const translations = localeTranslations;
 
 // Hook avec type-safety et support de la langue utilisateur
 export const useTranslation = () => {
-  const { user } = useAuthStore();
-  const { guestLanguage } = useLanguageStore();
+  const { appLanguage } = useLanguageStore();
 
-  // Priorité : langue du compte > langue invité > langue par défaut
-  const currentLanguage: SupportedLanguage = (user?.settings?.language as SupportedLanguage) || guestLanguage || DEFAULT_LANGUAGE;
-  
-  // Debug: Log language changes
-  React.useEffect(() => {
-    console.log('🌐 Current language:', currentLanguage, 'from user settings:', user?.settings?.language);
-  }, [currentLanguage, user?.settings?.language]);
+  // Single source of truth: languageStore.appLanguage
+  // (always synced on login and on settings change)
+  const currentLanguage: SupportedLanguage = appLanguage || DEFAULT_LANGUAGE;
+
+  // unused but kept to avoid breaking destructuring at call sites
+  React.useEffect(() => {}, []);
   
   const t = (key: TranslationKey): string => {
     const keys = key.split('.');

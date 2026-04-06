@@ -11,6 +11,7 @@ import {
     setUserIdentifier
 } from "@/lib/auth"
 import { authenticateWithBiometric, checkBiometricCapabilities } from "@/services/biometricService"
+import { useLanguageStore } from "@/stores/languageStore"
 import { ensureUserSettings, getSettings } from "@/services/settingsService"
 import { createUser, getUserById, getUserByIdentifier, loginUser, updateBiometricPreference, updateUserProfile } from "@/services/userService"
 import { CreateUserInput } from "@/types/user"
@@ -536,4 +537,14 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       return locked
     },
   })),
+)
+
+// Sync language to languageStore whenever user settings change
+useAuthStore.subscribe(
+  (state) => state.user?.settings?.language,
+  (language) => {
+    if (language) {
+      useLanguageStore.getState().setAppLanguage(language as any)
+    }
+  },
 )

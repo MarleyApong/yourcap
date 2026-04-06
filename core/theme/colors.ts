@@ -1,5 +1,36 @@
 export type ColorScheme = "light" | "dark"
 
+type AccentValues = { primary: string; primaryFg: string; secondary: string; secondaryFg: string; ring: string }
+
+export const ACCENT_PRESETS = {
+  purple: {
+    light: { primary: "#562d8f", primaryFg: "#ffffff", secondary: "#faf5ff", secondaryFg: "#7c3aed", ring: "#562d8f" },
+    dark:  { primary: "#a855f7", primaryFg: "#ffffff", secondary: "#312e81", secondaryFg: "#e9d5ff", ring: "#a855f7" },
+  },
+  blue: {
+    light: { primary: "#2563eb", primaryFg: "#ffffff", secondary: "#eff6ff", secondaryFg: "#1d4ed8", ring: "#2563eb" },
+    dark:  { primary: "#60a5fa", primaryFg: "#0f172a", secondary: "#1e3a5f", secondaryFg: "#bfdbfe", ring: "#60a5fa" },
+  },
+  green: {
+    light: { primary: "#16a34a", primaryFg: "#ffffff", secondary: "#f0fdf4", secondaryFg: "#15803d", ring: "#16a34a" },
+    dark:  { primary: "#34d399", primaryFg: "#0f172a", secondary: "#064e3b", secondaryFg: "#a7f3d0", ring: "#34d399" },
+  },
+  orange: {
+    light: { primary: "#c2410c", primaryFg: "#ffffff", secondary: "#fff7ed", secondaryFg: "#c2410c", ring: "#c2410c" },
+    dark:  { primary: "#fb923c", primaryFg: "#0f172a", secondary: "#431407", secondaryFg: "#fed7aa", ring: "#fb923c" },
+  },
+  rose: {
+    light: { primary: "#be123c", primaryFg: "#ffffff", secondary: "#fff1f2", secondaryFg: "#be123c", ring: "#be123c" },
+    dark:  { primary: "#fb7185", primaryFg: "#0f172a", secondary: "#4c0519", secondaryFg: "#fecdd3", ring: "#fb7185" },
+  },
+  teal: {
+    light: { primary: "#0f766e", primaryFg: "#ffffff", secondary: "#f0fdfa", secondaryFg: "#0f766e", ring: "#0f766e" },
+    dark:  { primary: "#2dd4bf", primaryFg: "#0f172a", secondary: "#134e4a", secondaryFg: "#99f6e4", ring: "#2dd4bf" },
+  },
+} as const satisfies Record<string, Record<ColorScheme, AccentValues>>
+
+export type AccentKey = keyof typeof ACCENT_PRESETS
+
 export const colors = {
   light: {
     background: {

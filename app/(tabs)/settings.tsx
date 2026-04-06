@@ -6,6 +6,8 @@ import { LanguageSelector } from "@/components/feature/language-selector"
 import { LoadingState } from "@/components/feature/loading-state"
 import { PageHeader } from "@/components/feature/page-header"
 import { SheetModal, sheetSectionStyles } from "@/components/feature/sheet-modal"
+import { useAppStore } from "@/core/stores/appStore"
+import { ACCENT_PRESETS } from "@/core/theme/colors"
 import { useTheme } from "@/core/theme"
 import { useSettings } from "@/hooks/useSettings"
 import { useTranslation } from "@/i18n"
@@ -14,6 +16,7 @@ import { Toast } from "@/lib/toast-global"
 import { BiometricCapabilities, checkBiometricCapabilities, getBiometricDisplayName } from "@/services/biometricService"
 import { requestNotificationPermissions, scheduleAllDebtReminders, updateNotificationSettings } from "@/services/notificationService"
 import { useAuthStore } from "@/stores/authStore"
+import { useLanguageStore } from "@/stores/languageStore"
 import { Feather, MaterialIcons } from "@expo/vector-icons"
 import * as LocalAuthentication from "expo-local-authentication"
 import { useRouter } from "expo-router"
@@ -34,7 +37,8 @@ const TERMS_ICONS = {
 export default function Settings() {
   const { user, logout, updateBiometricSetting, login } = useAuthStore()
   const { settings, loading, updateSetting } = useSettings()
-  const { colors } = useTheme()
+  const { colors, isDark, accentColor } = useTheme()
+  const { themeMode, setThemeMode, setAccentColor } = useAppStore()
   const { t, currentLanguage } = useTranslation()
   const router = useRouter()
   const insets = useSafeAreaInsets()
@@ -186,13 +190,14 @@ export default function Settings() {
     }
   }
 
+  const { setAppLanguage } = useLanguageStore()
+
   const handleLanguageChange = async (language: SupportedLanguage) => {
-    const success = await updateSetting("language", language)
-    if (success) {
-      Toast.success(t("settings.selectLanguage"))
-    } else {
-      Toast.error(t("common.error"))
-    }
+    // Update immediately in languageStore so UI updates right away
+    await setAppLanguage(language)
+    // Persist to DB
+    await updateSetting("language", language)
+    Toast.success(t("settings.selectLanguage"))
   }
 
   const [privacyModalVisible, setPrivacyModalVisible] = useState(false)
@@ -774,6 +779,66 @@ export default function Settings() {
             </View>
           </SettingCard>
 
+          {/* Appearance */}
+          <SettingCard title={t("settings.appearance")}>
+            {/* Theme mode */}
+            <View style={styles.settingSection}>
+              <Text style={[styles.settingSectionLabel, { color: colors.foreground.primary }]}>{t("settings.themeMode")}</Text>
+              <View style={styles.themeRow}>
+                {(["light", "system", "dark"] as const).map((mode) => {
+                  const labels = { light: t("settings.themeLight"), system: t("settings.themeSystem"), dark: t("settings.themeDark") }
+                  const icons = { light: "sun", system: "monitor", dark: "moon" }
+                  const selected = themeMode === mode
+                  return (
+                    <Pressable
+                      key={mode}
+                      onPress={() => setThemeMode(mode)}
+                      style={[
+                        styles.themeBtn,
+                        { backgroundColor: selected ? colors.primary.default : colors.secondary.default, borderColor: selected ? colors.primary.default : colors.border },
+                      ]}
+                    >
+                      <Feather name={icons[mode] as any} size={16} color={selected ? colors.primary.foreground : colors.muted.foreground} />
+                      <Text style={[styles.themeBtnText, { color: selected ? colors.primary.foreground : colors.foreground.primary }]}>
+                        {labels[mode]}
+                      </Text>
+                    </Pressable>
+                  )
+                })}
+              </View>
+            </View>
+
+            {/* Accent color */}
+            <View style={[styles.settingSection, { borderTopWidth: 1, borderTopColor: colors.border }]}>
+              <Text style={[styles.settingSectionLabel, { color: colors.foreground.primary }]}>{t("settings.accentColor")}</Text>
+              <View style={styles.accentRow}>
+                {(["purple", "blue", "green", "orange", "rose", "teal"] as const).map((accent) => {
+                  const accentNames = {
+                    purple: t("settings.accentPurple"),
+                    blue: t("settings.accentBlue"),
+                    green: t("settings.accentGreen"),
+                    orange: t("settings.accentOrange"),
+                    rose: t("settings.accentRose"),
+                    teal: t("settings.accentTeal"),
+                  }
+                  const dotColor = ACCENT_PRESETS[accent][isDark ? "dark" : "light"].primary
+                  const selected = accentColor === accent
+                  return (
+                    <Pressable key={accent} onPress={() => setAccentColor(accent)} style={styles.accentItem}>
+                      <View style={[
+                        styles.accentDot,
+                        { backgroundColor: dotColor, borderWidth: selected ? 3 : 0, borderColor: colors.foreground.primary },
+                      ]} />
+                      <Text style={[styles.accentLabel, { color: selected ? colors.primary.default : colors.muted.foreground }]}>
+                        {accentNames[accent]}
+                      </Text>
+                    </Pressable>
+                  )
+                })}
+              </View>
+            </View>
+          </SettingCard>
+
           {/* Data */}
           <SettingCard title={t("settings.data")}>
             <ImportExportSection
@@ -1026,6 +1091,22 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   logoutBtnText: { fontWeight: "600", marginLeft: 8 },
+  themeRow: { flexDirection: "row", gap: 8 },
+  themeBtn: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1.5,
+  },
+  themeBtnText: { fontSize: 13, fontWeight: "600" },
+  accentRow: { flexDirection: "row", flexWrap: "wrap", gap: 16, paddingTop: 4 },
+  accentItem: { alignItems: "center", gap: 6, minWidth: 52 },
+  accentDot: { width: 32, height: 32, borderRadius: 16 },
+  accentLabel: { fontSize: 11, fontWeight: "500" },
   disabledHint: {
     flexDirection: "row",
     alignItems: "center",
