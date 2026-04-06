@@ -348,9 +348,12 @@ export const en = {
     howToAddDebtAnswer: "Go to the Dashboard tab and tap the \"+\" button to add a new debt record.",
     howToChangePin: "• How to change my PIN?",
     howToChangePinAnswer: "Navigate to Settings → Profile → Change PIN to update your security PIN.",
-    contactSupport: "Contact Support:",
-    supportEmail: "Email: support@yourcap.app",
-    responseTime: "We typically respond within 24 hours.",
+    contactSupport: "Developer & Contact:",
+    supportEmail: "marlexapong90@gmail.com",
+    responseTime: "Available for projects, collaborations and suggestions.",
+    developerName: "Marley Apong",
+    developerPortfolio: "mlya.me",
+    developerTagline: "Open to new projects & ideas — reach out!",
     
     // Delete account texts
     deleteAccountConfirm: "This will permanently delete your account and all associated data. This action cannot be undone.",

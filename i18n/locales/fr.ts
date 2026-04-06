@@ -348,9 +348,12 @@ export const fr = {
     howToAddDebtAnswer: "Allez à l'onglet Tableau de bord et appuyez sur le bouton \"+\" pour ajouter un nouvel enregistrement de dette.",
     howToChangePin: "• Comment changer mon PIN ?",
     howToChangePinAnswer: "Naviguez vers Paramètres → Profil → Changer PIN pour mettre à jour votre PIN de sécurité.",
-    contactSupport: "Contact Support :",
-    supportEmail: "Email: support@yourcap.app",
-    responseTime: "Nous répondons généralement dans les 24 heures.",
+    contactSupport: "Développeur & Contact :",
+    supportEmail: "marlexapong90@gmail.com",
+    responseTime: "Disponible pour des projets, collaborations et suggestions.",
+    developerName: "Marley Apong",
+    developerPortfolio: "mlya.me",
+    developerTagline: "Ouvert aux projets & nouvelles idées — contactez-moi !",
     
     // Delete account texts
     deleteAccountConfirm: "Cela supprimera définitivement votre compte et toutes les données associées. Cette action ne peut pas être annulée.",

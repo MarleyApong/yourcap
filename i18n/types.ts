@@ -359,6 +359,9 @@ export interface TranslationKeys {
   'settings.contactSupport': string;
   'settings.supportEmail': string;
   'settings.responseTime': string;
+  'settings.developerName': string;
+  'settings.developerPortfolio': string;
+  'settings.developerTagline': string;
   'settings.deleteAccountConfirm': string;
   'settings.deleteAccountTitle': string;
   'settings.deleteAccountButton': string;

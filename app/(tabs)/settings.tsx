@@ -919,11 +919,25 @@ export default function Settings() {
         </View>
         <View style={sheetSectionStyles.section}>
           <View style={sheetSectionStyles.sectionHeader}>
-            <Feather name="mail" size={15} color={colors.primary.default} />
+            <Feather name="user" size={15} color={colors.primary.default} />
             <Text style={[sheetSectionStyles.sectionTitle, { color: colors.primary.default }]}>{t("settings.contactSupport")}</Text>
           </View>
-          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.supportEmail")}</Text>
-          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.responseTime")}</Text>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary, fontWeight: "600" }]}>
+            {t("settings.developerName")}
+          </Text>
+          <Pressable onPress={() => Linking.openURL("mailto:marlexapong90@gmail.com")}>
+            <Text style={[sheetSectionStyles.sectionContent, { color: colors.primary.default, textDecorationLine: "underline" }]}>
+              {t("settings.supportEmail")}
+            </Text>
+          </Pressable>
+          <Pressable onPress={() => Linking.openURL("https://mlya.me")}>
+            <Text style={[sheetSectionStyles.sectionContent, { color: colors.primary.default, textDecorationLine: "underline" }]}>
+              {t("settings.developerPortfolio")}
+            </Text>
+          </Pressable>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.muted.foreground, marginTop: 4 }]}>
+            {t("settings.developerTagline")}
+          </Text>
         </View>
       </SheetModal>
 
