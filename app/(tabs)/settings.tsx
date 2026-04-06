@@ -430,12 +430,14 @@ export default function Settings() {
                       <Text style={[styles.switchRowDesc, { color: colors.muted.foreground }]}>{t("settings.requireAuthDesc")}</Text>
                     </View>
                   </View>
-                  <Switch
-                    value={requireAuth}
-                    onValueChange={handleRequireAuthToggle}
-                    trackColor={{ false: colors.muted.default, true: colors.primary.default }}
-                    thumbColor={colors.card.background}
-                  />
+                  <View style={{ borderRadius: 999, borderWidth: 1.5, borderColor: requireAuth ? colors.primary.default : colors.border }}>
+                    <Switch
+                      value={requireAuth}
+                      onValueChange={handleRequireAuthToggle}
+                      trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                      thumbColor={colors.card.background}
+                    />
+                  </View>
                 </View>
 
                 {/* Hint when disabled */}
@@ -475,12 +477,14 @@ export default function Settings() {
                         </Text>
                       </View>
                     </View>
-                    <Switch
-                      value={user?.biometric_enabled || false}
-                      onValueChange={handleBiometricToggle}
-                      trackColor={{ false: colors.muted.default, true: colors.primary.default }}
-                      thumbColor={colors.card.background}
-                    />
+                    <View style={{ borderRadius: 999, borderWidth: 1.5, borderColor: user?.biometric_enabled ? colors.primary.default : colors.border }}>
+                      <Switch
+                        value={user?.biometric_enabled || false}
+                        onValueChange={handleBiometricToggle}
+                        trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                        thumbColor={colors.card.background}
+                      />
+                    </View>
                   </View>
                 )}
 
@@ -537,12 +541,14 @@ export default function Settings() {
                 <Text style={{ color: colors.foreground.primary }}>{t("settings.rememberMe")}</Text>
                 <Text style={[styles.switchRowDesc, { color: colors.muted.foreground }]}>{t("settings.rememberMeDescription")}</Text>
               </View>
-              <Switch
-                value={settings.remember_session}
-                onValueChange={handleRememberSessionToggle}
-                trackColor={{ false: colors.muted.default, true: colors.primary.default }}
-                thumbColor={colors.card.background}
-              />
+              <View style={{ borderRadius: 999, borderWidth: 1.5, borderColor: settings.remember_session ? colors.primary.default : colors.border }}>
+                <Switch
+                  value={settings.remember_session}
+                  onValueChange={handleRememberSessionToggle}
+                  trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                  thumbColor={colors.card.background}
+                />
+              </View>
             </View>
 
             {settings.remember_session && (
@@ -566,40 +572,42 @@ export default function Settings() {
           <SettingCard title={t("settings.notifications")}>
             <View style={styles.switchRow}>
               <Text style={{ color: colors.foreground.primary }}>{t("settings.enableNotifications")}</Text>
-              <Switch
-                value={settings.notification_enabled}
-                onValueChange={async (val) => {
-                  if (val) {
-                    // Demander la permission AVANT de sauvegarder
-                    const hasPermission = await requestNotificationPermissions()
-                    if (!hasPermission) {
-                      // Permission refusée — proposer d'ouvrir les réglages
-                      Toast.confirm(
-                        "Les notifications ont été refusées. Activez-les dans les réglages de votre téléphone.",
-                        () => Linking.openSettings(),
-                        {
-                          title: "Permission requise",
-                          confirmText: "Ouvrir les réglages",
-                          cancelText: "Annuler",
-                        },
-                      )
-                      return // Ne pas sauvegarder
+              <View style={{ borderRadius: 999, borderWidth: 1.5, borderColor: settings.notification_enabled ? colors.primary.default : colors.border }}>
+                <Switch
+                  value={settings.notification_enabled}
+                  onValueChange={async (val) => {
+                    if (val) {
+                      // Demander la permission AVANT de sauvegarder
+                      const hasPermission = await requestNotificationPermissions()
+                      if (!hasPermission) {
+                        // Permission refusée — proposer d'ouvrir les réglages
+                        Toast.confirm(
+                          "Les notifications ont été refusées. Activez-les dans les réglages de votre téléphone.",
+                          () => Linking.openSettings(),
+                          {
+                            title: "Permission requise",
+                            confirmText: "Ouvrir les réglages",
+                            cancelText: "Annuler",
+                          },
+                        )
+                        return // Ne pas sauvegarder
+                      }
+                      await updateSetting("notification_enabled", true)
+                      if (user?.user_id) {
+                        await scheduleAllDebtReminders(user.user_id)
+                      }
+                      Toast.success(t("settings.notificationsEnabled"))
+                    } else {
+                      await updateSetting("notification_enabled", false)
+                      const Notifications = await import("expo-notifications")
+                      await Notifications.cancelAllScheduledNotificationsAsync()
+                      Toast.success(t("settings.notificationsDisabled"))
                     }
-                    await updateSetting("notification_enabled", true)
-                    if (user?.user_id) {
-                      await scheduleAllDebtReminders(user.user_id)
-                    }
-                    Toast.success(t("settings.notificationsEnabled"))
-                  } else {
-                    await updateSetting("notification_enabled", false)
-                    const Notifications = await import("expo-notifications")
-                    await Notifications.cancelAllScheduledNotificationsAsync()
-                    Toast.success(t("settings.notificationsDisabled"))
-                  }
-                }}
-                trackColor={{ false: colors.muted.default, true: colors.primary.default }}
-                thumbColor={colors.card.background}
-              />
+                  }}
+                  trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                  thumbColor={colors.card.background}
+                />
+              </View>
             </View>
 
             {settings.notification_enabled && (
@@ -612,18 +620,20 @@ export default function Settings() {
                       <Text style={{ color: colors.foreground.primary }}>{t("settings.systemNotifications")}</Text>
                       <Text style={[styles.switchRowDesc, { color: colors.muted.foreground }]}>{t("settings.systemNotificationsDesc")}</Text>
                     </View>
-                    <Switch
-                      value={settings.system_notifications}
-                      onValueChange={async (val) => {
-                        const success = await updateSetting("system_notifications", val)
-                        if (success && user?.user_id) {
-                          await updateNotificationSettings(user.user_id)
-                          Toast.success(val ? t("settings.systemNotificationsEnabled") : t("settings.systemNotificationsDisabled"))
-                        }
-                      }}
-                      trackColor={{ false: colors.muted.default, true: colors.primary.default }}
-                      thumbColor={colors.card.background}
-                    />
+                    <View style={{ borderRadius: 999, borderWidth: 1.5, borderColor: settings.system_notifications ? colors.primary.default : colors.border }}>
+                      <Switch
+                        value={settings.system_notifications}
+                        onValueChange={async (val) => {
+                          const success = await updateSetting("system_notifications", val)
+                          if (success && user?.user_id) {
+                            await updateNotificationSettings(user.user_id)
+                            Toast.success(val ? t("settings.systemNotificationsEnabled") : t("settings.systemNotificationsDisabled"))
+                          }
+                        }}
+                        trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                        thumbColor={colors.card.background}
+                      />
+                    </View>
                   </View>
 
                   <View style={styles.switchRowCompact}>
@@ -631,12 +641,14 @@ export default function Settings() {
                       <Text style={{ color: colors.foreground.primary }}>{t("settings.emailNotifications")}</Text>
                       <Text style={[styles.switchRowDesc, { color: colors.muted.foreground }]}>{t("settings.emailNotificationsDesc")}</Text>
                     </View>
-                    <Switch
-                      value={settings.email_notifications}
-                      onValueChange={() => Toast.info(t("settings.emailComingSoon"))}
-                      trackColor={{ false: colors.muted.default, true: colors.primary.default }}
-                      thumbColor={colors.card.background}
-                    />
+                    <View style={{ borderRadius: 999, borderWidth: 1.5, borderColor: settings.email_notifications ? colors.primary.default : colors.border }}>
+                      <Switch
+                        value={settings.email_notifications}
+                        onValueChange={() => Toast.info(t("settings.emailComingSoon"))}
+                        trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                        thumbColor={colors.card.background}
+                      />
+                    </View>
                   </View>
 
                   <View style={styles.switchRowCompact}>
@@ -644,12 +656,14 @@ export default function Settings() {
                       <Text style={{ color: colors.foreground.primary }}>{t("settings.smsNotifications")}</Text>
                       <Text style={[styles.switchRowDesc, { color: colors.muted.foreground }]}>{t("settings.smsNotificationsDesc")}</Text>
                     </View>
-                    <Switch
-                      value={settings.sms_notifications}
-                      onValueChange={() => Toast.info(t("settings.smsComingSoon"))}
-                      trackColor={{ false: colors.muted.default, true: colors.primary.default }}
-                      thumbColor={colors.card.background}
-                    />
+                    <View style={{ borderRadius: 999, borderWidth: 1.5, borderColor: settings.sms_notifications ? colors.primary.default : colors.border }}>
+                      <Switch
+                        value={settings.sms_notifications}
+                        onValueChange={() => Toast.info(t("settings.smsComingSoon"))}
+                        trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                        thumbColor={colors.card.background}
+                      />
+                    </View>
                   </View>
                 </View>
 
@@ -707,18 +721,20 @@ export default function Settings() {
                       <Text style={{ color: colors.foreground.primary }}>{t("settings.summaryNotifications")}</Text>
                       <Text style={[styles.switchRowDesc, { color: colors.muted.foreground }]}>{t("settings.summaryNotificationsDesc")}</Text>
                     </View>
-                    <Switch
-                      value={settings.summary_notifications}
-                      onValueChange={async (val) => {
-                        const success = await updateSetting("summary_notifications", val)
-                        if (success && user?.user_id) {
-                          await scheduleAllDebtReminders(user.user_id)
-                          Toast.success(val ? t("settings.summaryNotificationsEnabled") : t("settings.summaryNotificationsDisabled"))
-                        }
-                      }}
-                      trackColor={{ false: colors.muted.default, true: colors.primary.default }}
-                      thumbColor={colors.card.background}
-                    />
+                    <View style={{ borderRadius: 999, borderWidth: 1.5, borderColor: settings.summary_notifications ? colors.primary.default : colors.border }}>
+                      <Switch
+                        value={settings.summary_notifications}
+                        onValueChange={async (val) => {
+                          const success = await updateSetting("summary_notifications", val)
+                          if (success && user?.user_id) {
+                            await scheduleAllDebtReminders(user.user_id)
+                            Toast.success(val ? t("settings.summaryNotificationsEnabled") : t("settings.summaryNotificationsDisabled"))
+                          }
+                        }}
+                        trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                        thumbColor={colors.card.background}
+                      />
+                    </View>
                   </View>
 
                   {settings.summary_notifications && (
