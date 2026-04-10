@@ -1,7 +1,9 @@
+import { SheetModal, sheetSectionStyles } from "@/components/feature/sheet-modal"
 import { useTheme } from "@/core/theme"
 import { useTranslation } from "@/i18n"
 import { Toast } from "@/lib/toast-global"
 import {
+  DATA_STRUCTURE_INFO,
   generateExportData,
   generateTemplateData,
   importDebtsFromCSV,
@@ -12,8 +14,7 @@ import {
 } from "@/services/importExportService"
 import { Feather } from "@expo/vector-icons"
 import React, { useState } from "react"
-import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, TextInput, View } from "react-native"
-import { DataStructureModal } from "./data-structure-modal"
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
 
 interface ImportExportSectionProps {
   userId: string
@@ -65,7 +66,7 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({ userId
         if (result.errors.length > 0) {
           Alert.alert(
             t("importExport.import.importCompletedWarnings"),
-            `${t("importExport.import.errorsEncountered")}\n${result.errors.slice(0, 5).join("\n")}${result.errors.length > 5 ? "\n..." : ""}`
+            `${t("importExport.import.errorsEncountered")}\n${result.errors.slice(0, 5).join("\n")}${result.errors.length > 5 ? "\n..." : ""}`,
           )
         }
       } else {
@@ -92,7 +93,7 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({ userId
         if (result.errors.length > 0) {
           Alert.alert(
             t("importExport.import.importCompletedWarnings"),
-            `${t("importExport.import.errorsEncountered")}\n${result.errors.slice(0, 5).join("\n")}${result.errors.length > 5 ? "\n..." : ""}`
+            `${t("importExport.import.errorsEncountered")}\n${result.errors.slice(0, 5).join("\n")}${result.errors.length > 5 ? "\n..." : ""}`,
           )
         }
       } else {
@@ -126,7 +127,7 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({ userId
           [
             { text: t("importExport.import.cancelButton"), style: "cancel" },
             { text: t("importExport.import.continueButton"), onPress: () => proceedWithImport(csvInput) },
-          ]
+          ],
         )
       } else {
         await proceedWithImport(csvInput)
@@ -221,10 +222,104 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({ userId
         </View>
       </View>
 
-      {showStructureModal && (
-        <DataStructureModal visible={showStructureModal} onClose={() => setShowStructureModal(false)} />
-      )}
+      {/* Data Structure SheetModal */}
+      <SheetModal
+        visible={showStructureModal}
+        onClose={() => setShowStructureModal(false)}
+        title={t("importExport.dataStructure.title")}
+        actionLabel={t("settings.iUnderstand")}
+        onAction={() => setShowStructureModal(false)}
+      >
+        <Text style={[sheetSectionStyles.sectionContent, { color: colors.muted.foreground, marginBottom: 16 }]}>
+          {t("importExport.dataStructure.description")}
+        </Text>
 
+        {/* Required fields */}
+        <View style={sheetSectionStyles.section}>
+          <View style={sheetSectionStyles.sectionHeader}>
+            <Feather name="check-circle" size={15} color={colors.primary.default} />
+            <Text style={[sheetSectionStyles.sectionTitle, { color: colors.primary.default }]}>
+              {t("importExport.dataStructure.rules.title")}
+            </Text>
+          </View>
+          {DATA_STRUCTURE_INFO.requiredFields.map((field) => (
+            <View key={field} style={styles.fieldRow}>
+              <Text style={[styles.fieldName, { color: colors.foreground.primary }]}>• {field}</Text>
+              <Text style={[styles.fieldDesc, { color: colors.muted.foreground }]}>
+                {DATA_STRUCTURE_INFO.dataTypes[field]}
+              </Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Optional fields */}
+        <View style={sheetSectionStyles.section}>
+          <View style={sheetSectionStyles.sectionHeader}>
+            <Feather name="plus-circle" size={15} color={colors.primary.default} />
+            <Text style={[sheetSectionStyles.sectionTitle, { color: colors.primary.default }]}>
+              {t("importExport.import.structureButton")}
+            </Text>
+          </View>
+          {DATA_STRUCTURE_INFO.optionalFields.map((field) => (
+            <View key={field} style={styles.fieldRow}>
+              <Text style={[styles.fieldName, { color: colors.foreground.primary }]}>• {field}</Text>
+              <Text style={[styles.fieldDesc, { color: colors.muted.foreground }]}>
+                {DATA_STRUCTURE_INFO.dataTypes[field]}
+              </Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Type values */}
+        <View style={sheetSectionStyles.section}>
+          <View style={sheetSectionStyles.sectionHeader}>
+            <Feather name="tag" size={15} color={colors.primary.default} />
+            <Text style={[sheetSectionStyles.sectionTitle, { color: colors.primary.default }]}>
+              Type
+            </Text>
+          </View>
+          <Text style={[styles.fieldDesc, { color: colors.muted.foreground }]}>
+            • <Text style={{ fontWeight: "600" }}>OWING</Text> — {t("importExport.dataStructure.typeValues.owed")}
+          </Text>
+          <Text style={[styles.fieldDesc, { color: colors.muted.foreground, marginTop: 4 }]}>
+            • <Text style={{ fontWeight: "600" }}>OWED</Text> — {t("importExport.dataStructure.typeValues.owe")}
+          </Text>
+        </View>
+
+        {/* Example */}
+        <View style={sheetSectionStyles.section}>
+          <View style={sheetSectionStyles.sectionHeader}>
+            <Feather name="file-text" size={15} color={colors.primary.default} />
+            <Text style={[sheetSectionStyles.sectionTitle, { color: colors.primary.default }]}>
+              {t("importExport.dataStructure.example")}
+            </Text>
+          </View>
+          <View style={[styles.exampleBox, { backgroundColor: colors.background.primary, borderColor: colors.border }]}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View>
+                <View style={[styles.exampleHeader, { borderBottomColor: colors.border }]}>
+                  {Object.keys(DATA_STRUCTURE_INFO.dataTypes).map((header) => (
+                    <Text key={header} style={[styles.exampleCell, { color: colors.foreground.primary, fontWeight: "600" }]}>
+                      {header}
+                    </Text>
+                  ))}
+                </View>
+                {DATA_STRUCTURE_INFO.examples.map((example, index) => (
+                  <View key={index} style={styles.exampleRow}>
+                    {Object.entries(example).map(([key, value]) => (
+                      <Text key={key} style={[styles.exampleCell, { color: colors.muted.foreground }]} numberOfLines={1}>
+                        {String(value)}
+                      </Text>
+                    ))}
+                  </View>
+                ))}
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </SheetModal>
+
+      {/* Import from text modal */}
       {showImportModal && (
         <View style={styles.modalOverlay}>
           <View style={styles.modalInner}>
@@ -316,6 +411,13 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   halfBtnText: { fontSize: 14, fontWeight: "500" },
+  fieldRow: { marginBottom: 6 },
+  fieldName: { fontWeight: "500", fontSize: 14 },
+  fieldDesc: { fontSize: 13, marginLeft: 12 },
+  exampleBox: { padding: 12, borderRadius: 8, borderWidth: 1 },
+  exampleHeader: { flexDirection: "row", borderBottomWidth: 1, paddingBottom: 6, marginBottom: 6 },
+  exampleRow: { flexDirection: "row", marginBottom: 4 },
+  exampleCell: { fontSize: 11, width: 96, marginRight: 8 },
   modalOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.5)",
