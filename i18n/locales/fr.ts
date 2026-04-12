@@ -563,7 +563,7 @@ export const fr = {
       // Modal
       modalTitle: "Importer CSV",
       modalDescription: "Collez le contenu de votre fichier CSV ci-dessous :",
-      modalPlaceholder: "contact_name,contact_phone,amount,currency,loan_date,due_date,status,debt_type\\nJohn Doe,+237123456789,50000,XAF,2024-01-15,2024-02-15,PENDING,OWING",
+      modalPlaceholder: "contact_name,contact_phone,amount,currency,loan_date,due_date,status,debt_type\\nKofi Mensah,+237123456789,50000,XAF,2024-01-15,2024-02-15,PENDING,OWING",
       modalCancel: "Annuler",
       modalImport: "Importer",
       // Results and errors

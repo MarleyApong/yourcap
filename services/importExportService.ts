@@ -50,9 +50,9 @@ export const DATA_STRUCTURE_INFO: ImportExportInfo = {
     'repayment_date'
   ],
   dataTypes: {
-    'contact_name': 'Texte (ex: John Doe)',
+    'contact_name': 'Texte (ex: Kofi Mensah)',
     'contact_phone': 'Texte (ex: +237123456789)',
-    'contact_email': 'Email (ex: john@example.com)',
+    'contact_email': 'Email (ex: kofi@example.com)',
     'amount': 'Nombre (ex: 50000)',
     'currency': 'Texte (ex: XAF, EUR, USD)',
     'description': 'Texte (ex: Prêt personnel)',
@@ -66,9 +66,9 @@ export const DATA_STRUCTURE_INFO: ImportExportInfo = {
   validDebtTypes: ['OWING', 'OWED'],
   examples: [
     {
-      contact_name: "John Doe",
+      contact_name: "Kofi Mensah",
       contact_phone: "+237123456789",
-      contact_email: "john@example.com",
+      contact_email: "kofi@example.com",
       amount: 50000,
       currency: "XAF",
       description: "Prêt pour business",
@@ -79,7 +79,7 @@ export const DATA_STRUCTURE_INFO: ImportExportInfo = {
       debt_type: "OWING"
     },
     {
-      contact_name: "Jane Smith",
+      contact_name: "Ama Owusu",
       contact_phone: "+237987654321",
       contact_email: "",
       amount: 25000,
@@ -97,9 +97,9 @@ export const DATA_STRUCTURE_INFO: ImportExportInfo = {
 // Template pour l'import avec exemples
 export const IMPORT_TEMPLATE: ExportData[] = [
   {
-    contact_name: "John Doe",
+    contact_name: "Kofi Mensah",
     contact_phone: "+237123456789",
-    contact_email: "john@example.com",
+    contact_email: "kofi@example.com",
     amount: 50000,
     currency: "XAF",
     description: "Loan for business",
@@ -110,7 +110,7 @@ export const IMPORT_TEMPLATE: ExportData[] = [
     debt_type: "OWING"
   },
   {
-    contact_name: "Jane Smith",
+    contact_name: "Ama Owusu",
     contact_phone: "+237987654321",
     contact_email: "",
     amount: 25000,

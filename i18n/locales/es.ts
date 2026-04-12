@@ -129,7 +129,7 @@ export const es = {
       title: "Añadir deuda",
       editTitle: "Editar deuda",
       name: "Nombre de la persona",
-      namePlaceholder: "Ej: Juan García",
+      namePlaceholder: "Ej: Kofi Mensah",
       amount: "Monto",
       amountPlaceholder: "Ej: 50000",
       description: "Descripción",

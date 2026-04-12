@@ -134,7 +134,7 @@ export const en = {
       title: "Add debt",
       editTitle: "Edit debt",
       name: "Person's name",
-      namePlaceholder: "Ex: John Doe",
+      namePlaceholder: "Ex: Kofi Mensah",
       amount: "Amount",
       amountPlaceholder: "Ex: 50000",
       description: "Description",
@@ -563,7 +563,7 @@ export const en = {
       // Modal
       modalTitle: "Import CSV",
       modalDescription: "Paste your CSV file content below:",
-      modalPlaceholder: "contact_name,contact_phone,amount,currency,loan_date,due_date,status,debt_type\\nJohn Doe,+237123456789,50000,XAF,2024-01-15,2024-02-15,PENDING,OWING",
+      modalPlaceholder: "contact_name,contact_phone,amount,currency,loan_date,due_date,status,debt_type\\nKofi Mensah,+237123456789,50000,XAF,2024-01-15,2024-02-15,PENDING,OWING",
       modalCancel: "Cancel",
       modalImport: "Import",
       // Results and errors
