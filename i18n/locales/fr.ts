@@ -362,9 +362,10 @@ export const fr = {
     howToChangePinAnswer: "Naviguez vers Paramètres → Profil → Changer PIN pour mettre à jour votre PIN de sécurité.",
     contactSupport: "Développeur & Contact :",
     supportEmail: "marlexapong90@gmail.com",
+    supportEmailLabel: "Besoin d'un devis, d'un avis, ou plus ? Écrivez-moi ici :",
     responseTime: "Disponible pour des projets, collaborations et suggestions.",
-    developerName: "Marley Apong",
-    developerPortfolio: "mlya.me",
+    developerName: "Je m'appelle Marley Apong",
+    developerPortfolio: "Parcourir mon site → mlya.me",
     developerTagline: "Ouvert aux projets & nouvelles idées — contactez-moi !",
     
     // Delete account texts

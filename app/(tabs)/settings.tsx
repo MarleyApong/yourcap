@@ -1006,6 +1006,9 @@ export default function Settings() {
           <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary, fontWeight: "600" }]}>
             {t("settings.developerName")}
           </Text>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary, marginTop: 6 }]}>
+            {t("settings.supportEmailLabel")}
+          </Text>
           <Pressable onPress={() => Linking.openURL("mailto:marlexapong90@gmail.com")}>
             <Text style={[sheetSectionStyles.sectionContent, { color: colors.primary.default, textDecorationLine: "underline" }]}>
               {t("settings.supportEmail")}

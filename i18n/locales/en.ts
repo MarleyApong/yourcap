@@ -362,9 +362,10 @@ export const en = {
     howToChangePinAnswer: "Navigate to Settings → Profile → Change PIN to update your security PIN.",
     contactSupport: "Developer & Contact:",
     supportEmail: "marlexapong90@gmail.com",
+    supportEmailLabel: "Need a quote, feedback, or more? Write to me here:",
     responseTime: "Available for projects, collaborations and suggestions.",
-    developerName: "Marley Apong",
-    developerPortfolio: "mlya.me",
+    developerName: "Hi, I'm Marley Apong",
+    developerPortfolio: "Browse my site → mlya.me",
     developerTagline: "Open to new projects & ideas — reach out!",
     
     // Delete account texts

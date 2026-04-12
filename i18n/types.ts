@@ -370,6 +370,7 @@ export interface TranslationKeys {
   'settings.howToChangePinAnswer': string;
   'settings.contactSupport': string;
   'settings.supportEmail': string;
+  'settings.supportEmailLabel': string;
   'settings.responseTime': string;
   'settings.developerName': string;
   'settings.developerPortfolio': string;
