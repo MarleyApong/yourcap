@@ -367,6 +367,10 @@ export const fr = {
     developerName: "Je m'appelle Marley Apong",
     developerPortfolio: "Parcourir mon site → mlya.me",
     developerTagline: "Ouvert aux projets & nouvelles idées — contactez-moi !",
+    supportTitle: "Soutenir le développeur",
+    supportDesc: "Si l'app vous est utile, un petit geste est toujours apprécié !",
+    supportKofi: "Offrir un café ☕  →  Ko-fi",
+    supportPaypal: "Faire un don  →  PayPal",
     
     // Delete account texts
     deleteAccountConfirm: "Cela supprimera définitivement votre compte et toutes les données associées. Cette action ne peut pas être annulée.",

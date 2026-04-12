@@ -375,6 +375,10 @@ export interface TranslationKeys {
   'settings.developerName': string;
   'settings.developerPortfolio': string;
   'settings.developerTagline': string;
+  'settings.supportTitle': string;
+  'settings.supportDesc': string;
+  'settings.supportKofi': string;
+  'settings.supportPaypal': string;
   'settings.deleteAccountConfirm': string;
   'settings.deleteAccountTitle': string;
   'settings.deleteAccountButton': string;

@@ -865,6 +865,50 @@ export default function Settings() {
             />
           </SettingCard>
 
+          {/* Support */}
+          <SettingCard title={t("settings.supportTitle")}>
+            <Text style={[{ fontSize: 13, color: colors.muted.foreground, marginBottom: 12, paddingHorizontal: 4 }]}>
+              {t("settings.supportDesc")}
+            </Text>
+            <Pressable
+              onPress={() => Linking.openURL("https://ko-fi.com/marleyapong")}
+              style={({ pressed }) => ({
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                paddingVertical: 10,
+                paddingHorizontal: 16,
+                borderRadius: 10,
+                borderWidth: 1.5,
+                borderColor: colors.primary.default,
+                marginBottom: 8,
+                opacity: pressed ? 0.7 : 1,
+              })}
+            >
+              <Text style={{ color: colors.primary.default, fontWeight: "600", fontSize: 14 }}>
+                {t("settings.supportKofi")}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => Linking.openURL("https://paypal.me/MarleyApong")}
+              style={({ pressed }) => ({
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                paddingVertical: 10,
+                paddingHorizontal: 16,
+                borderRadius: 10,
+                borderWidth: 1.5,
+                borderColor: colors.primary.default,
+                opacity: pressed ? 0.7 : 1,
+              })}
+            >
+              <Text style={{ color: colors.primary.default, fontWeight: "600", fontSize: 14 }}>
+                {t("settings.supportPaypal")}
+              </Text>
+            </Pressable>
+          </SettingCard>
+
           {/* About */}
           <SettingCard title={t("settings.about")}>
             <SettingRow icon="file-text" title={t("settings.termsOfServiceTitle")} onPress={() => setTermsModalVisible(true)} />
@@ -1022,6 +1066,56 @@ export default function Settings() {
           <Text style={[sheetSectionStyles.sectionContent, { color: colors.muted.foreground, marginTop: 4 }]}>
             {t("settings.developerTagline")}
           </Text>
+        </View>
+        <View style={sheetSectionStyles.section}>
+          <View style={sheetSectionStyles.sectionHeader}>
+            <Feather name="heart" size={15} color={colors.primary.default} />
+            <Text style={[sheetSectionStyles.sectionTitle, { color: colors.primary.default }]}>{t("settings.supportTitle")}</Text>
+          </View>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary, marginBottom: 10 }]}>
+            {t("settings.supportDesc")}
+          </Text>
+          <Pressable
+            onPress={() => Linking.openURL("https://ko-fi.com/marleyapong")}
+            style={({ pressed }) => [
+              {
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                paddingVertical: 10,
+                paddingHorizontal: 16,
+                borderRadius: 10,
+                borderWidth: 1.5,
+                borderColor: colors.primary.default,
+                marginBottom: 8,
+                opacity: pressed ? 0.7 : 1,
+              },
+            ]}
+          >
+            <Text style={{ color: colors.primary.default, fontWeight: "600", fontSize: 14 }}>
+              {t("settings.supportKofi")}
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => Linking.openURL("https://paypal.me/MarleyApong")}
+            style={({ pressed }) => [
+              {
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                paddingVertical: 10,
+                paddingHorizontal: 16,
+                borderRadius: 10,
+                borderWidth: 1.5,
+                borderColor: colors.primary.default,
+                opacity: pressed ? 0.7 : 1,
+              },
+            ]}
+          >
+            <Text style={{ color: colors.primary.default, fontWeight: "600", fontSize: 14 }}>
+              {t("settings.supportPaypal")}
+            </Text>
+          </Pressable>
         </View>
       </SheetModal>
 

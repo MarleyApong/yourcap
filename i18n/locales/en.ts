@@ -367,6 +367,10 @@ export const en = {
     developerName: "Hi, I'm Marley Apong",
     developerPortfolio: "Browse my site → mlya.me",
     developerTagline: "Open to new projects & ideas — reach out!",
+    supportTitle: "Support the developer",
+    supportDesc: "If the app is useful to you, any small gesture is greatly appreciated!",
+    supportKofi: "Buy a coffee ☕  →  Ko-fi",
+    supportPaypal: "Make a donation  →  PayPal",
     
     // Delete account texts
     deleteAccountConfirm: "This will permanently delete your account and all associated data. This action cannot be undone.",
