@@ -382,6 +382,8 @@ export const de = {
     eightHours: "8 Stunden",
     twentyFourHours: "24 Stunden",
     sevenDays: "7 Tage",
+    oneMonth: "1 Monat",
+    twoMonths: "2 Monate",
     oneDay: "1 Tag",
     threeDays: "3 Tage",
     fiveDays: "5 Tage",

@@ -61,7 +61,7 @@ export const initDb = async (): Promise<void> => {
         language TEXT DEFAULT 'en',
         inactivity_timeout INTEGER DEFAULT 30,
         remember_session INTEGER DEFAULT 1,
-        session_duration INTEGER DEFAULT 1440, -- en minutes, 1440 = 24h
+        session_duration INTEGER DEFAULT 86400, -- en minutes, 86400 = 2 mois (60j)
         system_notifications INTEGER DEFAULT 1,
         email_notifications INTEGER DEFAULT 0,
         sms_notifications INTEGER DEFAULT 0,

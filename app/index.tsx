@@ -2,8 +2,9 @@ import { useTheme } from "@/core/theme"
 import { useAppStartup } from "@/hooks/useInactivityTimeout"
 import { useTranslation } from "@/i18n"
 import { SupportedLanguage, supportedLanguages } from "@/i18n/locales"
+import { useAuthStore } from "@/stores/authStore"
 import { useLanguageStore } from "@/stores/languageStore"
-import { Link } from "expo-router"
+import { Link, Redirect } from "expo-router"
 import { useEffect } from "react"
 import { Dimensions, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native"
 
@@ -12,12 +13,17 @@ const { height: screenHeight } = Dimensions.get("window")
 export default function Index() {
   useAppStartup()
   const { t } = useTranslation()
+  const { user } = useAuthStore()
   const { colors } = useTheme()
   const { guestLanguage, setGuestLanguage, loadGuestLanguage } = useLanguageStore()
 
   useEffect(() => {
     loadGuestLanguage()
   }, [])
+
+  if (user) {
+    return <Redirect href="/(tabs)/dashboard" />
+  }
 
   return (
     <ImageBackground

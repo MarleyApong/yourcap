@@ -420,6 +420,8 @@ export const fr = {
     eightHours: "8 heures",
     twentyFourHours: "24 heures",
     sevenDays: "7 jours",
+    oneMonth: "1 mois",
+    twoMonths: "2 mois",
     oneDay: "1 jour",
     threeDays: "3 jours",
     fiveDays: "5 jours",

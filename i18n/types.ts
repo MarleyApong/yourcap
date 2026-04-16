@@ -446,6 +446,8 @@ export interface TranslationKeys {
   'settings.eightHours': string;
   'settings.twentyFourHours': string;
   'settings.sevenDays': string;
+  'settings.oneMonth': string;
+  'settings.twoMonths': string;
   'settings.oneDay': string;
   'settings.threeDays': string;
   'settings.fiveDays': string;

@@ -1,10 +1,11 @@
 import PinInput from "@/components/ui/pin-input"
 import { useTheme } from "@/core/theme"
+import { useTranslation } from "@/i18n"
 import { useSettings } from "@/hooks/useSettings"
 import { isAppLocked } from "@/lib/auth"
 import { useAuthStore } from "@/stores/authStore"
 import React, { useEffect, useState } from "react"
-import { AppState, AppStateStatus, Modal, StyleSheet, Text, View } from "react-native"
+import { ActivityIndicator, AppState, AppStateStatus, Modal, StyleSheet, Text, View } from "react-native"
 
 export default function AppLockScreen() {
   const { user, loginWithBiometric, login, biometricCapabilities, checkBiometricCapabilities, appLocked } = useAuthStore()
@@ -13,6 +14,7 @@ export default function AppLockScreen() {
   const [loading, setLoading] = useState(false)
   const [appState, setAppState] = useState(AppState.currentState)
   const { colors } = useTheme()
+  const { t } = useTranslation()
 
   useEffect(() => {
     const checkLockStatus = async () => {
@@ -70,17 +72,31 @@ export default function AppLockScreen() {
 
   if (!showLock || !user || appState !== "active") return null
 
+  const initials = user.full_name
+    ?.split(" ")
+    .map((n: string) => n.charAt(0).toUpperCase())
+    .slice(0, 2)
+    .join("") ?? "?"
+
   return (
-    <Modal visible={showLock} animationType="slide" presentationStyle="formSheet" statusBarTranslucent>
-      <View style={styles.root}>
-        <View style={styles.header}>
-          <Text style={[styles.welcome, { color: colors.primary.default }]}>Welcome back</Text>
-          <Text style={[styles.name, { color: colors.muted.foreground }]}>{user.full_name}</Text>
+    <Modal visible={showLock} animationType="fade" presentationStyle="fullScreen" statusBarTranslucent>
+      <View style={[styles.root, { backgroundColor: colors.background.primary }]}>
+
+        <View style={styles.topSection}>
+          <View style={[styles.avatar, { backgroundColor: colors.primary.default }]}>
+            <Text style={[styles.avatarText, { color: colors.primary.foreground }]}>{initials}</Text>
+          </View>
+          <Text style={[styles.welcome, { color: colors.foreground.primary }]}>
+            {t("auth.welcomeBack")}
+          </Text>
+          <Text style={[styles.name, { color: colors.muted.foreground }]}>
+            {user.full_name}
+          </Text>
         </View>
 
         <PinInput
-          title="Verify Identity"
-          subtitle="Enter your PIN or use biometric to continue"
+          title={t("auth.verifyIdentity")}
+          subtitle={t("auth.biometricSubtitle")}
           onComplete={handlePinComplete}
           onBiometric={handleBiometric}
           biometricAvailable={biometricCapabilities?.isAvailable && user.biometric_enabled}
@@ -89,8 +105,11 @@ export default function AppLockScreen() {
 
         {loading && (
           <View style={styles.overlay}>
-            <View style={[styles.loadingCard, { backgroundColor: colors.primary.default }]}>
-              <Text style={[styles.loadingText, { color: colors.primary.foreground }]}>Verifying...</Text>
+            <View style={[styles.loadingCard, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+              <ActivityIndicator color={colors.primary.default} size="large" />
+              <Text style={[styles.loadingText, { color: colors.foreground.primary }]}>
+                {t("modals.changePin.verifying")}
+              </Text>
             </View>
           </View>
         )}
@@ -102,36 +121,49 @@ export default function AppLockScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    justifyContent: "center",
   },
-  header: {
-    paddingHorizontal: 32,
-    marginBottom: 4,
-    marginTop: 96,
+  topSection: {
+    alignItems: "center",
+    paddingTop: 80,
+    paddingBottom: 8,
+  },
+  avatar: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  avatarText: {
+    fontSize: 28,
+    fontWeight: "700",
+    letterSpacing: 1,
   },
   welcome: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "700",
-    textAlign: "center",
   },
   name: {
-    fontSize: 18,
-    textAlign: "center",
-    marginTop: 8,
+    fontSize: 15,
+    marginTop: 6,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.3)",
-    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
     justifyContent: "center",
     alignItems: "center",
   },
   loadingCard: {
-    borderRadius: 12,
-    padding: 24,
+    borderRadius: 16,
+    borderWidth: 1,
+    paddingVertical: 28,
+    paddingHorizontal: 40,
     alignItems: "center",
+    gap: 14,
   },
   loadingText: {
-    color: "#ffffff",
+    fontSize: 15,
+    fontWeight: "500",
   },
 })

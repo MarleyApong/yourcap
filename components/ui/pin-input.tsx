@@ -40,6 +40,7 @@ export const PinInput: React.FC<PinInputProps> = ({
 
   const handleKeyPress = (key: string) => {
     if (pin.length < length) {
+      Vibration.vibrate(30)
       const newPin = pin + key
       setPin(newPin)
       setError("")
@@ -50,11 +51,13 @@ export const PinInput: React.FC<PinInputProps> = ({
   }
 
   const handleDelete = () => {
+    Vibration.vibrate(20)
     setPin(pin.slice(0, -1))
     setError("")
   }
 
   const handleClear = () => {
+    Vibration.vibrate(20)
     setPin("")
     setError("")
   }
@@ -100,17 +103,18 @@ export const PinInput: React.FC<PinInputProps> = ({
                 }}
                 style={[
                   styles.key,
-                  {
-                    backgroundColor:
-                      key === "delete" ? colors.primary.default : colors.accent.default,
-                  },
+                  key === "delete"
+                    ? { backgroundColor: colors.primary.default }
+                    : key === "clear"
+                    ? { backgroundColor: "transparent", borderWidth: 1.5, borderColor: colors.border }
+                    : { backgroundColor: colors.card.background, borderWidth: 1.5, borderColor: colors.border },
                 ]}
-                activeOpacity={0.7}
+                activeOpacity={0.65}
               >
                 {key === "delete" ? (
-                  <Feather name="delete" size={24} color="#ffffff" />
+                  <Feather name="delete" size={22} color={colors.primary.foreground} />
                 ) : key === "clear" ? (
-                  <Text style={[styles.keyText, { color: colors.foreground.primary }]}>Clear</Text>
+                  <Feather name="x" size={20} color={colors.muted.foreground} />
                 ) : (
                   <Text style={[styles.keyNumber, { color: colors.foreground.primary }]}>{key}</Text>
                 )}
@@ -123,10 +127,10 @@ export const PinInput: React.FC<PinInputProps> = ({
       {showBiometric && biometricAvailable && onBiometric && (
         <TouchableOpacity
           onPress={onBiometric}
-          style={[styles.biometric, { backgroundColor: colors.primary.default + "1a" }]}
+          style={[styles.biometric, { backgroundColor: colors.primary.default + "18", borderColor: colors.primary.default + "40", borderWidth: 1 }]}
           activeOpacity={0.7}
         >
-          <MaterialIcons name="fingerprint" size={24} color={colors.primary.default} />
+          <MaterialIcons name="fingerprint" size={22} color={colors.primary.default} />
           <Text style={[styles.biometricText, { color: colors.primary.default }]}>Use Biometric</Text>
         </TouchableOpacity>
       )}
@@ -144,48 +148,47 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   title: {
-    fontSize: 30,
+    fontSize: 26,
     fontWeight: "700",
     marginBottom: 8,
+    textAlign: "center",
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 15,
     marginBottom: 32,
+    textAlign: "center",
   },
   dots: {
     flexDirection: "row",
-    gap: 16,
-    marginBottom: 48,
+    gap: 14,
+    marginBottom: 40,
   },
   dot: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
     borderWidth: 2,
   },
   error: {
     textAlign: "center",
     marginBottom: 16,
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: "500",
   },
   keypad: {
-    gap: 16,
-    marginBottom: 32,
+    gap: 14,
+    marginBottom: 28,
   },
   row: {
     flexDirection: "row",
-    gap: 16,
+    gap: 14,
   },
   key: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 78,
+    height: 78,
+    borderRadius: 39,
     justifyContent: "center",
     alignItems: "center",
-  },
-  keyText: {
-    fontWeight: "500",
   },
   keyNumber: {
     fontSize: 24,
@@ -195,10 +198,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    padding: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
     borderRadius: 12,
   },
   biometricText: {
-    fontWeight: "500",
+    fontWeight: "600",
+    fontSize: 14,
   },
 })

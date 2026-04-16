@@ -382,6 +382,8 @@ export const pt = {
     eightHours: "8 horas",
     twentyFourHours: "24 horas",
     sevenDays: "7 dias",
+    oneMonth: "1 mês",
+    twoMonths: "2 meses",
     oneDay: "1 dia",
     threeDays: "3 dias",
     fiveDays: "5 dias",

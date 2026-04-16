@@ -6,7 +6,7 @@ export const DEFAULT_SETTINGS = {
   inactivity_timeout: 30,
   background_lock_delay: 5, // Délai en secondes avant verrouillage en arrière-plan
   remember_session: true,
-  session_duration: 1440, // 24h en minutes
+  session_duration: 86400, // 2 months en minutes (60 jours × 24h × 60min)
   system_notifications: false,
   email_notifications: false,
   sms_notifications: false,

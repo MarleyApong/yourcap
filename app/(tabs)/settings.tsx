@@ -556,10 +556,10 @@ export default function Settings() {
                 <Text style={[styles.settingSectionLabel, { color: colors.foreground.primary }]}>{t("settings.sessionDuration")}</Text>
                 <SelectionButtons
                   options={[
-                    { value: 1, label: t("settings.oneHour") },
-                    { value: 8, label: t("settings.eightHours") },
                     { value: 24, label: t("settings.twentyFourHours") },
                     { value: 168, label: t("settings.sevenDays") },
+                    { value: 720, label: t("settings.oneMonth") },
+                    { value: 1440, label: t("settings.twoMonths") },
                   ]}
                   selectedValue={settings.session_duration / 60}
                   onSelect={handleSessionDurationChange}
