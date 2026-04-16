@@ -15,4 +15,5 @@ export const DEFAULT_SETTINGS = {
   summary_notifications: false,
   summary_notification_time: "20:00", // 8 PM for daily summaries
   summary_frequency: 'daily' as 'daily' | 'weekly' | 'none',
+  summary_day_of_week: 1, // Sunday
 }

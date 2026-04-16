@@ -444,8 +444,17 @@ export const en = {
     summaryTime: "Summary Time",
     summaryFrequencyUpdated: "Summary frequency updated",
     summaryTimeUpdated: "Summary time updated",
+    summaryDay: "Summary Day",
+    summaryDayUpdated: "Summary day updated",
     selectMultipleTimes: "Select multiple times for reminders",
     notificationTimesUpdated: "Notification times updated",
+    sunday: "Sun",
+    monday: "Mon",
+    tuesday: "Tue",
+    wednesday: "Wed",
+    thursday: "Thu",
+    friday: "Fri",
+    saturday: "Sat",
 
     // About section titles
     termsOfServiceTitle: "Terms of Service",
@@ -530,6 +539,10 @@ export const en = {
     reminder: {
       title: "Debt reminder",
       message: "Don't forget your debt with",
+      owingTitle: "💰 Debt Reminder",
+      owedTitle: "⚠️ Payment Reminder",
+      owingBody: "{contactName} owes you {amount} {currency}. Due in {days} day{plural}.",
+      owedBody: "Don't forget: You owe {contactName} {amount} {currency}. Due in {days} day{plural}.",
     },
   },
 

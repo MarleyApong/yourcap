@@ -16,6 +16,7 @@ export interface Settings {
   summary_notifications?: boolean // For daily/weekly summaries
   summary_notification_time?: string // When to send summary notifications
   summary_frequency?: 'daily' | 'weekly' | 'none' // How often to send summaries
+  summary_day_of_week?: number // 1=Sun, 2=Mon, 3=Tue, 4=Wed, 5=Thu, 6=Fri, 7=Sat
   created_at: string
   updated_at: string
 }
@@ -37,4 +38,5 @@ export interface DefaultSettings {
   summary_notifications: boolean
   summary_notification_time: string
   summary_frequency: 'daily' | 'weekly' | 'none'
+  summary_day_of_week: number
 }

@@ -64,7 +64,7 @@
           "color": "#562d8f",
           "defaultChannel": "default",
           "androidMode": "default",
-          "androidCollapsedTitle": "#{unread_notifications} nouvelle(s) notification(s)"
+          "androidCollapsedTitle": "#{unread_notifications} new notification(s)"
         }
       ],
       [

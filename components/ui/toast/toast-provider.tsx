@@ -35,18 +35,27 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   })
 
   const showToast = (options: ToastOptions) => {
+    const baseMs = options.message.length * 50
+    const type = options.type || 'info'
+    const autoDuration = type === 'confirm' ? 0
+      : type === 'error' ? Math.min(6000, Math.max(3500, baseMs))
+      : Math.min(5000, Math.max(2500, baseMs))
+    const duration = (options.duration !== undefined && options.duration > 0)
+      ? options.duration
+      : autoDuration
+
     setToastState({
       ...options,
       visible: true,
-      type: options.type || 'info',
+      type,
       position: options.position || 'center',
-      duration: options.duration || 0
+      duration,
     })
 
-    if (options.duration && options.duration > 0 && options.type !== 'confirm') {
+    if (duration > 0 && type !== 'confirm') {
       setTimeout(() => {
         hideToast()
-      }, options.duration)
+      }, duration)
     }
   }
 

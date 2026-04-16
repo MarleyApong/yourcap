@@ -444,8 +444,17 @@ export const fr = {
     summaryTime: "Heure du résumé",
     summaryFrequencyUpdated: "Fréquence du résumé mise à jour",
     summaryTimeUpdated: "Heure du résumé mise à jour",
+    summaryDay: "Jour du résumé",
+    summaryDayUpdated: "Jour du résumé mis à jour",
     selectMultipleTimes: "Sélectionnez plusieurs heures pour les rappels",
     notificationTimesUpdated: "Heures de notification mises à jour",
+    sunday: "Dim",
+    monday: "Lun",
+    tuesday: "Mar",
+    wednesday: "Mer",
+    thursday: "Jeu",
+    friday: "Ven",
+    saturday: "Sam",
 
     // About section titles
     termsOfServiceTitle: "Conditions d'utilisation",
@@ -530,6 +539,10 @@ export const fr = {
     reminder: {
       title: "Rappel de dette",
       message: "N'oubliez pas votre dette avec",
+      owingTitle: "💰 Rappel de dette",
+      owedTitle: "⚠️ Rappel de paiement",
+      owingBody: "{contactName} vous doit {amount} {currency}. Échéance dans {days} jour{plural}.",
+      owedBody: "N'oubliez pas : Vous devez {amount} {currency} à {contactName}. Échéance dans {days} jour{plural}.",
     },
   },
 

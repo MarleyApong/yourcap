@@ -11,7 +11,7 @@ Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
-    shouldSetBadge: false,
+    shouldSetBadge: true,
     shouldShowBanner: true,
     shouldShowList: true,
   }),
@@ -78,6 +78,7 @@ export const scheduleDebtReminder = async (
   debtType: "OWING" | "OWED",
   reminderDays: number,
   notificationTimes: string[] = ["09:00"],
+  language: string = "en",
 ): Promise<string[]> => {
   try {
     const dueDateObj = new Date(dueDate)
@@ -90,12 +91,15 @@ export const scheduleDebtReminder = async (
       return []
     }
 
+    const t = getTranslationFunction(language as any)
     const isOwing = debtType === "OWING"
-    const title = isOwing ? `💰 Debt Reminder` : `⚠️ Payment Reminder`
-
+    const plural = reminderDays > 1 ? "s" : ""
+    const title = isOwing
+      ? t("notifications.reminder.owingTitle")
+      : t("notifications.reminder.owedTitle")
     const body = isOwing
-      ? `${contactName} owes you ${amount} ${currency}. Due in ${reminderDays} day${reminderDays > 1 ? "s" : ""}.`
-      : `Don't forget: You owe ${contactName} ${amount} ${currency}. Due in ${reminderDays} day${reminderDays > 1 ? "s" : ""}.`
+      ? t("notifications.reminder.owingBody", { contactName, amount, currency, days: reminderDays, plural })
+      : t("notifications.reminder.owedBody", { contactName, amount, currency, days: reminderDays, plural })
 
     const scheduledIds: string[] = []
 
@@ -159,7 +163,8 @@ export const cancelDebtReminder = async (notificationId: string): Promise<void> 
 export const scheduleSummaryNotification = async (
   userId: string,
   summaryTime: string,
-  frequency: 'daily' | 'weekly'
+  frequency: 'daily' | 'weekly',
+  summaryDayOfWeek: number = 1,
 ): Promise<string | null> => {
   try {
     const [hours, minutes] = summaryTime.split(':').map(Number)
@@ -176,10 +181,10 @@ export const scheduleSummaryNotification = async (
       }
       notificationId = `summary_daily_${userId}`
     } else {
-      // Schedule weekly (every Sunday at the specified time)
+      // Schedule weekly on the user's chosen day of week
       trigger = {
         type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
-        weekday: 1, // Sunday
+        weekday: summaryDayOfWeek,
         hour: hours,
         minute: minutes,
       }
@@ -252,21 +257,22 @@ export const scheduleAllDebtReminders = async (userId: string): Promise<void> =>
     // Schedule new debt reminder notifications
     for (const debt of pendingDebts) {
       await scheduleDebtReminder(
-        debt.debt_id, 
-        debt.contact_name, 
-        debt.amount, 
-        debt.currency || "XAF", 
-        debt.due_date, 
-        debt.debt_type, 
+        debt.debt_id,
+        debt.contact_name,
+        debt.amount,
+        debt.currency || "XAF",
+        debt.due_date,
+        debt.debt_type,
         settings.days_before_reminder,
-        notificationTimes
+        notificationTimes,
+        settings.language || "en"
       )
     }
 
     // Schedule summary notifications if enabled
     if (settings.summary_notifications && settings.summary_frequency !== 'none') {
       const summaryTime = settings.summary_notification_time || "20:00"
-      await scheduleSummaryNotification(userId, summaryTime, settings.summary_frequency || 'daily')
+      await scheduleSummaryNotification(userId, summaryTime, settings.summary_frequency || 'daily', settings.summary_day_of_week || 1)
     }
   } catch (error) {
     console.error("Error scheduling all debt reminders:", error)

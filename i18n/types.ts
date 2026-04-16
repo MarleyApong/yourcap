@@ -420,8 +420,17 @@ export interface TranslationKeys {
   'settings.summaryTime': string;
   'settings.summaryFrequencyUpdated': string;
   'settings.summaryTimeUpdated': string;
+  'settings.summaryDay': string;
+  'settings.summaryDayUpdated': string;
   'settings.selectMultipleTimes': string;
   'settings.notificationTimesUpdated': string;
+  'settings.sunday': string;
+  'settings.monday': string;
+  'settings.tuesday': string;
+  'settings.wednesday': string;
+  'settings.thursday': string;
+  'settings.friday': string;
+  'settings.saturday': string;
   'settings.termsOfServiceTitle': string;
   'settings.privacyPolicyTitle': string;
   'settings.helpSupportTitle': string;
@@ -494,6 +503,10 @@ export interface TranslationKeys {
   'notifications.summary.totalAmount': string;
   'notifications.reminder.title': string;
   'notifications.reminder.message': string;
+  'notifications.reminder.owingTitle': string;
+  'notifications.reminder.owedTitle': string;
+  'notifications.reminder.owingBody': string;
+  'notifications.reminder.owedBody': string;
 
     // Import Export
   'importExport.title': string;

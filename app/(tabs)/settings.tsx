@@ -758,6 +758,31 @@ export default function Settings() {
                         />
                       </View>
 
+                      {settings.summary_frequency === "weekly" && (
+                        <View style={styles.settingSection}>
+                          <Text style={[styles.settingSectionLabel, { color: colors.foreground.primary }]}>{t("settings.summaryDay")}</Text>
+                          <SelectionButtons
+                            options={[
+                              { value: "1", label: t("settings.sunday") },
+                              { value: "2", label: t("settings.monday") },
+                              { value: "3", label: t("settings.tuesday") },
+                              { value: "4", label: t("settings.wednesday") },
+                              { value: "5", label: t("settings.thursday") },
+                              { value: "6", label: t("settings.friday") },
+                              { value: "7", label: t("settings.saturday") },
+                            ]}
+                            selectedValue={String(settings.summary_day_of_week || 1)}
+                            onSelect={async (day) => {
+                              const success = await updateSetting("summary_day_of_week", Number(day))
+                              if (success && user?.user_id) {
+                                await scheduleAllDebtReminders(user.user_id)
+                                Toast.success(t("settings.summaryDayUpdated"))
+                              }
+                            }}
+                          />
+                        </View>
+                      )}
+
                       {settings.summary_frequency !== "none" && (
                         <View style={styles.settingSection}>
                           <Text style={[styles.settingSectionLabel, { color: colors.foreground.primary }]}>{t("settings.summaryTime")}</Text>
