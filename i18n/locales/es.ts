@@ -88,6 +88,9 @@ export const es = {
       biometricFailed: "Error en la autenticación biométrica",
       biometricError: "Error de autenticación biométrica",
     },
+    biometricPrompt: "Autentícate para acceder a tu cuenta",
+    biometricCancel: "Cancelar",
+    biometricFallback: "Usar PIN",
   },
 
   tabs: {
@@ -279,6 +282,12 @@ export const es = {
     changePin: "Cambiar PIN",
     biometric: "Autenticación biométrica",
     biometricDescription: "Usar huella dactilar o Face ID",
+    biometricConfirm: "Confirmar para activar la biometría",
+    biometricPermissionDenied: "Permiso biométrico denegado. Actívalo en los ajustes de tu teléfono.",
+    biometricPermissionTitle: "Permiso requerido",
+    biometricEnabled: "Biometría activada",
+    biometricDisabled: "Biometría desactivada",
+    openSettings: "Abrir ajustes",
     enableNotifications: "Activar notificaciones",
     reminderTime: "Hora de recordatorio",
     reminderDays: "Días antes del recordatorio",

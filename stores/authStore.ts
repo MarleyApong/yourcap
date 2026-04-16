@@ -291,7 +291,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         }
 
         // Biometric authentication
-        const biometricResult = await authenticateWithBiometric()
+        const userSettings = await ensureUserSettings(user.user_id)
+        const biometricResult = await authenticateWithBiometric(userSettings?.language || "en")
         if (!biometricResult.success) {
           Toast.error("Biometric authentication failed")
           return false

@@ -90,6 +90,9 @@ export const fr = {
       biometricFailed: "Échec de l'authentification biométrique",
       biometricError: "Erreur d'authentification biométrique",
     },
+    biometricPrompt: "Authentifiez-vous pour accéder à votre compte",
+    biometricCancel: "Annuler",
+    biometricFallback: "Utiliser le PIN",
   },
 
   // Navigation
@@ -289,6 +292,12 @@ export const fr = {
     // Security section
     biometric: "Authentification biométrique",
     biometricDescription: "Utiliser l'empreinte digitale ou Face ID",
+    biometricConfirm: "Confirmer pour activer la biométrie",
+    biometricPermissionDenied: "Permission biométrique refusée. Activez-la dans les réglages de votre téléphone.",
+    biometricPermissionTitle: "Permission requise",
+    biometricEnabled: "Biométrie activée",
+    biometricDisabled: "Biométrie désactivée",
+    openSettings: "Ouvrir les réglages",
 
     // Notifications section
     enableNotifications: "Activer les notifications",

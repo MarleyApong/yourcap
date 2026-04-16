@@ -90,6 +90,9 @@ export const en = {
       biometricFailed: "Biometric authentication failed",
       biometricError: "Biometric authentication error",
     },
+    biometricPrompt: "Authenticate to access your account",
+    biometricCancel: "Cancel",
+    biometricFallback: "Use PIN",
   },
 
   // Navigation
@@ -289,6 +292,12 @@ export const en = {
     // Security section
     biometric: "Biometric authentication",
     biometricDescription: "Use fingerprint or Face ID",
+    biometricConfirm: "Confirm to enable biometrics",
+    biometricPermissionDenied: "Biometric permission denied. Enable it in your phone settings.",
+    biometricPermissionTitle: "Permission required",
+    biometricEnabled: "Biometrics enabled",
+    biometricDisabled: "Biometrics disabled",
+    openSettings: "Open settings",
 
     // Notifications section
     enableNotifications: "Enable notifications",

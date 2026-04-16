@@ -82,8 +82,8 @@ export default function Settings() {
     if (enabled) {
       // Vérifie que la permission Face ID / biométrie est accordée
       const result = await LocalAuthentication.authenticateAsync({
-        promptMessage: "Confirmer pour activer la biométrie",
-        cancelLabel: "Annuler",
+        promptMessage: t("settings.biometricConfirm"),
+        cancelLabel: t("common.cancel"),
         disableDeviceFallback: true,
       })
 
@@ -93,12 +93,12 @@ export default function Settings() {
         }
         // Permission refusée ou non disponible → proposer les réglages
         Toast.confirm(
-          "La permission biométrique a été refusée. Activez-la dans les réglages de votre téléphone.",
+          t("settings.biometricPermissionDenied"),
           () => Linking.openSettings(),
           {
-            title: "Permission requise",
-            confirmText: "Ouvrir les réglages",
-            cancelText: "Annuler",
+            title: t("settings.biometricPermissionTitle"),
+            confirmText: t("settings.openSettings"),
+            cancelText: t("common.cancel"),
           },
         )
         return
@@ -107,9 +107,9 @@ export default function Settings() {
 
     const success = await updateBiometricSetting(enabled)
     if (!success) {
-      Toast.error("Failed to update biometric setting", "Error")
+      Toast.error(t("auth.errors.biometricError"))
     } else {
-      Toast.success(enabled ? "Biométrie activée" : "Biométrie désactivée")
+      Toast.success(enabled ? t("settings.biometricEnabled") : t("settings.biometricDisabled"))
     }
   }
 

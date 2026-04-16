@@ -1,5 +1,6 @@
 import * as LocalAuthentication from "expo-local-authentication"
 import { Platform } from "react-native"
+import { getTranslationFunction } from "../i18n"
 
 export interface BiometricCapabilities {
   isAvailable: boolean
@@ -44,9 +45,10 @@ export const checkBiometricCapabilities = async (): Promise<BiometricCapabilitie
   }
 }
 
-export const authenticateWithBiometric = async (): Promise<{ success: boolean; error?: string }> => {
+export const authenticateWithBiometric = async (language: string = "en"): Promise<{ success: boolean; error?: string }> => {
   try {
     const capabilities = await checkBiometricCapabilities()
+    const t = getTranslationFunction(language as any)
 
     console.log("🔐 Starting authentication with capabilities:", capabilities)
 
@@ -65,11 +67,11 @@ export const authenticateWithBiometric = async (): Promise<{ success: boolean; e
     }
 
     const result = await LocalAuthentication.authenticateAsync({
-      promptMessage: "Authenticate to access your account",
-      cancelLabel: "Cancel",
-      disableDeviceFallback: true, // Forcer uniquement la biométrie
+      promptMessage: t("auth.biometricPrompt"),
+      cancelLabel: t("auth.biometricCancel"),
+      disableDeviceFallback: true,
       requireConfirmation: false,
-      fallbackLabel: "Use PIN", // Texte pour le fallback
+      fallbackLabel: t("auth.biometricFallback"),
     })
 
     console.log("🔐 Authentication result:", result)

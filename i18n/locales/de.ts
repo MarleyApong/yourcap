@@ -88,6 +88,9 @@ export const de = {
       biometricFailed: "Biometrische Authentifizierung fehlgeschlagen",
       biometricError: "Fehler bei der biometrischen Authentifizierung",
     },
+    biometricPrompt: "Authentifizieren Sie sich, um auf Ihr Konto zuzugreifen",
+    biometricCancel: "Abbrechen",
+    biometricFallback: "PIN verwenden",
   },
 
   tabs: {
@@ -279,6 +282,12 @@ export const de = {
     changePin: "PIN ändern",
     biometric: "Biometrische Authentifizierung",
     biometricDescription: "Fingerabdruck oder Face ID verwenden",
+    biometricConfirm: "Bestätigen, um Biometrie zu aktivieren",
+    biometricPermissionDenied: "Biometrie-Berechtigung verweigert. Aktivieren Sie sie in Ihren Telefoneinstellungen.",
+    biometricPermissionTitle: "Berechtigung erforderlich",
+    biometricEnabled: "Biometrie aktiviert",
+    biometricDisabled: "Biometrie deaktiviert",
+    openSettings: "Einstellungen öffnen",
     enableNotifications: "Benachrichtigungen aktivieren",
     reminderTime: "Erinnerungszeit",
     reminderDays: "Tage vor Erinnerung",

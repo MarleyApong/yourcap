@@ -85,6 +85,9 @@ export interface TranslationKeys {
   'auth.errors.unexpectedError': string;
   'auth.errors.biometricFailed': string;
   'auth.errors.biometricError': string;
+  'auth.biometricPrompt': string;
+  'auth.biometricCancel': string;
+  'auth.biometricFallback': string;
 
   // Tabs
   'tabs.dashboard': string;
@@ -313,6 +316,12 @@ export interface TranslationKeys {
   'settings.changePin': string;
   'settings.biometric': string;
   'settings.biometricDescription': string;
+  'settings.biometricConfirm': string;
+  'settings.biometricPermissionDenied': string;
+  'settings.biometricPermissionTitle': string;
+  'settings.biometricEnabled': string;
+  'settings.biometricDisabled': string;
+  'settings.openSettings': string;
   'settings.enableNotifications': string;
   'settings.reminderTime': string;
   'settings.reminderDays': string;
