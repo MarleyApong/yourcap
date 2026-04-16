@@ -2,27 +2,48 @@ import { useTheme } from "@/core/theme"
 import { useAppStartup } from "@/hooks/useInactivityTimeout"
 import { useTranslation } from "@/i18n"
 import { SupportedLanguage, supportedLanguages } from "@/i18n/locales"
+import { getUserIdentifier } from "@/lib/auth"
 import { useAuthStore } from "@/stores/authStore"
 import { useLanguageStore } from "@/stores/languageStore"
 import { Link, Redirect } from "expo-router"
-import { useEffect } from "react"
-import { Dimensions, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native"
+import { useEffect, useState } from "react"
+import { ActivityIndicator, Dimensions, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native"
 
 const { height: screenHeight } = Dimensions.get("window")
 
 export default function Index() {
   useAppStartup()
   const { t } = useTranslation()
-  const { user } = useAuthStore()
+  const { user, isInitialized, sessionExpired } = useAuthStore()
   const { colors } = useTheme()
   const { guestLanguage, setGuestLanguage, loadGuestLanguage } = useLanguageStore()
+  const [hasAccount, setHasAccount] = useState<boolean | null>(null)
 
   useEffect(() => {
     loadGuestLanguage()
   }, [])
 
-  if (user) {
-    return <Redirect href="/(tabs)/dashboard" />
+  useEffect(() => {
+    if (!isInitialized) return
+    if (user) return // already redirecting
+    getUserIdentifier().then((id) => setHasAccount(!!id))
+  }, [isInitialized, user])
+
+  // Session active → dashboard
+  if (user) return <Redirect href="/(tabs)/dashboard" />
+
+  // En attente d'initialisation ou de vérification du compte
+  if (!isInitialized || hasAccount === null) {
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.background.primary, alignItems: "center", justifyContent: "center" }}>
+        <ActivityIndicator size="large" color={colors.primary.default} />
+      </View>
+    )
+  }
+
+  // Session expirée OU compte existant (logout) → login direct
+  if (sessionExpired || hasAccount) {
+    return <Redirect href="/auth/login" />
   }
 
   return (
