@@ -3,7 +3,7 @@ export function cn(...classes: (string | undefined | null | false)[]) {
 }
 
 // CHANGEMENT : Suppression d'async - formatCurrency est maintenant synchrone
-export function formatCurrency(amount: number, currency: string = "USD"): string {
+export function formatCurrency(amount: number, currency: string = "XAF"): string {
   try {
     return new Intl.NumberFormat(undefined, {
       style: "currency",

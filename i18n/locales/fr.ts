@@ -134,7 +134,7 @@ export const fr = {
       title: "Ajouter une dette",
       editTitle: "Modifier la dette",
       name: "Nom complet",
-      namePlaceholder: "Ex: Kamga Jean",
+      namePlaceholder: "Ex: Kamga Marie",
       amount: "Montant",
       amountPlaceholder: "Ex: 50000",
       description: "Description",
@@ -218,6 +218,14 @@ export const fr = {
       sms: "SMS",
       email: "Email",
       dueDate: "Date d'échéance",
+      messages: {
+        smsOwing: "Bonjour {name}, ceci est un rappel amical concernant les {amount} que vous avez empruntés le {loanDate}. Échéance : {dueDate}. Merci de me dire quand vous pouvez régler cela.",
+        smsOwed: "Bonjour {name}, je confirme que je vous dois {amount} depuis le {loanDate}. Je prévois de rembourser avant le {dueDate}. Merci pour votre patience.",
+        emailSubjectOwing: "Rappel de paiement - {amount}",
+        emailSubjectOwed: "Confirmation de paiement - {amount}",
+        emailBodyOwing: "Cher(e) {name},\n\nCeci est un rappel concernant le prêt de {amount} du {loanDate}.\n\nDate d'échéance : {dueDate}. Merci de me communiquer votre plan de remboursement.\n\nCordialement",
+        emailBodyOwed: "Cher(e) {name},\n\nJe confirme que je vous dois {amount} depuis le {loanDate}.\n\nJe prévois de rembourser avant le {dueDate}. N'hésitez pas à me contacter si besoin.\n\nCordialement",
+      },
       loanDate: "Date du prêt",
       phoneNumber: "Numéro de téléphone",
       createdOn: "Créé le",
@@ -583,7 +591,7 @@ export const fr = {
       // Modal
       modalTitle: "Importer CSV",
       modalDescription: "Collez le contenu de votre fichier CSV ci-dessous :",
-      modalPlaceholder: "contact_name,contact_phone,amount,currency,loan_date,due_date,status,debt_type\\nKofi Mensah,+237123456789,50000,XAF,2024-01-15,2024-02-15,PENDING,OWING",
+      modalPlaceholder: "contact_name,contact_phone,amount,currency,loan_date,due_date,status,debt_type\\nKamga Marie,+237699123456,50000,XAF,2024-01-15,2024-02-15,PENDING,OWING",
       modalCancel: "Annuler",
       modalImport: "Importer",
       // Results and errors

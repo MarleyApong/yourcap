@@ -3,7 +3,8 @@
     "allow": [
       "Bash(xargs cat:*)",
       "Bash(xargs basename:*)",
-      "Bash(wc -l \"D:/Projects/Development/yourcap/components/ui\"/*.tsx)"
+      "Bash(wc -l \"D:/Projects/Development/yourcap/components/ui\"/*.tsx)",
+      "Bash(grep *)"
     ]
   }
 }

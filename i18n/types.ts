@@ -201,6 +201,12 @@ export interface TranslationKeys {
   'debt.details.updatedAt': string;
   'debt.details.edit': string;
   'debt.details.delete': string;
+  'debt.details.messages.smsOwing': string;
+  'debt.details.messages.smsOwed': string;
+  'debt.details.messages.emailSubjectOwing': string;
+  'debt.details.messages.emailSubjectOwed': string;
+  'debt.details.messages.emailBodyOwing': string;
+  'debt.details.messages.emailBodyOwed': string;
 
   'debt.status.paid': string;
   'debt.status.pending': string;

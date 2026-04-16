@@ -115,27 +115,38 @@ export default function DebtDetails() {
 
   const handleSMS = () => {
     if (debt?.contact_phone) {
+      const amount = formatCurrency(debt.amount, debt.currency || "XAF")
+      const params = {
+        name: debt.contact_name,
+        amount,
+        loanDate: formatDate(debt.loan_date),
+        dueDate: formatDate(debt.due_date),
+      }
       const message =
         debt.debt_type === "OWING"
-          ? `Hi ${debt.contact_name}, this is a friendly reminder about the ${formatCurrency(debt.amount, debt.currency)} you borrowed on ${formatDate(debt.loan_date)}. The due date is ${formatDate(debt.due_date)}. Please let me know when you can settle this. Thanks!`
-          : `Hi ${debt.contact_name}, I wanted to confirm that I owe you ${formatCurrency(debt.amount, debt.currency)} from ${formatDate(debt.loan_date)}. I plan to repay by ${formatDate(debt.due_date)}. Thank you for your patience.`
-
+          ? t("debt.details.messages.smsOwing", params)
+          : t("debt.details.messages.smsOwed", params)
       Linking.openURL(`sms:${debt.contact_phone}?body=${encodeURIComponent(message)}`)
     }
   }
 
   const handleEmail = () => {
     if (debt?.contact_email) {
+      const amount = formatCurrency(debt.amount, debt.currency || "XAF")
+      const params = {
+        name: debt.contact_name,
+        amount,
+        loanDate: formatDate(debt.loan_date),
+        dueDate: formatDate(debt.due_date),
+      }
       const subject =
         debt.debt_type === "OWING"
-          ? `Payment Reminder - ${formatCurrency(debt.amount, debt.currency)}`
-          : `Payment Confirmation - ${formatCurrency(debt.amount, debt.currency)}`
-
+          ? t("debt.details.messages.emailSubjectOwing", params)
+          : t("debt.details.messages.emailSubjectOwed", params)
       const body =
         debt.debt_type === "OWING"
-          ? `Dear ${debt.contact_name},\n\nI hope this email finds you well. This is a friendly reminder regarding the ${formatCurrency(debt.amount, debt.currency)} loan from ${formatDate(debt.loan_date)}.\n\nThe agreed due date is ${formatDate(debt.due_date)}. Please let me know your payment plan at your earliest convenience.\n\nBest regards`
-          : `Dear ${debt.contact_name},\n\nI wanted to acknowledge that I owe you ${formatCurrency(debt.amount, debt.currency)} from ${formatDate(debt.loan_date)}.\n\nI plan to settle this by ${formatDate(debt.due_date)}. Please let me know if you need to discuss any payment arrangements.\n\nBest regards`
-
+          ? t("debt.details.messages.emailBodyOwing", params)
+          : t("debt.details.messages.emailBodyOwed", params)
       Linking.openURL(`mailto:${debt.contact_email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`)
     }
   }

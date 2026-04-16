@@ -134,7 +134,7 @@ export const en = {
       title: "Add debt",
       editTitle: "Edit debt",
       name: "Person's name",
-      namePlaceholder: "Ex: Kofi Mensah",
+      namePlaceholder: "Ex: Mbarga Paul",
       amount: "Amount",
       amountPlaceholder: "Ex: 50000",
       description: "Description",
@@ -218,6 +218,14 @@ export const en = {
       sms: "SMS",
       email: "Email",
       dueDate: "Due Date",
+      messages: {
+        smsOwing: "Hi {name}, this is a friendly reminder about the {amount} you borrowed on {loanDate}. Due date: {dueDate}. Please let me know when you can settle this. Thanks!",
+        smsOwed: "Hi {name}, I wanted to confirm that I owe you {amount} from {loanDate}. I plan to repay by {dueDate}. Thank you for your patience.",
+        emailSubjectOwing: "Payment Reminder - {amount}",
+        emailSubjectOwed: "Payment Confirmation - {amount}",
+        emailBodyOwing: "Dear {name},\n\nThis is a friendly reminder regarding the {amount} loan from {loanDate}.\n\nDue date: {dueDate}. Please let me know your payment plan at your earliest convenience.\n\nBest regards",
+        emailBodyOwed: "Dear {name},\n\nI wanted to acknowledge that I owe you {amount} from {loanDate}.\n\nI plan to settle this by {dueDate}. Please let me know if you need to discuss any payment arrangements.\n\nBest regards",
+      },
       loanDate: "Loan Date",
       phoneNumber: "Phone Number",
       createdOn: "Created On",
@@ -583,7 +591,7 @@ export const en = {
       // Modal
       modalTitle: "Import CSV",
       modalDescription: "Paste your CSV file content below:",
-      modalPlaceholder: "contact_name,contact_phone,amount,currency,loan_date,due_date,status,debt_type\\nKofi Mensah,+237123456789,50000,XAF,2024-01-15,2024-02-15,PENDING,OWING",
+      modalPlaceholder: "contact_name,contact_phone,amount,currency,loan_date,due_date,status,debt_type\\nMbarga Paul,+237699123456,50000,XAF,2024-01-15,2024-02-15,PENDING,OWING",
       modalCancel: "Cancel",
       modalImport: "Import",
       // Results and errors
