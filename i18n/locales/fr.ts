@@ -741,6 +741,24 @@ export const fr = {
     error: "Échec du chargement des dettes. Veuillez réessayer."
   },
 
+  // Changelog
+  changelog: {
+    title: "Quoi de neuf 🎉",
+    subtitle: "Voici les changements de cette version",
+    gotIt: "Compris !",
+  },
+
+  // Mise à jour des T&C
+  termsUpdate: {
+    title: "Termes mis à jour",
+    message: "Nous avons mis à jour nos termes et conditions. Veuillez lire les changements ci-dessous avant de continuer.",
+    accept: "J'accepte",
+    deleteAccount: "Supprimer mon compte",
+    deleteConfirmTitle: "Supprimer le compte",
+    deleteConfirmMessage: "Toutes vos données (dettes, paramètres) seront définitivement supprimées. Cette action est irréversible.",
+    deleteConfirm: "Supprimer",
+  },
+
   // Termes et conditions
   terms: {
     title: "Termes et Conditions",

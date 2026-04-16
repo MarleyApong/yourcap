@@ -600,6 +600,20 @@ export interface TranslationKeys {
   'importExport.dataStructure.rules.typeValid': string;
   'importExport.dataStructure.rules.dateFormat': string;
 
+  // Changelog
+  'changelog.title': string;
+  'changelog.subtitle': string;
+  'changelog.gotIt': string;
+
+  // Terms update
+  'termsUpdate.title': string;
+  'termsUpdate.message': string;
+  'termsUpdate.accept': string;
+  'termsUpdate.deleteAccount': string;
+  'termsUpdate.deleteConfirmTitle': string;
+  'termsUpdate.deleteConfirmMessage': string;
+  'termsUpdate.deleteConfirm': string;
+
   // Terms
   'terms.title': string;
   'terms.lastUpdated': string;

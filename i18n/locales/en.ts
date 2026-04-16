@@ -741,6 +741,24 @@ export const en = {
     error: "Failed to load debts. Please try again."
   },
 
+  // Changelog / What's new
+  changelog: {
+    title: "What's new 🎉",
+    subtitle: "Here's what changed in this version",
+    gotIt: "Got it!",
+  },
+
+  // Terms update
+  termsUpdate: {
+    title: "Terms updated",
+    message: "We've updated our terms and conditions. Please read the changes below before continuing.",
+    accept: "I accept",
+    deleteAccount: "Delete my account",
+    deleteConfirmTitle: "Delete account",
+    deleteConfirmMessage: "All your data (debts, settings) will be permanently deleted. This action cannot be undone.",
+    deleteConfirm: "Delete",
+  },
+
   // Terms and conditions
   terms: {
     title: "Terms and Conditions",

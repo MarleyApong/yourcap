@@ -1,4 +1,5 @@
 import AppLockScreen from "@/components/feature/app-lock-screen"
+import { AppUpdateModals } from "@/components/feature/app-update-modals"
 import { InitialLoadingScreen } from "@/components/feature/initial-loading-screen"
 import { ToastProvider } from "@/components/ui/toast/toast-provider"
 import { ThemeProvider } from "@/core/providers/ThemeProvider"
@@ -101,6 +102,8 @@ export default function RootLayout() {
 
         {/* App Lock Screen - s'affiche par-dessus tout quand nécessaire */}
         <AppLockScreen />
+        {/* Changelog + T&C update modals - s'affiche après connexion si nécessaire */}
+        <AppUpdateModals />
       </ToastProvider>
     </ThemeProvider>
   )

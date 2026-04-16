@@ -13,7 +13,10 @@ import {
 import { authenticateWithBiometric, checkBiometricCapabilities } from "@/services/biometricService"
 import { useLanguageStore } from "@/stores/languageStore"
 import { ensureUserSettings, getSettings } from "@/services/settingsService"
-import { createUser, getUserById, getUserByIdentifier, loginUser, updateBiometricPreference, updateUserProfile } from "@/services/userService"
+import { TERMS_VERSION } from "@/constants/AppVersions"
+import { setAcceptedTermsVersion, setLastSeenVersion } from "@/lib/versionCheck"
+import { createUser, deleteUserAccount, getUserById, getUserByIdentifier, loginUser, updateBiometricPreference, updateUserProfile } from "@/services/userService"
+import Constants from "expo-constants"
 import { CreateUserInput } from "@/types/user"
 import { router } from "expo-router"
 import "react-native-get-random-values"
@@ -59,6 +62,7 @@ type AuthActions = {
   updateUserSettings: (settings: Partial<UserSettings>) => void
   checkBiometricCapabilities: () => Promise<void>
   logout: () => Promise<void>
+  deleteAccount: () => Promise<boolean>
   markSessionExpired: () => void
   clearSessionExpired: () => void
   setAppLocked: (locked: boolean) => Promise<void>
@@ -393,6 +397,11 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
         set({ user })
 
+        // Mark current version and T&C as seen so modals don't show on first launch
+        const appVersion = Constants.expoConfig?.version ?? "0.0.0"
+        await setLastSeenVersion(appVersion)
+        await setAcceptedTermsVersion(TERMS_VERSION)
+
         return true
       } catch (error) {
         throw error
@@ -517,6 +526,25 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         loading: false,
       })
       router.replace("/")
+    },
+
+    deleteAccount: async () => {
+      try {
+        const { user } = get()
+        if (!user) return false
+        await deleteUserAccount(user.user_id)
+        await clearAuthToken()
+        const { clearUserIdentifier, clearSessionExpiry } = await import("@/lib/auth")
+        await clearUserIdentifier()
+        await clearSessionExpiry()
+        await setAppLocked(false)
+        set({ user: null, sessionExpired: false, appLocked: false, loading: false })
+        router.replace("/")
+        return true
+      } catch (error) {
+        console.error("Delete account error:", error)
+        return false
+      }
     },
 
     markSessionExpired: () => {

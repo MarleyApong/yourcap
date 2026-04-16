@@ -672,6 +672,22 @@ export const de = {
     error: "Schulden konnten nicht geladen werden. Bitte erneut versuchen.",
   },
 
+  changelog: {
+    title: "Was ist neu 🎉",
+    subtitle: "Das hat sich in dieser Version geändert",
+    gotIt: "Verstanden!",
+  },
+
+  termsUpdate: {
+    title: "Nutzungsbedingungen aktualisiert",
+    message: "Wir haben unsere Nutzungsbedingungen aktualisiert. Bitte lesen Sie die Änderungen unten, bevor Sie fortfahren.",
+    accept: "Ich akzeptiere",
+    deleteAccount: "Konto löschen",
+    deleteConfirmTitle: "Konto löschen",
+    deleteConfirmMessage: "Alle Ihre Daten (Schulden, Einstellungen) werden dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
+    deleteConfirm: "Löschen",
+  },
+
   terms: {
     title: "Nutzungsbedingungen",
     lastUpdated: "Zuletzt aktualisiert: April 2026",

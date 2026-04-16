@@ -672,6 +672,22 @@ export const pt = {
     error: "Falha ao carregar dívidas. Tente novamente.",
   },
 
+  changelog: {
+    title: "O que há de novo 🎉",
+    subtitle: "Veja o que mudou nesta versão",
+    gotIt: "Entendido!",
+  },
+
+  termsUpdate: {
+    title: "Termos atualizados",
+    message: "Atualizamos nossos termos e condições. Leia as alterações abaixo antes de continuar.",
+    accept: "Aceito",
+    deleteAccount: "Excluir minha conta",
+    deleteConfirmTitle: "Excluir conta",
+    deleteConfirmMessage: "Todos os seus dados (dívidas, configurações) serão excluídos permanentemente. Esta ação não pode ser desfeita.",
+    deleteConfirm: "Excluir",
+  },
+
   terms: {
     title: "Termos e Condições",
     lastUpdated: "Última atualização: Abril 2026",

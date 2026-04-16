@@ -672,6 +672,22 @@ export const es = {
     error: "Error al cargar las deudas. Inténtalo de nuevo.",
   },
 
+  changelog: {
+    title: "¿Qué hay de nuevo? 🎉",
+    subtitle: "Esto es lo que cambió en esta versión",
+    gotIt: "¡Entendido!",
+  },
+
+  termsUpdate: {
+    title: "Términos actualizados",
+    message: "Hemos actualizado nuestros términos y condiciones. Lee los cambios a continuación antes de continuar.",
+    accept: "Acepto",
+    deleteAccount: "Eliminar mi cuenta",
+    deleteConfirmTitle: "Eliminar cuenta",
+    deleteConfirmMessage: "Todos tus datos (deudas, configuración) se eliminarán permanentemente. Esta acción no se puede deshacer.",
+    deleteConfirm: "Eliminar",
+  },
+
   terms: {
     title: "Términos y Condiciones",
     lastUpdated: "Última actualización: Abril 2026",

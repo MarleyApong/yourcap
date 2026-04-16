@@ -281,3 +281,12 @@ export const updateUserPin = async (user_id: string, newPin: string): Promise<bo
     throw error
   }
 }
+
+export const deleteUserAccount = async (user_id: string): Promise<void> => {
+  const db = getDb()
+  await db.execAsync(`DELETE FROM notifications WHERE user_id = '${user_id}'`)
+  await db.execAsync(`DELETE FROM debts WHERE user_id = '${user_id}'`)
+  await db.execAsync(`DELETE FROM settings WHERE user_id = '${user_id}'`)
+  await db.execAsync(`DELETE FROM users WHERE user_id = '${user_id}'`)
+}
+
