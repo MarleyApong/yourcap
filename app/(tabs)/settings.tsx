@@ -889,7 +889,7 @@ export default function Settings() {
                 {t("settings.supportKofi")}
               </Text>
             </Pressable>
-            <Pressable
+            {/* <Pressable
               onPress={() => Linking.openURL("https://paypal.me/MarleyApong")}
               style={({ pressed }) => ({
                 flexDirection: "row",
@@ -906,7 +906,7 @@ export default function Settings() {
               <Text style={{ color: colors.primary.default, fontWeight: "600", fontSize: 14 }}>
                 {t("settings.supportPaypal")}
               </Text>
-            </Pressable>
+            </Pressable> */}
           </SettingCard>
 
           {/* About */}
@@ -1096,7 +1096,7 @@ export default function Settings() {
               {t("settings.supportKofi")}
             </Text>
           </Pressable>
-          <Pressable
+          {/* <Pressable
             onPress={() => Linking.openURL("https://paypal.me/MarleyApong")}
             style={({ pressed }) => [
               {
@@ -1115,7 +1115,7 @@ export default function Settings() {
             <Text style={{ color: colors.primary.default, fontWeight: "600", fontSize: 14 }}>
               {t("settings.supportPaypal")}
             </Text>
-          </Pressable>
+          </Pressable> */}
         </View>
       </SheetModal>
 
