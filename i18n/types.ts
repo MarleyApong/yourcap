@@ -273,6 +273,14 @@ export interface TranslationKeys {
   'history.filters.iOwe': string;
   'history.filters.pending': string;
   'history.filters.paid': string;
+  'history.search': string;
+  'history.advancedFilters': string;
+  'history.dateRange': string;
+  'history.dateFrom': string;
+  'history.dateTo': string;
+  'history.resetFilters': string;
+  'history.applyFilters': string;
+  'history.activeFilters': string;
   'history.empty.title': string;
   'history.empty.description': string;
   'history.empty.buttonText': string;

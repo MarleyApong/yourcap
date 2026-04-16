@@ -717,6 +717,14 @@ export const fr = {
       pending: "En attente",
       paid: "Payé"
     },
+    search: "Rechercher par nom ou numéro...",
+    advancedFilters: "Filtres",
+    dateRange: "Plage de dates",
+    dateFrom: "Du",
+    dateTo: "Au",
+    resetFilters: "Réinitialiser",
+    applyFilters: "Appliquer",
+    activeFilters: "{count} filtre(s) actif(s)",
     empty: {
       title: "Aucune dette trouvée",
       description: "Essayez d'ajuster vos filtres ou ajoutez votre première dette pour commencer.",

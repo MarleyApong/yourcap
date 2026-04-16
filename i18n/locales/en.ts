@@ -717,6 +717,14 @@ export const en = {
       pending: "Pending",
       paid: "Paid"
     },
+    search: "Search by name or number...",
+    advancedFilters: "Filters",
+    dateRange: "Date range",
+    dateFrom: "From",
+    dateTo: "To",
+    resetFilters: "Reset",
+    applyFilters: "Apply",
+    activeFilters: "{count} active filter(s)",
     empty: {
       title: "No debts found",
       description: "Try adjusting your filters or add your first debt to get started.",
