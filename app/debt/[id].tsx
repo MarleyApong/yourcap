@@ -375,20 +375,22 @@ export default function DebtDetails() {
             {debt.status === "OVERDUE" && (
               <Pressable
                 onPress={() => handleStatusChange("PENDING")}
-                style={[styles.actionBtn, { backgroundColor: colors.primary.default }]}
+                style={[styles.actionBtn, styles.actionBtnNeutral, { borderColor: colors.border }]}
               >
-                <Feather name="clock" size={20} color={colors.primary.foreground} />
-                <Text style={[styles.actionBtnText, { color: colors.primary.foreground }]}>{t("debt.details.markAsPending")}</Text>
+                <Feather name="clock" size={18} color={colors.foreground.primary} />
+                <Text style={[styles.actionBtnText, { color: colors.foreground.primary }]}>{t("debt.details.markAsPending")}</Text>
               </Pressable>
             )}
 
-            <Pressable
-              onPress={() => setEditModalVisible(true)}
-              style={[styles.actionBtn, { backgroundColor: colors.primary.default }]}
-            >
-              <Feather name="edit" size={20} color={colors.primary.foreground} />
-              <Text style={[styles.actionBtnText, { color: colors.primary.foreground }]}>{t("debt.details.editDebt")}</Text>
-            </Pressable>
+            {debt.status !== "PAID" && (
+              <Pressable
+                onPress={() => setEditModalVisible(true)}
+                style={[styles.actionBtn, styles.actionBtnNeutral, { borderColor: colors.border }]}
+              >
+                <Feather name="edit" size={18} color={colors.foreground.primary} />
+                <Text style={[styles.actionBtnText, { color: colors.foreground.primary }]}>{t("debt.details.editDebt")}</Text>
+              </Pressable>
+            )}
 
             <Pressable
               onPress={handleDelete}
@@ -581,25 +583,26 @@ const styles = StyleSheet.create({
   loadingText: { marginTop: 16 },
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 40 },
-  content: { paddingHorizontal: 24 },
+  content: { paddingHorizontal: 24, paddingTop: 20 },
   card: { padding: 16, borderRadius: 12, borderWidth: 1 },
   cardHeaderRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 },
   cardHeaderInfo: { flex: 1 },
-  contactName: { fontSize: 24, fontWeight: "700" },
-  debtAmount: { fontSize: 20, fontWeight: "600", marginTop: 4 },
-  statusBadge: { flexDirection: "row", alignItems: "center", paddingHorizontal: 12, paddingVertical: 4, borderRadius: 999, borderWidth: 1 },
-  statusDot: { width: 12, height: 12, borderRadius: 6, marginRight: 8 },
-  statusText: { textTransform: "capitalize", fontSize: 14, fontWeight: "500" },
-  contactActions: { flexDirection: "row", gap: 8, marginTop: 16 },
-  contactBtn: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8 },
-  contactBtnText: { marginLeft: 8, fontWeight: "500" },
-  sectionTitle: { fontSize: 18, fontWeight: "700" },
-  detailRow: { marginBottom: 24 },
-  detailLabel: { fontSize: 14 },
-  detailValue: { fontSize: 18, marginTop: 4 },
-  actionsSection: { marginTop: 32, gap: 12 },
-  actionBtn: { padding: 16, borderRadius: 12, flexDirection: "row", alignItems: "center", justifyContent: "center" },
-  actionBtnText: { marginLeft: 8, fontWeight: "600", fontSize: 18 },
+  contactName: { fontSize: 18, fontWeight: "700" },
+  debtAmount: { fontSize: 16, fontWeight: "600", marginTop: 4 },
+  statusBadge: { flexDirection: "row", alignItems: "center", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, borderWidth: 1 },
+  statusDot: { width: 10, height: 10, borderRadius: 5, marginRight: 6 },
+  statusText: { textTransform: "capitalize", fontSize: 13, fontWeight: "500" },
+  contactActions: { flexDirection: "row", gap: 8, marginTop: 12 },
+  contactBtn: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", paddingVertical: 8, paddingHorizontal: 10, borderRadius: 8 },
+  contactBtnText: { marginLeft: 6, fontWeight: "500", fontSize: 13 },
+  sectionTitle: { fontSize: 15, fontWeight: "700" },
+  detailRow: { marginBottom: 16 },
+  detailLabel: { fontSize: 13 },
+  detailValue: { fontSize: 15, marginTop: 2 },
+  actionsSection: { marginTop: 24, gap: 10 },
+  actionBtn: { padding: 14, borderRadius: 12, flexDirection: "row", alignItems: "center", justifyContent: "center" },
+  actionBtnNeutral: { backgroundColor: "transparent", borderWidth: 1 },
+  actionBtnText: { marginLeft: 8, fontWeight: "600", fontSize: 14 },
   modalHeader: {
     paddingHorizontal: 24,
     paddingVertical: 16,
@@ -608,10 +611,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     borderBottomWidth: 1,
   },
-  modalTitle: { fontSize: 20, fontWeight: "700" },
-  formGroup: { marginTop: 32, gap: 16 },
-  cardTitle: { fontSize: 18, fontWeight: "700", marginBottom: 8 },
-  cardSubtitle: { fontSize: 14, marginBottom: 16 },
+  modalTitle: { fontSize: 17, fontWeight: "700" },
+  formGroup: { marginTop: 24, gap: 16 },
+  cardTitle: { fontSize: 15, fontWeight: "700", marginBottom: 6 },
+  cardSubtitle: { fontSize: 13, marginBottom: 14 },
   toggleRow: {
     flexDirection: "row",
     justifyContent: "space-around",
@@ -631,5 +634,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  submitBtnText: { textAlign: "center", fontWeight: "600", fontSize: 18 },
+  submitBtnText: { textAlign: "center", fontWeight: "600", fontSize: 15 },
 })

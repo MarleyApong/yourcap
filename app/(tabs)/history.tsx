@@ -12,7 +12,8 @@ import { useAuthStore } from "@/stores/authStore"
 import { Debt, DebtStatus, DebtType } from "@/types/debt"
 import { Feather } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useFocusEffect } from "@react-navigation/core"
+import { useCallback, useMemo, useState } from "react"
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native"
 
 const PAGE_SIZE = 20
@@ -41,9 +42,11 @@ export default function History() {
   const router = useRouter()
   const { t } = useTranslation()
 
-  useEffect(() => {
-    if (user?.user_id) loadDebts()
-  }, [user])
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.user_id) loadDebts()
+    }, [user])
+  )
 
   const loadDebts = async () => {
     try {
