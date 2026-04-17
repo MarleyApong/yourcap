@@ -168,6 +168,17 @@ export const initDb = async (): Promise<void> => {
 
 export const resetDatabase = async (): Promise<boolean> => {
   try {
+    // Clear all AsyncStorage keys
+    const AsyncStorage = (await import("@react-native-async-storage/async-storage")).default
+    await AsyncStorage.multiRemove([
+      "auth_token",
+      "user_identifier",
+      "app_locked",
+      "session_expiry",
+      "last_seen_app_version",
+      "terms_accepted_version",
+    ])
+
     if (!db) {
       await initDb()
     }

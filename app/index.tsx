@@ -7,9 +7,8 @@ import { useAuthStore } from "@/stores/authStore"
 import { useLanguageStore } from "@/stores/languageStore"
 import { Link, Redirect } from "expo-router"
 import { useEffect, useState } from "react"
-import { ActivityIndicator, Dimensions, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native"
-
-const { height: screenHeight } = Dimensions.get("window")
+import { ActivityIndicator, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function Index() {
   useAppStartup()
@@ -18,6 +17,8 @@ export default function Index() {
   const { colors } = useTheme()
   const { guestLanguage, setGuestLanguage, loadGuestLanguage } = useLanguageStore()
   const [hasAccount, setHasAccount] = useState<boolean | null>(null)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const insets = useSafeAreaInsets()
 
   useEffect(() => {
     loadGuestLanguage()
@@ -25,14 +26,12 @@ export default function Index() {
 
   useEffect(() => {
     if (!isInitialized) return
-    if (user) return // already redirecting
+    if (user) return
     getUserIdentifier().then((id) => setHasAccount(!!id))
   }, [isInitialized, user])
 
-  // Session active → dashboard
   if (user) return <Redirect href="/(tabs)/dashboard" />
 
-  // En attente d'initialisation ou de vérification du compte
   if (!isInitialized || hasAccount === null) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.background.primary, alignItems: "center", justifyContent: "center" }}>
@@ -41,10 +40,11 @@ export default function Index() {
     )
   }
 
-  // Session expirée OU compte existant (logout) → login direct
   if (sessionExpired || hasAccount) {
     return <Redirect href="/auth/login" />
   }
+
+  const currentLang = supportedLanguages[guestLanguage]
 
   return (
     <ImageBackground
@@ -54,43 +54,55 @@ export default function Index() {
     >
       <View style={styles.overlay} />
 
-      {/* Sélecteur de langue en haut à droite */}
-      <View style={styles.langBar}>
-        {Object.entries(supportedLanguages).map(([key, config]) => {
-          const lang = key as SupportedLanguage
-          const isSelected = lang === guestLanguage
-          return (
-            <Pressable
-              key={key}
-              onPress={() => setGuestLanguage(lang)}
-              style={[
-                styles.langBtn,
-                {
-                  backgroundColor: isSelected ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.15)",
-                  borderColor: isSelected ? "#ffffff" : "rgba(255,255,255,0.3)",
-                },
-              ]}
-            >
-              <Text style={styles.langFlag}>{config.flag}</Text>
-              <Text
-                style={[
-                  styles.langCode,
-                  { color: isSelected ? "#000000" : "rgba(255,255,255,0.85)" },
-                ]}
-              >
-                {key.toUpperCase()}
-              </Text>
-            </Pressable>
-          )
-        })}
-      </View>
+      <View style={[styles.inner, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 24 }]}>
+      {dropdownOpen && (
+        <Pressable style={[StyleSheet.absoluteFillObject, { zIndex: 9 }]} onPress={() => setDropdownOpen(false)} />
+      )}
 
-      <View style={[styles.inner, { height: screenHeight - 400 }]}>
+        {/* Sélecteur de langue — dropdown inline */}
+        <View style={styles.langRow}>
+          <Pressable
+            onPress={() => setDropdownOpen((v) => !v)}
+            style={styles.langTrigger}
+          >
+            <Text style={styles.langFlag}>{currentLang.flag}</Text>
+            <Text style={styles.langCode}>{guestLanguage.toUpperCase()}</Text>
+            <Text style={styles.langChevron}>{dropdownOpen ? "▴" : "▾"}</Text>
+          </Pressable>
+
+          {dropdownOpen && (
+            <View style={styles.dropdown}>
+              {Object.entries(supportedLanguages).map(([key, config]) => {
+                const lang = key as SupportedLanguage
+                const isSelected = lang === guestLanguage
+                return (
+                  <Pressable
+                    key={key}
+                    onPress={() => {
+                      setGuestLanguage(lang)
+                      setDropdownOpen(false)
+                    }}
+                    style={[styles.dropdownItem, isSelected && styles.dropdownItemActive]}
+                  >
+                    <Text style={styles.langFlag}>{config.flag}</Text>
+                    <Text style={[styles.dropdownLabel, isSelected && styles.dropdownLabelActive]}>
+                      {config.name}
+                    </Text>
+                    {isSelected && <Text style={styles.checkmark}>✓</Text>}
+                  </Pressable>
+                )
+              })}
+            </View>
+          )}
+        </View>
+
+        {/* Titre centré */}
         <View style={styles.titleBlock}>
           <Text style={styles.title}>{t("welcome.title")}</Text>
           <Text style={styles.subtitle}>{t("welcome.subtitle")}</Text>
         </View>
 
+        {/* Boutons en bas */}
         <View style={styles.buttons}>
           <Link href="/auth/login" style={styles.loginBtn}>
             <Text style={styles.btnText}>{t("welcome.signIn")}</Text>
@@ -100,48 +112,75 @@ export default function Index() {
           </Link>
         </View>
       </View>
+
     </ImageBackground>
   )
 }
 
 const styles = StyleSheet.create({
-  bg: { flex: 1, justifyContent: "center", alignItems: "center" },
+  bg: { flex: 1 },
   overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.6)" },
 
-  langBar: {
-    position: "absolute",
-    top: 56,
-    right: 20,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 6,
-    justifyContent: "flex-end",
-    maxWidth: 220,
+  inner: {
+    flex: 1,
+    justifyContent: "space-between",
+    paddingHorizontal: 28,
   },
-  langBtn: {
+
+  langRow: { alignItems: "flex-end", zIndex: 10, position: "relative" },
+  langTrigger: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 999,
+    gap: 6,
+    backgroundColor: "rgba(255,255,255,0.15)",
     borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.3)",
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 999,
   },
-  langFlag: { fontSize: 14 },
-  langCode: { fontSize: 11, fontWeight: "700", letterSpacing: 0.5 },
+  langFlag: { fontSize: 15 },
+  langCode: { fontSize: 11, fontWeight: "700", color: "#ffffff", letterSpacing: 0.5 },
+  langChevron: { fontSize: 10, color: "rgba(255,255,255,0.7)" },
 
-  inner: { width: "100%", justifyContent: "space-between" },
-  titleBlock: { paddingHorizontal: 40 },
-  title: { color: "#ffffff", fontSize: 60, fontWeight: "700", lineHeight: 72 },
-  subtitle: { color: "rgba(255,255,255,0.8)", fontSize: 18, marginTop: 16 },
-  buttons: { width: "100%", paddingHorizontal: 40, position: "absolute", bottom: 0 },
+  titleBlock: { flex: 1, justifyContent: "flex-start", paddingHorizontal: 12, paddingTop: 60 },
+  title: { color: "#ffffff", fontSize: 56, fontWeight: "700", lineHeight: 72 },
+  subtitle: { color: "rgba(255,255,255,0.8)", fontSize: 16, marginTop: 20, lineHeight: 26 },
+
+  buttons: { gap: 12 },
   loginBtn: {
     backgroundColor: "rgba(255,255,255,0.2)",
     padding: 16,
     borderRadius: 12,
     width: "100%",
-    marginBottom: 16,
   },
   registerBtn: { width: "100%" },
-  btnText: { textAlign: "center", color: "#ffffff", fontWeight: "600", fontSize: 18 },
+  btnText: { textAlign: "center", color: "#ffffff", fontWeight: "600", fontSize: 16 },
+
+  dropdown: {
+    position: "absolute",
+    top: "100%",
+    right: 0,
+    marginTop: 6,
+    backgroundColor: "rgba(20,20,30,0.97)",
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.12)",
+    overflow: "hidden",
+    minWidth: 180,
+    zIndex: 20,
+  },
+  dropdownItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 13,
+  },
+  dropdownItemActive: {
+    backgroundColor: "rgba(255,255,255,0.08)",
+  },
+  dropdownLabel: { flex: 1, fontSize: 14, color: "rgba(255,255,255,0.75)" },
+  dropdownLabelActive: { color: "#ffffff", fontWeight: "600" },
+  checkmark: { fontSize: 12, color: "#ffffff" },
 })
