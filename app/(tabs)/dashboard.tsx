@@ -9,14 +9,18 @@ import { isDatabaseReady } from "@/db/db"
 import { useTranslation } from "@/i18n"
 import { Toast } from "@/lib/toast-global"
 import { formatCurrency } from "@/lib/utils"
+import { requestNotificationPermissions } from "@/services/notificationService"
 import { getDebtsSummary, getUserDebts } from "@/services/debtServices"
 import { useAuthStore } from "@/stores/authStore"
 import { Debt } from "@/types/debt"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useFocusEffect } from "@react-navigation/core"
 import { Link, useRouter } from "expo-router"
-import { useCallback, useState } from "react"
-import { ScrollView, StyleSheet, Text, View } from "react-native"
+import { useCallback, useEffect, useState } from "react"
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+
+const NOTIF_PERMISSION_KEY = "notification_permission_asked"
 
 export default function Dashboard() {
   const { user } = useAuthStore()
@@ -28,6 +32,31 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
   const insets = useSafeAreaInsets()
+
+  useEffect(() => {
+    const askNotificationPermission = async () => {
+      const asked = await AsyncStorage.getItem(NOTIF_PERMISSION_KEY)
+      if (asked) return
+      await AsyncStorage.setItem(NOTIF_PERMISSION_KEY, "true")
+      Alert.alert(
+        t("notifications.permission.title"),
+        t("notifications.permission.message"),
+        [
+          {
+            text: t("notifications.permission.later"),
+            style: "cancel",
+          },
+          {
+            text: t("notifications.permission.allow"),
+            onPress: async () => {
+              await requestNotificationPermissions()
+            },
+          },
+        ]
+      )
+    }
+    askNotificationPermission()
+  }, [])
 
   const loadData = useCallback(async () => {
     if (!user?.user_id) {
