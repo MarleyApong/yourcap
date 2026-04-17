@@ -4,7 +4,12 @@
       "Bash(xargs cat:*)",
       "Bash(xargs basename:*)",
       "Bash(wc -l \"D:/Projects/Development/yourcap/components/ui\"/*.tsx)",
-      "Bash(grep *)"
+      "Bash(grep *)",
+      "Bash(mkdir -p D:/Projects/Development/me/public/images/yourcap)",
+      "Bash(cp \"C:/Users/AAMW/Downloads/Screenshot_2026-04-17-10-08-08-839_com.marleyapong.yourcap.jpg.jpeg\" \"D:/Projects/Development/me/public/images/yourcap/screen-welcome.jpg\")",
+      "Bash(cp \"C:/Users/AAMW/Downloads/Screenshot_2026-04-17-10-08-21-053_com.marleyapong.yourcap.jpg.jpeg\" \"D:/Projects/Development/me/public/images/yourcap/screen-register.jpg\")",
+      "Bash(cp \"C:/Users/AAMW/Downloads/Screenshot_2026-04-17-10-09-05-152_com.marleyapong.yourcap.jpg.jpeg\" \"D:/Projects/Development/me/public/images/yourcap/screen-pin.jpg\")",
+      "Bash(cp \"C:/Users/AAMW/Downloads/Screenshot_2026-04-17-10-09-26-537_com.marleyapong.yourcap.jpg.jpeg\" \"D:/Projects/Development/me/public/images/yourcap/screen-dashboard.jpg\")"
     ]
   }
 }
