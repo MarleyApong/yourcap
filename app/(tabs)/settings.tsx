@@ -42,10 +42,10 @@ export default function Settings() {
     )
   }
 
-  const MenuRow = ({ icon, title, value, onPress, isDanger = false }: { icon: string; title: string; value?: string; onPress: () => void; isDanger?: boolean }) => (
+  const MenuRow = ({ icon, title, value, onPress, isDanger = false, isFirst = false }: { icon: string; title: string; value?: string; onPress: () => void; isDanger?: boolean; isFirst?: boolean }) => (
     <Pressable
       onPress={onPress}
-      style={[styles.menuRow, { borderTopColor: isDanger ? colors.status.destructive + "20" : colors.border }]}
+      style={[styles.menuRow, { borderTopWidth: isFirst ? 0 : 1, borderTopColor: isDanger ? colors.status.destructive + "20" : colors.border }]}
     >
       <View style={styles.menuRowLeft}>
         <View style={[styles.iconBox, { backgroundColor: isDanger ? colors.status.destructive + "15" : colors.primary.default }]}>
@@ -92,13 +92,13 @@ export default function Settings() {
                 <Text style={[styles.profileEmail, { color: colors.muted.foreground }]}>{user?.email || user?.phone_number}</Text>
               </View>
             </View>
-            <MenuRow icon="edit" title={t("settings.editProfile")} onPress={() => setEditProfileModalVisible(true)} />
+            <MenuRow isFirst icon="edit" title={t("settings.editProfile")} onPress={() => setEditProfileModalVisible(true)} />
             <MenuRow icon="lock" title={t("settings.changePin")} onPress={() => setChangePinModalVisible(true)} />
           </View>
 
           {/* Settings menu */}
           <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
-            <MenuRow icon="bell" title={t("settings.notifications")} value={notifValue} onPress={() => router.push("/settings/notifications")} />
+            <MenuRow isFirst icon="bell" title={t("settings.notifications")} value={notifValue} onPress={() => router.push("/settings/notifications")} />
             <MenuRow icon="shield" title={t("settings.security")} value={securityValue} onPress={() => router.push("/settings/security")} />
             <MenuRow icon="clock" title={t("settings.sessionManagement")} onPress={() => router.push("/settings/session")} />
             <MenuRow icon="globe" title={t("settings.language")} value={languageName} onPress={() => router.push("/settings/language")} />
@@ -111,6 +111,7 @@ export default function Settings() {
             <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
               <Text style={[styles.cardTitle, { color: colors.foreground.primary }]}>{t("settings.developmentTools")}</Text>
               <MenuRow
+                isFirst
                 icon="bell"
                 title={t("settings.testSummaryNotification")}
                 onPress={async () => {
@@ -137,7 +138,7 @@ export default function Settings() {
           {/* Danger Zone */}
           <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.status.destructive }]}>
             <Text style={[styles.cardTitle, { color: colors.status.destructive }]}>{t("settings.dangerZone")}</Text>
-            <MenuRow icon="trash-2" title={t("settings.deleteAccount")} onPress={handleDeleteAccount} isDanger />
+            <MenuRow isFirst icon="trash-2" title={t("settings.deleteAccount")} onPress={handleDeleteAccount} isDanger />
             <Pressable
               onPress={handleLogout}
               style={[styles.logoutBtn, { backgroundColor: colors.status.destructive }]}
