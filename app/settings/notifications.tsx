@@ -263,7 +263,7 @@ export default function NotificationsSettings() {
 
 const styles = StyleSheet.create({
   scroll: { flex: 1 },
-  content: { paddingHorizontal: 24 },
+  content: { paddingHorizontal: 24, paddingTop: 24 },
   card: { borderRadius: 12, borderWidth: 1, padding: 16, marginBottom: 24 },
   switchRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 12 },
   switchLeft: { flexDirection: "row", alignItems: "center", flex: 1, gap: 12 },

@@ -155,7 +155,7 @@ export default function AboutSettings() {
 
 const styles = StyleSheet.create({
   scroll: { flex: 1 },
-  content: { paddingHorizontal: 24 },
+  content: { paddingHorizontal: 24, paddingTop: 24 },
   card: { borderRadius: 12, borderWidth: 1, padding: 16, marginBottom: 16 },
   cardTitle: { fontSize: 16, fontWeight: "600", marginBottom: 8 },
   cardDesc: { fontSize: 13, marginBottom: 12 },
