@@ -526,8 +526,11 @@ export default function Settings() {
                       { value: 30, label: t("settings.lockThirtySeconds") },
                       { value: 60, label: t("settings.lockOneMinute") },
                     ]}
-                    selectedValue={settings.background_lock_delay || 5}
-                    onSelect={(seconds) => updateSetting("background_lock_delay", seconds)}
+                    selectedValue={settings.background_lock_delay ?? 5}
+                    onSelect={async (seconds) => {
+                      const success = await updateSetting("background_lock_delay", seconds)
+                      if (success) Toast.success(t("settings.backgroundLockDelayUpdated"))
+                    }}
                   />
                 </View>
               </SettingCard>

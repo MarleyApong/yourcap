@@ -318,6 +318,7 @@ export const de = {
     lockTenSeconds: "10 Sekunden",
     lockThirtySeconds: "30 Sekunden",
     lockOneMinute: "1 Minute",
+    backgroundLockDelayUpdated: "Sperrverzögerung aktualisiert",
     termsOfService: "Nutzungsbedingungen",
     privacyPolicy: "Datenschutzrichtlinie",
     helpSupport: "Hilfe & Support",

@@ -338,6 +338,7 @@ export const fr = {
     lockTenSeconds: "10 secondes", 
     lockThirtySeconds: "30 secondes",
     lockOneMinute: "1 minute",
+    backgroundLockDelayUpdated: "Délai de verrouillage mis à jour",
 
     // Modal texts
     termsOfService: "Conditions d'utilisation",

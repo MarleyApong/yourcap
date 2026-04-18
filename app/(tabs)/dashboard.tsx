@@ -11,6 +11,7 @@ import { Toast } from "@/lib/toast-global"
 import { formatCurrency } from "@/lib/utils"
 import { requestNotificationPermissions } from "@/services/notificationService"
 import { getDebtsSummary, getUserDebts } from "@/services/debtServices"
+import { updateSettings } from "@/services/settingsService"
 import { useAuthStore } from "@/stores/authStore"
 import { Debt } from "@/types/debt"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -35,28 +36,20 @@ export default function Dashboard() {
 
   useEffect(() => {
     const askNotificationPermission = async () => {
+      if (!user) return
       const asked = await AsyncStorage.getItem(NOTIF_PERMISSION_KEY)
       if (asked) return
       await AsyncStorage.setItem(NOTIF_PERMISSION_KEY, "true")
-      Alert.alert(
-        t("notifications.permission.title"),
-        t("notifications.permission.message"),
-        [
-          {
-            text: t("notifications.permission.later"),
-            style: "cancel",
-          },
-          {
-            text: t("notifications.permission.allow"),
-            onPress: async () => {
-              await requestNotificationPermissions()
-            },
-          },
-        ]
-      )
+      const granted = await requestNotificationPermissions()
+      if (granted) {
+        await updateSettings(user.user_id, {
+          notification_enabled: true,
+          system_notifications: true,
+        })
+      }
     }
     askNotificationPermission()
-  }, [])
+  }, [user])
 
   const loadData = useCallback(async () => {
     if (!user?.user_id) {

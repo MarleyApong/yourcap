@@ -318,6 +318,7 @@ export const pt = {
     lockTenSeconds: "10 segundos",
     lockThirtySeconds: "30 segundos",
     lockOneMinute: "1 minuto",
+    backgroundLockDelayUpdated: "Atraso de bloqueio atualizado",
     termsOfService: "Termos de serviço",
     privacyPolicy: "Política de privacidade",
     helpSupport: "Ajuda e suporte",

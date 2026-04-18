@@ -338,6 +338,7 @@ export const en = {
     lockTenSeconds: "10 seconds", 
     lockThirtySeconds: "30 seconds",
     lockOneMinute: "1 minute",
+    backgroundLockDelayUpdated: "Lock delay updated",
 
     // Modal texts
     termsOfService: "Terms of Service",

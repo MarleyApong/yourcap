@@ -12,7 +12,7 @@ export const DEFAULT_SETTINGS = {
   sms_notifications: false,
   notification_times: ["09:00"], // Array of notification times
   notification_time: "09:00", // Backward compatibility
-  summary_notifications: false,
+  summary_notifications: true,
   summary_notification_time: "20:00", // 8 PM for daily summaries
   summary_frequency: 'daily' as 'daily' | 'weekly' | 'none',
   summary_day_of_week: 1, // Sunday

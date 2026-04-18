@@ -87,7 +87,7 @@ export default function AppLockScreen() {
             <Text style={[styles.avatarText, { color: colors.primary.foreground }]}>{initials}</Text>
           </View>
           <Text style={[styles.welcome, { color: colors.foreground.primary }]}>
-            {t("auth.welcomeBack")}
+            {t("auth.login.welcomeBack")}
           </Text>
           <Text style={[styles.name, { color: colors.muted.foreground }]}>
             {user.full_name}
@@ -95,8 +95,8 @@ export default function AppLockScreen() {
         </View>
 
         <PinInput
-          title={t("auth.verifyIdentity")}
-          subtitle={t("auth.biometricSubtitle")}
+          title={t("auth.login.verifyIdentity")}
+          subtitle={t("auth.login.biometricSubtitle")}
           onComplete={handlePinComplete}
           onBiometric={handleBiometric}
           biometricAvailable={biometricCapabilities?.isAvailable && user.biometric_enabled}

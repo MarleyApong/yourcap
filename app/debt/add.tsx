@@ -6,6 +6,7 @@ import { TextInput } from "@/components/ui/text-input"
 import { useTheme } from "@/core/theme"
 import { useTranslation } from "@/i18n"
 import { createDebt } from "@/services/debtServices"
+import { scheduleAllDebtReminders } from "@/services/notificationService"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
@@ -96,6 +97,7 @@ export default function AddDebt() {
       })
 
       Toast.success(t("debt.add.success"), "Success")
+      scheduleAllDebtReminders(user!.user_id)
 
       setForm({
         contact_name: "",

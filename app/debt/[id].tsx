@@ -7,6 +7,7 @@ import { useTheme } from "@/core/theme"
 import { useTranslation } from "@/i18n"
 import { formatCurrency, formatDate } from "@/lib/utils"
 import { deleteDebt, getDebtById, updateDebt } from "@/services/debtServices"
+import { scheduleAllDebtReminders } from "@/services/notificationService"
 import { useAuthStore } from "@/stores/authStore"
 import { Debt, DebtStatus } from "@/types/debt"
 import { Feather } from "@expo/vector-icons"
@@ -81,6 +82,7 @@ export default function DebtDetails() {
     try {
       await updateDebt(debt!.debt_id, { status: newStatus })
       loadDebt()
+      scheduleAllDebtReminders(user!.user_id)
       Toast.success(t("debt.details.statusUpdated"), t("common.success"))
     } catch (error) {
       Toast.error(t("debt.details.statusUpdateFailed"), t("common.error"))
@@ -209,6 +211,7 @@ export default function DebtDetails() {
       Toast.success(t("debt.details.updateSuccess"), t("common.success"))
       setEditModalVisible(false)
       loadDebt()
+      scheduleAllDebtReminders(user!.user_id)
     } catch (error) {
       console.error("Error updating debt:", error)
       Toast.error(t("debt.details.updateFailed"), t("common.error"))
