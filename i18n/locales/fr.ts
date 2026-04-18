@@ -56,6 +56,7 @@ export const fr = {
       dontHaveAccount: "Vous n'avez pas de compte ?",
       signUp: "S'inscrire",
       useDifferentAccount: "Utiliser un autre compte",
+      invalidPin: "PIN incorrect. Veuillez réessayer.",
     },
     register: {
       title: "S'inscrire",

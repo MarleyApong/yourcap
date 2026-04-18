@@ -54,6 +54,7 @@ export const de = {
       dontHaveAccount: "Noch kein Konto?",
       signUp: "Registrieren",
       useDifferentAccount: "Anderes Konto verwenden",
+      invalidPin: "Falscher PIN. Bitte versuche es erneut.",
     },
     register: {
       title: "Registrieren",

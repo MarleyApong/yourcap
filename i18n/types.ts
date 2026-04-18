@@ -20,6 +20,8 @@ export interface TranslationKeys {
   'common.retry': string;
   'common.done': string;
   'common.none': string;
+  'common.on': string;
+  'common.off': string;
   'common.next': string;
   'common.previous': string;
   'common.search': string;
@@ -43,6 +45,7 @@ export interface TranslationKeys {
   'auth.login.emailOrPhone': string;
   'auth.login.pinTitle': string;
   'auth.login.pinSubtitle': string;
+  'auth.login.invalidPin': string;
   'auth.login.verifyIdentity': string;
   'auth.login.biometricSubtitle': string;
   'auth.login.welcomeBack': string;
@@ -298,6 +301,8 @@ export interface TranslationKeys {
   'settings.requireAuthDesc': string;
   'settings.disableProtectionTitle': string;
   'settings.disableProtectionConfirm': string;
+  'settings.protected': string;
+  'settings.disabled': string;
   'settings.protectionEnabled': string;
   'settings.protectionDisabled': string;
   'settings.securityOptionsDisabledHint': string;
@@ -327,6 +332,7 @@ export interface TranslationKeys {
   'settings.biometricConfirm': string;
   'settings.biometricPermissionDenied': string;
   'settings.biometricPermissionTitle': string;
+  'settings.useBiometricToUnlock': string;
   'settings.biometricEnabled': string;
   'settings.biometricDisabled': string;
   'settings.openSettings': string;
@@ -338,6 +344,8 @@ export interface TranslationKeys {
   'settings.daily': string;
   'settings.weekly': string;
   'settings.selectLanguage': string;
+  'settings.languageUpdated': string;
+  'settings.backgroundLockDelayUpdated': string;
   'settings.french': string;
   'settings.english': string;
   'settings.spanish': string;
@@ -415,6 +423,8 @@ export interface TranslationKeys {
   'settings.logOut': string;
   'settings.notificationsEnabled': string;
   'settings.notificationsDisabled': string;
+  'settings.notificationPermissionDenied': string;
+  'settings.notificationPermissionTitle': string;
   'settings.notificationPermissionsDenied': string;
   'settings.notificationTypes': string;
   'settings.systemNotifications': string;
