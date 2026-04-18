@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   card: { borderRadius: 12, borderWidth: 1, padding: 16, marginBottom: 24 },
   sectionLabel: { fontWeight: "500", marginBottom: 12 },
   section: { paddingTop: 16 },
-  themeRow: { flexDirection: "row", gap: 8 },
+  themeRow: { flexDirection: "row", gap: 8, paddingBottom: 16 },
   themeBtn: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingVertical: 10, borderRadius: 10, borderWidth: 1.5 },
   themeBtnText: { fontSize: 13, fontWeight: "600" },
   accentRow: { flexDirection: "row", flexWrap: "wrap", gap: 16, paddingTop: 4 },
