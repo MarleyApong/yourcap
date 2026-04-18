@@ -98,19 +98,23 @@ export const ensureUserSettings = async (user_id: string): Promise<Settings> => 
     const existingSettings = await db.getFirstAsync<Settings>(`SELECT * FROM settings WHERE user_id = ?`, [user_id])
 
     if (existingSettings) {
-      // Make sure we have the new fields, update if missing
-      const needsUpdate = !existingSettings.notification_times || 
+      const needsUpdate = !existingSettings.notification_times ||
                          existingSettings.summary_notifications === undefined ||
                          !existingSettings.summary_notification_time ||
-                         !existingSettings.summary_frequency
+                         !existingSettings.summary_frequency ||
+                         existingSettings.require_auth === undefined ||
+                         existingSettings.background_lock_delay === undefined ||
+                         existingSettings.background_lock_delay === null
 
       if (needsUpdate) {
         await db.runAsync(
-          `UPDATE settings SET 
-           notification_times = ?, 
-           summary_notifications = ?, 
-           summary_notification_time = ?, 
-           summary_frequency = ?,
+          `UPDATE settings SET
+           notification_times = COALESCE(notification_times, ?),
+           summary_notifications = COALESCE(summary_notifications, ?),
+           summary_notification_time = COALESCE(summary_notification_time, ?),
+           summary_frequency = COALESCE(summary_frequency, ?),
+           require_auth = COALESCE(require_auth, ?),
+           background_lock_delay = COALESCE(background_lock_delay, ?),
            updated_at = ?
            WHERE user_id = ?`,
           [
@@ -118,33 +122,34 @@ export const ensureUserSettings = async (user_id: string): Promise<Settings> => 
             DEFAULT_SETTINGS.summary_notifications ? 1 : 0,
             DEFAULT_SETTINGS.summary_notification_time,
             DEFAULT_SETTINGS.summary_frequency,
+            DEFAULT_SETTINGS.require_auth ? 1 : 0,
+            DEFAULT_SETTINGS.background_lock_delay,
             new Date().toISOString(),
-            user_id
+            user_id,
           ]
         )
-        
-        return await getSettings(user_id) || existingSettings
       }
-      
-      return existingSettings
+
+      return await getSettings(user_id) || existingSettings
     }
 
     // Créer des paramètres par défaut avec les nouvelles colonnes
     const now = new Date().toISOString()
     await db.runAsync(
-      `INSERT INTO settings 
-      (user_id, notification_enabled, days_before_reminder, language, 
-        inactivity_timeout, remember_session, session_duration, 
+      `INSERT INTO settings
+      (user_id, notification_enabled, days_before_reminder, language,
+        inactivity_timeout, require_auth, remember_session, session_duration,
         system_notifications, email_notifications, sms_notifications, notification_time,
         notification_times, summary_notifications, summary_notification_time, summary_frequency,
-        created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        background_lock_delay, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         user_id,
         DEFAULT_SETTINGS.notification_enabled ? 1 : 0,
         DEFAULT_SETTINGS.days_before_reminder,
         DEFAULT_SETTINGS.language,
         DEFAULT_SETTINGS.inactivity_timeout,
+        DEFAULT_SETTINGS.require_auth ? 1 : 0,
         DEFAULT_SETTINGS.remember_session ? 1 : 0,
         DEFAULT_SETTINGS.session_duration,
         DEFAULT_SETTINGS.system_notifications ? 1 : 0,
@@ -155,27 +160,16 @@ export const ensureUserSettings = async (user_id: string): Promise<Settings> => 
         DEFAULT_SETTINGS.summary_notifications ? 1 : 0,
         DEFAULT_SETTINGS.summary_notification_time,
         DEFAULT_SETTINGS.summary_frequency,
+        DEFAULT_SETTINGS.background_lock_delay,
         now,
         now,
       ],
     )
 
-    return {
+    return await getSettings(user_id) || {
       user_id,
-      notification_enabled: DEFAULT_SETTINGS.notification_enabled,
-      days_before_reminder: DEFAULT_SETTINGS.days_before_reminder,
-      language: DEFAULT_SETTINGS.language,
-      inactivity_timeout: DEFAULT_SETTINGS.inactivity_timeout,
-      remember_session: DEFAULT_SETTINGS.remember_session,
-      session_duration: DEFAULT_SETTINGS.session_duration,
-      system_notifications: DEFAULT_SETTINGS.system_notifications,
-      email_notifications: DEFAULT_SETTINGS.email_notifications,
-      sms_notifications: DEFAULT_SETTINGS.sms_notifications,
-      notification_time: DEFAULT_SETTINGS.notification_time,
+      ...DEFAULT_SETTINGS,
       notification_times: [...DEFAULT_SETTINGS.notification_times],
-      summary_notifications: DEFAULT_SETTINGS.summary_notifications,
-      summary_notification_time: DEFAULT_SETTINGS.summary_notification_time,
-      summary_frequency: DEFAULT_SETTINGS.summary_frequency,
       created_at: now,
       updated_at: now,
     }

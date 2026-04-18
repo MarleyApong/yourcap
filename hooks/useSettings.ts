@@ -1,4 +1,4 @@
-import { getSettings, updateSettings } from "@/services/settingsService"
+import { ensureUserSettings, updateSettings } from "@/services/settingsService"
 import { useAuthStore } from "@/stores/authStore"
 import { useCallback, useEffect, useState } from "react"
 
@@ -16,7 +16,7 @@ export const useSettings = () => {
 
     try {
       setLoading(true)
-      const userSettings = await getSettings(user.user_id)
+      const userSettings = await ensureUserSettings(user.user_id)
       setSettings(userSettings)
     } catch (error) {
       console.error("Error loading settings:", error)
