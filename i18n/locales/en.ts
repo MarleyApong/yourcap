@@ -310,6 +310,7 @@ export const en = {
 
     // Language section
     selectLanguage: "Select language",
+    languageUpdated: "Language updated",
     french: "Français",
     english: "English",
     spanish: "Español",

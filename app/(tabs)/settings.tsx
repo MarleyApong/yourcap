@@ -10,7 +10,7 @@ import { useAppStore } from "@/core/stores/appStore"
 import { ACCENT_PRESETS } from "@/core/theme/colors"
 import { useTheme } from "@/core/theme"
 import { useSettings } from "@/hooks/useSettings"
-import { useTranslation } from "@/i18n"
+import { getTranslationFunction, useTranslation } from "@/i18n"
 import { SupportedLanguage } from "@/i18n/locales"
 import { Toast } from "@/lib/toast-global"
 import { BiometricCapabilities, checkBiometricCapabilities, getBiometricDisplayName } from "@/services/biometricService"
@@ -193,11 +193,10 @@ export default function Settings() {
   const { setAppLanguage } = useLanguageStore()
 
   const handleLanguageChange = async (language: SupportedLanguage) => {
-    // Update immediately in languageStore so UI updates right away
     await setAppLanguage(language)
-    // Persist to DB
     await updateSetting("language", language)
-    Toast.success(t("settings.selectLanguage"))
+    const tNew = getTranslationFunction(language)
+    Toast.success(tNew("settings.languageUpdated"))
   }
 
   const [privacyModalVisible, setPrivacyModalVisible] = useState(false)

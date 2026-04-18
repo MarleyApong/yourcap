@@ -296,6 +296,7 @@ export const de = {
     daily: "Täglich",
     weekly: "Wöchentlich",
     selectLanguage: "Sprache auswählen",
+    languageUpdated: "Sprache aktualisiert",
     french: "Français",
     english: "English",
     spanish: "Español",
