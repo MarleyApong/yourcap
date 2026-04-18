@@ -30,6 +30,8 @@ type UserSettings = {
   language: string
   remember_session: boolean
   session_duration: number
+  require_auth: boolean
+  background_lock_delay: number
 }
 
 type User = {
@@ -108,6 +110,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
                   language: settings.language,
                   remember_session: settings.remember_session,
                   session_duration: settings.session_duration,
+                  require_auth: settings.require_auth ?? DEFAULT_SETTINGS.require_auth,
+                  background_lock_delay: settings.background_lock_delay ?? DEFAULT_SETTINGS.background_lock_delay,
                 },
               },
               appLocked: true, // L'app reste verrouillée jusqu'à authentification PIN/fingerprint
@@ -137,6 +141,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
                   language: settings.language,
                   remember_session: settings.remember_session,
                   session_duration: settings.session_duration,
+                  require_auth: settings.require_auth ?? DEFAULT_SETTINGS.require_auth,
+                  background_lock_delay: settings.background_lock_delay ?? DEFAULT_SETTINGS.background_lock_delay,
                 },
               },
               appLocked: false, // Déverrouillé car session valide et app pas verrouillée
@@ -185,6 +191,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
               language: settings.language,
               remember_session: settings.remember_session,
               session_duration: settings.session_duration,
+              require_auth: settings.require_auth ?? DEFAULT_SETTINGS.require_auth,
+              background_lock_delay: settings.background_lock_delay ?? DEFAULT_SETTINGS.background_lock_delay,
             },
           },
           isInitialized: true,
@@ -240,6 +248,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
               language: settings.language,
               remember_session: settings.remember_session,
               session_duration: settings.session_duration,
+              require_auth: settings.require_auth ?? DEFAULT_SETTINGS.require_auth,
+              background_lock_delay: settings.background_lock_delay ?? DEFAULT_SETTINGS.background_lock_delay,
             },
           }
 
@@ -327,6 +337,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
               language: settings.language,
               remember_session: settings.remember_session,
               session_duration: settings.session_duration,
+              require_auth: settings.require_auth ?? DEFAULT_SETTINGS.require_auth,
+              background_lock_delay: settings.background_lock_delay ?? DEFAULT_SETTINGS.background_lock_delay,
             },
           }
 
@@ -392,6 +404,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             language: settings.language,
             remember_session: settings.remember_session,
             session_duration: settings.session_duration,
+            require_auth: settings.require_auth ?? DEFAULT_SETTINGS.require_auth,
+            background_lock_delay: settings.background_lock_delay ?? DEFAULT_SETTINGS.background_lock_delay,
           },
         }
 
@@ -425,6 +439,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
                 language: settings.language,
                 remember_session: settings.remember_session,
                 session_duration: settings.session_duration,
+                require_auth: settings.require_auth ?? DEFAULT_SETTINGS.require_auth,
+                background_lock_delay: settings.background_lock_delay ?? DEFAULT_SETTINGS.background_lock_delay,
               }
             : user.settings || {
                 notification_enabled: DEFAULT_SETTINGS.notification_enabled,
@@ -433,6 +449,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
                 language: DEFAULT_SETTINGS.language,
                 remember_session: DEFAULT_SETTINGS.remember_session,
                 session_duration: DEFAULT_SETTINGS.session_duration,
+                require_auth: DEFAULT_SETTINGS.require_auth,
+                background_lock_delay: DEFAULT_SETTINGS.background_lock_delay,
               }
 
           set({
