@@ -97,7 +97,11 @@ export const fr = {
     continue: "common.continue",
     error: "common.error",
     none: "common.none",
-    success: "common.success"
+    success: "common.success",
+    confirm: "common.confirm",
+    cancel: "common.cancel",
+    on: "common.on",
+    off: "common.off"
   },
   auth: {
     register: {
@@ -126,7 +130,8 @@ export const fr = {
       emailOrPhone: "auth.login.emailOrPhone",
       dontHaveAccount: "auth.login.dontHaveAccount",
       welcomeBackUser: "auth.login.welcomeBackUser",
-      signUp: "auth.login.signUp"
+      signUp: "auth.login.signUp",
+      invalidPin: "auth.login.invalidPin"
     },
     validation: {
       fullNameRequired: "auth.validation.fullNameRequired",
@@ -282,7 +287,56 @@ export const fr = {
     lockFiveSeconds: "settings.lockFiveSeconds",
     lockTenSeconds: "settings.lockTenSeconds",
     lockThirtySeconds: "settings.lockThirtySeconds",
-    lockOneMinute: "settings.lockOneMinute"
+    lockOneMinute: "settings.lockOneMinute",
+    oneMonth: "settings.oneMonth",
+    twoMonths: "settings.twoMonths",
+    protectionEnabled: "settings.protectionEnabled",
+    disableProtectionConfirm: "settings.disableProtectionConfirm",
+    disableProtectionTitle: "settings.disableProtectionTitle",
+    biometricConfirm: "settings.biometricConfirm",
+    biometricPermissionDenied: "settings.biometricPermissionDenied",
+    biometricPermissionTitle: "settings.biometricPermissionTitle",
+    openSettings: "settings.openSettings",
+    biometricEnabled: "settings.biometricEnabled",
+    biometricDisabled: "settings.biometricDisabled",
+    protectionDisabled: "settings.protectionDisabled",
+    verifyIdentity: "settings.verifyIdentity",
+    requireAuth: "settings.requireAuth",
+    requireAuthDesc: "settings.requireAuthDesc",
+    securityOptionsDisabledHint: "settings.securityOptionsDisabledHint",
+    useBiometricToUnlock: "settings.useBiometricToUnlock",
+    backgroundLockDelayUpdated: "settings.backgroundLockDelayUpdated",
+    enterPinToDisable: "settings.enterPinToDisable",
+    notificationPermissionDenied: "settings.notificationPermissionDenied",
+    notificationPermissionTitle: "settings.notificationPermissionTitle",
+    summaryDay: "settings.summaryDay",
+    sunday: "settings.sunday",
+    monday: "settings.monday",
+    tuesday: "settings.tuesday",
+    wednesday: "settings.wednesday",
+    thursday: "settings.thursday",
+    friday: "settings.friday",
+    saturday: "settings.saturday",
+    summaryDayUpdated: "settings.summaryDayUpdated",
+    appearance: "settings.appearance",
+    themeMode: "settings.themeMode",
+    themeLight: "settings.themeLight",
+    themeSystem: "settings.themeSystem",
+    themeDark: "settings.themeDark",
+    accentColor: "settings.accentColor",
+    accentPurple: "settings.accentPurple",
+    accentBlue: "settings.accentBlue",
+    accentGreen: "settings.accentGreen",
+    accentOrange: "settings.accentOrange",
+    accentRose: "settings.accentRose",
+    accentTeal: "settings.accentTeal",
+    supportTitle: "settings.supportTitle",
+    supportDesc: "settings.supportDesc",
+    supportKofi: "settings.supportKofi",
+    developerName: "settings.developerName",
+    developerPortfolio: "settings.developerPortfolio",
+    protected: "settings.protected",
+    disabled: "settings.disabled"
   },
   history: {
     error: "history.error",
@@ -307,7 +361,14 @@ export const fr = {
     dateLabels: {
       loan: "history.dateLabels.loan",
       due: "history.dateLabels.due"
-    }
+    },
+    search: "history.search",
+    advancedFilters: "history.advancedFilters",
+    applyFilters: "history.applyFilters",
+    dateRange: "history.dateRange",
+    dateFrom: "history.dateFrom",
+    dateTo: "history.dateTo",
+    resetFilters: "history.resetFilters"
   },
   dashboard: {
     title: "dashboard.title",
@@ -328,5 +389,12 @@ export const fr = {
       failedToLoad: "dashboard.errors.failedToLoad",
       tapToRetry: "dashboard.errors.tapToRetry"
     }
+  },
+  terms: {
+    title: "terms.title",
+    lastUpdated: "terms.lastUpdated",
+    required: "terms.required",
+    accept: "terms.accept",
+    link: "terms.link"
   }
 };
