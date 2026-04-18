@@ -3,9 +3,10 @@ import { useTranslation } from "@/i18n"
 import { isSessionValid } from "@/lib/auth"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
+import { BlurView } from "expo-blur"
 import { Tabs, useRouter } from "expo-router"
 import { useEffect } from "react"
-import { StatusBar, Text, View } from "react-native"
+import { Platform, StatusBar, StyleSheet, Text, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 
 const TabIcon = ({ focused, iconName, title }: { focused: boolean; iconName: string; title: string }) => {
@@ -56,7 +57,7 @@ const TabIcon = ({ focused, iconName, title }: { focused: boolean; iconName: str
 }
 
 export default function TabsLayout() {
-  const { colors } = useTheme()
+  const { colors, isDark } = useTheme()
   const { t } = useTranslation()
   const router = useRouter()
   const { user, markSessionExpired } = useAuthStore()
@@ -88,7 +89,7 @@ export default function TabsLayout() {
               paddingVertical: 18,
             },
             tabBarStyle: {
-              backgroundColor: colors.navigation.background,
+              backgroundColor: "transparent",
               borderRadius: 16,
               marginHorizontal: 16,
               marginBottom: 8,
@@ -103,6 +104,24 @@ export default function TabsLayout() {
               shadowRadius: 8,
               elevation: 10,
             },
+            tabBarBackground: () =>
+              Platform.OS === "ios" ? (
+                <BlurView
+                  intensity={60}
+                  tint={isDark ? "dark" : "light"}
+                  style={[
+                    StyleSheet.absoluteFill,
+                    { borderRadius: 16, overflow: "hidden", backgroundColor: colors.navigation.background + "99" },
+                  ]}
+                />
+              ) : (
+                <View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    { borderRadius: 16, overflow: "hidden", backgroundColor: colors.navigation.background },
+                  ]}
+                />
+              ),
             tabBarActiveTintColor: colors.navigation.activeForeground,
             tabBarInactiveTintColor: colors.navigation.inactiveForeground,
             headerStyle: {
