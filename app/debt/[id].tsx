@@ -4,14 +4,14 @@ import { SelectInput } from "@/components/ui/select-input"
 import { useTheme } from "@/core/theme"
 import { useTranslation } from "@/i18n"
 import { formatCurrency, formatDate } from "@/lib/utils"
-import { deleteDebt, getDebtById, updateDebt } from "@/services/debtServices"
+import { deleteDebt, getContacts, getDebtById, SavedContact, updateDebt } from "@/services/debtServices"
 import { scheduleAllDebtReminders } from "@/services/notificationService"
 import { useAuthStore } from "@/stores/authStore"
 import { Debt, DebtStatus } from "@/types/debt"
 import { Feather } from "@expo/vector-icons"
 import { useLocalSearchParams, useRouter } from "expo-router"
-import { useEffect, useState } from "react"
-import { Linking, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
+import { useEffect, useRef, useState } from "react"
+import { Animated, Linking, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
@@ -33,10 +33,25 @@ export default function DebtDetails() {
     loan_date: new Date(), due_date: new Date(),
     debt_type: "OWING" as "OWING" | "OWED",
   })
+  const [savedContacts, setSavedContacts] = useState<SavedContact[]>([])
+  const [showContactPicker, setShowContactPicker] = useState(false)
+  const [contactSearch, setContactSearch] = useState("")
+  const chipsTranslateY = useRef(new Animated.Value(-10)).current
+  const chipsOpacity = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
-    if (user?.user_id) loadDebt()
-    else router.replace("/auth/login")
+    if (user?.user_id) {
+      loadDebt()
+      getContacts(user.user_id).then(contacts => {
+        setSavedContacts(contacts)
+        if (contacts.length > 0) {
+          Animated.parallel([
+            Animated.spring(chipsTranslateY, { toValue: 0, damping: 18, stiffness: 220, useNativeDriver: true }),
+            Animated.timing(chipsOpacity, { toValue: 1, duration: 180, useNativeDriver: true }),
+          ]).start()
+        }
+      })
+    } else router.replace("/auth/login")
   }, [id, user])
 
   const loadDebt = async () => {
@@ -103,6 +118,17 @@ export default function DebtDetails() {
   }
 
   const handleEditChange = (field: string, value: string) => setEditForm(prev => ({ ...prev, [field]: value }))
+
+  const applyEditContact = (contact: SavedContact) => {
+    setEditForm(prev => ({
+      ...prev,
+      contact_name: contact.contact_name,
+      contact_phone: contact.contact_phone,
+      contact_email: contact.contact_email || "",
+    }))
+    setShowContactPicker(false)
+    setContactSearch("")
+  }
   const handleEditDateChange = (field: "loan_date" | "due_date") => (date: Date) => setEditForm(prev => ({ ...prev, [field]: date }))
 
   const validateEditForm = () => {
@@ -277,6 +303,45 @@ export default function DebtDetails() {
           >
             <View style={styles.sheetHandle} />
 
+            {savedContacts.length > 0 && (
+              <Animated.View style={{ opacity: chipsOpacity, transform: [{ translateY: chipsTranslateY }], marginBottom: 20 }}>
+                <Text style={[styles.fieldLabel, { color: colors.muted.foreground, marginBottom: 4 }]}>
+                  {t("debt.add.savedContacts.recent")}
+                </Text>
+                <Text style={[styles.contactsHint, { color: colors.muted.foreground }]}>
+                  {editForm.contact_name && savedContacts.some(c => c.contact_name === editForm.contact_name && c.contact_phone === editForm.contact_phone)
+                    ? t("debt.add.savedContacts.autoFilled", { name: editForm.contact_name.split(" ")[0] })
+                    : t("debt.add.savedContacts.hint")}
+                </Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsRow}>
+                  {savedContacts.slice(0, 5).map((contact, i) => {
+                    const initials = contact.contact_name.split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase()
+                    const firstName = contact.contact_name.split(" ")[0]
+                    const color = CHIP_COLORS[i % CHIP_COLORS.length]
+                    const selected = editForm.contact_name === contact.contact_name && editForm.contact_phone === contact.contact_phone
+                    return (
+                      <Pressable key={i} onPress={() => applyEditContact(contact)} style={styles.chip}>
+                        <View style={[styles.chipAvatar, { backgroundColor: selected ? color : color + "22" }]}>
+                          <Text style={[styles.chipInitials, { color: selected ? "#fff" : color }]}>{initials}</Text>
+                        </View>
+                        <Text style={[styles.chipName, { color: selected ? colors.primary.default : colors.foreground.primary }]} numberOfLines={1}>
+                          {firstName}
+                        </Text>
+                      </Pressable>
+                    )
+                  })}
+                  {savedContacts.length > 5 && (
+                    <Pressable onPress={() => setShowContactPicker(true)} style={styles.chip}>
+                      <View style={[styles.chipAvatar, { backgroundColor: colors.border }]}>
+                        <Text style={[styles.chipInitials, { color: colors.muted.foreground }]}>+{savedContacts.length - 5}</Text>
+                      </View>
+                      <Text style={[styles.chipName, { color: colors.muted.foreground }]}>{t("debt.add.savedContacts.more")}</Text>
+                    </Pressable>
+                  )}
+                </ScrollView>
+              </Animated.View>
+            )}
+
             <EField label={t("debt.add.name")} required colors={colors}>
               <EInput icon="user" colors={colors}>
                 <TextInput style={[styles.inputText, { color: colors.foreground.primary }]} placeholder={t("debt.add.namePlaceholder")} placeholderTextColor={colors.muted.foreground} value={editForm.contact_name} onChangeText={v => handleEditChange("contact_name", v)} />
@@ -329,6 +394,41 @@ export default function DebtDetails() {
               <Text style={styles.saveBtnText}>{editLoading ? t("debt.details.saving") : t("debt.details.saveChanges")}</Text>
             </Pressable>
           </KeyboardAwareScrollView>
+
+          {/* Contact Picker */}
+          <Modal visible={showContactPicker} animationType="slide" transparent onRequestClose={() => { setShowContactPicker(false); setContactSearch("") }}>
+            <View style={styles.pickerOverlay}>
+              <View style={[styles.pickerSheet, { backgroundColor: colors.background.primary }]}>
+                <View style={[styles.pickerHeader, { borderBottomColor: colors.border }]}>
+                  <Text style={[styles.pickerTitle, { color: colors.foreground.primary }]}>{t("debt.add.savedContacts.title")}</Text>
+                  <Pressable onPress={() => { setShowContactPicker(false); setContactSearch("") }}>
+                    <Feather name="x" size={20} color={colors.foreground.primary} />
+                  </Pressable>
+                </View>
+                <View style={[styles.pickerSearch, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+                  <Feather name="search" size={14} color={colors.muted.foreground} />
+                  <TextInput style={[styles.pickerSearchInput, { color: colors.foreground.primary }]} placeholder={t("debt.add.savedContacts.search")} placeholderTextColor={colors.muted.foreground} value={contactSearch} onChangeText={setContactSearch} autoFocus />
+                </View>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                  {savedContacts.filter(c => !contactSearch || c.contact_name.toLowerCase().includes(contactSearch.toLowerCase()) || c.contact_phone.includes(contactSearch)).map((contact, i) => {
+                    const initials = contact.contact_name.split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase()
+                    return (
+                      <Pressable key={i} onPress={() => applyEditContact(contact)} style={[styles.pickerItem, { borderBottomColor: colors.border }]}>
+                        <View style={[styles.pickerAvatar, { backgroundColor: colors.primary.default + "20" }]}>
+                          <Text style={[styles.pickerAvatarText, { color: colors.primary.default }]}>{initials}</Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                          <Text style={[styles.pickerName, { color: colors.foreground.primary }]}>{contact.contact_name}</Text>
+                          <Text style={[styles.pickerPhone, { color: colors.muted.foreground }]}>{contact.contact_phone}</Text>
+                        </View>
+                        <Feather name="chevron-right" size={16} color={colors.muted.foreground} />
+                      </Pressable>
+                    )
+                  })}
+                </ScrollView>
+              </View>
+            </View>
+          </Modal>
         </View>
       </Modal>
     </View>
@@ -365,6 +465,8 @@ function EInput({ icon, colors, alignTop, children }: { icon: string; colors: an
     </View>
   )
 }
+
+const CHIP_COLORS = ["#6C63FF", "#FF6B6B", "#4ECDC4", "#F7B731", "#45B7D1"]
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
@@ -403,4 +505,21 @@ const styles = StyleSheet.create({
   textarea: { minHeight: 72 },
   saveBtn: { flexDirection: "row", gap: 8, justifyContent: "center", alignItems: "center", padding: 15, borderRadius: 14, marginTop: 8 },
   saveBtnText: { color: "#fff", fontWeight: "600", fontSize: 16 },
+  contactsHint: { fontSize: 11, marginBottom: 10 },
+  chipsRow: { gap: 10, paddingRight: 4 },
+  chip: { alignItems: "center", gap: 5, width: 52 },
+  chipAvatar: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center" },
+  chipInitials: { fontSize: 15, fontWeight: "700" },
+  chipName: { fontSize: 11, fontWeight: "500", textAlign: "center" },
+  pickerOverlay: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.4)" },
+  pickerSheet: { borderTopLeftRadius: 20, borderTopRightRadius: 20, maxHeight: "80%", paddingBottom: 32 },
+  pickerHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 20, paddingVertical: 16, borderBottomWidth: 1 },
+  pickerTitle: { fontSize: 16, fontWeight: "700" },
+  pickerSearch: { flexDirection: "row", alignItems: "center", gap: 8, margin: 16, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10, borderWidth: 1 },
+  pickerSearchInput: { flex: 1, fontSize: 14 },
+  pickerItem: { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 20, paddingVertical: 14, borderBottomWidth: StyleSheet.hairlineWidth },
+  pickerAvatar: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center" },
+  pickerAvatarText: { fontSize: 14, fontWeight: "700" },
+  pickerName: { fontSize: 14, fontWeight: "600" },
+  pickerPhone: { fontSize: 12, marginTop: 1 },
 })
