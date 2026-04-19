@@ -14,7 +14,7 @@ type FBackButtonProps = {
 export const FBackButton = ({ path, isAbsolute = true, style, color, onPress }: FBackButtonProps) => {
   const router = useRouter()
   const { colors } = useTheme()
-  const resolvedColor = color ?? "#ffffff"
+  const resolvedColor = color ?? colors.foreground.primary
 
   const handlePress = () => {
     if (onPress) {
