@@ -31,7 +31,7 @@ export const SummaryCard = ({ label, amount, type }: SummaryCardProps) => {
         },
       ]}
     >
-      <Text style={[styles.label, { color: colors.muted.foreground }]}>{label}</Text>
+      <Text style={[styles.label, { color: colors.muted.foreground }]} numberOfLines={2}>{label}</Text>
       <Text style={[styles.amount, { color: getAmountColor() }]}>{amount}</Text>
     </View>
   )
@@ -46,7 +46,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   label: {
-    fontSize: 14,
+    fontSize: 11,
+    textAlign: "center",
+    minHeight: 28,
   },
   amount: {
     fontSize: 12,
