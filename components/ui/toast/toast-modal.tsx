@@ -12,6 +12,96 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
+
+interface CompactToastProps {
+  visible: boolean
+  message: string
+  type: "info" | "success" | "error" | "warning" | "confirm"
+  onClose: () => void
+}
+
+export const CompactToast: React.FC<CompactToastProps> = ({ visible, message, type, onClose }) => {
+  const { colors } = useTheme()
+  const insets = useSafeAreaInsets()
+  const translateY = useRef(new Animated.Value(-100)).current
+  const opacity = useRef(new Animated.Value(0)).current
+
+  useEffect(() => {
+    if (visible) {
+      Animated.parallel([
+        Animated.spring(translateY, { toValue: 0, useNativeDriver: true, damping: 18, stiffness: 200 }),
+        Animated.timing(opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
+      ]).start()
+    } else {
+      Animated.parallel([
+        Animated.timing(translateY, { toValue: -100, duration: 200, useNativeDriver: true }),
+        Animated.timing(opacity, { toValue: 0, duration: 200, useNativeDriver: true }),
+      ]).start()
+    }
+  }, [visible])
+
+  const iconMap = {
+    success: { name: "check-circle" as const, color: colors.status.success },
+    error: { name: "x-circle" as const, color: colors.status.destructive },
+    warning: { name: "alert-triangle" as const, color: colors.status.warning },
+    info: { name: "info" as const, color: colors.primary.default },
+    confirm: { name: "help-circle" as const, color: colors.primary.default },
+  }
+  const icon = iconMap[type]
+
+  if (!visible && opacity._value === 0) return null
+
+  return (
+    <Animated.View
+      style={[
+        compactStyles.container,
+        {
+          top: insets.top + 12,
+          backgroundColor: colors.card.background,
+          borderColor: colors.border,
+          opacity,
+          transform: [{ translateY }],
+        },
+      ]}
+      pointerEvents="box-none"
+    >
+      <Feather name={icon.name} size={18} color={icon.color} />
+      <Text style={[compactStyles.message, { color: colors.foreground.primary }]} numberOfLines={2}>
+        {message}
+      </Text>
+      <TouchableOpacity onPress={onClose} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+        <Feather name="x" size={16} color={colors.muted.foreground} />
+      </TouchableOpacity>
+    </Animated.View>
+  )
+}
+
+const compactStyles = StyleSheet.create({
+  container: {
+    position: "absolute",
+    left: 16,
+    right: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    zIndex: 9999,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  message: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: "500",
+  },
+})
 
 interface ToastModalProps {
   visible: boolean

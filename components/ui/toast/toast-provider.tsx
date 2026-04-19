@@ -1,6 +1,6 @@
 import { Toast } from '@/lib/toast-global'
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react'
-import { ToastModal } from './toast-modal'
+import { CompactToast, ToastModal } from './toast-modal'
 
 export interface ToastOptions {
   title?: string
@@ -8,6 +8,7 @@ export interface ToastOptions {
   type?: 'info' | 'success' | 'error' | 'warning' | 'confirm'
   position?: 'center' | 'top' | 'bottom'
   duration?: number
+  compact?: boolean
   confirmText?: string
   cancelText?: string
   onConfirm?: () => void
@@ -71,12 +72,20 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   return (
     <ToastContext.Provider value={{ showToast, hideToast }}>
       {children}
-      <ToastModal
-        {...alertState}
-        type={alertState.type ?? 'info'}
-        position={alertState.position ?? 'center'}
-        onClose={hideToast}
-      />
+      {alertState.compact ? (
+        <CompactToast
+          {...alertState}
+          type={alertState.type ?? 'info'}
+          onClose={hideToast}
+        />
+      ) : (
+        <ToastModal
+          {...alertState}
+          type={alertState.type ?? 'info'}
+          position={alertState.position ?? 'center'}
+          onClose={hideToast}
+        />
+      )}
     </ToastContext.Provider>
   )
 }

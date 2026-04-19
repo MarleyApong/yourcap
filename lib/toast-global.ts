@@ -19,59 +19,23 @@ class ToastManager {
 
   // Méthodes publiques accessibles globalement
   info = (message: string, title?: string, options?: Partial<ToastOptions>) => {
-    if (!this.showToastFn) {
-      console.warn("Toast system not initialized. Make sure ToastProvider is wrapped around your app.")
-      return
-    }
-    this.showToastFn({
-      type: "info",
-      message,
-      title,
-      duration: 3000,
-      ...options,
-    })
+    if (!this.showToastFn) return
+    this.showToastFn({ type: "info", message, title, compact: true, duration: 3000, ...options })
   }
 
   success = (message: string, title?: string, options?: Partial<ToastOptions>) => {
-    if (!this.showToastFn) {
-      console.warn("Toast system not initialized. Make sure ToastProvider is wrapped around your app.")
-      return
-    }
-    this.showToastFn({
-      type: "success",
-      message,
-      title,
-      duration: 3000,
-      ...options,
-    })
+    if (!this.showToastFn) return
+    this.showToastFn({ type: "success", message, title, compact: true, duration: 3000, ...options })
   }
 
   error = (message: string, title?: string, options?: Partial<ToastOptions>) => {
-    if (!this.showToastFn) {
-      console.warn("Toast system not initialized. Make sure ToastProvider is wrapped around your app.")
-      return
-    }
-    this.showToastFn({
-      type: "error",
-      message,
-      title,
-      duration: 4000,
-      ...options,
-    })
+    if (!this.showToastFn) return
+    this.showToastFn({ type: "error", message, title, compact: true, duration: 4000, ...options })
   }
 
   warning = (message: string, title?: string, options?: Partial<ToastOptions>) => {
-    if (!this.showToastFn) {
-      console.warn("Toast system not initialized. Make sure ToastProvider is wrapped around your app.")
-      return
-    }
-    this.showToastFn({
-      type: "warning",
-      message,
-      title,
-      duration: 4000,
-      ...options,
-    })
+    if (!this.showToastFn) return
+    this.showToastFn({ type: "warning", message, title, compact: true, duration: 4000, ...options })
   }
 
   confirm = (message: string, onConfirm: () => void, options?: Partial<ToastOptions>) => {
