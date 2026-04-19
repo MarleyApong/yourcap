@@ -1,0 +1,11 @@
+contact_name,contact_phone,contact_email,amount,currency,description,loan_date,due_date,repayment_date,status,debt_type
+Mbarga Paul,+237690123456,mbarga.paul@gmail.com,75000,XAF,Prêt pour réparation voiture,2025-01-10,2025-03-10,,PENDING,OWING
+Kamga Marie,+237677456789,,120000,XAF,Aide pour loyer mensuel,2025-02-01,2025-04-01,2025-03-28,PAID,OWING
+Nkengne Jean,+237655321098,jean.nkengne@yahoo.fr,45000,XAF,Achat matériel informatique,2025-02-15,2025-05-15,,OVERDUE,OWING
+Fotso Alice,+237699887766,alice.fotso@outlook.com,30000,XAF,Prêt personnel,2025-03-01,2025-04-30,,PENDING,OWED
+Tchinda Robert,+237681234567,,200000,XAF,Investissement commun boutique,2025-01-20,2025-06-20,,PENDING,OWING
+Nguemo Sophie,+237670987654,sophie.nguemo@gmail.com,55000,EUR,Avance sur salaire,2025-03-10,2025-04-10,2025-04-08,PAID,OWED
+Bello Hamidou,+237694567890,,15000,XAF,Transport retour Douala,2025-04-01,2025-04-15,,OVERDUE,OWING
+Eyinga Clara,+237685432109,clara.eyinga@gmail.com,90000,XAF,Achat marchandise marché,2025-02-28,2025-05-31,,PENDING,OWING
+Mvondo Eric,+237666123456,,25000,USD,Dîner d'affaires remboursement,2025-03-20,2025-04-20,,PENDING,OWED
+Abena Lucie,+237699345678,lucie.abena@hotmail.fr,180000,XAF,Prêt urgence médicale,2025-01-05,2025-07-05,,PENDING,OWING

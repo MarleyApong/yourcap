@@ -185,6 +185,11 @@ export const fr = {
       },
       descriptionOptional: "Description (Optionnel)",
       steps: { who: "Qui ?", whoSub: "Contact et type de dette", amount: "Combien ?", amountSub: "Montant et devise", when: "Quand ?", whenSub: "Dates et notes" },
+      savedContacts: {
+        title: "Contacts enregistrés",
+        pick: "Choisir un contact enregistré",
+        search: "Rechercher par nom ou téléphone...",
+      },
       success: "Enregistrement de dette créé avec succès !",
       error: "Échec de la création de la dette. Veuillez réessayer.",
     },

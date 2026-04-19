@@ -144,6 +144,11 @@ export const de = {
       descriptionPlaceholder: "z.B.: Darlehen für medizinischen Notfall",
       descriptionOptional: "Beschreibung (Optional)",
       steps: { who: "Wer?", whoSub: "Kontakt & Schuldentyp", amount: "Wie viel?", amountSub: "Betrag & Währung", when: "Wann?", whenSub: "Daten & Notizen" },
+      savedContacts: {
+        title: "Gespeicherte Kontakte",
+        pick: "Gespeicherten Kontakt wählen",
+        search: "Nach Name oder Telefon suchen...",
+      },
       type: "Typ",
       typeIOwed: "Mir wird geschuldet (jemand schuldet mir)",
       typeIOwe: "Ich schulde (ich schulde jemandem)",

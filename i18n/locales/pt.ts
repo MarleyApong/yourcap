@@ -144,6 +144,11 @@ export const pt = {
       descriptionPlaceholder: "Ex: Empréstimo para emergência médica",
       descriptionOptional: "Descrição (Opcional)",
       steps: { who: "Quem?", whoSub: "Contato e tipo de dívida", amount: "Quanto?", amountSub: "Valor e moeda", when: "Quando?", whenSub: "Datas e notas" },
+      savedContacts: {
+        title: "Contatos salvos",
+        pick: "Escolher um contato salvo",
+        search: "Buscar por nome ou telefone...",
+      },
       type: "Tipo",
       typeIOwed: "Me devem (alguém me deve)",
       typeIOwe: "Devo (devo a alguém)",

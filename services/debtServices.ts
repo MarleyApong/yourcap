@@ -144,6 +144,30 @@ export const getUserDebts = async (user_id: string): Promise<Debt[]> => {
   }
 }
 
+export interface SavedContact {
+  contact_name: string
+  contact_phone: string
+  contact_email: string | null
+}
+
+export const getContacts = async (user_id: string): Promise<SavedContact[]> => {
+  try {
+    const db = getDb()
+    const contacts = await db.getAllAsync<SavedContact>(
+      `SELECT contact_name, contact_phone, MAX(contact_email) as contact_email
+       FROM debts
+       WHERE user_id = ?
+       GROUP BY contact_name, contact_phone
+       ORDER BY contact_name ASC`,
+      [user_id],
+    )
+    return contacts || []
+  } catch (error) {
+    console.error(`Error fetching contacts for user ${user_id}:`, error)
+    return []
+  }
+}
+
 export const getDebtsSummary = async (user_id: string) => {
   try {
     const db = getDb()

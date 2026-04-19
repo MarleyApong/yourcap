@@ -161,6 +161,9 @@ export interface TranslationKeys {
   'debt.add.validation.invalidDueDate': string;
   
   'debt.add.descriptionOptional': string;
+  'debt.add.savedContacts.title': string;
+  'debt.add.savedContacts.pick': string;
+  'debt.add.savedContacts.search': string;
   'debt.add.success': string;
   'debt.add.error': string;
 

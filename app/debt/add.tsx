@@ -3,13 +3,13 @@ import { Loader } from "@/components/ui/loader"
 import { SelectInput } from "@/components/ui/select-input"
 import { useTheme } from "@/core/theme"
 import { useTranslation } from "@/i18n"
-import { createDebt } from "@/services/debtServices"
+import { createDebt, getContacts, SavedContact } from "@/services/debtServices"
 import { scheduleAllDebtReminders } from "@/services/notificationService"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
-import { useRef, useState } from "react"
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
+import { useEffect, useRef, useState } from "react"
+import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
@@ -33,6 +33,15 @@ export default function AddDebt() {
     debt_type: "OWING",
   })
   const [loading, setLoading] = useState(false)
+  const [savedContacts, setSavedContacts] = useState<SavedContact[]>([])
+  const [showContactPicker, setShowContactPicker] = useState(false)
+  const [contactSearch, setContactSearch] = useState("")
+
+  useEffect(() => {
+    if (user?.user_id) {
+      getContacts(user.user_id).then(setSavedContacts)
+    }
+  }, [])
 
   const contactPhoneRef = useRef<TextInput>(null)
   const contactEmailRef = useRef<TextInput>(null)
@@ -40,6 +49,17 @@ export default function AddDebt() {
   const descriptionRef = useRef<TextInput>(null)
 
   const handleChange = (field: string, value: string) => setForm(prev => ({ ...prev, [field]: value }))
+
+  const applyContact = (contact: SavedContact) => {
+    setForm(prev => ({
+      ...prev,
+      contact_name: contact.contact_name,
+      contact_phone: contact.contact_phone,
+      contact_email: contact.contact_email || "",
+    }))
+    setShowContactPicker(false)
+    setContactSearch("")
+  }
 
   const handleDateChange = (field: "loan_date" | "due_date") => (date: Date) =>
     setForm(prev => ({ ...prev, [field]: date }))
@@ -135,6 +155,19 @@ export default function AddDebt() {
         {/* STEP 1 — Qui */}
         {step === 1 && (
           <>
+            {savedContacts.length > 0 && (
+              <Pressable
+                onPress={() => setShowContactPicker(true)}
+                style={[styles.contactPickerBtn, { backgroundColor: colors.primary.default + "12", borderColor: colors.primary.default + "30" }]}
+              >
+                <Feather name="users" size={14} color={colors.primary.default} />
+                <Text style={[styles.contactPickerBtnText, { color: colors.primary.default }]}>
+                  {t("debt.add.savedContacts.pick")} ({savedContacts.length})
+                </Text>
+                <Feather name="chevron-right" size={14} color={colors.primary.default} />
+              </Pressable>
+            )}
+
             <Field label={t("debt.add.debtType.title")} colors={colors}>
               <View style={[styles.toggle, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
                 {(["OWING", "OWED"] as const).map(opt => (
@@ -275,6 +308,66 @@ export default function AddDebt() {
           {!loading && <Feather name={step === 3 ? "check" : "arrow-right"} size={18} color="#fff" />}
         </Pressable>
       </KeyboardAwareScrollView>
+
+      {/* Contact Picker Modal */}
+      <Modal
+        visible={showContactPicker}
+        animationType="slide"
+        transparent
+        onRequestClose={() => { setShowContactPicker(false); setContactSearch("") }}
+      >
+        <View style={styles.pickerOverlay}>
+          <View style={[styles.pickerSheet, { backgroundColor: colors.background.primary }]}>
+            <View style={[styles.pickerHeader, { borderBottomColor: colors.border }]}>
+              <Text style={[styles.pickerTitle, { color: colors.foreground.primary }]}>
+                {t("debt.add.savedContacts.title")}
+              </Text>
+              <Pressable onPress={() => { setShowContactPicker(false); setContactSearch("") }}>
+                <Feather name="x" size={20} color={colors.foreground.primary} />
+              </Pressable>
+            </View>
+            <View style={[styles.pickerSearch, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+              <Feather name="search" size={14} color={colors.muted.foreground} />
+              <TextInput
+                style={[styles.pickerSearchInput, { color: colors.foreground.primary }]}
+                placeholder={t("debt.add.savedContacts.search")}
+                placeholderTextColor={colors.muted.foreground}
+                value={contactSearch}
+                onChangeText={setContactSearch}
+                autoFocus
+              />
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {savedContacts
+                .filter(c =>
+                  !contactSearch ||
+                  c.contact_name.toLowerCase().includes(contactSearch.toLowerCase()) ||
+                  c.contact_phone.includes(contactSearch)
+                )
+                .map((contact, i) => {
+                  const initials = contact.contact_name.split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase()
+                  return (
+                    <Pressable
+                      key={i}
+                      onPress={() => applyContact(contact)}
+                      style={[styles.pickerItem, { borderBottomColor: colors.border }]}
+                    >
+                      <View style={[styles.pickerAvatar, { backgroundColor: colors.primary.default + "20" }]}>
+                        <Text style={[styles.pickerAvatarText, { color: colors.primary.default }]}>{initials}</Text>
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={[styles.pickerName, { color: colors.foreground.primary }]}>{contact.contact_name}</Text>
+                        <Text style={[styles.pickerPhone, { color: colors.muted.foreground }]}>{contact.contact_phone}</Text>
+                      </View>
+                      <Feather name="chevron-right" size={16} color={colors.muted.foreground} />
+                    </Pressable>
+                  )
+                })
+              }
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </View>
   )
 }
@@ -343,4 +436,36 @@ const styles = StyleSheet.create({
     borderRadius: 14,
   },
   nextBtnText: { color: "#fff", fontWeight: "600", fontSize: 16 },
+  contactPickerBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    marginBottom: 18,
+  },
+  contactPickerBtnText: { flex: 1, fontSize: 13, fontWeight: "600" },
+  pickerOverlay: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.4)" },
+  pickerSheet: { borderTopLeftRadius: 20, borderTopRightRadius: 20, maxHeight: "80%", paddingBottom: 32 },
+  pickerHeader: {
+    flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+    paddingHorizontal: 20, paddingVertical: 16, borderBottomWidth: 1,
+  },
+  pickerTitle: { fontSize: 16, fontWeight: "700" },
+  pickerSearch: {
+    flexDirection: "row", alignItems: "center", gap: 8,
+    margin: 16, paddingHorizontal: 12, paddingVertical: 8,
+    borderRadius: 10, borderWidth: 1,
+  },
+  pickerSearchInput: { flex: 1, fontSize: 14 },
+  pickerItem: {
+    flexDirection: "row", alignItems: "center", gap: 12,
+    paddingHorizontal: 20, paddingVertical: 14, borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  pickerAvatar: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center" },
+  pickerAvatarText: { fontSize: 14, fontWeight: "700" },
+  pickerName: { fontSize: 14, fontWeight: "600" },
+  pickerPhone: { fontSize: 12, marginTop: 1 },
 })
