@@ -183,8 +183,13 @@ export default function AddDebt() {
           <>
             {savedContacts.length > 0 && (
               <Animated.View style={{ opacity: chipsOpacity, transform: [{ translateY: chipsTranslateY }], marginBottom: 20 }}>
-                <Text style={[styles.fieldLabel, { color: colors.muted.foreground, marginBottom: 10 }]}>
+                <Text style={[styles.fieldLabel, { color: colors.muted.foreground, marginBottom: 4 }]}>
                   {t("debt.add.savedContacts.recent")}
+                </Text>
+                <Text style={[styles.contactsHint, { color: colors.muted.foreground }]}>
+                  {form.contact_name && savedContacts.some(c => c.contact_name === form.contact_name && c.contact_phone === form.contact_phone)
+                    ? t("debt.add.savedContacts.autoFilled", { name: form.contact_name.split(" ")[0] })
+                    : t("debt.add.savedContacts.hint")}
                 </Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsRow}>
                   {savedContacts.slice(0, 5).map((contact, i) => {
@@ -485,6 +490,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
   },
   nextBtnText: { color: "#fff", fontWeight: "600", fontSize: 16 },
+  contactsHint: { fontSize: 11, marginBottom: 10 },
   chipsRow: { gap: 10, paddingRight: 4 },
   chip: { alignItems: "center", gap: 5, width: 52 },
   chipAvatar: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center" },

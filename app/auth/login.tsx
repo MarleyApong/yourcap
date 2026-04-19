@@ -158,7 +158,7 @@ export default function Login() {
               </Text>
             </TouchableOpacity>
             <Text style={[styles.quickAuthWelcome, { color: colors.muted.foreground }]}>
-              {t("auth.login.welcomeBackUser").replace("{name}", identifier)}
+              {t("auth.login.welcomeBackUser", { name: identifier })}
             </Text>
           </View>
         )}

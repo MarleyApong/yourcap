@@ -147,6 +147,8 @@ export const pt = {
       savedContacts: {
         title: "Contatos salvos",
         recent: "Contatos recentes",
+        hint: "Contatos das suas dívidas anteriores",
+        autoFilled: "Preenchido a partir de {name}",
         pick: "Escolher um contato salvo",
         search: "Buscar por nome ou telefone...",
         more: "Mais",

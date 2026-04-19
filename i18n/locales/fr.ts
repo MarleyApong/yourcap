@@ -190,6 +190,8 @@ export const fr = {
       savedContacts: {
         title: "Contacts enregistrés",
         recent: "Contacts récents",
+        hint: "Contacts issus de vos dettes précédentes",
+        autoFilled: "Pré-rempli depuis {name}",
         pick: "Choisir un contact enregistré",
         search: "Rechercher par nom ou téléphone...",
         more: "Plus",

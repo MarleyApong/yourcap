@@ -190,6 +190,8 @@ export const en = {
       savedContacts: {
         title: "Saved contacts",
         recent: "Recent contacts",
+        hint: "Contacts from your previous debts",
+        autoFilled: "Auto-filled from {name}",
         pick: "Choose a saved contact",
         search: "Search by name or phone...",
         more: "More",

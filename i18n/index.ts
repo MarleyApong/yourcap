@@ -16,10 +16,10 @@ export const useTranslation = () => {
   // unused but kept to avoid breaking destructuring at call sites
   React.useEffect(() => {}, []);
   
-  const t = (key: TranslationKey): string => {
+  const t = (key: TranslationKey, params?: Record<string, string | number>): string => {
     const keys = key.split('.');
     let value: any = translations[currentLanguage];
-    
+
     for (const k of keys) {
       if (value && typeof value === 'object' && k in value) {
         value = value[k];
@@ -29,7 +29,7 @@ export const useTranslation = () => {
           console.error(`❌ Translation key not found: "${key}" for language "${currentLanguage}"`);
           console.error(`Available keys starting with "${keys[0]}": ${Object.keys(translations[currentLanguage]).filter(k => k.startsWith(keys[0]))}`);
         }
-        
+
         // Fallback sur la langue par défaut si la clé n'existe pas
         if (currentLanguage !== DEFAULT_LANGUAGE) {
           let fallbackValue: any = translations[DEFAULT_LANGUAGE];
@@ -37,17 +37,25 @@ export const useTranslation = () => {
             if (fallbackValue && typeof fallbackValue === 'object' && k in fallbackValue) {
               fallbackValue = fallbackValue[k];
             } else {
-              return key; // Return the key if translation doesn't exist even in fallback
+              return key;
             }
           }
-          return typeof fallbackValue === 'string' ? fallbackValue : key;
+          value = typeof fallbackValue === 'string' ? fallbackValue : key;
+        } else {
+          return key;
         }
-        
-        return key; // Return the key if translation doesn't exist
       }
     }
-    
-    return typeof value === 'string' ? value : key;
+
+    let result = typeof value === 'string' ? value : key;
+
+    if (params) {
+      Object.entries(params).forEach(([k, val]) => {
+        result = result.replace(new RegExp(`\\{${k}\\}`, 'g'), String(val));
+      });
+    }
+
+    return result;
   };
 
   return { t, currentLanguage };

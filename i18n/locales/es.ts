@@ -147,6 +147,8 @@ export const es = {
       savedContacts: {
         title: "Contactos guardados",
         recent: "Contactos recientes",
+        hint: "Contactos de tus deudas anteriores",
+        autoFilled: "Rellenado desde {name}",
         pick: "Elegir un contacto guardado",
         search: "Buscar por nombre o teléfono...",
         more: "Más",
