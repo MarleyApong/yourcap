@@ -8,14 +8,16 @@ import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
-import { Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { Image, ImageBackground, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function Login() {
   const { login, loginWithBiometric, biometricCapabilities, checkBiometricCapabilities } = useAuthStore()
   const { colors } = useTheme()
   const { t } = useTranslation()
   const router = useRouter()
+  const insets = useSafeAreaInsets()
   const identifierRef = useRef<TextInput>(null)
   const canGoBack = router.canGoBack()
 
@@ -34,15 +36,11 @@ export default function Login() {
   const initializeLoginState = async () => {
     try {
       const quickAuthSession = await hasValidSessionForQuickAuth()
-
-      console.log("Login init - Quick auth session:", quickAuthSession)
-
       if (quickAuthSession.hasValidSession) {
         setIdentifier(quickAuthSession.identifier!)
         setShowPinInput(true)
         setIsQuickAuth(true)
         setShouldShowBiometric(quickAuthSession.biometricEnabled || false)
-        setHasExistingAccount(true)
         await setAppLocked(false)
       }
     } catch (error) {
@@ -55,7 +53,6 @@ export default function Login() {
       Toast.error(t("auth.validation.pleaseEnterEmailOrPhone"))
       return false
     }
-
     if (value.includes("@")) {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
         Toast.error(t("auth.validation.invalidEmail"))
@@ -67,7 +64,6 @@ export default function Login() {
         return false
       }
     }
-
     return true
   }
 
@@ -128,11 +124,11 @@ export default function Login() {
 
   if (showPinInput) {
     return (
-      <View style={[styles.root, { backgroundColor: colors.primary[50] }]}>
+      <View style={[styles.root, { backgroundColor: colors.background.primary }]}>
         {!isQuickAuth && <FBackButton onPress={handleBackFromPin} />}
 
         {isQuickAuth && (
-          <View style={styles.quickAuthHeader}>
+          <View style={[styles.quickAuthHeader, { paddingTop: insets.top + 16 }]}>
             <TouchableOpacity onPress={handleBackFromPin} style={styles.quickAuthBack}>
               <Feather name="chevron-left" size={24} color={colors.primary.default} />
               <Text style={[styles.quickAuthBackText, { color: colors.primary.default }]}>
@@ -168,117 +164,138 @@ export default function Login() {
   }
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.primary[50] }]}>
+    <ImageBackground
+      source={require("@/assets/images/bg/bg-login-2.png")}
+      style={styles.root}
+      resizeMode="cover"
+      blurRadius={4}
+    >
+      <View style={styles.bgOverlay} />
+
+      {canGoBack && <FBackButton path="/" />}
+
+      {/* Logo + titre sur l'image */}
+      <View style={[styles.hero, { paddingTop: insets.top + 60 }]}>
+        <Image
+          source={require("@/assets/images/logo/logo.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+        <Text style={styles.heroTitle}>{t("auth.login.welcomeBack")}</Text>
+        <Text style={styles.heroSubtitle}>{t("auth.login.subtitle")}</Text>
+      </View>
+
+      {/* Bottom sheet form */}
       <KeyboardAwareScrollView
         enableOnAndroid
         extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={{ flexGrow: 1, justifyContent: "flex-end" }}
       >
-        {canGoBack && <FBackButton path="/" />}
+        <View style={[styles.sheet, { backgroundColor: colors.background.primary }]}>
+          <View style={styles.sheetHandle} />
 
-        <View style={styles.heroImage}>
-          <Image source={require("@/assets/images/bg/bg-login-2.png")} style={styles.bgImage} resizeMode="cover" />
-          <View style={styles.bgOverlay} />
-        </View>
-
-        <View style={styles.formContainer}>
-          <View style={styles.formInner}>
-            <Image
-              source={require("@/assets/images/logo/logo.png")}
-              style={styles.logoWatermark}
-            />
-
-            <Text style={[styles.title, { color: colors.primary.default }]}>{t("auth.login.welcomeBack")}</Text>
-            <Text style={[styles.subtitle, { color: colors.foreground.primary }]}>{t("auth.login.subtitle")}</Text>
-
-            <View style={styles.inputs}>
-              <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
-                <Feather name="mail" size={24} color={colors.primary.default} />
-                <TextInput
-                  ref={identifierRef}
-                  style={[styles.inputText, { color: colors.foreground.primary }]}
-                  placeholder={t("auth.login.emailOrPhone")}
-                  placeholderTextColor={colors.muted.foreground}
-                  value={identifier}
-                  onChangeText={setIdentifier}
-                  keyboardType="default"
-                  autoCapitalize="none"
-                  returnKeyType="done"
-                  onSubmitEditing={handleIdentifierSubmit}
-                />
-              </View>
+          <View style={styles.inputs}>
+            <Text style={[styles.inputLabel, { color: colors.muted.foreground }]}>
+              {t("auth.login.phoneOrEmail")}
+            </Text>
+            <View style={[styles.inputRow, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+              <Feather name="user" size={18} color={colors.muted.foreground} />
+              <TextInput
+                ref={identifierRef}
+                style={[styles.inputText, { color: colors.foreground.primary }]}
+                placeholder="6XX XXX XXX / email@example.com"
+                placeholderTextColor={colors.muted.foreground}
+                value={identifier}
+                onChangeText={setIdentifier}
+                keyboardType="default"
+                autoCapitalize="none"
+                returnKeyType="done"
+                onSubmitEditing={handleIdentifierSubmit}
+              />
             </View>
+          </View>
 
-            <View style={styles.actions}>
-              <TouchableOpacity
-                onPress={handleIdentifierSubmit}
-                disabled={loading}
-                style={[styles.submitBtn, { backgroundColor: colors.primary.default, opacity: loading ? 0.7 : 1 }]}
-              >
-                <Text style={styles.submitBtnText}>{t("common.continue")}</Text>
-              </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleIdentifierSubmit}
+            disabled={loading}
+            style={[styles.submitBtn, { backgroundColor: colors.primary.default, opacity: loading ? 0.7 : 1 }]}
+          >
+            <Text style={styles.submitBtnText}>{t("common.continue")}</Text>
+            <Feather name="arrow-right" size={18} color="#ffffff" />
+          </TouchableOpacity>
 
-              <View style={styles.signupRow}>
-                <Text style={{ color: colors.foreground.primary }}>{t("auth.login.dontHaveAccount")}</Text>
-                <Link href="/auth/register">
-                  <Text style={[styles.signupLink, { color: colors.primary.default }]}>{t("auth.login.signUp")}</Text>
-                </Link>
-              </View>
-            </View>
+          <View style={[styles.signupRow, { paddingBottom: insets.bottom + 16 }]}>
+            <Text style={{ color: colors.muted.foreground, fontSize: 14 }}>{t("auth.login.dontHaveAccount")}</Text>
+            <Link href="/auth/register">
+              <Text style={[styles.signupLink, { color: colors.primary.default }]}>{t("auth.login.signUp")}</Text>
+            </Link>
           </View>
         </View>
       </KeyboardAwareScrollView>
-    </View>
+    </ImageBackground>
   )
 }
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  quickAuthHeader: { paddingTop: 48, paddingHorizontal: 32 },
+  bgOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.55)" },
+  hero: { alignItems: "center", paddingHorizontal: 32 },
+  logo: { width: 72, height: 72, marginBottom: 20, borderRadius: 16 },
+  heroTitle: { fontSize: 32, fontWeight: "700", color: "#ffffff", textAlign: "center" },
+  heroSubtitle: { fontSize: 15, color: "rgba(255,255,255,0.7)", textAlign: "center", marginTop: 8 },
+  sheet: {
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingHorizontal: 28,
+    paddingTop: 16,
+    paddingBottom: 8,
+    marginTop: 48,
+  },
+  sheetHandle: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "rgba(128,128,128,0.4)",
+    alignSelf: "center",
+    marginBottom: 28,
+  },
+  inputLabel: { fontSize: 13, fontWeight: "500", marginBottom: 6 },
+  inputs: { marginBottom: 20 },
+  inputRow: {
+    borderWidth: 1,
+    borderRadius: 12,
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "center",
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+  },
+  inputText: { fontSize: 15, flex: 1 },
+  submitBtn: {
+    flexDirection: "row",
+    gap: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
+    borderRadius: 14,
+    width: "100%",
+    marginBottom: 16,
+  },
+  submitBtnText: { textAlign: "center", color: "#ffffff", fontWeight: "600", fontSize: 16 },
+  signupRow: { flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 8 },
+  signupLink: { fontWeight: "700", fontSize: 14 },
+  quickAuthHeader: { paddingHorizontal: 32 },
   quickAuthBack: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 16 },
   quickAuthBackText: { fontWeight: "500" },
   quickAuthWelcome: { fontSize: 18, marginBottom: 16 },
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.3)",
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
   loadingCard: { borderRadius: 12, padding: 24, alignItems: "center" },
   loadingText: { marginTop: 16, color: "#ffffff" },
-  heroImage: { position: "relative" },
-  bgImage: { height: 360, width: "100%" },
-  bgOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.6)" },
-  formContainer: { flex: 1, justifyContent: "space-between" },
-  formInner: { alignItems: "center", width: "100%", paddingHorizontal: 32, marginTop: 24 },
-  logoWatermark: { width: 160, height: 160, position: "absolute", opacity: 0.05 },
-  title: { fontSize: 30, fontWeight: "700" },
-  subtitle: { fontSize: 16 },
-  inputs: { width: "100%", marginTop: 20, gap: 12 },
-  inputRow: {
-    borderWidth: 1,
-    borderRadius: 6,
-    flexDirection: "row",
-    gap: 8,
-    alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  inputText: { fontSize: 15, flex: 1 },
-  actions: { width: "100%", paddingHorizontal: 16, paddingBottom: 32, marginTop: 24 },
-  submitBtn: {
-    flexDirection: "row",
-    gap: 8,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 14,
-    borderRadius: 12,
-    width: "100%",
-  },
-  submitBtnText: { textAlign: "center", color: "#ffffff", fontWeight: "600", fontSize: 16 },
-  signupRow: { flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 12, marginTop: 12 },
-  signupLink: { fontWeight: "700", textDecorationLine: "underline" },
 })

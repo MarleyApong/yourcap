@@ -45,6 +45,7 @@ export const pt = {
       title: "Bem-vindo de volta",
       subtitle: "Digite suas credenciais",
       emailOrPhone: "Email ou número de telefone",
+      phoneOrEmail: "Número de telefone ou Email",
       pinTitle: "Digite o PIN",
       pinSubtitle: "Digite seu PIN de 6 dígitos para continuar",
       verifyIdentity: "Verificar identidade",

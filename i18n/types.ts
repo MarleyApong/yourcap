@@ -43,6 +43,7 @@ export interface TranslationKeys {
   'auth.login.title': string;
   'auth.login.subtitle': string;
   'auth.login.emailOrPhone': string;
+  'auth.login.phoneOrEmail': string;
   'auth.login.pinTitle': string;
   'auth.login.pinSubtitle': string;
   'auth.login.invalidPin': string;

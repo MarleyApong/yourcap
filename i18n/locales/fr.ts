@@ -47,6 +47,7 @@ export const fr = {
       title: "Bon retour",
       subtitle: "Entrez vos identifiants",
       emailOrPhone: "Email ou Numéro de téléphone",
+      phoneOrEmail: "Numéro de téléphone ou Email",
       pinTitle: "Entrez votre PIN",
       pinSubtitle: "Entrez votre PIN à 6 chiffres pour continuer",
       verifyIdentity: "Vérifiez votre identité",

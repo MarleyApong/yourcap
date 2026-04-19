@@ -45,6 +45,7 @@ export const de = {
       title: "Willkommen zurück",
       subtitle: "Gib deine Anmeldedaten ein",
       emailOrPhone: "E-Mail oder Telefonnummer",
+      phoneOrEmail: "Telefonnummer oder E-Mail",
       pinTitle: "PIN eingeben",
       pinSubtitle: "Gib deinen 6-stelligen PIN ein, um fortzufahren",
       verifyIdentity: "Identität bestätigen",
