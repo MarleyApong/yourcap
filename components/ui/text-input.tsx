@@ -20,7 +20,7 @@ export const TextInput = forwardRef<RNTextInput, Props>(
         {label && (
           <Text style={[styles.label, { color: colors.foreground.primary }]}>
             {label}
-            {required ? <Text style={styles.required}> *</Text> : ""}
+            {required ? <Text style={{ color: colors.status.destructive }}> *</Text> : ""}
           </Text>
         )}
         <View style={[styles.inputRow, { borderBottomColor: colors.primary.default }]}>
@@ -32,7 +32,7 @@ export const TextInput = forwardRef<RNTextInput, Props>(
             {...props}
           />
         </View>
-        {error && <Text style={styles.error}>{error}</Text>}
+        {error && <Text style={{ color: colors.status.destructive, fontSize: 14, marginTop: 4 }}>{error}</Text>}
       </View>
     )
   }
@@ -48,9 +48,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 18,
   },
-  required: {
-    color: "#dc2626",
-  },
   inputRow: {
     borderBottomWidth: 1,
     flexDirection: "row",
@@ -62,10 +59,5 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 18,
-  },
-  error: {
-    color: "#ef4444",
-    fontSize: 14,
-    marginTop: 4,
   },
 })

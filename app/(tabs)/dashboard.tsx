@@ -1,6 +1,7 @@
 import { DebtItem } from "@/components/feature/dashboard/debtItem"
 import { EmptyState } from "@/components/feature/empty-state"
 import { LoadingState } from "@/components/feature/loading-state"
+import { Fab } from "@/components/ui/fab"
 import { useTheme } from "@/core/theme"
 import { isDatabaseReady } from "@/db/db"
 import { useTranslation } from "@/i18n"
@@ -262,6 +263,7 @@ export default function Dashboard() {
         </View>
         <View style={{ height: insets.bottom + 80 }} />
       </ScrollView>
+      <Fab onPress={() => router.push("/debt/add")} />
     </View>
   )
 }

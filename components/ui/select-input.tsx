@@ -26,7 +26,7 @@ export const SelectInput = ({ label, value, onChange, options, required = false 
     <View style={styles.container}>
       <Text style={[styles.label, { color: colors.foreground.primary }]}>
         {label}
-        {required ? <Text style={styles.required}> *</Text> : ""}
+        {required ? <Text style={{ color: colors.status.destructive }}> *</Text> : ""}
       </Text>
 
       <Pressable
@@ -80,9 +80,6 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: "700",
     fontSize: 18,
-  },
-  required: {
-    color: "#dc2626",
   },
   field: {
     borderBottomWidth: 1,

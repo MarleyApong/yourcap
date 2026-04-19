@@ -3,6 +3,7 @@ import { LoadingState } from "@/components/feature/loading-state"
 import { PageHeader } from "@/components/feature/page-header"
 import { SheetModal } from "@/components/feature/sheet-modal"
 import { DateInput } from "@/components/ui/date-input"
+import { Fab } from "@/components/ui/fab"
 import { useTheme } from "@/core/theme"
 import { useTranslation } from "@/i18n"
 import { Toast } from "@/lib/toast-global"
@@ -253,13 +254,7 @@ export default function History() {
         />
       )}
 
-      {/* FAB */}
-      <Pressable
-        onPress={() => router.push("/debt/add")}
-        style={[styles.fab, { backgroundColor: colors.primary.default }]}
-      >
-        <Feather name="plus" size={26} color={colors.primary.foreground} />
-      </Pressable>
+      <Fab onPress={() => router.push("/debt/add")} />
 
       {/* Unified filter sheet */}
       <SheetModal
@@ -345,21 +340,6 @@ const styles = StyleSheet.create({
     alignItems: "center", justifyContent: "center",
   },
   filterBadgeText: { fontSize: 9, fontWeight: "700" },
-  fab: {
-    position: "absolute",
-    bottom: 96,
-    right: 24,
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 6,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
   stateContainer: { flex: 1, paddingHorizontal: 24 },
   listContent: { paddingHorizontal: 24, paddingBottom: 96 },
   emptyContainer: { paddingTop: 16 },
