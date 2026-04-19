@@ -51,6 +51,7 @@ export default function Index() {
       source={require("@/assets/images/bg/welcome.jpg")}
       style={styles.bg}
       resizeMode="cover"
+      blurRadius={5}
     >
       <View style={styles.overlay} />
 
