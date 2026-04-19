@@ -8,8 +8,9 @@ import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
-import { Dimensions, Image, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native"
+import { Image, ImageBackground, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const TERMS_SECTION_ICONS = {
   storage: "smartphone",
@@ -20,8 +21,6 @@ const TERMS_SECTION_ICONS = {
   limitation: "info",
   evolution: "zap",
 } as const
-
-const { height: SCREEN_HEIGHT } = Dimensions.get("window")
 
 export default function Register() {
   const [step, setStep] = useState(1)
@@ -41,6 +40,7 @@ export default function Register() {
   const { t } = useTranslation()
   const { register } = useAuthStore()
   const router = useRouter()
+  const insets = useSafeAreaInsets()
 
   const emailRef = useRef<TextInput>(null)
   const phoneRef = useRef<TextInput>(null)
@@ -54,22 +54,18 @@ export default function Register() {
       Toast.error(t("auth.validation.fullNameRequired"))
       return false
     }
-
     if (!formData.phone_number.trim()) {
       Toast.error(t("auth.validation.phoneRequired"))
       return false
     }
-
     if (!/^(6|2)(2|3|[5-9])[0-9]{7}$/.test(formData.phone_number)) {
       Toast.error(t("auth.validation.invalidPhone"))
       return false
     }
-
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       Toast.error(t("auth.validation.invalidEmail"))
       return false
     }
-
     return true
   }
 
@@ -78,12 +74,10 @@ export default function Register() {
       Toast.error(t("auth.validation.pinLength"))
       return false
     }
-
     if (formData.pin !== formData.confirmPin) {
       Toast.error(t("auth.validation.pinMismatch"))
       return false
     }
-
     return true
   }
 
@@ -93,7 +87,6 @@ export default function Register() {
       setResetKey((k) => k + 1)
       return
     }
-
     setLoading(true)
     try {
       const success = await register({
@@ -103,7 +96,6 @@ export default function Register() {
         pin: formData.pin,
         confirmPin: formData.confirmPin,
       })
-
       if (success) {
         Toast.success(t("auth.register.accountCreated"))
         router.replace("/(tabs)/dashboard")
@@ -123,9 +115,7 @@ export default function Register() {
       Toast.error(t("terms.required"))
       return
     }
-    if (validateStep1()) {
-      setStep(2)
-    }
+    if (validateStep1()) setStep(2)
   }
 
   const handlePinComplete = (pin: string) => {
@@ -146,23 +136,15 @@ export default function Register() {
   // --- STEP 2: CREATE PIN ---
   if (step === 2) {
     return (
-      <KeyboardAwareScrollView
-        style={[styles.scrollRoot, { backgroundColor: colors.primary[50] }]}
-        contentContainerStyle={{ flexGrow: 1 }}
-        enableOnAndroid
-        extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.backBtnWrapper}>
+      <View style={[styles.root, { backgroundColor: colors.background.primary }]}>
+        <View style={[styles.pinBack, { paddingTop: insets.top + 16 }]}>
           <Pressable
             onPress={() => setStep(1)}
-            style={[styles.backCircleBtn, { backgroundColor: "rgba(255,255,255,0.2)", borderColor: colors.primary.default }]}
+            style={[styles.backCircleBtn, { borderColor: colors.border }]}
           >
-            <Feather name="chevron-left" size={24} color={colors.primary.default} />
+            <Feather name="chevron-left" size={24} color={colors.foreground.primary} />
           </Pressable>
         </View>
-
         <PinInput
           key="create-pin"
           title={t("auth.register.createPin")}
@@ -171,30 +153,22 @@ export default function Register() {
           showBiometric={false}
           length={6}
         />
-      </KeyboardAwareScrollView>
+      </View>
     )
   }
 
   // --- STEP 3: CONFIRM PIN ---
   if (step === 3) {
     return (
-      <KeyboardAwareScrollView
-        style={[styles.scrollRoot, { backgroundColor: colors.primary[50] }]}
-        contentContainerStyle={{ flexGrow: 1 }}
-        enableOnAndroid
-        extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.backBtnWrapper}>
+      <View style={[styles.root, { backgroundColor: colors.background.primary }]}>
+        <View style={[styles.pinBack, { paddingTop: insets.top + 16 }]}>
           <Pressable
             onPress={() => setStep(2)}
-            style={[styles.backCircleBtn, { backgroundColor: "rgba(255,255,255,0.2)", borderColor: colors.primary.default }]}
+            style={[styles.backCircleBtn, { borderColor: colors.border }]}
           >
-            <Feather name="chevron-left" size={24} color={colors.primary.default} />
+            <Feather name="chevron-left" size={24} color={colors.foreground.primary} />
           </Pressable>
         </View>
-
         <PinInput
           key={`confirm-pin-${resetKey}`}
           title={t("auth.register.confirmPin")}
@@ -203,7 +177,6 @@ export default function Register() {
           showBiometric={false}
           length={6}
         />
-
         {loading && (
           <View style={styles.overlay}>
             <View style={[styles.loadingCard, { backgroundColor: colors.primary.default }]}>
@@ -212,47 +185,59 @@ export default function Register() {
             </View>
           </View>
         )}
-      </KeyboardAwareScrollView>
+      </View>
     )
   }
 
   // --- STEP 1: USER INFO ---
   return (
-    <KeyboardAwareScrollView
-      style={[styles.scrollRoot, { backgroundColor: colors.primary[50] }]}
-      contentContainerStyle={{ flexGrow: 1 }}
-      enableOnAndroid
-      extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
-      keyboardShouldPersistTaps="handled"
-      showsVerticalScrollIndicator={false}
+    <ImageBackground
+      source={require("@/assets/images/bg/bg-login-2.png")}
+      style={styles.root}
+      resizeMode="cover"
+      blurRadius={4}
     >
+      <View style={styles.bgOverlay} />
+
       <FBackButton />
 
-      {/* Conteneur plein écran : contenu centré + boutons absolute en bas */}
-      <View style={styles.screen}>
-        <Image source={require("@/assets/images/logo/logo.png")} style={styles.logoWatermark} />
+      {/* Logo + titre sur l'image — même position que login */}
+      <View style={[styles.hero, { paddingTop: insets.top + 60 }]}>
+        <Image
+          source={require("@/assets/images/logo/logo.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+        <Text style={styles.heroTitle}>{t("auth.register.title")}</Text>
+        <Text style={styles.heroSubtitle}>{t("auth.register.subtitle")}</Text>
+        <View style={styles.stepIndicator}>
+          {[1, 2, 3].map((i) => (
+            <View
+              key={i}
+              style={[
+                styles.stepDot,
+                step >= i
+                  ? { backgroundColor: "#ffffff", width: 32 }
+                  : { backgroundColor: "rgba(255,255,255,0.3)", width: 16 },
+              ]}
+            />
+          ))}
+        </View>
+      </View>
 
-        <View style={styles.formContainer}>
-          <Text style={[styles.title, { color: colors.primary.default }]}>{t("auth.register.title")}</Text>
-          <Text style={[styles.subtitle, { color: colors.foreground.primary }]}>{t("auth.register.subtitle")}</Text>
-
-          <View style={styles.stepIndicator}>
-            {[1, 2, 3].map((i) => (
-              <View
-                key={i}
-                style={[
-                  styles.stepDot,
-                  step >= i
-                    ? { backgroundColor: colors.primary.default, width: 32 }
-                    : { backgroundColor: "#d1d5db", width: 16 },
-                ]}
-              />
-            ))}
-          </View>
+      <KeyboardAwareScrollView
+        enableOnAndroid
+        extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flexGrow: 1, justifyContent: "flex-end" }}
+      >
+        <View style={[styles.sheet, { backgroundColor: colors.background.primary }]}>
+          <View style={styles.sheetHandle} />
 
           <View style={styles.inputs}>
-            <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
-              <Feather name="user" size={22} color={colors.primary.default} />
+            <View style={[styles.inputRow, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+              <Feather name="user" size={18} color={colors.muted.foreground} />
               <TextInput
                 style={[styles.inputText, { color: colors.foreground.primary }]}
                 placeholder={t("auth.register.fullName")}
@@ -264,12 +249,12 @@ export default function Register() {
               />
             </View>
 
-            <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
-              <Feather name="phone" size={22} color={colors.primary.default} />
+            <View style={[styles.inputRow, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+              <Feather name="phone" size={18} color={colors.muted.foreground} />
               <TextInput
                 ref={phoneRef}
                 style={[styles.inputText, { color: colors.foreground.primary }]}
-                placeholder={t("auth.register.phoneNumber")}
+                placeholder="6XX XXX XXX"
                 placeholderTextColor={colors.muted.foreground}
                 value={formData.phone_number}
                 onChangeText={(text) => handleChange("phone_number", text)}
@@ -279,8 +264,8 @@ export default function Register() {
               />
             </View>
 
-            <View style={[styles.inputRow, { backgroundColor: colors.primary[50], borderColor: colors.primary.default }]}>
-              <Feather name="mail" size={22} color={colors.primary.default} />
+            <View style={[styles.inputRow, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+              <Feather name="mail" size={18} color={colors.muted.foreground} />
               <TextInput
                 ref={emailRef}
                 style={[styles.inputText, { color: colors.foreground.primary }]}
@@ -295,15 +280,9 @@ export default function Register() {
               />
             </View>
           </View>
-        </View>
 
-        {/* Boutons absolute en bas — scrollent avec le contenu quand clavier ouvert */}
-        <View style={styles.actions}>
-          {/* Checkbox termes et conditions */}
-          <Pressable
-            onPress={() => setTermsAccepted((v) => !v)}
-            style={styles.termsRow}
-          >
+          {/* Terms */}
+          <Pressable onPress={() => setTermsAccepted((v) => !v)} style={styles.termsRow}>
             <View style={[
               styles.checkbox,
               {
@@ -313,13 +292,9 @@ export default function Register() {
             ]}>
               {termsAccepted && <Feather name="check" size={12} color="#ffffff" />}
             </View>
-            <Text style={[styles.termsText, { color: colors.foreground.primary }]}>
-              {t("terms.accept")}{" "}
-            </Text>
+            <Text style={[styles.termsText, { color: colors.foreground.primary }]}>{t("terms.accept")} </Text>
             <Pressable onPress={() => setTermsModalVisible(true)}>
-              <Text style={[styles.termsLink, { color: colors.primary.default }]}>
-                {t("terms.link")}
-              </Text>
+              <Text style={[styles.termsLink, { color: colors.primary.default }]}>{t("terms.link")}</Text>
             </Pressable>
           </Pressable>
 
@@ -334,20 +309,20 @@ export default function Register() {
               },
             ]}
           >
-            <Feather name="arrow-up-right" size={18} color={termsAccepted ? "#ffffff" : colors.muted.foreground} />
             <Text style={[styles.submitBtnText, { color: termsAccepted ? "#ffffff" : colors.muted.foreground }]}>
               {t("common.continue")}
             </Text>
+            <Feather name="arrow-right" size={18} color={termsAccepted ? "#ffffff" : colors.muted.foreground} />
           </Pressable>
 
-          <View style={styles.signinRow}>
-            <Text style={{ color: colors.foreground.primary }}>{t("auth.register.alreadyHaveAccount")}</Text>
+          <View style={[styles.signinRow, { paddingBottom: insets.bottom + 16 }]}>
+            <Text style={{ color: colors.muted.foreground, fontSize: 14 }}>{t("auth.register.alreadyHaveAccount")}</Text>
             <Link href="/auth/login">
               <Text style={[styles.signinLink, { color: colors.primary.default }]}>{t("auth.register.signIn")}</Text>
             </Link>
           </View>
         </View>
-      </View>
+      </KeyboardAwareScrollView>
 
       <SheetModal
         visible={termsModalVisible}
@@ -356,7 +331,7 @@ export default function Register() {
         title={t("terms.title")}
         actionLabel={t("common.confirm")}
       >
-        <Text style={[styles.termsDate, { color: colors.muted.foreground }]}>
+        <Text style={[{ fontSize: 12, color: colors.muted.foreground, paddingTop: 8, marginBottom: 4 }]}>
           {t("terms.lastUpdated")}
         </Text>
         {(Object.keys(TERMS_SECTION_ICONS) as (keyof typeof TERMS_SECTION_ICONS)[]).map((section) => (
@@ -373,82 +348,47 @@ export default function Register() {
           </View>
         ))}
       </SheetModal>
-    </KeyboardAwareScrollView>
+    </ImageBackground>
   )
 }
 
 const styles = StyleSheet.create({
-  scrollRoot: { flex: 1 },
-  backBtnWrapper: { position: "absolute", top: 112, left: 24, zIndex: 10 },
-  backCircleBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 8,
-    borderWidth: 1,
-    borderRadius: 999,
+  root: { flex: 1 },
+  bgOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.55)" },
+  hero: { alignItems: "center", paddingHorizontal: 32 },
+  logo: { width: 72, height: 72, marginBottom: 16, borderRadius: 16 },
+  heroTitle: { fontSize: 30, fontWeight: "700", color: "#ffffff", textAlign: "center" },
+  heroSubtitle: { fontSize: 15, color: "rgba(255,255,255,0.7)", textAlign: "center", marginTop: 6 },
+  stepIndicator: { flexDirection: "row", gap: 8, marginTop: 16 },
+  stepDot: { height: 6, borderRadius: 999 },
+  sheet: {
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingHorizontal: 28,
+    paddingTop: 16,
+    paddingBottom: 8,
+    marginTop: 24,
   },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.3)",
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  sheetHandle: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "rgba(128,128,128,0.4)",
+    alignSelf: "center",
+    marginBottom: 24,
   },
-  loadingCard: { borderRadius: 12, padding: 24, alignItems: "center" },
-  loadingText: { marginTop: 16, color: "#ffffff" },
-  // Plein écran : FBackButton est absolute top:112, le contenu est centré dessous
-  screen: {
-    height: SCREEN_HEIGHT,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 32,
-  },
-  logoWatermark: { width: 160, height: 160, position: "absolute", opacity: 0.05 },
-  formContainer: { alignItems: "center", width: "100%" },
-  title: { fontSize: 32, fontWeight: "700" },
-  subtitle: { fontSize: 15, marginTop: 4 },
-  stepIndicator: { flexDirection: "row", gap: 8, marginVertical: 20 },
-  stepDot: { height: 8, borderRadius: 999 },
-  inputs: { width: "100%", gap: 12, marginTop: 4 },
+  inputs: { gap: 12, marginBottom: 16 },
   inputRow: {
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 12,
     flexDirection: "row",
-    gap: 8,
+    gap: 10,
     alignItems: "center",
     paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingVertical: 14,
   },
   inputText: { fontSize: 15, flex: 1 },
-  // Absolute dans screen → scrolle avec le contenu, ne chevauche pas les inputs
-  actions: {
-    position: "absolute",
-    bottom: 40,
-    left: 0,
-    right: 0,
-    paddingHorizontal: 32,
-  },
-  submitBtn: {
-    flexDirection: "row",
-    gap: 8,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 14,
-    borderRadius: 12,
-    width: "100%",
-  },
-  submitBtnText: { textAlign: "center", color: "#ffffff", fontWeight: "600", fontSize: 16 },
-  signinRow: { flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 12, marginTop: 12 },
-  signinLink: { fontWeight: "700", textDecorationLine: "underline" },
-
-  // Terms checkbox
-  termsRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-    flexWrap: "wrap",
-  },
+  termsRow: { flexDirection: "row", alignItems: "center", marginBottom: 16, flexWrap: "wrap" },
   checkbox: {
     width: 20,
     height: 20,
@@ -461,6 +401,34 @@ const styles = StyleSheet.create({
   },
   termsText: { fontSize: 14 },
   termsLink: { fontSize: 14, fontWeight: "600", textDecorationLine: "underline" },
-  termsDate: { fontSize: 12, paddingTop: 8, marginBottom: 4 },
-
+  submitBtn: {
+    flexDirection: "row",
+    gap: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
+    borderRadius: 14,
+    width: "100%",
+    marginBottom: 16,
+  },
+  submitBtnText: { textAlign: "center", fontWeight: "600", fontSize: 16 },
+  signinRow: { flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 8 },
+  signinLink: { fontWeight: "700", fontSize: 14 },
+  pinBack: { paddingHorizontal: 24, marginBottom: 8 },
+  backCircleBtn: {
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderRadius: 999,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingCard: { borderRadius: 12, padding: 24, alignItems: "center" },
+  loadingText: { marginTop: 16, color: "#ffffff" },
 })
