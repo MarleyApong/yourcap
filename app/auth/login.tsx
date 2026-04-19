@@ -6,7 +6,7 @@ import { useTranslation } from "@/i18n"
 import { hasValidSessionForQuickAuth, setAppLocked } from "@/lib/auth"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
-import { Link } from "expo-router"
+import { Link, useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
 import { Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
@@ -15,7 +15,9 @@ export default function Login() {
   const { login, loginWithBiometric, biometricCapabilities, checkBiometricCapabilities } = useAuthStore()
   const { colors } = useTheme()
   const { t } = useTranslation()
+  const router = useRouter()
   const identifierRef = useRef<TextInput>(null)
+  const canGoBack = router.canGoBack()
 
   const [identifier, setIdentifier] = useState("")
   const [showPinInput, setShowPinInput] = useState(false)
@@ -40,7 +42,7 @@ export default function Login() {
         setShowPinInput(true)
         setIsQuickAuth(true)
         setShouldShowBiometric(quickAuthSession.biometricEnabled || false)
-
+        setHasExistingAccount(true)
         await setAppLocked(false)
       }
     } catch (error) {
@@ -174,7 +176,7 @@ export default function Login() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ flexGrow: 1 }}
       >
-        <FBackButton path="/" />
+        {canGoBack && <FBackButton path="/" />}
 
         <View style={styles.heroImage}>
           <Image source={require("@/assets/images/bg/bg-login-2.png")} style={styles.bgImage} resizeMode="cover" />
