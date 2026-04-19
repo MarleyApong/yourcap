@@ -106,16 +106,17 @@ export const es = {
 
   dashboard: {
     title: "Panel",
-    quickActions: "Acciones rápidas",
-    addDebt: "Añadir deuda",
-    addCredit: "Añadir crédito",
-    summary: {
-      totalOwed: "Total prestado",
-      totalLent: "Total debido",
-      balance: "Saldo",
-      people: "personas",
-      person: "persona",
+    greeting: { morning: "Buenos días", afternoon: "Buenas tardes", evening: "Buenas noches" },
+    balance: { net: "Saldo neto", toReceive: "Por cobrar", toPay: "Por pagar" },
+    attention: {
+      title: "Requiere atención",
+      empty: "Todo en orden",
+      emptyDesc: "Sin deudas vencidas ni próximas",
+      overdue: "Vencida",
+      dueToday: "Hoy",
+      dueSoon: "En {days}d",
     },
+    recent: { title: "Reciente", seeAll: "Ver todo" },
     errors: {
       databaseNotReady: "Base de datos no lista. Reinicia la aplicación.",
       failedToLoad: "Error al cargar los datos. Inténtalo de nuevo.",
@@ -126,10 +127,7 @@ export const es = {
       subtitle: "Comienza añadiendo tu primera deuda o crédito",
       addFirst: "Añadir la primera",
     },
-    debt: {
-      owes: "debe",
-      owed: "te debe",
-    },
+    debt: { owes: "debe", owed: "te debe" },
   },
 
   debt: {

@@ -101,14 +101,20 @@ export interface TranslationKeys {
 
   // Dashboard
   'dashboard.title': string;
-  'dashboard.quickActions': string;
-  'dashboard.addDebt': string;
-  'dashboard.addCredit': string;
-  'dashboard.summary.totalOwed': string;
-  'dashboard.summary.totalLent': string;
-  'dashboard.summary.balance': string;
-  'dashboard.summary.people': string;
-  'dashboard.summary.person': string;
+  'dashboard.greeting.morning': string;
+  'dashboard.greeting.afternoon': string;
+  'dashboard.greeting.evening': string;
+  'dashboard.balance.net': string;
+  'dashboard.balance.toReceive': string;
+  'dashboard.balance.toPay': string;
+  'dashboard.attention.title': string;
+  'dashboard.attention.empty': string;
+  'dashboard.attention.emptyDesc': string;
+  'dashboard.attention.overdue': string;
+  'dashboard.attention.dueToday': string;
+  'dashboard.attention.dueSoon': string;
+  'dashboard.recent.title': string;
+  'dashboard.recent.seeAll': string;
   'dashboard.errors.databaseNotReady': string;
   'dashboard.errors.failedToLoad': string;
   'dashboard.errors.tapToRetry': string;

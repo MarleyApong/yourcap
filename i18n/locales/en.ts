@@ -110,16 +110,17 @@ export const en = {
   // Dashboard
   dashboard: {
     title: "Dashboard",
-    quickActions: "Quick actions",
-    addDebt: "Add debt",
-    addCredit: "Add credit",
-    summary: {
-      totalOwed: "Total owed",
-      totalLent: "Total lent",
-      balance: "Balance",
-      people: "people",
-      person: "person",
+    greeting: { morning: "Good morning", afternoon: "Good afternoon", evening: "Good evening" },
+    balance: { net: "Net balance", toReceive: "To receive", toPay: "To pay" },
+    attention: {
+      title: "Needs attention",
+      empty: "All clear",
+      emptyDesc: "No overdue or upcoming debts",
+      overdue: "Overdue",
+      dueToday: "Due today",
+      dueSoon: "In {days}d",
     },
+    recent: { title: "Recent", seeAll: "See all" },
     errors: {
       databaseNotReady: "Database not ready. Please restart the app.",
       failedToLoad: "Failed to load data. Please try again.",
@@ -130,10 +131,7 @@ export const en = {
       subtitle: "Start by adding your first debt or credit",
       addFirst: "Add first",
     },
-    debt: {
-      owes: "owes",
-      owed: "owes you",
-    },
+    debt: { owes: "owes", owed: "owes you" },
   },
 
   // Debts

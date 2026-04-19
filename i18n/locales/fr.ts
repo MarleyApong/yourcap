@@ -110,16 +110,17 @@ export const fr = {
   // Tableau de bord
   dashboard: {
     title: "Tableau de bord",
-    quickActions: "Actions rapides",
-    addDebt: "Ajouter une dette",
-    addCredit: "Ajouter un crédit",
-    summary: {
-      totalOwed: "Total dû",
-      totalLent: "Total prêté",
-      balance: "Solde",
-      people: "personnes",
-      person: "personne",
+    greeting: { morning: "Bonjour", afternoon: "Bon après-midi", evening: "Bonsoir" },
+    balance: { net: "Solde net", toReceive: "À recevoir", toPay: "À payer" },
+    attention: {
+      title: "À traiter",
+      empty: "Tout est en ordre",
+      emptyDesc: "Aucune dette en retard ou à échéance proche",
+      overdue: "En retard",
+      dueToday: "Aujourd'hui",
+      dueSoon: "Dans {days}j",
     },
+    recent: { title: "Récent", seeAll: "Voir tout" },
     errors: {
       databaseNotReady: "Base de données non prête. Veuillez redémarrer l'application.",
       failedToLoad: "Échec du chargement des données. Veuillez réessayer.",
@@ -130,10 +131,7 @@ export const fr = {
       subtitle: "Commencez par ajouter votre première dette ou crédit",
       addFirst: "Ajouter la première",
     },
-    debt: {
-      owes: "doit",
-      owed: "vous doit",
-    },
+    debt: { owes: "doit", owed: "vous doit" },
   },
 
   // Dettes

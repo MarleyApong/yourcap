@@ -106,16 +106,17 @@ export const de = {
 
   dashboard: {
     title: "Dashboard",
-    quickActions: "Schnellaktionen",
-    addDebt: "Schuld hinzufügen",
-    addCredit: "Kredit hinzufügen",
-    summary: {
-      totalOwed: "Insgesamt geliehen",
-      totalLent: "Insgesamt geschuldet",
-      balance: "Guthaben",
-      people: "Personen",
-      person: "Person",
+    greeting: { morning: "Guten Morgen", afternoon: "Guten Tag", evening: "Guten Abend" },
+    balance: { net: "Nettosaldo", toReceive: "Zu erhalten", toPay: "Zu zahlen" },
+    attention: {
+      title: "Handlungsbedarf",
+      empty: "Alles in Ordnung",
+      emptyDesc: "Keine überfälligen oder anstehenden Schulden",
+      overdue: "Überfällig",
+      dueToday: "Heute fällig",
+      dueSoon: "In {days}T",
     },
+    recent: { title: "Zuletzt", seeAll: "Alle anzeigen" },
     errors: {
       databaseNotReady: "Datenbank nicht bereit. Bitte App neu starten.",
       failedToLoad: "Daten konnten nicht geladen werden. Bitte erneut versuchen.",
@@ -126,10 +127,7 @@ export const de = {
       subtitle: "Füge deine erste Schuld oder Kredit hinzu",
       addFirst: "Erste hinzufügen",
     },
-    debt: {
-      owes: "schuldet",
-      owed: "schuldet dir",
-    },
+    debt: { owes: "schuldet", owed: "schuldet dir" },
   },
 
   debt: {

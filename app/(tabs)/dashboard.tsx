@@ -1,37 +1,49 @@
 import { DebtItem } from "@/components/feature/dashboard/debtItem"
-import { QuickActionButton } from "@/components/feature/dashboard/quick-action-button"
-import { SummaryCard } from "@/components/feature/dashboard/summary-card"
 import { EmptyState } from "@/components/feature/empty-state"
 import { LoadingState } from "@/components/feature/loading-state"
-import { PageHeader } from "@/components/feature/page-header"
 import { useTheme } from "@/core/theme"
 import { isDatabaseReady } from "@/db/db"
 import { useTranslation } from "@/i18n"
 import { Toast } from "@/lib/toast-global"
 import { formatCurrency } from "@/lib/utils"
-import { requestNotificationPermissions } from "@/services/notificationService"
 import { getDebtsSummary, getUserDebts } from "@/services/debtServices"
+import { requestNotificationPermissions } from "@/services/notificationService"
 import { updateSettings } from "@/services/settingsService"
 import { useAuthStore } from "@/stores/authStore"
 import { Debt } from "@/types/debt"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useFocusEffect } from "@react-navigation/core"
-import { Link, useRouter } from "expo-router"
+import { Feather } from "@expo/vector-icons"
+import { useRouter } from "expo-router"
 import { useCallback, useEffect, useState } from "react"
-import { ScrollView, StyleSheet, Text, View } from "react-native"
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
 import Animated, { FadeInDown, FadeInRight } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const NOTIF_PERMISSION_KEY = "notification_permission_asked"
+
+function getDaysUntil(dateString: string): number {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const due = new Date(dateString)
+  due.setHours(0, 0, 0, 0)
+  return Math.round((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+}
+
+function getGreeting(t: (key: any, params?: any) => string): string {
+  const h = new Date().getHours()
+  if (h < 12) return t("dashboard.greeting.morning")
+  if (h < 18) return t("dashboard.greeting.afternoon")
+  return t("dashboard.greeting.evening")
+}
 
 export default function Dashboard() {
   const { user } = useAuthStore()
   const { t } = useTranslation()
   const { colors } = useTheme()
   const [summary, setSummary] = useState({ owing: 0, owed: 0, balance: 0 })
-  const [recentDebts, setRecentDebts] = useState<Debt[]>([])
+  const [allDebts, setAllDebts] = useState<Debt[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
   const insets = useSafeAreaInsets()
 
@@ -43,148 +55,211 @@ export default function Dashboard() {
       await AsyncStorage.setItem(NOTIF_PERMISSION_KEY, "true")
       const granted = await requestNotificationPermissions()
       if (granted) {
-        await updateSettings(user.user_id, {
-          notification_enabled: true,
-          system_notifications: true,
-        })
+        await updateSettings(user.user_id, { notification_enabled: true, system_notifications: true })
       }
     }
     askNotificationPermission()
   }, [user])
 
   const loadData = useCallback(async () => {
-    if (!user?.user_id) {
-      console.log("No user ID available")
-      setLoading(false)
-      return
-    }
-
-    if (!isDatabaseReady()) {
-      console.error("Database not ready")
-      setError(t("dashboard.errors.databaseNotReady"))
-      setLoading(false)
-      return
-    }
-
+    if (!user?.user_id || !isDatabaseReady()) { setLoading(false); return }
     try {
       setLoading(true)
-      setError(null)
-
-      console.log("Loading data for user:", user.user_id)
-
-      const [summaryData, debts] = await Promise.all([getDebtsSummary(user.user_id), getUserDebts(user.user_id)])
-
-      console.log("Loaded summary:", summaryData)
-      console.log("Loaded debts:", debts?.length || 0)
-
+      const [summaryData, debts] = await Promise.all([
+        getDebtsSummary(user.user_id),
+        getUserDebts(user.user_id),
+      ])
       setSummary(summaryData)
-      setRecentDebts(debts.slice(0, 5))
-    } catch (error) {
-      console.error("Dashboard load error:", error)
-      setError(t("dashboard.errors.failedToLoad"))
-      Toast.error(t("dashboard.errors.failedToLoad"), t("common.error"))
+      setAllDebts(debts)
+    } catch {
+      Toast.error(t("dashboard.errors.failedToLoad"))
     } finally {
       setLoading(false)
     }
   }, [user?.user_id])
 
-  useFocusEffect(
-    useCallback(() => {
-      if (user?.user_id) {
-        loadData()
-      }
-    }, [loadData]),
-  )
+  useFocusEffect(useCallback(() => { loadData() }, [loadData]))
 
-  const handleAddDebt = () => router.push("/debt/add")
-  const handleViewHistory = () => router.push("/(tabs)/history")
-  const handleViewSettings = () => router.push("/(tabs)/settings")
-  const handleDebtPress = (debtId: string) => router.push(`/debt/${debtId}`)
-  const handleRetry = () => loadData()
+  const attentionItems = allDebts
+    .filter(d => {
+      if (d.status === "PAID") return false
+      if (d.status === "OVERDUE") return true
+      const days = getDaysUntil(d.due_date)
+      return days >= 0 && days <= 7
+    })
+    .sort((a, b) => {
+      if (a.status === "OVERDUE" && b.status !== "OVERDUE") return -1
+      if (b.status === "OVERDUE" && a.status !== "OVERDUE") return 1
+      return new Date(a.due_date).getTime() - new Date(b.due_date).getTime()
+    })
+    .slice(0, 5)
+
+  const recentDebts = [...allDebts]
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .slice(0, 4)
+
+  const firstName = user?.full_name?.split(" ")[0] ?? ""
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background.primary }]}>
-      <PageHeader title={t("dashboard.title")} fbackButton={false} textPosition="center" textAlign="left" />
+      <ScrollView showsVerticalScrollIndicator={false}>
 
-      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-        <View style={styles.content}>
-          {error && (
-            <View
-              style={[
-                styles.errorBox,
-                {
-                  backgroundColor: colors.status.destructive,
-                  borderColor: colors.status.destructiveForeground,
-                },
-              ]}
-            >
-              <Text style={[styles.errorText, { color: colors.status.destructiveForeground }]}>{error}</Text>
-              <Text style={[styles.errorRetry, { color: colors.status.destructiveForeground }]} onPress={handleRetry}>
-                {t("dashboard.errors.tapToRetry")}
-              </Text>
-            </View>
-          )}
-
-          {!error && (
-            <Animated.View entering={FadeInDown.duration(350).delay(50)} style={styles.summaryRow}>
-              <SummaryCard label={t("dashboard.summary.totalLent")} amount={formatCurrency(summary.owed, "XAF")} type="negative" />
-              <SummaryCard label={t("dashboard.summary.totalOwed")} amount={formatCurrency(summary.owing, "XAF")} type="positive" />
-              <SummaryCard label={t("dashboard.summary.balance")} amount={formatCurrency(summary.balance, "XAF")} type={summary.balance >= 0 ? "positive" : "negative"} />
-            </Animated.View>
-          )}
-
-          <Animated.View
-            entering={FadeInDown.duration(350).delay(150)}
-            style={[styles.quickActions, { backgroundColor: colors.card.background, borderColor: colors.border }]}
-          >
-            <QuickActionButton icon="plus" label={t("dashboard.addDebt")} onPress={handleAddDebt} />
-            <QuickActionButton icon="list" label={t("tabs.history")} onPress={handleViewHistory} />
-            <QuickActionButton icon="settings" label={t("tabs.settings")} onPress={handleViewSettings} />
-          </Animated.View>
-
-          {!error && (
-            <Animated.View entering={FadeInDown.duration(350).delay(250)} style={styles.recentSection}>
-              <View style={styles.recentHeader}>
-                <Text style={[styles.recentTitle, { color: colors.foreground.primary }]}>
-                  {t("dashboard.quickActions")}
-                </Text>
-                <Link href="/(tabs)/history">
-                  <Text style={[styles.recentLink, { color: colors.primary.default }]}>
-                    {t("tabs.history")}
-                  </Text>
-                </Link>
-              </View>
-
-              {loading && <LoadingState message={t("common.loading")} />}
-
-              {!loading && recentDebts.length === 0 && (
-                <EmptyState
-                  title={t("dashboard.empty.title")}
-                  description={t("dashboard.empty.subtitle")}
-                  buttonText={t("dashboard.empty.addFirst")}
-                  onButtonPress={handleAddDebt}
-                  image={require("@/assets/images/empty.png")}
-                />
-              )}
-
-              {!loading && recentDebts.length > 0 && (
-                <View style={[styles.debtList, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
-                  {recentDebts.map((debt, index) => (
-                    <Animated.View key={debt.debt_id} entering={FadeInRight.duration(300).delay(300 + index * 60)}>
-                      <DebtItem
-                        debt={debt}
-                        currency={"XAF"}
-                        onPress={() => handleDebtPress(debt.debt_id)}
-                        showBorder={index !== recentDebts.length - 1}
-                      />
-                    </Animated.View>
-                  ))}
-                </View>
-              )}
-            </Animated.View>
-          )}
+        {/* Header */}
+        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+          <Text style={[styles.greeting, { color: colors.foreground.primary }]}>
+            {getGreeting(t)}{firstName ? `, ${firstName}` : ""} 👋
+          </Text>
+          <Text style={[styles.dateText, { color: colors.muted.foreground }]}>
+            {new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" })}
+          </Text>
         </View>
 
+        <View style={styles.content}>
+
+          {/* Balance card */}
+          <Animated.View entering={FadeInDown.duration(350).delay(50)}>
+            <View style={[styles.balanceCard, { backgroundColor: colors.primary.default }]}>
+              <Text style={styles.balanceLabel}>{t("dashboard.balance.net")}</Text>
+              <Text style={styles.balanceAmount}>
+                {summary.balance >= 0 ? "+" : ""}{formatCurrency(summary.balance, "XAF")}
+              </Text>
+              <View style={[styles.balanceDividerH, { backgroundColor: "rgba(255,255,255,0.15)" }]} />
+              <View style={styles.balanceRow}>
+                <View style={styles.balanceSub}>
+                  <Feather name="arrow-down-circle" size={14} color="rgba(255,255,255,0.6)" />
+                  <View>
+                    <Text style={styles.balanceSubLabel}>{t("dashboard.balance.toReceive")}</Text>
+                    <Text style={styles.balanceSubAmount}>{formatCurrency(summary.owing, "XAF")}</Text>
+                  </View>
+                </View>
+                <View style={[styles.balanceDividerV, { backgroundColor: "rgba(255,255,255,0.2)" }]} />
+                <View style={styles.balanceSub}>
+                  <Feather name="arrow-up-circle" size={14} color="rgba(255,255,255,0.6)" />
+                  <View>
+                    <Text style={styles.balanceSubLabel}>{t("dashboard.balance.toPay")}</Text>
+                    <Text style={styles.balanceSubAmount}>{formatCurrency(summary.owed, "XAF")}</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </Animated.View>
+
+          {/* Attention */}
+          <Animated.View entering={FadeInDown.duration(350).delay(150)} style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <View style={styles.sectionTitleRow}>
+                <Feather
+                  name="alert-circle"
+                  size={15}
+                  color={attentionItems.length > 0 ? colors.status.destructive : colors.muted.foreground}
+                />
+                <Text style={[styles.sectionTitle, { color: colors.foreground.primary }]}>
+                  {t("dashboard.attention.title")}
+                </Text>
+                {attentionItems.length > 0 && (
+                  <View style={[styles.countBadge, { backgroundColor: colors.status.destructive }]}>
+                    <Text style={styles.countBadgeText}>{attentionItems.length}</Text>
+                  </View>
+                )}
+              </View>
+            </View>
+
+            {loading && <LoadingState message={t("common.loading")} />}
+
+            {!loading && attentionItems.length === 0 && (
+              <View style={[styles.allClear, { backgroundColor: colors.status.success + "12", borderColor: colors.status.success + "30" }]}>
+                <Feather name="check-circle" size={15} color={colors.status.success} />
+                <View>
+                  <Text style={[styles.allClearTitle, { color: colors.status.success }]}>
+                    {t("dashboard.attention.empty")}
+                  </Text>
+                  <Text style={[styles.allClearDesc, { color: colors.muted.foreground }]}>
+                    {t("dashboard.attention.emptyDesc")}
+                  </Text>
+                </View>
+              </View>
+            )}
+
+            {!loading && attentionItems.length > 0 && (
+              <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+                {attentionItems.map((debt, i) => {
+                  const isOverdue = debt.status === "OVERDUE"
+                  const days = getDaysUntil(debt.due_date)
+                  const urgencyColor = isOverdue ? colors.status.destructive : colors.status.warning
+                  const tag = isOverdue
+                    ? t("dashboard.attention.overdue")
+                    : days === 0
+                    ? t("dashboard.attention.dueToday")
+                    : t("dashboard.attention.dueSoon", { days })
+                  return (
+                    <Pressable
+                      key={debt.debt_id}
+                      onPress={() => router.push(`/debt/${debt.debt_id}`)}
+                      style={[
+                        styles.attentionItem,
+                        i < attentionItems.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
+                      ]}
+                    >
+                      <View style={[styles.attentionDot, { backgroundColor: urgencyColor }]} />
+                      <View style={{ flex: 1 }}>
+                        <Text style={[styles.attentionName, { color: colors.foreground.primary }]}>{debt.contact_name}</Text>
+                        <Text style={[styles.attentionAmount, { color: colors.muted.foreground }]}>
+                          {formatCurrency(debt.amount, debt.currency)}
+                        </Text>
+                      </View>
+                      <View style={[styles.attentionTag, { backgroundColor: urgencyColor + "18" }]}>
+                        <Text style={[styles.attentionTagText, { color: urgencyColor }]}>{tag}</Text>
+                      </View>
+                      <Feather name="chevron-right" size={14} color={colors.muted.foreground} style={{ marginLeft: 4 }} />
+                    </Pressable>
+                  )
+                })}
+              </View>
+            )}
+          </Animated.View>
+
+          {/* Recent */}
+          <Animated.View entering={FadeInDown.duration(350).delay(250)} style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={[styles.sectionTitle, { color: colors.foreground.primary }]}>
+                {t("dashboard.recent.title")}
+              </Text>
+              <Pressable onPress={() => router.push("/(tabs)/history")}>
+                <Text style={[styles.seeAll, { color: colors.primary.default }]}>
+                  {t("dashboard.recent.seeAll")}
+                </Text>
+              </Pressable>
+            </View>
+
+            {loading && <LoadingState message={t("common.loading")} />}
+
+            {!loading && recentDebts.length === 0 && (
+              <EmptyState
+                title={t("dashboard.empty.title")}
+                description={t("dashboard.empty.subtitle")}
+                buttonText={t("dashboard.empty.addFirst")}
+                onButtonPress={() => router.push("/debt/add")}
+                image={require("@/assets/images/empty.png")}
+              />
+            )}
+
+            {!loading && recentDebts.length > 0 && (
+              <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+                {recentDebts.map((debt, index) => (
+                  <Animated.View key={debt.debt_id} entering={FadeInRight.duration(300).delay(300 + index * 60)}>
+                    <DebtItem
+                      debt={debt}
+                      currency={debt.currency}
+                      onPress={() => router.push(`/debt/${debt.debt_id}`)}
+                      showBorder={index !== recentDebts.length - 1}
+                    />
+                  </Animated.View>
+                ))}
+              </View>
+            )}
+          </Animated.View>
+
+        </View>
         <View style={{ height: insets.bottom + 80 }} />
       </ScrollView>
     </View>
@@ -193,38 +268,34 @@ export default function Dashboard() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scroll: { flex: 1 },
-  content: { paddingHorizontal: 24, paddingBottom: 24 },
-  errorBox: {
-    marginTop: 24,
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-  },
-  errorText: { fontSize: 14 },
-  errorRetry: { fontSize: 14, fontWeight: "500", marginTop: 8 },
-  summaryRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 24,
-  },
-  quickActions: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingHorizontal: 24,
-    paddingVertical: 24,
-    marginTop: 24,
-    borderRadius: 12,
-    borderWidth: 1,
-  },
-  recentSection: { marginTop: 24 },
-  recentHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  recentTitle: { fontSize: 18, fontWeight: "600" },
-  recentLink: { fontSize: 14, fontWeight: "500" },
-  debtList: { borderRadius: 12, borderWidth: 1 },
+  header: { paddingHorizontal: 24, paddingBottom: 20 },
+  greeting: { fontSize: 22, fontWeight: "700" },
+  dateText: { fontSize: 13, marginTop: 3, textTransform: "capitalize" },
+  content: { paddingHorizontal: 20 },
+  balanceCard: { borderRadius: 20, padding: 22, marginBottom: 24 },
+  balanceLabel: { fontSize: 11, color: "rgba(255,255,255,0.65)", fontWeight: "600", textTransform: "uppercase", letterSpacing: 0.6 },
+  balanceAmount: { fontSize: 38, fontWeight: "800", color: "#fff", marginTop: 4, marginBottom: 18 },
+  balanceDividerH: { height: 1, marginBottom: 16 },
+  balanceRow: { flexDirection: "row", alignItems: "center" },
+  balanceSub: { flex: 1, flexDirection: "row", alignItems: "center", gap: 8 },
+  balanceSubLabel: { fontSize: 11, color: "rgba(255,255,255,0.6)", marginBottom: 2 },
+  balanceSubAmount: { fontSize: 13, color: "#fff", fontWeight: "700" },
+  balanceDividerV: { width: 1, height: 30, marginHorizontal: 16 },
+  section: { marginBottom: 24 },
+  sectionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
+  sectionTitleRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+  sectionTitle: { fontSize: 17, fontWeight: "700" },
+  countBadge: { paddingHorizontal: 7, paddingVertical: 2, borderRadius: 999 },
+  countBadgeText: { fontSize: 11, fontWeight: "700", color: "#fff" },
+  seeAll: { fontSize: 13, fontWeight: "600" },
+  card: { borderRadius: 14, borderWidth: 1, overflow: "hidden" },
+  allClear: { flexDirection: "row", alignItems: "flex-start", gap: 10, padding: 14, borderRadius: 12, borderWidth: 1 },
+  allClearTitle: { fontSize: 13, fontWeight: "600" },
+  allClearDesc: { fontSize: 12, marginTop: 2 },
+  attentionItem: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 14, paddingVertical: 13 },
+  attentionDot: { width: 8, height: 8, borderRadius: 4 },
+  attentionName: { fontSize: 14, fontWeight: "600" },
+  attentionAmount: { fontSize: 12, marginTop: 1 },
+  attentionTag: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
+  attentionTagText: { fontSize: 11, fontWeight: "600" },
 })
