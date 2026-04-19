@@ -14,7 +14,7 @@ import {
 } from "@/services/importExportService"
 import { Feather } from "@expo/vector-icons"
 import React, { useState } from "react"
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
 
 interface ImportExportSectionProps {
   userId: string
@@ -64,15 +64,12 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({ userId
         Toast.success(`${result.imported}/${result.total} ${t("importExport.import.importedFromFile")}`)
         onImportComplete?.(result.imported, result.total)
         if (result.errors.length > 0) {
-          Alert.alert(
-            t("importExport.import.importCompletedWarnings"),
-            `${t("importExport.import.errorsEncountered")}\n${result.errors.slice(0, 5).join("\n")}${result.errors.length > 5 ? "\n..." : ""}`,
-          )
+          Toast.error(`${result.errors.length} ${t("importExport.import.errorsEncountered")}`)
         }
       } else {
         Toast.error(t("importExport.import.importFileError"))
         if (result.errors.length > 0) {
-          Alert.alert(t("importExport.import.importErrors"), result.errors.slice(0, 5).join("\n"))
+          Toast.error(`${result.errors.length} ${t("importExport.import.importErrors")}`)
         }
       }
     } catch {
@@ -91,15 +88,12 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({ userId
         setShowImportModal(false)
         onImportComplete?.(result.imported, result.total)
         if (result.errors.length > 0) {
-          Alert.alert(
-            t("importExport.import.importCompletedWarnings"),
-            `${t("importExport.import.errorsEncountered")}\n${result.errors.slice(0, 5).join("\n")}${result.errors.length > 5 ? "\n..." : ""}`,
-          )
+          Toast.error(`${result.errors.length} ${t("importExport.import.errorsEncountered")}`)
         }
       } else {
         Toast.error(t("importExport.import.importTextError"))
         if (result.errors.length > 0) {
-          Alert.alert(t("importExport.import.importErrors"), result.errors.slice(0, 5).join("\n"))
+          Toast.error(`${result.errors.length} ${t("importExport.import.importErrors")}`)
         }
       }
     } catch {
@@ -121,13 +115,10 @@ export const ImportExportSection: React.FC<ImportExportSectionProps> = ({ userId
           .slice(0, 3)
           .map((item) => `${t("importExport.import.line")} ${item.index}: ${item.errors.join(", ")}`)
           .join("\n")
-        Alert.alert(
-          t("importExport.import.validationErrors"),
-          `${invalid.length} ${t("importExport.import.validationMessage")}\n${errorMessage}${invalid.length > 3 ? "\n..." : ""}\n\n${t("importExport.import.continueWithValid")} ${valid.length} ${t("importExport.import.validLines")}`,
-          [
-            { text: t("importExport.import.cancelButton"), style: "cancel" },
-            { text: t("importExport.import.continueButton"), onPress: () => proceedWithImport(csvInput) },
-          ],
+        Toast.confirm(
+          `${invalid.length} ${t("importExport.import.validationMessage")} — ${t("importExport.import.continueWithValid")} ${valid.length} ${t("importExport.import.validLines")}`,
+          () => proceedWithImport(csvInput),
+          { title: t("importExport.import.validationErrors"), confirmText: t("importExport.import.continueButton"), cancelText: t("importExport.import.cancelButton") },
         )
       } else {
         await proceedWithImport(csvInput)

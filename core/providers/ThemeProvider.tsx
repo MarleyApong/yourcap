@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
 import { useColorScheme as useRNColorScheme } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import * as SystemUI from "expo-system-ui"
 import { colors, ColorScheme, ThemeColors } from "../theme/colors"
 
 interface ThemeContextType {
@@ -38,6 +39,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setIsReady(true)
     }
   }
+
+  useEffect(() => {
+    SystemUI.setBackgroundColorAsync(colors[colorScheme].background.primary).catch(() => {})
+  }, [colorScheme])
 
   const setTheme = (scheme: ColorScheme) => {
     setColorScheme(scheme)

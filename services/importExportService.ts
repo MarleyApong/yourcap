@@ -2,7 +2,7 @@ import { DebtInput, DebtStatus, DebtType } from '@/types/debt'
 import * as DocumentPicker from 'expo-document-picker'
 import * as FileSystem from 'expo-file-system'
 import * as Sharing from 'expo-sharing'
-import { Alert, Platform, Share } from 'react-native'
+import { Platform, Share } from 'react-native'
 import { createDebt, getUserDebts } from './debtServices'
 
 // Structure de données pour l'export/import
@@ -347,7 +347,7 @@ export const shareExportData = async (csvData: string, filename?: string): Promi
     }
   } catch (error) {
     console.error('Erreur lors du partage:', error)
-    Alert.alert('Erreur', 'Impossible de partager les données')
+    throw error
   }
 }
 

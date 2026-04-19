@@ -3,6 +3,7 @@ import { AppUpdateModals } from "@/components/feature/app-update-modals"
 import { InitialLoadingScreen } from "@/components/feature/initial-loading-screen"
 import { ToastProvider } from "@/components/ui/toast/toast-provider"
 import { ThemeProvider } from "@/core/providers/ThemeProvider"
+import { useTheme } from "@/core/theme"
 import { initDb } from "@/db/db"
 import { useAppStartup, useInactivityTimeout } from "@/hooks/useInactivityTimeout"
 import { useNotificationHandler } from "@/hooks/useNotificationHandler"
@@ -13,6 +14,27 @@ import { Stack } from "expo-router"
 import * as SplashScreen from "expo-splash-screen"
 import { useEffect, useState } from "react"
 import "react-native-get-random-values"
+
+function NavigationStack() {
+  const { colors } = useTheme()
+  return (
+    <Stack
+      screenOptions={{
+        contentStyle: { backgroundColor: colors.background.primary },
+        headerShown: false,
+        animation: "fade",
+        animationDuration: 220,
+      }}
+    >
+      <Stack.Screen name="index" options={{ animation: "fade" }} />
+      <Stack.Screen name="(tabs)" options={{ animation: "fade" }} />
+      <Stack.Screen name="auth" options={{ animation: "fade_from_bottom" }} />
+      <Stack.Screen name="debt" options={{ animation: "slide_from_bottom" }} />
+      <Stack.Screen name="settings" options={{ animation: "slide_from_right" }} />
+      <Stack.Screen name="+not-found" />
+    </Stack>
+  )
+}
 
 SplashScreen.preventAutoHideAsync()
 
@@ -84,21 +106,7 @@ export default function RootLayout() {
   return (
     <ThemeProvider>
       <ToastProvider>
-        <Stack
-          screenOptions={{
-            contentStyle: { backgroundColor: "#000000" },
-            headerShown: false,
-            animation: "fade",
-            animationDuration: 220,
-          }}
-        >
-          <Stack.Screen name="index" options={{ headerShown: false, animation: "fade" }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: "fade" }} />
-          <Stack.Screen name="auth" options={{ headerShown: false, animation: "fade_from_bottom" }} />
-          <Stack.Screen name="debt" options={{ headerShown: false, animation: "slide_from_bottom" }} />
-          <Stack.Screen name="settings" options={{ headerShown: false, animation: "slide_from_right" }} />
-          <Stack.Screen name="+not-found" options={{ headerShown: false }} />
-        </Stack>
+        <NavigationStack />
 
         {/* App Lock Screen - s'affiche par-dessus tout quand nécessaire */}
         <AppLockScreen />
