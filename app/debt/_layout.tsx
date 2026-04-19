@@ -1,22 +1,22 @@
 import { useTheme } from "@/core/theme"
 import { Stack } from "expo-router"
-import { SafeAreaView } from "react-native-safe-area-context"
+import { View } from "react-native"
 
 export default function DebtLayout() {
   const { colors } = useTheme()
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.primary }}>
+    <View style={{ flex: 1, backgroundColor: colors.primary.default }}>
       <Stack
         screenOptions={{
           headerShown: false,
-          animation: "slide_from_bottom",
-          animationDuration: 300,
+          animation: "none",
+          contentStyle: { backgroundColor: colors.primary.default },
         }}
       >
-        <Stack.Screen name="add" options={{ title: "Add Debt", headerShown: false }} />
-        <Stack.Screen name="[id]" options={{ title: "Debt Details" }} />
+        <Stack.Screen name="add" />
+        <Stack.Screen name="[id]" />
       </Stack>
-    </SafeAreaView>
+    </View>
   )
 }
