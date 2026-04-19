@@ -68,7 +68,7 @@ export default function Register() {
       Toast.error(t("auth.validation.phoneRequired"))
       return false
     }
-    if (!/^(6|2)(2|3|[5-9])[0-9]{7}$/.test(formData.phone_number)) {
+    if (!/^\+?[0-9]{7,15}$/.test(formData.phone_number.replace(/[\s\-().]/g, ""))) {
       Toast.error(t("auth.validation.invalidPhone"))
       return false
     }
@@ -260,7 +260,7 @@ export default function Register() {
               <TextInput
                 ref={phoneRef}
                 style={[styles.inputText, { color: colors.foreground.primary }]}
-                placeholder="6XX XXX XXX"
+                placeholder="+XXX XXX XXX XXX"
                 placeholderTextColor={colors.muted.foreground}
                 value={formData.phone_number}
                 onChangeText={(text) => handleChange("phone_number", text)}
@@ -361,7 +361,7 @@ export default function Register() {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   bgOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.55)" },
-  heroWrapper: { alignItems: "center", paddingHorizontal: 32 },
+  heroWrapper: { alignItems: "center", paddingHorizontal: 32, flexShrink: 1, overflow: "hidden" },
   logo: { width: 72, height: 72, marginBottom: 16, borderRadius: 16 },
   heroTitle: { fontSize: 30, fontWeight: "700", color: "#ffffff", textAlign: "center" },
   heroSubtitle: { fontSize: 15, color: "rgba(255,255,255,0.7)", textAlign: "center", marginTop: 6 },

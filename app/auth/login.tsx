@@ -59,7 +59,7 @@ export default function Login() {
         return false
       }
     } else {
-      if (!/^(6|2)(2|3|[5-9])[0-9]{7}$/.test(value)) {
+      if (!/^\+?[0-9]{7,15}$/.test(value.replace(/[\s\-().]/g, ""))) {
         Toast.error(t("auth.validation.invalidPhone"))
         return false
       }
@@ -208,7 +208,7 @@ export default function Login() {
               <TextInput
                 ref={identifierRef}
                 style={[styles.inputText, { color: colors.foreground.primary }]}
-                placeholder="6XX XXX XXX / email@example.com"
+                placeholder="+XXX XXX XXX / email@example.com"
                 placeholderTextColor={colors.muted.foreground}
                 value={identifier}
                 onChangeText={setIdentifier}
