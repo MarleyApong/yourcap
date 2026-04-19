@@ -146,8 +146,10 @@ export const pt = {
       steps: { who: "Quem?", whoSub: "Contato e tipo de dívida", amount: "Quanto?", amountSub: "Valor e moeda", when: "Quando?", whenSub: "Datas e notas" },
       savedContacts: {
         title: "Contatos salvos",
+        recent: "Contatos recentes",
         pick: "Escolher um contato salvo",
         search: "Buscar por nome ou telefone...",
+        more: "Mais",
       },
       type: "Tipo",
       typeIOwed: "Me devem (alguém me deve)",

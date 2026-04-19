@@ -162,8 +162,10 @@ export interface TranslationKeys {
   
   'debt.add.descriptionOptional': string;
   'debt.add.savedContacts.title': string;
+  'debt.add.savedContacts.recent': string;
   'debt.add.savedContacts.pick': string;
   'debt.add.savedContacts.search': string;
+  'debt.add.savedContacts.more': string;
   'debt.add.success': string;
   'debt.add.error': string;
 

@@ -9,7 +9,7 @@ import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
-import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
+import { Animated, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
@@ -37,9 +37,20 @@ export default function AddDebt() {
   const [showContactPicker, setShowContactPicker] = useState(false)
   const [contactSearch, setContactSearch] = useState("")
 
+  const chipsTranslateY = useRef(new Animated.Value(-10)).current
+  const chipsOpacity = useRef(new Animated.Value(0)).current
+
   useEffect(() => {
     if (user?.user_id) {
-      getContacts(user.user_id).then(setSavedContacts)
+      getContacts(user.user_id).then(contacts => {
+        setSavedContacts(contacts)
+        if (contacts.length > 0) {
+          Animated.parallel([
+            Animated.spring(chipsTranslateY, { toValue: 0, damping: 18, stiffness: 220, useNativeDriver: true }),
+            Animated.timing(chipsOpacity, { toValue: 1, duration: 180, useNativeDriver: true }),
+          ]).start()
+        }
+      })
     }
   }, [])
 
@@ -156,16 +167,37 @@ export default function AddDebt() {
         {step === 1 && (
           <>
             {savedContacts.length > 0 && (
-              <Pressable
-                onPress={() => setShowContactPicker(true)}
-                style={[styles.contactPickerBtn, { backgroundColor: colors.primary.default + "12", borderColor: colors.primary.default + "30" }]}
-              >
-                <Feather name="users" size={14} color={colors.primary.default} />
-                <Text style={[styles.contactPickerBtnText, { color: colors.primary.default }]}>
-                  {t("debt.add.savedContacts.pick")} ({savedContacts.length})
+              <Animated.View style={{ opacity: chipsOpacity, transform: [{ translateY: chipsTranslateY }], marginBottom: 20 }}>
+                <Text style={[styles.fieldLabel, { color: colors.muted.foreground, marginBottom: 10 }]}>
+                  {t("debt.add.savedContacts.recent")}
                 </Text>
-                <Feather name="chevron-right" size={14} color={colors.primary.default} />
-              </Pressable>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsRow}>
+                  {savedContacts.slice(0, 5).map((contact, i) => {
+                    const initials = contact.contact_name.split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase()
+                    const firstName = contact.contact_name.split(" ")[0]
+                    const color = CHIP_COLORS[i % CHIP_COLORS.length]
+                    const selected = form.contact_name === contact.contact_name && form.contact_phone === contact.contact_phone
+                    return (
+                      <Pressable key={i} onPress={() => applyContact(contact)} style={styles.chip}>
+                        <View style={[styles.chipAvatar, { backgroundColor: selected ? color : color + "22" }]}>
+                          <Text style={[styles.chipInitials, { color: selected ? "#fff" : color }]}>{initials}</Text>
+                        </View>
+                        <Text style={[styles.chipName, { color: selected ? colors.primary.default : colors.foreground.primary }]} numberOfLines={1}>
+                          {firstName}
+                        </Text>
+                      </Pressable>
+                    )
+                  })}
+                  {savedContacts.length > 5 && (
+                    <Pressable onPress={() => setShowContactPicker(true)} style={styles.chip}>
+                      <View style={[styles.chipAvatar, { backgroundColor: colors.border }]}>
+                        <Text style={[styles.chipInitials, { color: colors.muted.foreground }]}>+{savedContacts.length - 5}</Text>
+                      </View>
+                      <Text style={[styles.chipName, { color: colors.muted.foreground }]}>{t("debt.add.savedContacts.more")}</Text>
+                    </Pressable>
+                  )}
+                </ScrollView>
+              </Animated.View>
             )}
 
             <Field label={t("debt.add.debtType.title")} colors={colors}>
@@ -402,6 +434,8 @@ function InputRow({ icon, colors, alignTop, children }: {
   )
 }
 
+const CHIP_COLORS = ["#6C63FF", "#FF6B6B", "#4ECDC4", "#F7B731", "#45B7D1"]
+
 const styles = StyleSheet.create({
   root: { flex: 1 },
   hero: { paddingHorizontal: 24, paddingBottom: 24 },
@@ -436,17 +470,11 @@ const styles = StyleSheet.create({
     borderRadius: 14,
   },
   nextBtnText: { color: "#fff", fontWeight: "600", fontSize: 16 },
-  contactPickerBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    marginBottom: 18,
-  },
-  contactPickerBtnText: { flex: 1, fontSize: 13, fontWeight: "600" },
+  chipsRow: { gap: 10, paddingRight: 4 },
+  chip: { alignItems: "center", gap: 5, width: 52 },
+  chipAvatar: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center" },
+  chipInitials: { fontSize: 15, fontWeight: "700" },
+  chipName: { fontSize: 11, fontWeight: "500", textAlign: "center" },
   pickerOverlay: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.4)" },
   pickerSheet: { borderTopLeftRadius: 20, borderTopRightRadius: 20, maxHeight: "80%", paddingBottom: 32 },
   pickerHeader: {

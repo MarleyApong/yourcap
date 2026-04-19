@@ -146,8 +146,10 @@ export const de = {
       steps: { who: "Wer?", whoSub: "Kontakt & Schuldentyp", amount: "Wie viel?", amountSub: "Betrag & Währung", when: "Wann?", whenSub: "Daten & Notizen" },
       savedContacts: {
         title: "Gespeicherte Kontakte",
+        recent: "Letzte Kontakte",
         pick: "Gespeicherten Kontakt wählen",
         search: "Nach Name oder Telefon suchen...",
+        more: "Mehr",
       },
       type: "Typ",
       typeIOwed: "Mir wird geschuldet (jemand schuldet mir)",

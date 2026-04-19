@@ -187,8 +187,10 @@ export const en = {
       steps: { who: "Who?", whoSub: "Contact & debt type", amount: "How much?", amountSub: "Amount & currency", when: "When?", whenSub: "Dates & notes" },
       savedContacts: {
         title: "Saved contacts",
+        recent: "Recent contacts",
         pick: "Choose a saved contact",
         search: "Search by name or phone...",
+        more: "More",
       },
       success: "Debt record created successfully!",
       error: "Failed to create debt. Please try again.",
