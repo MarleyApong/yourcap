@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginBottom: 28,
   },
-  inputLabel: { fontSize: 13, fontWeight: "500", marginBottom: 6 },
+  inputLabel: { fontSize: 15, fontWeight: "600", marginBottom: 8 },
   inputs: { marginBottom: 20 },
   inputRow: {
     borderWidth: 1,
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     gap: 10,
     alignItems: "center",
     paddingHorizontal: 14,
-    paddingVertical: 14,
+    paddingVertical: 11,
   },
   inputText: { fontSize: 15, flex: 1 },
   submitBtn: {

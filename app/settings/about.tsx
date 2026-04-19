@@ -1,4 +1,3 @@
-import { ImportExportSection } from "@/components/feature/import-export-section"
 import { PageHeader } from "@/components/feature/page-header"
 import { SheetModal, sheetSectionStyles } from "@/components/feature/sheet-modal"
 import { useTheme } from "@/core/theme"
@@ -60,14 +59,6 @@ export default function AboutSettings() {
             </Pressable>
           </View>
 
-          {/* Data */}
-          <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
-            <Text style={[styles.cardTitle, { color: colors.foreground.primary }]}>{t("settings.data")}</Text>
-            <ImportExportSection
-              userId={user?.user_id || ""}
-              onImportComplete={(imported, total) => Toast.success(`${imported}/${total} ${t("settings.debtsImported")}`)}
-            />
-          </View>
 
           {/* About links */}
           <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border }]}>

@@ -201,37 +201,40 @@ export default function Register() {
 
       <FBackButton />
 
-      {/* Logo + titre sur l'image — même position que login */}
-      <View style={[styles.hero, { paddingTop: insets.top + 60 }]}>
-        <Image
-          source={require("@/assets/images/logo/logo.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-        <Text style={styles.heroTitle}>{t("auth.register.title")}</Text>
-        <Text style={styles.heroSubtitle}>{t("auth.register.subtitle")}</Text>
-        <View style={styles.stepIndicator}>
-          {[1, 2, 3].map((i) => (
-            <View
-              key={i}
-              style={[
-                styles.stepDot,
-                step >= i
-                  ? { backgroundColor: "#ffffff", width: 32 }
-                  : { backgroundColor: "rgba(255,255,255,0.3)", width: 16 },
-              ]}
-            />
-          ))}
-        </View>
-      </View>
-
       <KeyboardAwareScrollView
         enableOnAndroid
         extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1, justifyContent: "flex-end" }}
+        contentContainerStyle={{ flexGrow: 1 }}
       >
+        {/* Hero — monte avec le clavier */}
+        <View style={[styles.heroWrapper, { paddingTop: insets.top + 60 }]}>
+          <Image
+            source={require("@/assets/images/logo/logo.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <Text style={styles.heroTitle}>{t("auth.register.title")}</Text>
+          <Text style={styles.heroSubtitle}>{t("auth.register.subtitle")}</Text>
+          <View style={styles.stepIndicator}>
+            {[1, 2, 3].map((i) => (
+              <View
+                key={i}
+                style={[
+                  styles.stepDot,
+                  step >= i
+                    ? { backgroundColor: "#ffffff", width: 32 }
+                    : { backgroundColor: "rgba(255,255,255,0.3)", width: 16 },
+                ]}
+              />
+            ))}
+          </View>
+        </View>
+
+        {/* Spacer pour pousser le sheet en bas */}
+        <View style={{ flex: 1 }} />
+
         <View style={[styles.sheet, { backgroundColor: colors.background.primary }]}>
           <View style={styles.sheetHandle} />
 
@@ -355,7 +358,7 @@ export default function Register() {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   bgOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.55)" },
-  hero: { alignItems: "center", paddingHorizontal: 32 },
+  heroWrapper: { alignItems: "center", paddingHorizontal: 32 },
   logo: { width: 72, height: 72, marginBottom: 16, borderRadius: 16 },
   heroTitle: { fontSize: 30, fontWeight: "700", color: "#ffffff", textAlign: "center" },
   heroSubtitle: { fontSize: 15, color: "rgba(255,255,255,0.7)", textAlign: "center", marginTop: 6 },
@@ -377,7 +380,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginBottom: 24,
   },
-  inputs: { gap: 12, marginBottom: 16 },
+  inputs: { gap: 12, marginBottom: 28 },
   inputRow: {
     borderWidth: 1,
     borderRadius: 12,
@@ -385,7 +388,7 @@ const styles = StyleSheet.create({
     gap: 10,
     alignItems: "center",
     paddingHorizontal: 14,
-    paddingVertical: 14,
+    paddingVertical: 11,
   },
   inputText: { fontSize: 15, flex: 1 },
   termsRow: { flexDirection: "row", alignItems: "center", marginBottom: 16, flexWrap: "wrap" },

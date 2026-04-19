@@ -103,6 +103,7 @@ export default function Settings() {
             <MenuRow icon="clock" title={t("settings.sessionManagement")} onPress={() => router.push("/settings/session")} />
             <MenuRow icon="globe" title={t("settings.language")} value={languageName} onPress={() => router.push("/settings/language")} />
             <MenuRow icon="sun" title={t("settings.appearance")} onPress={() => router.push("/settings/appearance")} />
+            <MenuRow icon="database" title={t("settings.data")} onPress={() => router.push("/settings/data")} />
             <MenuRow icon="info" title={t("settings.about")} onPress={() => router.push("/settings/about")} />
           </View>
 
