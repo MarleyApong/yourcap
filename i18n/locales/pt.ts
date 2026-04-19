@@ -143,6 +143,7 @@ export const pt = {
       description: "Descrição",
       descriptionPlaceholder: "Ex: Empréstimo para emergência médica",
       descriptionOptional: "Descrição (Opcional)",
+      steps: { who: "Quem?", whoSub: "Contato e tipo de dívida", amount: "Quanto?", amountSub: "Valor e moeda", when: "Quando?", whenSub: "Datas e notas" },
       type: "Tipo",
       typeIOwed: "Me devem (alguém me deve)",
       typeIOwe: "Devo (devo a alguém)",

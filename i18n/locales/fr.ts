@@ -184,6 +184,7 @@ export const fr = {
         invalidDueDate: "La date d'échéance ne peut pas être antérieure à la date du prêt"
       },
       descriptionOptional: "Description (Optionnel)",
+      steps: { who: "Qui ?", whoSub: "Contact et type de dette", amount: "Combien ?", amountSub: "Montant et devise", when: "Quand ?", whenSub: "Dates et notes" },
       success: "Enregistrement de dette créé avec succès !",
       error: "Échec de la création de la dette. Veuillez réessayer.",
     },

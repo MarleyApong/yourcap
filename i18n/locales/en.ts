@@ -184,6 +184,7 @@ export const en = {
         invalidDueDate: "Due date cannot be before loan date"
       },
       descriptionOptional: "Description (Optional)",
+      steps: { who: "Who?", whoSub: "Contact & debt type", amount: "How much?", amountSub: "Amount & currency", when: "When?", whenSub: "Dates & notes" },
       success: "Debt record created successfully!",
       error: "Failed to create debt. Please try again.",
     },

@@ -143,6 +143,7 @@ export const de = {
       description: "Beschreibung",
       descriptionPlaceholder: "z.B.: Darlehen für medizinischen Notfall",
       descriptionOptional: "Beschreibung (Optional)",
+      steps: { who: "Wer?", whoSub: "Kontakt & Schuldentyp", amount: "Wie viel?", amountSub: "Betrag & Währung", when: "Wann?", whenSub: "Daten & Notizen" },
       type: "Typ",
       typeIOwed: "Mir wird geschuldet (jemand schuldet mir)",
       typeIOwe: "Ich schulde (ich schulde jemandem)",

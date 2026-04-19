@@ -143,6 +143,7 @@ export const es = {
       description: "Descripción",
       descriptionPlaceholder: "Ej: Préstamo para emergencia médica",
       descriptionOptional: "Descripción (Opcional)",
+      steps: { who: "¿Quién?", whoSub: "Contacto y tipo de deuda", amount: "¿Cuánto?", amountSub: "Monto y divisa", when: "¿Cuándo?", whenSub: "Fechas y notas" },
       type: "Tipo",
       typeIOwed: "Me deben (alguien me debe)",
       typeIOwe: "Debo (debo a alguien)",

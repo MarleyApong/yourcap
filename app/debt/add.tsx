@@ -1,8 +1,6 @@
-import { PageHeader } from "@/components/feature/page-header"
 import { DateInput } from "@/components/ui/date-input"
 import { Loader } from "@/components/ui/loader"
 import { SelectInput } from "@/components/ui/select-input"
-import { TextInput } from "@/components/ui/text-input"
 import { useTheme } from "@/core/theme"
 import { useTranslation } from "@/i18n"
 import { createDebt } from "@/services/debtServices"
@@ -11,15 +9,18 @@ import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { useRef, useState } from "react"
-import { Platform, Pressable, StyleSheet, Text, TextInput as RNTextInput, View } from "react-native"
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function AddDebt() {
   const { user } = useAuthStore()
   const router = useRouter()
   const { colors } = useTheme()
   const { t } = useTranslation()
+  const insets = useSafeAreaInsets()
 
+  const [step, setStep] = useState(1)
   const [form, setForm] = useState({
     contact_name: "",
     contact_phone: "",
@@ -33,53 +34,31 @@ export default function AddDebt() {
   })
   const [loading, setLoading] = useState(false)
 
-  const contactNameRef = useRef<RNTextInput>(null)
-  const contactPhoneRef = useRef<RNTextInput>(null)
-  const contactEmailRef = useRef<RNTextInput>(null)
-  const amountRef = useRef<RNTextInput>(null)
-  const descriptionRef = useRef<RNTextInput>(null)
+  const contactPhoneRef = useRef<TextInput>(null)
+  const contactEmailRef = useRef<TextInput>(null)
+  const amountRef = useRef<TextInput>(null)
+  const descriptionRef = useRef<TextInput>(null)
 
-  const handleChange = (field: string, value: string) => {
-    setForm({ ...form, [field]: value })
+  const handleChange = (field: string, value: string) => setForm(prev => ({ ...prev, [field]: value }))
+
+  const handleDateChange = (field: "loan_date" | "due_date") => (date: Date) =>
+    setForm(prev => ({ ...prev, [field]: date }))
+
+  const validateStep1 = () => {
+    if (!form.contact_name.trim()) { Toast.error(t("debt.add.validation.nameRequired")); return false }
+    if (!form.contact_phone.trim()) { Toast.error(t("debt.add.validation.phoneRequired")); return false }
+    return true
   }
 
-  const handleDateChange = (field: "loan_date" | "due_date") => (date: Date) => {
-    setForm({ ...form, [field]: date })
-  }
-
-  const validateForm = () => {
-    if (!form.contact_name.trim()) {
-      Toast.error(t("debt.add.validation.nameRequired"), "Validation Error")
-      return false
+  const validateStep2 = () => {
+    if (!form.amount.trim() || isNaN(Number(form.amount)) || Number(form.amount) <= 0) {
+      Toast.error(t("debt.add.validation.invalidAmount")); return false
     }
-
-    if (!form.contact_phone.trim()) {
-      Toast.error(t("debt.add.validation.phoneRequired"), "Validation Error")
-      return false
-    }
-
-    if (!form.amount.trim()) {
-      Toast.error(t("debt.add.validation.amountRequired"), "Validation Error")
-      return false
-    }
-
-    const amount = Number(form.amount)
-    if (isNaN(amount) || amount <= 0) {
-      Toast.error(t("debt.add.validation.invalidAmount"), "Validation Error")
-      return false
-    }
-
-    if (form.due_date < form.loan_date) {
-      Toast.error(t("debt.add.validation.invalidDueDate"), "Validation Error")
-      return false
-    }
-
     return true
   }
 
   const handleSubmit = async () => {
-    if (!validateForm()) return
-
+    if (form.due_date < form.loan_date) { Toast.error(t("debt.add.validation.invalidDueDate")); return }
     setLoading(true)
     try {
       await createDebt({
@@ -95,234 +74,273 @@ export default function AddDebt() {
         debt_type: form.debt_type as "OWING" | "OWED",
         status: "PENDING",
       })
-
-      Toast.success(t("debt.add.success"), "Success")
+      Toast.success(t("debt.add.success"))
       scheduleAllDebtReminders(user!.user_id)
-
-      setForm({
-        contact_name: "",
-        contact_phone: "",
-        contact_email: "",
-        amount: "",
-        currency: "XAF",
-        description: "",
-        loan_date: new Date(),
-        due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        debt_type: "OWING",
-      })
-
       router.back()
-    } catch (error) {
-      console.error("Error creating debt:", error)
-      Toast.error(t("debt.add.error"), "Error")
+    } catch {
+      Toast.error(t("debt.add.error"))
     } finally {
       setLoading(false)
     }
   }
 
-  const getDebtTypeDescription = () => {
-    return form.debt_type === "OWING"
-      ? t("debt.add.debtType.owingDescription")
-      : t("debt.add.debtType.owedDescription")
+  const handleNext = () => {
+    if (step === 1 && !validateStep1()) return
+    if (step === 2 && !validateStep2()) return
+    if (step < 3) setStep(s => s + 1)
+    else handleSubmit()
   }
 
+  const handleBack = () => {
+    if (step > 1) setStep(s => s - 1)
+    else router.back()
+  }
+
+  const STEPS = [
+    { title: t("debt.add.steps.who"), subtitle: t("debt.add.steps.whoSub") },
+    { title: t("debt.add.steps.amount"), subtitle: t("debt.add.steps.amountSub") },
+    { title: t("debt.add.steps.when"), subtitle: t("debt.add.steps.whenSub") },
+  ]
+
   return (
-    <KeyboardAwareScrollView
-      style={[styles.scroll, { backgroundColor: colors.background.primary }]}
-      contentContainerStyle={{ paddingBottom: 40 }}
-      enableOnAndroid
-      extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
-      keyboardShouldPersistTaps="handled"
-      showsVerticalScrollIndicator={false}
-    >
-      <PageHeader title={t("debt.add.title")} textPosition="center" textAlign="left" />
-
-      <View style={styles.content}>
-        <View style={styles.formGroup}>
-          {/* Debt Type */}
-          <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.primary.default }]}>
-            <Text style={[styles.cardTitle, { color: colors.primary.default }]}>
-              {t("debt.add.debtType.title")}
-            </Text>
-
-            <View style={[styles.toggleRow, { borderColor: colors.primary.default }]}>
-              <Pressable
-                onPress={() => setForm({ ...form, debt_type: "OWING" })}
-                style={[
-                  styles.toggleBtn,
-                  { backgroundColor: form.debt_type === "OWING" ? colors.primary.default : "transparent" },
-                ]}
-              >
-                <Text style={{ color: form.debt_type === "OWING" ? colors.primary.foreground : colors.foreground.primary, fontWeight: "500" }}>
-                  {t("debt.add.debtType.owing")}
-                </Text>
-              </Pressable>
-              <Pressable
-                onPress={() => setForm({ ...form, debt_type: "OWED" })}
-                style={[
-                  styles.toggleBtn,
-                  { backgroundColor: form.debt_type === "OWED" ? colors.primary.default : "transparent" },
-                ]}
-              >
-                <Text style={{ color: form.debt_type === "OWED" ? colors.primary.foreground : colors.foreground.primary, fontWeight: "500" }}>
-                  {t("debt.add.debtType.owed")}
-                </Text>
-              </Pressable>
-            </View>
-
-            <View style={[styles.descBox, { backgroundColor: colors.muted.default + "40" }]}>
-              <Text style={[styles.descText, { color: colors.muted.foreground }]}>{getDebtTypeDescription()}</Text>
-            </View>
-          </View>
-
-          {/* Contact Info */}
-          <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
-            <Text style={[styles.cardTitle, { color: colors.primary.default }]}>{t("debt.add.contact.title")}</Text>
-            <Text style={[styles.cardSubtitle, { color: colors.muted.foreground }]}>{t("debt.add.contact.subtitle")}</Text>
-
-            <TextInput
-              ref={contactNameRef}
-              label={t("debt.add.name")}
-              required
-              placeholder={t("debt.add.namePlaceholder")}
-              value={form.contact_name}
-              onChangeText={(text) => handleChange("contact_name", text)}
-              icon="user"
-              returnKeyType="next"
-              onSubmitEditing={() => contactPhoneRef.current?.focus()}
-            />
-
-            <TextInput
-              ref={contactPhoneRef}
-              label={t("debt.add.contact.phone")}
-              placeholder={t("debt.add.contact.phonePlaceholder")}
-              value={form.contact_phone}
-              onChangeText={(text) => handleChange("contact_phone", text)}
-              keyboardType="phone-pad"
-              icon="phone"
-              required
-              returnKeyType="next"
-              onSubmitEditing={() => contactEmailRef.current?.focus()}
-            />
-
-            <TextInput
-              ref={contactEmailRef}
-              label={t("debt.add.contact.email")}
-              placeholder={t("debt.add.contact.emailPlaceholder")}
-              value={form.contact_email}
-              onChangeText={(text) => handleChange("contact_email", text)}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              icon="mail"
-              containerStyle={{ marginBottom: 0 }}
-              returnKeyType="next"
-              onSubmitEditing={() => amountRef.current?.focus()}
-            />
-          </View>
-
-          {/* Debt Details */}
-          <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
-            <Text style={[styles.cardTitle, { color: colors.primary.default }]}>{t("debt.add.financial.title")}</Text>
-            <Text style={[styles.cardSubtitle, { color: colors.muted.foreground }]}>{t("debt.add.financial.subtitle")}</Text>
-
-            <TextInput
-              ref={amountRef}
-              label={t("debt.add.amount")}
-              required
-              placeholder={t("debt.add.amountPlaceholder")}
-              value={form.amount}
-              onChangeText={(text) => handleChange("amount", text)}
-              keyboardType="numeric"
-              icon="credit-card"
-              returnKeyType="next"
-              onSubmitEditing={() => descriptionRef.current?.focus()}
-            />
-
-            <SelectInput
-              label={t("debt.add.financial.currency")}
-              value={form.currency}
-              onChange={(val) => handleChange("currency", val)}
-              options={[
-                { label: "XAF (CFA Franc)", value: "XAF" },
-                { label: "USD (US Dollar)", value: "USD" },
-                { label: "EUR (Euro)", value: "EUR" },
-                { label: "GBP (British Pound)", value: "GBP" },
-              ]}
-            />
-
-            <DateInput
-              label={t("debt.add.financial.loanDate")}
-              value={form.loan_date}
-              onChange={handleDateChange("loan_date")}
-              maximumDate={new Date()}
-              required
-            />
-
-            <DateInput
-              label={t("debt.add.financial.dueDate")}
-              value={form.due_date}
-              onChange={handleDateChange("due_date")}
-              minimumDate={form.loan_date}
-              required
-            />
-
-            <TextInput
-              ref={descriptionRef}
-              label={t("debt.add.description")}
-              placeholder={t("debt.add.descriptionPlaceholder")}
-              value={form.description}
-              onChangeText={(text) => handleChange("description", text)}
-              multiline
-              numberOfLines={3}
-              icon="file-text"
-              containerStyle={{ marginBottom: 0 }}
-              returnKeyType="done"
-              onSubmitEditing={handleSubmit}
-            />
-          </View>
-
-          {/* Submit */}
-          <Pressable
-            onPress={handleSubmit}
-            disabled={loading}
-            style={[styles.submitBtn, { backgroundColor: colors.primary.default, opacity: loading ? 0.7 : 1 }]}
-          >
-            {loading ? <Loader /> : <Feather name="plus" size={20} color={colors.primary.foreground} />}
-            <Text style={[styles.submitBtnText, { color: colors.primary.foreground }]}>
-              {loading ? t("common.loading") : t("debt.add.save")}
-            </Text>
-          </Pressable>
+    <View style={[styles.root, { backgroundColor: colors.primary.default }]}>
+      {/* Hero */}
+      <View style={[styles.hero, { paddingTop: insets.top + 8 }]}>
+        <Pressable onPress={handleBack} style={styles.backBtn}>
+          <Feather name="chevron-left" size={24} color="#fff" />
+        </Pressable>
+        <Text style={styles.heroTitle}>{STEPS[step - 1].title}</Text>
+        <Text style={styles.heroSubtitle}>{STEPS[step - 1].subtitle}</Text>
+        <View style={styles.stepDots}>
+          {[1, 2, 3].map(i => (
+            <View key={i} style={[styles.stepDot, {
+              backgroundColor: step >= i ? "#fff" : "rgba(255,255,255,0.3)",
+              width: step === i ? 24 : 8,
+            }]} />
+          ))}
         </View>
       </View>
-    </KeyboardAwareScrollView>
+
+      {/* Sheet */}
+      <KeyboardAwareScrollView
+        style={[styles.sheet, { backgroundColor: colors.background.primary }]}
+        contentContainerStyle={[styles.sheetContent, { paddingBottom: insets.bottom + 24 }]}
+        enableOnAndroid
+        extraScrollHeight={80}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.sheetHandle} />
+
+        {/* STEP 1 — Qui */}
+        {step === 1 && (
+          <>
+            <Field label={t("debt.add.debtType.title")} colors={colors}>
+              <View style={[styles.toggle, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+                {(["OWING", "OWED"] as const).map(opt => (
+                  <Pressable
+                    key={opt}
+                    onPress={() => handleChange("debt_type", opt)}
+                    style={[styles.toggleOpt, { backgroundColor: form.debt_type === opt ? colors.primary.default : "transparent" }]}
+                  >
+                    <Text style={{ color: form.debt_type === opt ? "#fff" : colors.foreground.primary, fontWeight: "600", fontSize: 13 }}>
+                      {opt === "OWING" ? t("debt.add.debtType.owing") : t("debt.add.debtType.owed")}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+            </Field>
+
+            <Field label={t("debt.add.name")} required colors={colors}>
+              <InputRow icon="user" colors={colors}>
+                <TextInput
+                  style={[styles.inputText, { color: colors.foreground.primary }]}
+                  placeholder={t("debt.add.namePlaceholder")}
+                  placeholderTextColor={colors.muted.foreground}
+                  value={form.contact_name}
+                  onChangeText={v => handleChange("contact_name", v)}
+                  returnKeyType="next"
+                  onSubmitEditing={() => contactPhoneRef.current?.focus()}
+                />
+              </InputRow>
+            </Field>
+
+            <Field label={t("debt.add.contact.phone")} required colors={colors}>
+              <InputRow icon="phone" colors={colors}>
+                <TextInput
+                  ref={contactPhoneRef}
+                  style={[styles.inputText, { color: colors.foreground.primary }]}
+                  placeholder="+XXX XXX XXX"
+                  placeholderTextColor={colors.muted.foreground}
+                  value={form.contact_phone}
+                  onChangeText={v => handleChange("contact_phone", v)}
+                  keyboardType="phone-pad"
+                  returnKeyType="next"
+                  onSubmitEditing={() => contactEmailRef.current?.focus()}
+                />
+              </InputRow>
+            </Field>
+
+            <Field label={t("debt.add.contact.email")} optional colors={colors}>
+              <InputRow icon="mail" colors={colors}>
+                <TextInput
+                  ref={contactEmailRef}
+                  style={[styles.inputText, { color: colors.foreground.primary }]}
+                  placeholder="email@example.com"
+                  placeholderTextColor={colors.muted.foreground}
+                  value={form.contact_email}
+                  onChangeText={v => handleChange("contact_email", v)}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  returnKeyType="done"
+                />
+              </InputRow>
+            </Field>
+          </>
+        )}
+
+        {/* STEP 2 — Combien */}
+        {step === 2 && (
+          <>
+            <Field label={t("debt.add.amount")} required colors={colors}>
+              <InputRow icon="credit-card" colors={colors}>
+                <TextInput
+                  ref={amountRef}
+                  style={[styles.inputText, { color: colors.foreground.primary }]}
+                  placeholder="0"
+                  placeholderTextColor={colors.muted.foreground}
+                  value={form.amount}
+                  onChangeText={v => handleChange("amount", v)}
+                  keyboardType="numeric"
+                  returnKeyType="done"
+                  autoFocus
+                />
+              </InputRow>
+            </Field>
+
+            <Field label={t("debt.add.financial.currency")} colors={colors}>
+              <SelectInput
+                value={form.currency}
+                onChange={v => handleChange("currency", v)}
+                options={[
+                  { label: "XAF — Franc CFA", value: "XAF" },
+                  { label: "USD — US Dollar", value: "USD" },
+                  { label: "EUR — Euro", value: "EUR" },
+                  { label: "GBP — British Pound", value: "GBP" },
+                ]}
+              />
+            </Field>
+          </>
+        )}
+
+        {/* STEP 3 — Quand */}
+        {step === 3 && (
+          <>
+            <Field label={t("debt.add.financial.loanDate")} required colors={colors}>
+              <DateInput value={form.loan_date} onChange={handleDateChange("loan_date")} maximumDate={new Date()} />
+            </Field>
+
+            <Field label={t("debt.add.financial.dueDate")} required colors={colors}>
+              <DateInput value={form.due_date} onChange={handleDateChange("due_date")} minimumDate={form.loan_date} />
+            </Field>
+
+            <Field label={t("debt.add.description")} optional colors={colors}>
+              <InputRow icon="file-text" colors={colors} alignTop>
+                <TextInput
+                  ref={descriptionRef}
+                  style={[styles.inputText, styles.textarea, { color: colors.foreground.primary }]}
+                  placeholder={t("debt.add.descriptionPlaceholder")}
+                  placeholderTextColor={colors.muted.foreground}
+                  value={form.description}
+                  onChangeText={v => handleChange("description", v)}
+                  multiline
+                  numberOfLines={3}
+                  textAlignVertical="top"
+                />
+              </InputRow>
+            </Field>
+          </>
+        )}
+
+        {/* Button */}
+        <Pressable
+          onPress={handleNext}
+          disabled={loading}
+          style={[styles.nextBtn, { backgroundColor: colors.primary.default, opacity: loading ? 0.7 : 1, marginTop: 8 }]}
+        >
+          {loading ? <Loader /> : null}
+          <Text style={styles.nextBtnText}>
+            {step === 3 ? t("debt.add.save") : t("common.continue")}
+          </Text>
+          {!loading && <Feather name={step === 3 ? "check" : "arrow-right"} size={18} color="#fff" />}
+        </Pressable>
+      </KeyboardAwareScrollView>
+    </View>
+  )
+}
+
+function Field({ label, required, optional, colors, children }: {
+  label: string; required?: boolean; optional?: boolean; colors: any; children: React.ReactNode
+}) {
+  return (
+    <View style={styles.field}>
+      <Text style={[styles.fieldLabel, { color: colors.muted.foreground }]}>
+        {label}
+        {required && <Text style={{ color: colors.status.destructive }}> *</Text>}
+        {optional && <Text style={{ color: colors.muted.foreground }}> (opt.)</Text>}
+      </Text>
+      {children}
+    </View>
+  )
+}
+
+function InputRow({ icon, colors, alignTop, children }: {
+  icon: string; colors: any; alignTop?: boolean; children: React.ReactNode
+}) {
+  return (
+    <View style={[styles.inputRow, {
+      backgroundColor: colors.card.background,
+      borderColor: colors.border,
+      alignItems: alignTop ? "flex-start" : "center",
+    }]}>
+      <Feather name={icon as any} size={16} color={colors.muted.foreground} style={alignTop ? { marginTop: 2 } : undefined} />
+      {children}
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  scroll: { flex: 1 },
-  content: { paddingHorizontal: 24 },
-  formGroup: { marginTop: 32, gap: 16 },
-  card: { padding: 16, borderRadius: 12, borderWidth: 1 },
-  cardTitle: { fontSize: 18, fontWeight: "700", marginBottom: 8 },
-  cardSubtitle: { fontSize: 14, marginBottom: 16 },
-  toggleRow: {
+  root: { flex: 1 },
+  hero: { paddingHorizontal: 24, paddingBottom: 24 },
+  backBtn: { width: 40, height: 40, justifyContent: "center", marginBottom: 12 },
+  heroTitle: { fontSize: 26, fontWeight: "700", color: "#fff" },
+  heroSubtitle: { fontSize: 13, color: "rgba(255,255,255,0.7)", marginTop: 4 },
+  stepDots: { flexDirection: "row", gap: 6, marginTop: 16 },
+  stepDot: { height: 6, borderRadius: 999 },
+  sheet: { flex: 1, borderTopLeftRadius: 24, borderTopRightRadius: 24 },
+  sheetContent: { paddingHorizontal: 24, paddingTop: 8 },
+  sheetHandle: { width: 40, height: 4, borderRadius: 2, backgroundColor: "rgba(128,128,128,0.3)", alignSelf: "center", marginBottom: 24 },
+  field: { marginBottom: 18 },
+  fieldLabel: { fontSize: 12, fontWeight: "600", marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.4 },
+  inputRow: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    padding: 4,
-    borderRadius: 12,
+    gap: 10,
     borderWidth: 1,
-    marginBottom: 12,
-  },
-  toggleBtn: { flex: 1, alignItems: "center", paddingVertical: 12, borderRadius: 8 },
-  descBox: { padding: 12, borderRadius: 8 },
-  descText: { fontSize: 14, lineHeight: 20 },
-  submitBtn: {
-    padding: 16,
     borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  inputText: { flex: 1, fontSize: 14 },
+  textarea: { minHeight: 72 },
+  toggle: { flexDirection: "row", borderWidth: 1, borderRadius: 10, padding: 3, gap: 4 },
+  toggleOpt: { flex: 1, alignItems: "center", paddingVertical: 10, borderRadius: 8 },
+  nextBtn: {
     flexDirection: "row",
     gap: 8,
     justifyContent: "center",
     alignItems: "center",
+    padding: 15,
+    borderRadius: 14,
   },
-  submitBtnText: { textAlign: "center", fontWeight: "600", fontSize: 18 },
+  nextBtnText: { color: "#fff", fontWeight: "600", fontSize: 16 },
 })
