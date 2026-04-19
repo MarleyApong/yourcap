@@ -186,6 +186,8 @@ export const de = {
         amountPositive: "Betrag muss positiv sein",
         invalidAmount: "Bitte gib einen gültigen Betrag größer als 0 ein",
         invalidDueDate: "Fälligkeitsdatum kann nicht vor dem Darlehensdatum liegen",
+        phoneConflictTitle: "Vorhandener Kontakt",
+        phoneConflict: "Diese Nummer ist bereits mit {name} verknüpft. Trotzdem fortfahren?"
       },
       success: "Schuldeneintrag erfolgreich erstellt!",
       error: "Schuld konnte nicht erstellt werden. Erneut versuchen.",

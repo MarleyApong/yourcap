@@ -116,7 +116,22 @@ export default function AddDebt() {
   }
 
   const handleNext = () => {
-    if (step === 1 && !validateStep1()) return
+    if (step === 1) {
+      if (!validateStep1()) return
+      const normalized = form.contact_phone.replace(/[\s\-().]/g, "")
+      const conflict = savedContacts.find(c =>
+        c.contact_phone.replace(/[\s\-().]/g, "") === normalized &&
+        c.contact_name.toLowerCase().trim() !== form.contact_name.toLowerCase().trim()
+      )
+      if (conflict) {
+        Toast.confirm(
+          t("debt.add.validation.phoneConflict", { name: conflict.contact_name }),
+          () => setStep(s => s + 1),
+          { title: t("debt.add.validation.phoneConflictTitle"), confirmText: t("common.continue"), cancelText: t("common.cancel") }
+        )
+        return
+      }
+    }
     if (step === 2 && !validateStep2()) return
     if (step < 3) setStep(s => s + 1)
     else handleSubmit()

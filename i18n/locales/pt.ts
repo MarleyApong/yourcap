@@ -186,6 +186,8 @@ export const pt = {
         amountPositive: "O valor deve ser positivo",
         invalidAmount: "Digite um valor válido maior que 0",
         invalidDueDate: "A data de vencimento não pode ser anterior à data do empréstimo",
+        phoneConflictTitle: "Contato existente",
+        phoneConflict: "Este número já está associado a {name}. Continuar mesmo assim?"
       },
       success: "Dívida registrada com sucesso!",
       error: "Falha ao criar dívida. Tente novamente.",

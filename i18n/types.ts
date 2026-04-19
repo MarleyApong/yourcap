@@ -159,6 +159,8 @@ export interface TranslationKeys {
   'debt.add.validation.amountPositive': string;
   'debt.add.validation.invalidAmount': string;
   'debt.add.validation.invalidDueDate': string;
+  'debt.add.validation.phoneConflictTitle': string;
+  'debt.add.validation.phoneConflict': string;
   
   'debt.add.descriptionOptional': string;
   'debt.add.savedContacts.title': string;

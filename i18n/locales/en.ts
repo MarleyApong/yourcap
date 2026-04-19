@@ -181,7 +181,9 @@ export const en = {
         amountRequired: "Amount is required",
         amountPositive: "Amount must be positive",
         invalidAmount: "Please enter a valid amount greater than 0",
-        invalidDueDate: "Due date cannot be before loan date"
+        invalidDueDate: "Due date cannot be before loan date",
+        phoneConflictTitle: "Existing contact",
+        phoneConflict: "This number is already linked to {name}. Continue anyway?"
       },
       descriptionOptional: "Description (Optional)",
       steps: { who: "Who?", whoSub: "Contact & debt type", amount: "How much?", amountSub: "Amount & currency", when: "When?", whenSub: "Dates & notes" },

@@ -186,6 +186,8 @@ export const es = {
         amountPositive: "El monto debe ser positivo",
         invalidAmount: "Introduce un monto válido mayor que 0",
         invalidDueDate: "La fecha de vencimiento no puede ser anterior a la del préstamo",
+        phoneConflictTitle: "Contacto existente",
+        phoneConflict: "Este número ya está asociado a {name}. ¿Continuar de todas formas?"
       },
       success: "¡Deuda registrada con éxito!",
       error: "Error al crear la deuda. Inténtalo de nuevo.",

@@ -181,7 +181,9 @@ export const fr = {
         amountRequired: "Le montant est requis",
         amountPositive: "Le montant doit être positif",
         invalidAmount: "Veuillez saisir un montant valide supérieur à 0",
-        invalidDueDate: "La date d'échéance ne peut pas être antérieure à la date du prêt"
+        invalidDueDate: "La date d'échéance ne peut pas être antérieure à la date du prêt",
+        phoneConflictTitle: "Contact existant",
+        phoneConflict: "Ce numéro est déjà associé à {name}. Continuer quand même ?"
       },
       descriptionOptional: "Description (Optionnel)",
       steps: { who: "Qui ?", whoSub: "Contact et type de dette", amount: "Combien ?", amountSub: "Montant et devise", when: "Quand ?", whenSub: "Dates et notes" },
