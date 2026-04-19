@@ -46,6 +46,7 @@ export const pt = {
       subtitle: "Digite suas credenciais",
       emailOrPhone: "Email ou número de telefone",
       phoneOrEmail: "Número de telefone ou Email",
+      recentAccounts: "Contas recentes",
       pinTitle: "Digite o PIN",
       pinSubtitle: "Digite seu PIN de 6 dígitos para continuar",
       verifyIdentity: "Verificar identidade",

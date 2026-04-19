@@ -46,6 +46,7 @@ export const de = {
       subtitle: "Gib deine Anmeldedaten ein",
       emailOrPhone: "E-Mail oder Telefonnummer",
       phoneOrEmail: "Telefonnummer oder E-Mail",
+      recentAccounts: "Letzte Konten",
       pinTitle: "PIN eingeben",
       pinSubtitle: "Gib deinen 6-stelligen PIN ein, um fortzufahren",
       verifyIdentity: "Identität bestätigen",

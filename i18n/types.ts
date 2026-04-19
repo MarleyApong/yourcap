@@ -44,6 +44,7 @@ export interface TranslationKeys {
   'auth.login.subtitle': string;
   'auth.login.emailOrPhone': string;
   'auth.login.phoneOrEmail': string;
+  'auth.login.recentAccounts': string;
   'auth.login.pinTitle': string;
   'auth.login.pinSubtitle': string;
   'auth.login.invalidPin': string;

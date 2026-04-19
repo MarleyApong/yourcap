@@ -48,6 +48,7 @@ export const fr = {
       subtitle: "Entrez vos identifiants",
       emailOrPhone: "Email ou Numéro de téléphone",
       phoneOrEmail: "Numéro de téléphone ou Email",
+      recentAccounts: "Comptes récents",
       pinTitle: "Entrez votre PIN",
       pinSubtitle: "Entrez votre PIN à 6 chiffres pour continuer",
       verifyIdentity: "Vérifiez votre identité",

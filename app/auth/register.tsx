@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
     gap: 10,
     alignItems: "center",
     paddingHorizontal: 14,
-    paddingVertical: 11,
+    paddingVertical: 8,
   },
   inputText: { fontSize: 15, flex: 1 },
   termsRow: { flexDirection: "row", alignItems: "center", marginBottom: 16, flexWrap: "wrap" },

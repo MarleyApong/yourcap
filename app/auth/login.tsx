@@ -5,12 +5,31 @@ import { useTheme } from "@/core/theme"
 import { useTranslation } from "@/i18n"
 import { hasValidSessionForQuickAuth, setAppLocked } from "@/lib/auth"
 import { useAuthStore } from "@/stores/authStore"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
-import { Image, ImageBackground, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { Image, ImageBackground, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+
+const SAVED_IDENTIFIERS_KEY = "@yourcap_saved_identifiers"
+const MAX_SAVED = 5
+
+async function getSavedIdentifiers(): Promise<string[]> {
+  try {
+    const raw = await AsyncStorage.getItem(SAVED_IDENTIFIERS_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch { return [] }
+}
+
+async function saveIdentifier(identifier: string) {
+  try {
+    const existing = await getSavedIdentifiers()
+    const updated = [identifier, ...existing.filter(i => i !== identifier)].slice(0, MAX_SAVED)
+    await AsyncStorage.setItem(SAVED_IDENTIFIERS_KEY, JSON.stringify(updated))
+  } catch {}
+}
 
 export default function Login() {
   const { login, loginWithBiometric, biometricCapabilities, checkBiometricCapabilities } = useAuthStore()
@@ -27,10 +46,12 @@ export default function Login() {
   const [pinKey, setPinKey] = useState(0)
   const [shouldShowBiometric, setShouldShowBiometric] = useState(false)
   const [isQuickAuth, setIsQuickAuth] = useState(false)
+  const [savedIdentifiers, setSavedIdentifiers] = useState<string[]>([])
 
   useEffect(() => {
     checkBiometricCapabilities()
     initializeLoginState()
+    getSavedIdentifiers().then(setSavedIdentifiers)
   }, [])
 
   const initializeLoginState = async () => {
@@ -79,6 +100,7 @@ export default function Login() {
     try {
       const success = await login({ identifier: identifier.trim(), pin })
       if (success) {
+        await saveIdentifier(identifier.trim())
         Toast.success(t("auth.login.welcomeBack"))
       } else {
         Toast.error(t("auth.validation.invalidCredentials"))
@@ -183,6 +205,12 @@ export default function Login() {
         />
         <Text style={styles.heroTitle}>{t("auth.login.welcomeBack")}</Text>
         <Text style={styles.heroSubtitle}>{t("auth.login.subtitle")}</Text>
+        {savedIdentifiers.length > 0 && (
+          <View style={styles.recentBadge}>
+            <Feather name={savedIdentifiers[0].includes("@") ? "mail" : "phone"} size={11} color="rgba(255,255,255,0.8)" />
+            <Text style={styles.recentBadgeText}>{savedIdentifiers[0]}</Text>
+          </View>
+        )}
       </View>
 
       {/* Bottom sheet form */}
@@ -217,7 +245,40 @@ export default function Login() {
                 returnKeyType="done"
                 onSubmitEditing={handleIdentifierSubmit}
               />
+              {identifier.length > 0 && (
+                <Pressable onPress={() => setIdentifier("")} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                  <Feather name="x" size={16} color={colors.muted.foreground} />
+                </Pressable>
+              )}
             </View>
+            {savedIdentifiers.length > 0 && (
+              <View style={styles.chipsWrapper}>
+                <Text style={[styles.chipsLabel, { color: colors.muted.foreground }]}>
+                  {t("auth.login.recentAccounts")}
+                </Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsContent}>
+                  {savedIdentifiers.map((id) => {
+                    const active = identifier === id
+                    return (
+                      <Pressable
+                        key={id}
+                        onPress={() => setIdentifier(id)}
+                        style={[styles.chip, {
+                          backgroundColor: active ? colors.primary.default + "18" : colors.card.background,
+                          borderColor: active ? colors.primary.default : colors.border,
+                        }]}
+                      >
+                        <Feather name={id.includes("@") ? "mail" : "phone"} size={12} color={active ? colors.primary.default : colors.muted.foreground} />
+                        <Text style={[styles.chipText, { color: active ? colors.primary.default : colors.foreground.primary }]} numberOfLines={1}>
+                          {id}
+                        </Text>
+                        <Feather name="chevron-right" size={12} color={active ? colors.primary.default : colors.muted.foreground} />
+                      </Pressable>
+                    )
+                  })}
+                </ScrollView>
+              </View>
+            )}
           </View>
 
           <TouchableOpacity
@@ -248,6 +309,8 @@ const styles = StyleSheet.create({
   logo: { width: 72, height: 72, marginBottom: 20, borderRadius: 16 },
   heroTitle: { fontSize: 32, fontWeight: "700", color: "#ffffff", textAlign: "center" },
   heroSubtitle: { fontSize: 15, color: "rgba(255,255,255,0.7)", textAlign: "center", marginTop: 8 },
+  recentBadge: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 10, backgroundColor: "rgba(255,255,255,0.15)", paddingHorizontal: 12, paddingVertical: 5, borderRadius: 20 },
+  recentBadgeText: { fontSize: 13, color: "rgba(255,255,255,0.9)", fontWeight: "500" },
   sheet: {
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
@@ -266,6 +329,20 @@ const styles = StyleSheet.create({
   },
   inputLabel: { fontSize: 15, fontWeight: "600", marginBottom: 8 },
   inputs: { marginBottom: 20 },
+  chipsWrapper: { marginTop: 10 },
+  chipsLabel: { fontSize: 11, fontWeight: "500", marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 },
+  chipsContent: { gap: 8, paddingRight: 4 },
+  chip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: 20,
+    borderWidth: 1,
+    maxWidth: 180,
+  },
+  chipText: { fontSize: 12, fontWeight: "500", flexShrink: 1 },
   inputRow: {
     borderWidth: 1,
     borderRadius: 12,
@@ -273,7 +350,7 @@ const styles = StyleSheet.create({
     gap: 10,
     alignItems: "center",
     paddingHorizontal: 14,
-    paddingVertical: 11,
+    paddingVertical: 8,
   },
   inputText: { fontSize: 15, flex: 1 },
   submitBtn: {
