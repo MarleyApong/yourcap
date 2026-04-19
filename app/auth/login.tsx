@@ -190,6 +190,8 @@ export default function Login() {
         enableOnAndroid
         extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
         keyboardShouldPersistTaps="handled"
+        bounces={false}
+        overScrollMode="never"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ flexGrow: 1, justifyContent: "flex-end" }}
       >

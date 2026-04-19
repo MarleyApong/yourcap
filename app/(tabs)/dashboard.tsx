@@ -18,7 +18,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useFocusEffect } from "@react-navigation/core"
 import { Link, useRouter } from "expo-router"
 import { useCallback, useEffect, useState } from "react"
-import { Alert, ScrollView, StyleSheet, Text, View } from "react-native"
+import { ScrollView, StyleSheet, Text, View } from "react-native"
+import Animated, { FadeInDown, FadeInRight } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const NOTIF_PERMISSION_KEY = "notification_permission_asked"
@@ -125,29 +126,24 @@ export default function Dashboard() {
           )}
 
           {!error && (
-            <View style={styles.summaryRow}>
+            <Animated.View entering={FadeInDown.duration(350).delay(50)} style={styles.summaryRow}>
               <SummaryCard label={t("dashboard.summary.totalLent")} amount={formatCurrency(summary.owed, "XAF")} type="negative" />
               <SummaryCard label={t("dashboard.summary.totalOwed")} amount={formatCurrency(summary.owing, "XAF")} type="positive" />
               <SummaryCard label={t("dashboard.summary.balance")} amount={formatCurrency(summary.balance, "XAF")} type={summary.balance >= 0 ? "positive" : "negative"} />
-            </View>
+            </Animated.View>
           )}
 
-          <View
-            style={[
-              styles.quickActions,
-              {
-                backgroundColor: colors.card.background,
-                borderColor: colors.border,
-              },
-            ]}
+          <Animated.View
+            entering={FadeInDown.duration(350).delay(150)}
+            style={[styles.quickActions, { backgroundColor: colors.card.background, borderColor: colors.border }]}
           >
             <QuickActionButton icon="plus" label={t("dashboard.addDebt")} onPress={handleAddDebt} />
             <QuickActionButton icon="list" label={t("tabs.history")} onPress={handleViewHistory} />
             <QuickActionButton icon="settings" label={t("tabs.settings")} onPress={handleViewSettings} />
-          </View>
+          </Animated.View>
 
           {!error && (
-            <View style={styles.recentSection}>
+            <Animated.View entering={FadeInDown.duration(350).delay(250)} style={styles.recentSection}>
               <View style={styles.recentHeader}>
                 <Text style={[styles.recentTitle, { color: colors.foreground.primary }]}>
                   {t("dashboard.quickActions")}
@@ -172,27 +168,20 @@ export default function Dashboard() {
               )}
 
               {!loading && recentDebts.length > 0 && (
-                <View
-                  style={[
-                    styles.debtList,
-                    {
-                      backgroundColor: colors.card.background,
-                      borderColor: colors.border,
-                    },
-                  ]}
-                >
+                <View style={[styles.debtList, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
                   {recentDebts.map((debt, index) => (
-                    <DebtItem
-                      key={debt.debt_id}
-                      debt={debt}
-                      currency={"XAF"}
-                      onPress={() => handleDebtPress(debt.debt_id)}
-                      showBorder={index !== recentDebts.length - 1}
-                    />
+                    <Animated.View key={debt.debt_id} entering={FadeInRight.duration(300).delay(300 + index * 60)}>
+                      <DebtItem
+                        debt={debt}
+                        currency={"XAF"}
+                        onPress={() => handleDebtPress(debt.debt_id)}
+                        showBorder={index !== recentDebts.length - 1}
+                      />
+                    </Animated.View>
                   ))}
                 </View>
               )}
-            </View>
+            </Animated.View>
           )}
         </View>
 

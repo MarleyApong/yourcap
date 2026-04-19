@@ -13,6 +13,7 @@ import { Feather } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
 import { useState } from "react"
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
+import Animated, { FadeInDown } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function Settings() {
@@ -82,7 +83,7 @@ export default function Settings() {
 
         <View style={styles.content}>
           {/* Profile */}
-          <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+          <Animated.View entering={FadeInDown.duration(300).delay(50)} style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
             <View style={styles.profileRow}>
               <View style={[styles.profileAvatar, { backgroundColor: colors.primary.default }]}>
                 <Feather name="user" size={24} color={colors.primary.foreground} />
@@ -94,10 +95,10 @@ export default function Settings() {
             </View>
             <MenuRow isFirst icon="edit" title={t("settings.editProfile")} onPress={() => setEditProfileModalVisible(true)} />
             <MenuRow icon="lock" title={t("settings.changePin")} onPress={() => setChangePinModalVisible(true)} />
-          </View>
+          </Animated.View>
 
           {/* Settings menu */}
-          <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+          <Animated.View entering={FadeInDown.duration(300).delay(150)} style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
             <MenuRow isFirst icon="bell" title={t("settings.notifications")} value={notifValue} onPress={() => router.push("/settings/notifications")} />
             <MenuRow icon="shield" title={t("settings.security")} value={securityValue} onPress={() => router.push("/settings/security")} />
             <MenuRow icon="clock" title={t("settings.sessionManagement")} onPress={() => router.push("/settings/session")} />
@@ -105,7 +106,7 @@ export default function Settings() {
             <MenuRow icon="sun" title={t("settings.appearance")} onPress={() => router.push("/settings/appearance")} />
             <MenuRow icon="database" title={t("settings.data")} onPress={() => router.push("/settings/data")} />
             <MenuRow icon="info" title={t("settings.about")} onPress={() => router.push("/settings/about")} />
-          </View>
+          </Animated.View>
 
           {/* Dev tools */}
           {__DEV__ && (

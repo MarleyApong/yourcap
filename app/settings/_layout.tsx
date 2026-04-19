@@ -7,7 +7,7 @@ export default function SettingsLayout() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.primary }}>
-      <Stack screenOptions={{ headerShown: false }} />
+      <Stack screenOptions={{ headerShown: false, animation: "slide_from_right", animationDuration: 250 }} />
     </SafeAreaView>
   )
 }

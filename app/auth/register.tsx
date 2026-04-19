@@ -8,8 +8,7 @@ import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { Link, useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
-import { Image, ImageBackground, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native"
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+import { Animated, Image, ImageBackground, Keyboard, Pressable, StyleSheet, Text, TextInput, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const TERMS_SECTION_ICONS = {
@@ -44,6 +43,17 @@ export default function Register() {
 
   const emailRef = useRef<TextInput>(null)
   const phoneRef = useRef<TextInput>(null)
+  const keyboardPadding = useRef(new Animated.Value(0)).current
+
+  useEffect(() => {
+    const show = Keyboard.addListener("keyboardDidShow", (e) => {
+      Animated.timing(keyboardPadding, { toValue: e.endCoordinates.height, duration: 250, useNativeDriver: false }).start()
+    })
+    const hide = Keyboard.addListener("keyboardDidHide", () => {
+      Animated.timing(keyboardPadding, { toValue: 0, duration: 250, useNativeDriver: false }).start()
+    })
+    return () => { show.remove(); hide.remove() }
+  }, [])
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -201,14 +211,8 @@ export default function Register() {
 
       <FBackButton />
 
-      <KeyboardAwareScrollView
-        enableOnAndroid
-        extraScrollHeight={Platform.OS === "ios" ? 60 : 80}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
-        {/* Hero — monte avec le clavier */}
+      <Animated.View style={{ flex: 1, paddingBottom: keyboardPadding }}>
+        {/* Hero — le flex spacer compresse quand le clavier monte */}
         <View style={[styles.heroWrapper, { paddingTop: insets.top + 60 }]}>
           <Image
             source={require("@/assets/images/logo/logo.png")}
@@ -232,10 +236,9 @@ export default function Register() {
           </View>
         </View>
 
-        {/* Spacer pour pousser le sheet en bas */}
         <View style={{ flex: 1 }} />
 
-        <View style={[styles.sheet, { backgroundColor: colors.background.primary }]}>
+        <View style={[styles.sheet, { backgroundColor: colors.background.primary, paddingBottom: insets.bottom + 16 }]}>
           <View style={styles.sheetHandle} />
 
           <View style={styles.inputs}>
@@ -318,14 +321,14 @@ export default function Register() {
             <Feather name="arrow-right" size={18} color={termsAccepted ? "#ffffff" : colors.muted.foreground} />
           </Pressable>
 
-          <View style={[styles.signinRow, { paddingBottom: insets.bottom + 16 }]}>
+          <View style={styles.signinRow}>
             <Text style={{ color: colors.muted.foreground, fontSize: 14 }}>{t("auth.register.alreadyHaveAccount")}</Text>
             <Link href="/auth/login">
               <Text style={[styles.signinLink, { color: colors.primary.default }]}>{t("auth.register.signIn")}</Text>
             </Link>
           </View>
         </View>
-      </KeyboardAwareScrollView>
+      </Animated.View>
 
       <SheetModal
         visible={termsModalVisible}
@@ -369,7 +372,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 28,
     paddingHorizontal: 28,
     paddingTop: 16,
-    paddingBottom: 8,
     marginTop: 24,
   },
   sheetHandle: {

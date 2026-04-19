@@ -10,6 +10,8 @@ export default function DebtLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
+          animation: "slide_from_bottom",
+          animationDuration: 300,
         }}
       >
         <Stack.Screen name="add" options={{ title: "Add Debt", headerShown: false }} />
