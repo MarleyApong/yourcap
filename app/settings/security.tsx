@@ -46,7 +46,7 @@ export default function SecuritySettings() {
 
   const handleBiometricToggle = async (enabled: boolean) => {
     if (enabled && !biometricCapabilities?.isAvailable) {
-      Toast.error("Biometric authentication is not available on this device", "Error")
+      Toast.error(t("settings.biometricNotAvailable"), "Error")
       return
     }
     if (enabled) {
@@ -106,12 +106,26 @@ export default function SecuritySettings() {
     }
   }
 
+  const biometryIcon = biometricCapabilities?.biometryType === "face"
+    ? "face"
+    : biometricCapabilities?.biometryType === "iris"
+    ? "remove-red-eye"
+    : "fingerprint"
+
   return (
     <>
-      <ScrollView style={[styles.scroll, { backgroundColor: colors.background.primary }]} contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}>
+      <ScrollView
+        style={[styles.scroll, { backgroundColor: colors.background.primary }]}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
+      >
         <PageHeader title={t("settings.security")} textPosition="center" textAlign="left" />
 
         <View style={styles.content}>
+
+          {/* ── Section 1 : Protection ── */}
+          <Text style={[styles.sectionTitle, { color: colors.muted.foreground }]}>
+            {t("settings.sectionProtection")}
+          </Text>
           <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
             {/* App protection toggle */}
             <View style={styles.switchRow}>
@@ -120,12 +134,17 @@ export default function SecuritySettings() {
                   <Feather name="shield" size={18} color={colors.primary.foreground} />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ color: colors.foreground.primary }}>{t("settings.requireAuth")}</Text>
+                  <Text style={[styles.rowLabel, { color: colors.foreground.primary }]}>{t("settings.requireAuth")}</Text>
                   <Text style={[styles.desc, { color: colors.muted.foreground }]}>{t("settings.requireAuthDesc")}</Text>
                 </View>
               </View>
               <View style={{ borderRadius: 999, borderWidth: 1.5, borderColor: requireAuth ? colors.primary.default : colors.border }}>
-                <Switch value={requireAuth} onValueChange={handleRequireAuthToggle} trackColor={{ false: colors.muted.default, true: colors.primary.default }} thumbColor={colors.card.background} />
+                <Switch
+                  value={requireAuth}
+                  onValueChange={handleRequireAuthToggle}
+                  trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                  thumbColor={colors.card.background}
+                />
               </View>
             </View>
 
@@ -138,31 +157,44 @@ export default function SecuritySettings() {
 
             {/* Biometric */}
             {biometricCapabilities?.isAvailable && (
-              <View style={[styles.switchRow, { borderTopWidth: 1, borderTopColor: colors.border, opacity: dimmed ? 0.4 : 1 }]} pointerEvents={dimmed ? "none" : "auto"}>
+              <View
+                style={[styles.switchRow, { borderTopWidth: 1, borderTopColor: colors.border, opacity: dimmed ? 0.4 : 1 }]}
+                pointerEvents={dimmed ? "none" : "auto"}
+              >
                 <View style={styles.switchLeft}>
                   <View style={[styles.iconBox, { backgroundColor: colors.primary.default }]}>
-                    <MaterialIcons
-                      name={biometricCapabilities.biometryType === "face" ? "face" : biometricCapabilities.biometryType === "iris" ? "remove-red-eye" : "fingerprint"}
-                      size={18}
-                      color={colors.primary.foreground}
-                    />
+                    <MaterialIcons name={biometryIcon} size={18} color={colors.primary.foreground} />
                   </View>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ color: colors.foreground.primary }}>{getBiometricDisplayName(biometricCapabilities.biometryType)}</Text>
+                    <Text style={[styles.rowLabel, { color: colors.foreground.primary }]}>
+                      {getBiometricDisplayName(biometricCapabilities.biometryType)}
+                    </Text>
                     <Text style={[styles.desc, { color: colors.muted.foreground }]}>
-                      {t("settings.useBiometricToUnlock") || `Use ${getBiometricDisplayName(biometricCapabilities.biometryType).toLowerCase()} to unlock`}
+                      {t("settings.useBiometricToUnlock")}
                     </Text>
                   </View>
                 </View>
                 <View style={{ borderRadius: 999, borderWidth: 1.5, borderColor: user?.biometric_enabled ? colors.primary.default : colors.border }}>
-                  <Switch value={user?.biometric_enabled || false} onValueChange={handleBiometricToggle} trackColor={{ false: colors.muted.default, true: colors.primary.default }} thumbColor={colors.card.background} />
+                  <Switch
+                    value={user?.biometric_enabled || false}
+                    onValueChange={handleBiometricToggle}
+                    trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                    thumbColor={colors.card.background}
+                  />
                 </View>
               </View>
             )}
+          </View>
 
+          {/* ── Section 2 : Verrouillage automatique ── */}
+          <Text style={[styles.sectionTitle, { color: colors.muted.foreground, marginTop: 24 }]}>
+            {t("settings.sectionAutoLock")}
+          </Text>
+          <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border, opacity: dimmed ? 0.4 : 1 }]} pointerEvents={dimmed ? "none" : "auto"}>
             {/* Inactivity timeout */}
-            <View style={[styles.section, { opacity: dimmed ? 0.4 : 1 }]} pointerEvents={dimmed ? "none" : "auto"}>
-              <Text style={[styles.sectionLabel, { color: colors.foreground.primary }]}>{t("settings.autoLogout")}</Text>
+            <View style={styles.sectionBlock}>
+              <Text style={[styles.rowLabel, { color: colors.foreground.primary }]}>{t("settings.autoLock")}</Text>
+              <Text style={[styles.desc, { color: colors.muted.foreground, marginBottom: 12 }]}>{t("settings.autoLockDesc")}</Text>
               <SelectionButtons
                 options={[
                   { value: 1, label: t("settings.oneMin") },
@@ -178,8 +210,9 @@ export default function SecuritySettings() {
             </View>
 
             {/* Background lock delay */}
-            <View style={[styles.section, { borderTopWidth: 1, borderTopColor: colors.border, opacity: dimmed ? 0.4 : 1 }]} pointerEvents={dimmed ? "none" : "auto"}>
-              <Text style={[styles.sectionLabel, { color: colors.foreground.primary }]}>{t("settings.backgroundLockDelay")}</Text>
+            <View style={[styles.sectionBlock, { borderTopWidth: 1, borderTopColor: colors.border }]}>
+              <Text style={[styles.rowLabel, { color: colors.foreground.primary }]}>{t("settings.backgroundLockDelay")}</Text>
+              <Text style={[styles.desc, { color: colors.muted.foreground, marginBottom: 12 }]}>{t("settings.backgroundLockDelayDesc")}</Text>
               <SelectionButtons
                 options={[
                   { value: 0, label: t("settings.lockImmediately") },
@@ -195,15 +228,20 @@ export default function SecuritySettings() {
                 }}
               />
             </View>
+          </View>
 
-            {/* Shuffle PIN keypad */}
-            <View style={[styles.switchRow, { borderTopWidth: 1, borderTopColor: colors.border, opacity: dimmed ? 0.4 : 1 }]} pointerEvents={dimmed ? "none" : "auto"}>
+          {/* ── Section 3 : Clavier PIN ── */}
+          <Text style={[styles.sectionTitle, { color: colors.muted.foreground, marginTop: 24 }]}>
+            {t("settings.sectionPinKeypad")}
+          </Text>
+          <View style={[styles.card, { backgroundColor: colors.card.background, borderColor: colors.border, opacity: dimmed ? 0.4 : 1 }]} pointerEvents={dimmed ? "none" : "auto"}>
+            <View style={styles.switchRow}>
               <View style={styles.switchLeft}>
                 <View style={[styles.iconBox, { backgroundColor: colors.primary.default }]}>
                   <Feather name="shuffle" size={18} color={colors.primary.foreground} />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ color: colors.foreground.primary }}>{t("settings.shufflePin")}</Text>
+                  <Text style={[styles.rowLabel, { color: colors.foreground.primary }]}>{t("settings.shufflePin")}</Text>
                   <Text style={[styles.desc, { color: colors.muted.foreground }]}>{t("settings.shufflePinDesc")}</Text>
                 </View>
               </View>
@@ -217,10 +255,17 @@ export default function SecuritySettings() {
               </View>
             </View>
           </View>
+
         </View>
       </ScrollView>
 
-      <Modal visible={disableAuthModalVisible} animationType="slide" presentationStyle="formSheet" statusBarTranslucent onRequestClose={() => setDisableAuthModalVisible(false)}>
+      <Modal
+        visible={disableAuthModalVisible}
+        animationType="slide"
+        presentationStyle="formSheet"
+        statusBarTranslucent
+        onRequestClose={() => setDisableAuthModalVisible(false)}
+      >
         <View style={[styles.verifyModal, { backgroundColor: colors.background.primary }]}>
           <Pressable style={styles.verifyModalClose} onPress={() => setDisableAuthModalVisible(false)}>
             <Feather name="x" size={24} color={colors.foreground.primary} />
@@ -241,15 +286,16 @@ export default function SecuritySettings() {
 
 const styles = StyleSheet.create({
   scroll: { flex: 1 },
-  content: { paddingHorizontal: 24, paddingTop: 24 },
-  card: { borderRadius: 12, borderWidth: 1, padding: 16, marginBottom: 24 },
-  switchRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 12 },
+  content: { paddingHorizontal: 24, paddingTop: 16 },
+  sectionTitle: { fontSize: 11, fontWeight: "600", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 8, marginLeft: 4 },
+  card: { borderRadius: 12, borderWidth: 1, paddingHorizontal: 16, marginBottom: 4 },
+  switchRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 14 },
   switchLeft: { flexDirection: "row", alignItems: "center", flex: 1, gap: 12 },
   iconBox: { padding: 8, borderRadius: 999 },
-  section: { paddingVertical: 12 },
-  sectionLabel: { fontWeight: "500", marginBottom: 10 },
-  desc: { fontSize: 13, marginTop: 2 },
-  hint: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8, borderWidth: 1, marginVertical: 8 },
+  rowLabel: { fontWeight: "500", fontSize: 14 },
+  sectionBlock: { paddingVertical: 14 },
+  desc: { fontSize: 12, marginTop: 2 },
+  hint: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8, borderWidth: 1, marginBottom: 8 },
   hintText: { fontSize: 12, flex: 1 },
   verifyModal: { flex: 1, justifyContent: "center" },
   verifyModalClose: { position: "absolute", top: 56, right: 24, zIndex: 10 },
