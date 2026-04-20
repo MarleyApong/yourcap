@@ -31,6 +31,8 @@ export default function AddDebt() {
     loan_date: new Date(),
     due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     debt_type: "OWING",
+    interest_type: "none" as "none" | "flat" | "monthly",
+    interest_rate: "",
   })
   const [loading, setLoading] = useState(false)
   const [savedContacts, setSavedContacts] = useState<SavedContact[]>([])
@@ -104,6 +106,8 @@ export default function AddDebt() {
         due_date: form.due_date.toISOString(),
         debt_type: form.debt_type as "OWING" | "OWED",
         status: "PENDING",
+        interest_type: form.interest_type,
+        interest_rate: form.interest_type !== "none" ? Number(form.interest_rate) || 0 : 0,
       })
       Toast.success(t("debt.add.success"))
       scheduleAllDebtReminders(user!.user_id)
@@ -315,6 +319,33 @@ export default function AddDebt() {
                 ]}
               />
             </Field>
+
+            <Field label={t("debt.interest.title")} colors={colors}>
+              <SelectInput
+                value={form.interest_type}
+                onChange={v => handleChange("interest_type", v)}
+                options={[
+                  { label: t("debt.interest.none"), value: "none" },
+                  { label: t("debt.interest.flat"), value: "flat" },
+                  { label: t("debt.interest.monthly"), value: "monthly" },
+                ]}
+              />
+            </Field>
+
+            {form.interest_type !== "none" && (
+              <Field label={t("debt.interest.rate")} colors={colors}>
+                <InputRow icon="percent" colors={colors}>
+                  <TextInput
+                    style={[styles.inputText, { color: colors.foreground.primary }]}
+                    placeholder="0"
+                    placeholderTextColor={colors.muted.foreground}
+                    value={form.interest_rate}
+                    onChangeText={v => handleChange("interest_rate", v)}
+                    keyboardType="numeric"
+                  />
+                </InputRow>
+              </Field>
+            )}
           </>
         )}
 

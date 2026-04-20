@@ -39,6 +39,8 @@ export default function DebtDetails() {
     amount: "", currency: "XAF", description: "",
     loan_date: new Date(), due_date: new Date(),
     debt_type: "OWING" as "OWING" | "OWED",
+    interest_type: "none" as "none" | "flat" | "monthly",
+    interest_rate: "",
   })
   const [savedContacts, setSavedContacts] = useState<SavedContact[]>([])
   const [showContactPicker, setShowContactPicker] = useState(false)
@@ -82,6 +84,8 @@ export default function DebtDetails() {
           loan_date: new Date(data.loan_date),
           due_date: new Date(data.due_date),
           debt_type: data.debt_type,
+          interest_type: data.interest_type ?? "none",
+          interest_rate: data.interest_rate > 0 ? data.interest_rate.toString() : "",
         })
       } else {
         Toast.error(t("debt.details.notFound")); router.back()
@@ -166,6 +170,8 @@ export default function DebtDetails() {
         loan_date: editForm.loan_date.toISOString(),
         due_date: editForm.due_date.toISOString(),
         debt_type: editForm.debt_type,
+        interest_type: editForm.interest_type,
+        interest_rate: editForm.interest_type !== "none" ? Number(editForm.interest_rate) || 0 : 0,
       })
       Toast.success(t("debt.details.updateSuccess"))
       setEditModalVisible(false)
@@ -536,6 +542,22 @@ export default function DebtDetails() {
                 { label: "GBP — British Pound", value: "GBP" },
               ]} />
             </EField>
+
+            <EField label={t("debt.interest.title")} colors={colors}>
+              <SelectInput value={editForm.interest_type} onChange={v => handleEditChange("interest_type", v)} options={[
+                { label: t("debt.interest.none"), value: "none" },
+                { label: t("debt.interest.flat"), value: "flat" },
+                { label: t("debt.interest.monthly"), value: "monthly" },
+              ]} />
+            </EField>
+
+            {editForm.interest_type !== "none" && (
+              <EField label={t("debt.interest.rate")} colors={colors}>
+                <EInput icon="percent" colors={colors}>
+                  <TextInput style={[styles.inputText, { color: colors.foreground.primary }]} placeholder="0" placeholderTextColor={colors.muted.foreground} value={editForm.interest_rate} onChangeText={v => handleEditChange("interest_rate", v)} keyboardType="numeric" />
+                </EInput>
+              </EField>
+            )}
 
             <EField label={t("debt.add.financial.loanDate")} required colors={colors}>
               <DateInput value={editForm.loan_date} onChange={handleEditDateChange("loan_date")} maximumDate={new Date()} />

@@ -13,10 +13,11 @@ export const createDebt = async (debt: DebtInput): Promise<Debt> => {
     const db = getDb()
 
     await db.runAsync(
-      `INSERT INTO debts 
-      (debt_id, user_id, contact_name, contact_phone, contact_email, 
-       amount, currency, description, loan_date, due_date, status, debt_type, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO debts
+      (debt_id, user_id, contact_name, contact_phone, contact_email,
+       amount, currency, description, loan_date, due_date, status, debt_type,
+       interest_rate, interest_type, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         debt_id,
         debt.user_id,
@@ -30,6 +31,8 @@ export const createDebt = async (debt: DebtInput): Promise<Debt> => {
         debt.due_date,
         debt.status || "PENDING",
         debt.debt_type,
+        debt.interest_rate ?? 0,
+        debt.interest_type ?? "none",
         now,
         now,
       ],
