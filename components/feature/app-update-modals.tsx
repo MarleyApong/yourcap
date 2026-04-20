@@ -6,7 +6,7 @@ import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import Constants from "expo-constants"
 import { useEffect, useState } from "react"
-import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { sheetSectionStyles } from "./sheet-modal"
 
@@ -25,11 +25,9 @@ type Step = "changelog" | "terms" | null
 export function AppUpdateModals() {
   const { colors } = useTheme()
   const { t } = useTranslation()
-  const { user, deleteAccount } = useAuthStore()
+  const { user } = useAuthStore()
   const insets = useSafeAreaInsets()
   const [step, setStep] = useState<Step>(null)
-  const [deleteLoading, setDeleteLoading] = useState(false)
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [pendingSteps, setPendingSteps] = useState<Step[]>([])
 
   const appVersion = Constants.expoConfig?.version ?? "0.0.0"
@@ -76,14 +74,6 @@ export function AppUpdateModals() {
   const handleTermsAccept = async () => {
     await setAcceptedTermsVersion(TERMS_VERSION)
     advanceStep()
-  }
-
-  const handleDeleteAccount = async () => {
-    setDeleteLoading(true)
-    await deleteAccount()
-    setDeleteLoading(false)
-    setShowDeleteConfirm(false)
-    setStep(null)
   }
 
   const entries: string[] = step === "changelog" && CHANGELOG[appVersion]
@@ -138,7 +128,7 @@ export function AppUpdateModals() {
           )}
 
           {/* ── TERMS UPDATE STEP ── */}
-          {step === "terms" && !showDeleteConfirm && (
+          {step === "terms" && (
             <>
               <View style={[styles.header, { borderBottomColor: colors.border }]}>
                 <View style={{ flex: 1 }}>
@@ -168,54 +158,15 @@ export function AppUpdateModals() {
                 <View style={{ height: 8 }} />
               </ScrollView>
 
-              <View style={styles.termsActions}>
-                <Pressable
-                  onPress={handleTermsAccept}
-                  style={[styles.primaryBtn, { backgroundColor: colors.primary.default, flex: 1 }]}
-                >
-                  <Text style={[styles.primaryBtnText, { color: colors.primary.foreground }]}>
-                    {t("termsUpdate.accept")}
-                  </Text>
-                </Pressable>
-                <Pressable
-                  onPress={() => setShowDeleteConfirm(true)}
-                  style={[styles.secondaryBtn, { borderColor: colors.status.destructive, flex: 1 }]}
-                >
-                  <Text style={[styles.secondaryBtnText, { color: colors.status.destructive }]}>
-                    {t("termsUpdate.deleteAccount")}
-                  </Text>
-                </Pressable>
-              </View>
-            </>
-          )}
-
-          {/* ── DELETE CONFIRM ── */}
-          {step === "terms" && showDeleteConfirm && (
-            <View style={styles.confirmContent}>
-              <View style={[styles.confirmIcon, { backgroundColor: colors.status.destructive + "15" }]}>
-                <Feather name="alert-triangle" size={32} color={colors.status.destructive} />
-              </View>
-              <Text style={[styles.confirmTitle, { color: colors.foreground.primary }]}>
-                {t("termsUpdate.deleteConfirmTitle")}
-              </Text>
-              <Text style={[styles.confirmMessage, { color: colors.muted.foreground }]}>
-                {t("termsUpdate.deleteConfirmMessage")}
-              </Text>
               <Pressable
-                onPress={handleDeleteAccount}
-                disabled={deleteLoading}
-                style={[styles.primaryBtn, { backgroundColor: colors.status.destructive, opacity: deleteLoading ? 0.7 : 1 }]}
+                onPress={handleTermsAccept}
+                style={[styles.primaryBtn, { backgroundColor: colors.primary.default }]}
               >
-                {deleteLoading
-                  ? <ActivityIndicator color="#fff" size="small" />
-                  : <Text style={[styles.primaryBtnText, { color: "#fff" }]}>{t("termsUpdate.deleteConfirm")}</Text>
-                }
+                <Text style={[styles.primaryBtnText, { color: colors.primary.foreground }]}>
+                  {t("termsUpdate.accept")}
+                </Text>
               </Pressable>
-              <Pressable onPress={() => setShowDeleteConfirm(false)} style={styles.backBtn}>
-                <Feather name="arrow-left" size={15} color={colors.muted.foreground} />
-                <Text style={[styles.backBtnText, { color: colors.muted.foreground }]}>{t("common.back")}</Text>
-              </Pressable>
-            </View>
+            </>
           )}
 
         </View>
@@ -238,13 +189,4 @@ const styles = StyleSheet.create({
   entryText: { flex: 1, fontSize: 14, lineHeight: 20 },
   primaryBtn: { marginHorizontal: 20, marginTop: 12, padding: 14, borderRadius: 12, alignItems: "center" },
   primaryBtnText: { fontWeight: "700", fontSize: 15 },
-  termsActions: { flexDirection: "row", gap: 10, paddingHorizontal: 20, marginTop: 12 },
-  secondaryBtn: { padding: 14, borderRadius: 12, alignItems: "center", borderWidth: 1 },
-  secondaryBtnText: { fontWeight: "600", fontSize: 14 },
-  confirmContent: { padding: 24, alignItems: "center", gap: 12 },
-  confirmIcon: { width: 64, height: 64, borderRadius: 32, alignItems: "center", justifyContent: "center" },
-  confirmTitle: { fontSize: 18, fontWeight: "700", textAlign: "center" },
-  confirmMessage: { fontSize: 14, textAlign: "center", lineHeight: 20 },
-  backBtn: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4, padding: 8 },
-  backBtnText: { fontSize: 14 },
 })
