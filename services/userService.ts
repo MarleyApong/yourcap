@@ -1,6 +1,6 @@
 import { getDb } from "@/db/db"
+import { hashPin, verifyPin, isBcryptHash } from "@/lib/pin-hash"
 import { CreateUserInput, User } from "@/types/user"
-import bcrypt from "bcryptjs"
 import { v4 as uuidv4 } from "uuid"
 
 export const getUserByIdentifier = async (identifier: string): Promise<User | null> => {
@@ -49,7 +49,7 @@ export const createUser = async ({ full_name, email, phone_number, pin }: Create
 
   const user_id = uuidv4()
   const now = new Date().toISOString()
-  const hashedPin = await bcrypt.hash(pin, 10)
+  const hashedPin = await hashPin(pin)
 
   try {
     const db = getDb()
@@ -112,12 +112,21 @@ export const loginUser = async (
 
     // Vérification normale du PIN
     console.log("🔐 Verifying PIN...")
-    const isValid = await bcrypt.compare(pin, result.pin)
+    const isValid = await verifyPin(pin, result.pin)
     console.log("🔐 PIN valid:", isValid)
 
     if (!isValid) {
       console.log("❌ Invalid PIN")
       return null
+    }
+
+    // Migration transparente : si l'ancien hash bcrypt, re-hasher avec expo-crypto
+    if (isBcryptHash(result.pin)) {
+      console.log("🔄 Migrating PIN hash to expo-crypto...")
+      const newHash = await hashPin(pin)
+      const now = new Date().toISOString()
+      await db.runAsync(`UPDATE users SET pin = ?, updated_at = ? WHERE user_id = ?`, [newHash, now, result.user_id])
+      console.log("✅ PIN hash migrated")
     }
 
     console.log("✅ Login successful")
@@ -143,7 +152,7 @@ export const resetPin = async ({ identifier, newPin }: { identifier: string; new
       return false
     }
 
-    const hashedPin = await bcrypt.hash(newPin, 10)
+    const hashedPin = await hashPin(newPin)
     const now = new Date().toISOString()
 
     await db.runAsync(`UPDATE users SET pin = ?, updated_at = ? WHERE user_id = ?`, [hashedPin, now, (user as { user_id: string }).user_id])
@@ -179,7 +188,7 @@ export const verifyPin = async (user_id: string, pin: string): Promise<boolean> 
 
     if (!result) return false
 
-    return await bcrypt.compare(pin, result.pin)
+    return await verifyPin(pin, result.pin)
   } catch (error) {
     console.error("Verify PIN error:", error)
     return false
@@ -249,7 +258,7 @@ export const verifyUserPin = async (user_id: string, pin: string): Promise<boole
     
     if (!result) return false
     
-    return await bcrypt.compare(pin, result.pin)
+    return await verifyPin(pin, result.pin)
   } catch (error) {
     console.error("Verify user PIN error:", error)
     return false
@@ -267,7 +276,7 @@ export const updateUserPin = async (user_id: string, newPin: string): Promise<bo
     }
 
     // Hasher le nouveau PIN
-    const hashedPin = await bcrypt.hash(newPin, 10)
+    const hashedPin = await hashPin(newPin)
 
     // Mettre à jour le PIN
     await db.runAsync(
