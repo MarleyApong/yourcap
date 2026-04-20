@@ -171,7 +171,7 @@ export default function DebtDetails() {
   if (loading || !debt) {
     return (
       <View style={[styles.root, { backgroundColor: colors.primary.default, flex: 1, alignItems: "center", justifyContent: "center" }]}>
-        <Loader />
+        <Loader color={colors.primary.foreground} />
       </View>
     )
   }
@@ -249,14 +249,14 @@ export default function DebtDetails() {
         <View style={styles.actions}>
           {debt.status !== "PAID" && (
             <Pressable onPress={() => handleStatusChange("PAID")} style={[styles.actionBtn, { backgroundColor: colors.status.success }]}>
-              <Feather name="check-circle" size={18} color="#fff" />
-              <Text style={styles.actionBtnText}>{t("debt.details.markAsPaid")}</Text>
+              <Feather name="check-circle" size={18} color={colors.status.successForeground} />
+              <Text style={[styles.actionBtnText, { color: colors.status.successForeground }]}>{t("debt.details.markAsPaid")}</Text>
             </Pressable>
           )}
           {debt.status === "PENDING" && (
-            <Pressable onPress={() => handleStatusChange("OVERDUE")} style={[styles.actionBtn, { backgroundColor: colors.status.warning }]}>
-              <Feather name="alert-triangle" size={18} color="#fff" />
-              <Text style={styles.actionBtnText}>{t("debt.details.markAsOverdue")}</Text>
+            <Pressable onPress={() => handleStatusChange("OVERDUE")} style={[styles.actionBtn, styles.actionBtnOutline, { borderColor: colors.status.warning }]}>
+              <Feather name="alert-triangle" size={18} color={colors.status.warning} />
+              <Text style={[styles.actionBtnText, { color: colors.status.warning }]}>{t("debt.details.markAsOverdue")}</Text>
             </Pressable>
           )}
           {debt.status === "OVERDUE" && (
@@ -272,8 +272,8 @@ export default function DebtDetails() {
             </Pressable>
           )}
           <Pressable onPress={handleDelete} style={[styles.actionBtn, { backgroundColor: colors.status.destructive }]}>
-            <Feather name="trash-2" size={18} color="#fff" />
-            <Text style={styles.actionBtnText}>{t("debt.details.deleteDebt")}</Text>
+            <Feather name="trash-2" size={18} color={colors.status.destructiveForeground} />
+            <Text style={[styles.actionBtnText, { color: colors.status.destructiveForeground }]}>{t("debt.details.deleteDebt")}</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -390,7 +390,7 @@ export default function DebtDetails() {
             </EField>
 
             <Pressable onPress={handleEditSubmit} disabled={editLoading} style={[styles.saveBtn, { backgroundColor: colors.primary.default, opacity: editLoading ? 0.7 : 1 }]}>
-              {editLoading ? <Loader /> : <Feather name="check" size={18} color="#fff" />}
+              {editLoading ? <Loader color={colors.primary.foreground} /> : <Feather name="check" size={18} color={colors.primary.foreground} />}
               <Text style={styles.saveBtnText}>{editLoading ? t("debt.details.saving") : t("debt.details.saveChanges")}</Text>
             </Pressable>
           </KeyboardAwareScrollView>

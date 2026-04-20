@@ -248,7 +248,7 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
           {loading && (
             <View style={styles.overlay}>
               <View style={[styles.loadingCard, { backgroundColor: colors.primary.default }]}>
-                <Loader />
+                <Loader color={colors.primary.foreground} />
                 <Text style={[styles.loadingText, { color: colors.primary.foreground }]}>
                   {step === 1
                     ? t("modals.changePin.verifying")

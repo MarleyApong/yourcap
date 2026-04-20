@@ -228,7 +228,7 @@ export default function AddDebt() {
                     onPress={() => handleChange("debt_type", opt)}
                     style={[styles.toggleOpt, { backgroundColor: form.debt_type === opt ? colors.primary.default : "transparent" }]}
                   >
-                    <Text style={{ color: form.debt_type === opt ? "#fff" : colors.foreground.primary, fontWeight: "600", fontSize: 13 }}>
+                    <Text style={{ color: form.debt_type === opt ? colors.primary.foreground : colors.foreground.primary, fontWeight: "600", fontSize: 13 }}>
                       {opt === "OWING" ? t("debt.add.debtType.owing") : t("debt.add.debtType.owed")}
                     </Text>
                   </Pressable>
@@ -353,7 +353,7 @@ export default function AddDebt() {
           disabled={loading}
           style={[styles.nextBtn, { backgroundColor: colors.primary.default, opacity: loading ? 0.7 : 1, marginTop: 8 }]}
         >
-          {loading ? <Loader /> : null}
+          {loading ? <Loader color={colors.primary.foreground} /> : null}
           <Text style={styles.nextBtnText}>
             {step === 3 ? t("debt.add.save") : t("common.continue")}
           </Text>

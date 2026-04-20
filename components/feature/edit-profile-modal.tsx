@@ -194,7 +194,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
               style={[styles.saveBtn, { backgroundColor: colors.primary.default, opacity: loading ? 0.7 : 1 }]}
             >
               {loading ? (
-                <Loader />
+                <Loader color={colors.primary.foreground} />
               ) : (
                 <>
                   <Feather name="check" size={18} color={colors.primary.foreground} />

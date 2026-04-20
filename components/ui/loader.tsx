@@ -9,5 +9,5 @@ interface LoaderProps {
 export const Loader = ({ size = "small", color }: LoaderProps) => {
   const { colors } = useTheme()
 
-  return <ActivityIndicator size={size} color={color ?? colors.primary.foreground} />
+  return <ActivityIndicator size={size} color={color ?? colors.primary.default} />
 }

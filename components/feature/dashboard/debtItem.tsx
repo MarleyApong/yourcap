@@ -26,27 +26,9 @@ export const DebtItem = ({ debt, currency, onPress, showBorder }: DebtItemProps)
     }
   }
 
-  const getStatusBadgeColor = (status: string) => {
-    switch (status) {
-      case "PAID":
-        return colors.badge.bg1
-      case "OVERDUE":
-        return colors.badge.bg5
-      default:
-        return colors.badge.bg3
-    }
-  }
+  const getStatusBadgeColor = (status: string) => getStatusColor(status) + "18"
 
-  const getStatusTextColor = (status: string) => {
-    switch (status) {
-      case "PAID":
-        return colors.badge.fg1
-      case "OVERDUE":
-        return colors.badge.fg5
-      default:
-        return colors.badge.fg3
-    }
-  }
+  const getStatusTextColor = (status: string) => getStatusColor(status)
 
   return (
     <Pressable
