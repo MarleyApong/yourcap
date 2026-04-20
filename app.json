@@ -22,7 +22,7 @@
         "backgroundColor": "#562d8f"
       },
       "package": "com.marleyapong.yourcap",
-      "versionCode": 2,
+      "versionCode": 3,
       "permissions": [
         "android.permission.USE_BIOMETRIC",
         "android.permission.USE_FINGERPRINT",

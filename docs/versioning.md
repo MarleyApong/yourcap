@@ -49,6 +49,52 @@ Ne pas toucher à `TERMS_VERSION` et ne pas ajouter d'entrée dans `CHANGELOG` p
 
 ## Règles importantes
 
-- Ne **jamais** ajouter une entrée `CHANGELOG` pour la version initiale (`1.3.0`)
+- Ne **jamais** ajouter une entrée `CHANGELOG` pour la version initiale
 - Ne bumper `TERMS_VERSION` **que** si le contenu des T&C change vraiment
 - La version dans `CHANGELOG` doit correspondre **exactement** à `version` dans `app.json`
+
+---
+
+## Déploiement Android (build local)
+
+### Prérequis
+- Java 17 installé (`java -version`)
+- Keystore placé dans `android/app/` avec `android/app/keystore.properties` rempli
+
+### Procédure complète
+
+```bash
+# 1. Bumper la version (met à jour app.json, package.json, versionCode)
+npm run release:prod
+
+# 2. Builder le AAB
+cd android
+./gradlew bundleRelease
+```
+
+Le fichier généré : `android/app/build/outputs/bundle/release/app-release.aab`
+
+### Uploader sur la Play Console
+1. Play Console → Ton app → Production → Créer une version
+2. Uploader le `.aab`
+3. Publier
+
+---
+
+## Récupérer le keystore depuis EAS (première fois)
+
+```bash
+eas credentials --platform android
+# → Android Keystore → Download existing keystore
+```
+
+Placer le `.jks` dans `android/app/` et remplir `android/app/keystore.properties` :
+
+```properties
+storeFile=nom-du-fichier.jks
+storePassword=MOT_DE_PASSE_STORE
+keyAlias=TON_ALIAS
+keyPassword=MOT_DE_PASSE_KEY
+```
+
+> Ces fichiers sont dans `.gitignore` — ne jamais les committer.
