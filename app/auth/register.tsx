@@ -191,7 +191,7 @@ export default function Register() {
           <View style={styles.overlay}>
             <View style={[styles.loadingCard, { backgroundColor: colors.primary.default }]}>
               <Loader color={colors.primary.foreground} />
-              <Text style={styles.loadingText}>{t("auth.register.creatingAccount")}</Text>
+              <Text style={[styles.loadingText, { color: colors.primary.foreground }]}>{t("auth.register.creatingAccount")}</Text>
             </View>
           </View>
         )}

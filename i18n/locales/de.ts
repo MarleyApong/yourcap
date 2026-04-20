@@ -523,8 +523,10 @@ export const de = {
       youAreOwed: "Dir wird geschuldet",
       totalPeople: "Personen insgesamt",
       totalAmount: "für einen Gesamtbetrag von",
-      owingFormat: "💰 {count} Person{plural} schuldet dir {amount} {currency}",
-      owedFormat: "Du schuldest {amount} {currency} an {count} Person{plural}",
+      owingFormatSingular: "💰 1 Person schuldet dir {amount} {currency}",
+      owingFormatPlural: "💰 {count} Personen schulden dir {amount} {currency}",
+      owedFormatSingular: "Du schuldest {amount} {currency} an 1 Person",
+      owedFormatPlural: "Du schuldest {amount} {currency} an {count} Personen",
     },
     reminder: {
       title: "Schuldenerinnerung",

@@ -574,8 +574,10 @@ export const en = {
       totalPeople: "people in total",
       totalAmount: "for a total amount of",
       // Dynamic formats
-      owingFormat: "💰 {count} person{plural} owe{pluralOwes} you {amount} {currency}",
-      owedFormat: "You owe {amount} {currency} to {count} person{plural}",
+      owingFormatSingular: "💰 1 person owes you {amount} {currency}",
+      owingFormatPlural: "💰 {count} people owe you {amount} {currency}",
+      owedFormatSingular: "You owe {amount} {currency} to 1 person",
+      owedFormatPlural: "You owe {amount} {currency} to {count} people",
     },
     reminder: {
       title: "Debt reminder",

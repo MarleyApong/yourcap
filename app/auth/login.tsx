@@ -177,7 +177,7 @@ export default function Login() {
           <View style={styles.overlay}>
             <View style={[styles.loadingCard, { backgroundColor: colors.primary.default }]}>
               <Loader color={colors.primary.foreground} />
-              <Text style={styles.loadingText}>{t("auth.login.verifyIdentity")}</Text>
+              <Text style={[styles.loadingText, { color: colors.primary.foreground }]}>{t("auth.login.verifyIdentity")}</Text>
             </View>
           </View>
         )}

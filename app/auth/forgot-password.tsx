@@ -175,7 +175,7 @@ export default function ForgotPassword() {
           <View style={styles.overlay}>
             <View style={[styles.loadingCard, { backgroundColor: colors.primary.default }]}>
               <Loader color={colors.primary.foreground} />
-              <Text style={styles.loadingText}>Resetting PIN...</Text>
+              <Text style={[styles.loadingText, { color: colors.primary.foreground }]}>Resetting PIN...</Text>
             </View>
           </View>
         )}

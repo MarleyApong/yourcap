@@ -33,24 +33,25 @@ export const generateLocalizedSummaryContent = async (
       const parts = []
       
       if (owingDebts.length > 0) {
-        const owingText = t('notifications.summary.owingFormat', {
+        const owingKey = owingDebts.length === 1
+          ? 'notifications.summary.owingFormatSingular'
+          : 'notifications.summary.owingFormatPlural'
+        parts.push(t(owingKey as any, {
           count: owingDebts.length,
-          plural: owingDebts.length > 1 ? 's' : '',
-          pluralOwes: owingDebts.length === 1 ? 's' : '',
           amount: totalOwing.toLocaleString(),
           currency: 'XAF'
-        })
-        parts.push(owingText)
+        }))
       }
-      
+
       if (owedDebts.length > 0) {
-        const owedText = t('notifications.summary.owedFormat', {
+        const owedKey = owedDebts.length === 1
+          ? 'notifications.summary.owedFormatSingular'
+          : 'notifications.summary.owedFormatPlural'
+        parts.push(t(owedKey as any, {
           count: owedDebts.length,
-          plural: owedDebts.length > 1 ? 's' : '',
           amount: totalOwed.toLocaleString(),
-          currency: 'XAF'  
-        })
-        parts.push(owedText)
+          currency: 'XAF'
+        }))
       }
       
       body = parts.join(" • ")

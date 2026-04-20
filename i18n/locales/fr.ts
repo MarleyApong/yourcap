@@ -574,8 +574,10 @@ export const fr = {
       totalPeople: "personnes au total",
       totalAmount: "pour un montant total de",
       // Formats dynamiques
-      owingFormat: "💰 {count} personne{plural} vous doi{pluralOwes} {amount} {currency}",
-      owedFormat: "⚠️ Vous devez {amount} {currency} à {count} personne{plural}",
+      owingFormatSingular: "💰 1 personne vous doit {amount} {currency}",
+      owingFormatPlural: "💰 {count} personnes vous doivent {amount} {currency}",
+      owedFormatSingular: "⚠️ Vous devez {amount} {currency} à 1 personne",
+      owedFormatPlural: "⚠️ Vous devez {amount} {currency} à {count} personnes",
     },
     reminder: {
       title: "Rappel de dette",
