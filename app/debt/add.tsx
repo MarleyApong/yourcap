@@ -153,14 +153,14 @@ export default function AddDebt() {
       {/* Hero */}
       <View style={[styles.hero, { paddingTop: insets.top + 8 }]}>
         <Pressable onPress={handleBack} style={styles.backBtn}>
-          <Feather name="chevron-left" size={24} color="#fff" />
+          <Feather name="chevron-left" size={24} color={colors.primary.foreground} />
         </Pressable>
-        <Text style={styles.heroTitle}>{STEPS[step - 1].title}</Text>
-        <Text style={styles.heroSubtitle}>{STEPS[step - 1].subtitle}</Text>
+        <Text style={[styles.heroTitle, { color: colors.primary.foreground }]}>{STEPS[step - 1].title}</Text>
+        <Text style={[styles.heroSubtitle, { color: colors.primary.foreground + "B3" }]}>{STEPS[step - 1].subtitle}</Text>
         <View style={styles.stepDots}>
           {[1, 2, 3].map(i => (
             <View key={i} style={[styles.stepDot, {
-              backgroundColor: step >= i ? "#fff" : "rgba(255,255,255,0.3)",
+              backgroundColor: step >= i ? colors.primary.foreground : colors.primary.foreground + "4D",
               width: step === i ? 24 : 8,
             }]} />
           ))}
@@ -354,10 +354,10 @@ export default function AddDebt() {
           style={[styles.nextBtn, { backgroundColor: colors.primary.default, opacity: loading ? 0.7 : 1, marginTop: 8 }]}
         >
           {loading ? <Loader color={colors.primary.foreground} /> : null}
-          <Text style={styles.nextBtnText}>
+          <Text style={[styles.nextBtnText, { color: colors.primary.foreground }]}>
             {step === 3 ? t("debt.add.save") : t("common.continue")}
           </Text>
-          {!loading && <Feather name={step === 3 ? "check" : "arrow-right"} size={18} color="#fff" />}
+          {!loading && <Feather name={step === 3 ? "check" : "arrow-right"} size={18} color={colors.primary.foreground} />}
         </Pressable>
       </KeyboardAwareScrollView>
 
@@ -460,8 +460,8 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   hero: { paddingHorizontal: 24, paddingBottom: 24 },
   backBtn: { width: 40, height: 40, justifyContent: "center", marginBottom: 12 },
-  heroTitle: { fontSize: 26, fontWeight: "700", color: "#fff" },
-  heroSubtitle: { fontSize: 13, color: "rgba(255,255,255,0.7)", marginTop: 4 },
+  heroTitle: { fontSize: 26, fontWeight: "700" },
+  heroSubtitle: { fontSize: 13, marginTop: 4 },
   stepDots: { flexDirection: "row", gap: 6, marginTop: 16 },
   stepDot: { height: 6, borderRadius: 999 },
   sheet: { flex: 1, borderTopLeftRadius: 24, borderTopRightRadius: 24 },
@@ -489,7 +489,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 14,
   },
-  nextBtnText: { color: "#fff", fontWeight: "600", fontSize: 16 },
+  nextBtnText: { fontWeight: "600", fontSize: 16 },
   contactsHint: { fontSize: 11, marginBottom: 10 },
   chipsRow: { gap: 10, paddingRight: 4 },
   chip: { alignItems: "center", gap: 5, width: 52 },

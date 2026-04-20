@@ -182,22 +182,22 @@ export default function DebtDetails() {
       <View style={[styles.hero, { paddingTop: insets.top + 8 }]}>
         <View style={styles.heroTopRow}>
           <Pressable onPress={() => router.back()} style={styles.backBtn}>
-            <Feather name="chevron-left" size={24} color="#fff" />
+            <Feather name="chevron-left" size={24} color={colors.primary.foreground} />
           </Pressable>
         </View>
 
-        <View style={styles.heroAvatar}>
-          <Text style={styles.heroAvatarText}>{initials}</Text>
+        <View style={[styles.heroAvatar, { backgroundColor: colors.primary.foreground + "40" }]}>
+          <Text style={[styles.heroAvatarText, { color: colors.primary.foreground }]}>{initials}</Text>
         </View>
-        <Text style={styles.heroName}>{debt.contact_name}</Text>
-        <Text style={styles.heroAmount}>{formatCurrency(debt.amount, debt.currency || "XAF")}</Text>
-        <Text style={[styles.heroType, { color: "rgba(255,255,255,0.8)" }]}>
+        <Text style={[styles.heroName, { color: colors.primary.foreground }]}>{debt.contact_name}</Text>
+        <Text style={[styles.heroAmount, { color: colors.primary.foreground }]}>{formatCurrency(debt.amount, debt.currency || "XAF")}</Text>
+        <Text style={[styles.heroType, { color: colors.primary.foreground + "CC" }]}>
           {debt.debt_type === "OWING" ? t("history.debtType.owesYou") : t("history.debtType.youOwe")}
         </Text>
 
         <View style={[styles.statusBadge, { backgroundColor: statusColor + "30", borderColor: statusColor + "60" }]}>
           <View style={[styles.statusDot, { backgroundColor: statusColor }]} />
-          <Text style={[styles.statusText, { color: "#fff" }]}>
+          <Text style={[styles.statusText, { color: colors.primary.foreground }]}>
             {debt.status === "PAID" ? t("debt.status.paid") : debt.status === "OVERDUE" ? t("debt.status.overdue") : t("debt.status.pending")}
           </Text>
         </View>
@@ -285,11 +285,11 @@ export default function DebtDetails() {
           <View style={[styles.modalHero, { paddingTop: insets.top + 8 }]}>
             <View style={styles.heroTopRow}>
               <Pressable onPress={() => setEditModalVisible(false)} style={styles.backBtn}>
-                <Feather name="x" size={22} color="#fff" />
+                <Feather name="x" size={22} color={colors.primary.foreground} />
               </Pressable>
             </View>
-            <Text style={styles.modalHeroTitle}>{t("debt.details.editTitle")}</Text>
-            <Text style={styles.modalHeroSub}>{debt.contact_name}</Text>
+            <Text style={[styles.modalHeroTitle, { color: colors.primary.foreground }]}>{t("debt.details.editTitle")}</Text>
+            <Text style={[styles.modalHeroSub, { color: colors.primary.foreground + "B3" }]}>{debt.contact_name}</Text>
           </View>
 
           {/* Modal form */}
@@ -473,10 +473,10 @@ const styles = StyleSheet.create({
   hero: { paddingHorizontal: 24, paddingBottom: 24, alignItems: "center" },
   heroTopRow: { width: "100%", marginBottom: 8 },
   backBtn: { width: 40, height: 40, justifyContent: "center" },
-  heroAvatar: { width: 64, height: 64, borderRadius: 32, backgroundColor: "rgba(255,255,255,0.25)", alignItems: "center", justifyContent: "center", marginBottom: 10, marginTop: 8 },
-  heroAvatarText: { fontSize: 22, fontWeight: "700", color: "#fff" },
-  heroName: { fontSize: 22, fontWeight: "700", color: "#fff", textAlign: "center" },
-  heroAmount: { fontSize: 28, fontWeight: "800", color: "#fff", marginTop: 2 },
+  heroAvatar: { width: 64, height: 64, borderRadius: 32, alignItems: "center", justifyContent: "center", marginBottom: 10, marginTop: 8 },
+  heroAvatarText: { fontSize: 22, fontWeight: "700" },
+  heroName: { fontSize: 22, fontWeight: "700", textAlign: "center" },
+  heroAmount: { fontSize: 28, fontWeight: "800", marginTop: 2 },
   heroType: { fontSize: 13, marginTop: 2, marginBottom: 10 },
   statusBadge: { flexDirection: "row", alignItems: "center", paddingHorizontal: 12, paddingVertical: 5, borderRadius: 999, borderWidth: 1 },
   statusDot: { width: 8, height: 8, borderRadius: 4, marginRight: 6 },
@@ -494,10 +494,10 @@ const styles = StyleSheet.create({
   actions: { gap: 10 },
   actionBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, paddingVertical: 13, borderRadius: 12 },
   actionBtnOutline: { backgroundColor: "transparent", borderWidth: 1 },
-  actionBtnText: { color: "#fff", fontWeight: "600", fontSize: 14 },
+  actionBtnText: { fontWeight: "600", fontSize: 14 },
   modalHero: { paddingHorizontal: 24, paddingBottom: 20 },
-  modalHeroTitle: { fontSize: 22, fontWeight: "700", color: "#fff", marginTop: 48 },
-  modalHeroSub: { fontSize: 13, color: "rgba(255,255,255,0.7)", marginTop: 2 },
+  modalHeroTitle: { fontSize: 22, fontWeight: "700", marginTop: 48 },
+  modalHeroSub: { fontSize: 13, marginTop: 2 },
   field: { marginBottom: 16 },
   fieldLabel: { fontSize: 12, fontWeight: "600", marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.4 },
   inputRow: { flexDirection: "row", gap: 10, borderWidth: 1, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10 },

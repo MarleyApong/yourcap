@@ -286,8 +286,8 @@ export default function Login() {
             disabled={loading}
             style={[styles.submitBtn, { backgroundColor: colors.primary.default, opacity: loading ? 0.7 : 1 }]}
           >
-            <Text style={styles.submitBtnText}>{t("common.continue")}</Text>
-            <Feather name="arrow-right" size={18} color="#ffffff" />
+            <Text style={[styles.submitBtnText, { color: colors.primary.foreground }]}>{t("common.continue")}</Text>
+            <Feather name="arrow-right" size={18} color={colors.primary.foreground} />
           </TouchableOpacity>
 
           <View style={[styles.signupRow, { paddingBottom: insets.bottom + 16 }]}>
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
     width: "100%",
     marginBottom: 16,
   },
-  submitBtnText: { textAlign: "center", color: "#ffffff", fontWeight: "600", fontSize: 16 },
+  submitBtnText: { textAlign: "center", fontWeight: "600", fontSize: 16 },
   signupRow: { flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 8 },
   signupLink: { fontWeight: "700", fontSize: 14 },
   quickAuthHeader: { paddingHorizontal: 32 },

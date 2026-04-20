@@ -252,8 +252,8 @@ export default function ForgotPassword() {
             disabled={loading}
             style={[styles.submitBtn, { backgroundColor: colors.primary.default, opacity: loading ? 0.7 : 1 }]}
           >
-            <Feather name="arrow-up-right" size={24} color="#ffffff" />
-            <Text style={styles.submitBtnText}>Continue</Text>
+            <Feather name="arrow-up-right" size={24} color={colors.primary.foreground} />
+            <Text style={[styles.submitBtnText, { color: colors.primary.foreground }]}>Continue</Text>
           </Pressable>
 
           <View style={styles.signinRow}>
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     width: "100%",
   },
-  submitBtnText: { textAlign: "center", color: "#ffffff", fontWeight: "600", fontSize: 16 },
+  submitBtnText: { textAlign: "center", fontWeight: "600", fontSize: 16 },
   signinRow: { flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 12, marginTop: 12 },
   signinLink: { fontWeight: "700", textDecorationLine: "underline" },
 })

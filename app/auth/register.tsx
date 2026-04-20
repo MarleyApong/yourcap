@@ -296,7 +296,7 @@ export default function Register() {
                 borderColor: termsAccepted ? colors.primary.default : colors.muted.foreground,
               },
             ]}>
-              {termsAccepted && <Feather name="check" size={12} color="#ffffff" />}
+              {termsAccepted && <Feather name="check" size={12} color={colors.primary.foreground} />}
             </View>
             <Text style={[styles.termsText, { color: colors.foreground.primary }]}>{t("terms.accept")} </Text>
             <Pressable onPress={() => setTermsModalVisible(true)}>
@@ -315,10 +315,10 @@ export default function Register() {
               },
             ]}
           >
-            <Text style={[styles.submitBtnText, { color: termsAccepted ? "#ffffff" : colors.muted.foreground }]}>
+            <Text style={[styles.submitBtnText, { color: termsAccepted ? colors.primary.foreground : colors.muted.foreground }]}>
               {t("common.continue")}
             </Text>
-            <Feather name="arrow-right" size={18} color={termsAccepted ? "#ffffff" : colors.muted.foreground} />
+            <Feather name="arrow-right" size={18} color={termsAccepted ? colors.primary.foreground : colors.muted.foreground} />
           </Pressable>
 
           <View style={styles.signinRow}>

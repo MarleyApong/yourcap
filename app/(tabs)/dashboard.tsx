@@ -120,25 +120,25 @@ export default function Dashboard() {
           {/* Balance card */}
           <Animated.View entering={FadeInDown.duration(350).delay(50)}>
             <View style={[styles.balanceCard, { backgroundColor: colors.primary.default }]}>
-              <Text style={styles.balanceLabel}>{t("dashboard.balance.net")}</Text>
-              <Text style={styles.balanceAmount}>
+              <Text style={[styles.balanceLabel, { color: colors.primary.foreground + "A6" }]}>{t("dashboard.balance.net")}</Text>
+              <Text style={[styles.balanceAmount, { color: colors.primary.foreground }]}>
                 {summary.balance >= 0 ? "+" : ""}{formatCurrency(summary.balance, "XAF")}
               </Text>
-              <View style={[styles.balanceDividerH, { backgroundColor: "rgba(255,255,255,0.15)" }]} />
+              <View style={[styles.balanceDividerH, { backgroundColor: colors.primary.foreground + "26" }]} />
               <View style={styles.balanceRow}>
                 <View style={styles.balanceSub}>
-                  <Feather name="arrow-down-circle" size={14} color="rgba(255,255,255,0.6)" />
+                  <Feather name="arrow-down-circle" size={14} color={colors.primary.foreground + "99"} />
                   <View>
-                    <Text style={styles.balanceSubLabel}>{t("dashboard.balance.toReceive")}</Text>
-                    <Text style={styles.balanceSubAmount}>{formatCurrency(summary.owing, "XAF")}</Text>
+                    <Text style={[styles.balanceSubLabel, { color: colors.primary.foreground + "99" }]}>{t("dashboard.balance.toReceive")}</Text>
+                    <Text style={[styles.balanceSubAmount, { color: colors.primary.foreground }]}>{formatCurrency(summary.owing, "XAF")}</Text>
                   </View>
                 </View>
-                <View style={[styles.balanceDividerV, { backgroundColor: "rgba(255,255,255,0.2)" }]} />
+                <View style={[styles.balanceDividerV, { backgroundColor: colors.primary.foreground + "33" }]} />
                 <View style={styles.balanceSub}>
-                  <Feather name="arrow-up-circle" size={14} color="rgba(255,255,255,0.6)" />
+                  <Feather name="arrow-up-circle" size={14} color={colors.primary.foreground + "99"} />
                   <View>
-                    <Text style={styles.balanceSubLabel}>{t("dashboard.balance.toPay")}</Text>
-                    <Text style={styles.balanceSubAmount}>{formatCurrency(summary.owed, "XAF")}</Text>
+                    <Text style={[styles.balanceSubLabel, { color: colors.primary.foreground + "99" }]}>{t("dashboard.balance.toPay")}</Text>
+                    <Text style={[styles.balanceSubAmount, { color: colors.primary.foreground }]}>{formatCurrency(summary.owed, "XAF")}</Text>
                   </View>
                 </View>
               </View>
@@ -159,7 +159,7 @@ export default function Dashboard() {
                 </Text>
                 {attentionItems.length > 0 && (
                   <View style={[styles.countBadge, { backgroundColor: colors.status.destructive }]}>
-                    <Text style={styles.countBadgeText}>{attentionItems.length}</Text>
+                    <Text style={[styles.countBadgeText, { color: colors.status.destructiveForeground }]}>{attentionItems.length}</Text>
                   </View>
                 )}
               </View>
@@ -275,20 +275,20 @@ const styles = StyleSheet.create({
   dateText: { fontSize: 13, marginTop: 3, textTransform: "capitalize" },
   content: { paddingHorizontal: 20 },
   balanceCard: { borderRadius: 20, padding: 22, marginBottom: 24 },
-  balanceLabel: { fontSize: 11, color: "rgba(255,255,255,0.65)", fontWeight: "600", textTransform: "uppercase", letterSpacing: 0.6 },
-  balanceAmount: { fontSize: 38, fontWeight: "800", color: "#fff", marginTop: 4, marginBottom: 18 },
+  balanceLabel: { fontSize: 11, fontWeight: "600", textTransform: "uppercase", letterSpacing: 0.6 },
+  balanceAmount: { fontSize: 38, fontWeight: "800", marginTop: 4, marginBottom: 18 },
   balanceDividerH: { height: 1, marginBottom: 16 },
   balanceRow: { flexDirection: "row", alignItems: "center" },
   balanceSub: { flex: 1, flexDirection: "row", alignItems: "center", gap: 8 },
-  balanceSubLabel: { fontSize: 11, color: "rgba(255,255,255,0.6)", marginBottom: 2 },
-  balanceSubAmount: { fontSize: 13, color: "#fff", fontWeight: "700" },
+  balanceSubLabel: { fontSize: 11, marginBottom: 2 },
+  balanceSubAmount: { fontSize: 13, fontWeight: "700" },
   balanceDividerV: { width: 1, height: 30, marginHorizontal: 16 },
   section: { marginBottom: 24 },
   sectionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
   sectionTitleRow: { flexDirection: "row", alignItems: "center", gap: 6 },
   sectionTitle: { fontSize: 17, fontWeight: "700" },
   countBadge: { paddingHorizontal: 7, paddingVertical: 2, borderRadius: 999 },
-  countBadgeText: { fontSize: 11, fontWeight: "700", color: "#fff" },
+  countBadgeText: { fontSize: 11, fontWeight: "700" },
   seeAll: { fontSize: 13, fontWeight: "600" },
   card: { borderRadius: 14, borderWidth: 1, overflow: "hidden" },
   allClear: { flexDirection: "row", alignItems: "flex-start", gap: 10, padding: 14, borderRadius: 12, borderWidth: 1 },
