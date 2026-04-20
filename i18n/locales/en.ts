@@ -86,6 +86,16 @@ export const en = {
       pleaseEnterEmailOrPhone: "Please enter your email or phone number",
     },
     forgotPassword: {
+      title: "Forgot PIN",
+      subtitle: "Reset your PIN securely",
+      fullName: "Full name",
+      identifier: "you@example.com or 6xx xxx xxx",
+      newPin: "New PIN",
+      newPinSub: "Create a new 6-digit PIN",
+      confirmPin: "Confirm PIN",
+      confirmPinSub: "Enter your new 6-digit PIN again to confirm",
+      resetting: "Resetting PIN...",
+      rememberPin: "Remember your PIN?",
       identifierRequired: "Full name and email/phone are required",
       resetFailed: "Failed to reset PIN. Try again.",
     },
@@ -391,6 +401,9 @@ export const en = {
     dataSecure: "Your data is stored securely and never shared with third parties without your consent, except as required by law.",
     
     // Help modal texts
+    rateApp: "Rate the app",
+    shareApp: "Share the app",
+    reportBug: "Report a bug",
     helpIntro: "Need help with YourCap? Here are some resources:",
     faq: "Frequently Asked Questions:",
     howToAddDebt: "• How to add a new debt?",
@@ -542,6 +555,7 @@ export const en = {
       updating: "Updating...",
       processing: "Processing...",
       success: "PIN changed successfully!",
+      currentPinVerified: "Current PIN verified",
       validation: {
         incorrectPin: "Current PIN is incorrect",
         pinMustBeDifferent: "New PIN must be different from current PIN",

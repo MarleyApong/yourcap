@@ -132,8 +132,8 @@ export default function ForgotPassword() {
 
         <PinInput
           key="new-pin"
-          title="New PIN"
-          subtitle="Create a new 6-digit PIN"
+          title={t("auth.forgotPassword.newPin")}
+          subtitle={t("auth.forgotPassword.newPinSub")}
           onComplete={handlePinComplete}
           showBiometric={false}
           length={6}
@@ -164,8 +164,8 @@ export default function ForgotPassword() {
 
         <PinInput
           key={`confirm-pin-${confirmKey}`}
-          title="Confirm PIN"
-          subtitle="Enter your new 6-digit PIN again to confirm"
+          title={t("auth.forgotPassword.confirmPin")}
+          subtitle={t("auth.forgotPassword.confirmPinSub")}
           onComplete={handleConfirmPinComplete}
           showBiometric={false}
           length={6}
@@ -175,7 +175,7 @@ export default function ForgotPassword() {
           <View style={styles.overlay}>
             <View style={[styles.loadingCard, { backgroundColor: colors.primary.default }]}>
               <Loader color={colors.primary.foreground} />
-              <Text style={[styles.loadingText, { color: colors.primary.foreground }]}>Resetting PIN...</Text>
+              <Text style={[styles.loadingText, { color: colors.primary.foreground }]}>{t("auth.forgotPassword.resetting")}</Text>
             </View>
           </View>
         )}
@@ -197,8 +197,8 @@ export default function ForgotPassword() {
 
       <View style={styles.screen}>
         <View style={styles.formContainer}>
-          <Text style={[styles.title, { color: colors.primary.default }]}>Forgot PIN</Text>
-          <Text style={[styles.subtitle, { color: colors.muted.foreground }]}>Reset your PIN securely</Text>
+          <Text style={[styles.title, { color: colors.primary.default }]}>{t("auth.forgotPassword.title")}</Text>
+          <Text style={[styles.subtitle, { color: colors.muted.foreground }]}>{t("auth.forgotPassword.subtitle")}</Text>
 
           <View style={styles.stepIndicator}>
             {[1, 2, 3].map((i) => (
@@ -208,7 +208,7 @@ export default function ForgotPassword() {
                   styles.stepDot,
                   step >= i
                     ? { backgroundColor: colors.primary.default, width: 32 }
-                    : { backgroundColor: "#d1d5db", width: 16 },
+                    : { backgroundColor: colors.border, width: 16 },
                 ]}
               />
             ))}
@@ -219,7 +219,7 @@ export default function ForgotPassword() {
               <Feather name="user" size={22} color={colors.primary.default} />
               <RNTextInput
                 style={[styles.inputText, { color: colors.foreground.primary }]}
-                placeholder="Full name"
+                placeholder={t("auth.forgotPassword.fullName")}
                 placeholderTextColor={colors.muted.foreground}
                 value={formData.full_name}
                 onChangeText={(text) => handleChange("full_name", text)}
@@ -233,7 +233,7 @@ export default function ForgotPassword() {
               <RNTextInput
                 ref={identifierRef}
                 style={[styles.inputText, { color: colors.foreground.primary }]}
-                placeholder="you@example.com or 6xx xxx xxx"
+                placeholder={t("auth.forgotPassword.identifier")}
                 placeholderTextColor={colors.muted.foreground}
                 value={formData.identifier}
                 onChangeText={(text) => handleChange("identifier", text)}
@@ -253,13 +253,13 @@ export default function ForgotPassword() {
             style={[styles.submitBtn, { backgroundColor: colors.primary.default, opacity: loading ? 0.7 : 1 }]}
           >
             <Feather name="arrow-up-right" size={24} color={colors.primary.foreground} />
-            <Text style={[styles.submitBtnText, { color: colors.primary.foreground }]}>Continue</Text>
+            <Text style={[styles.submitBtnText, { color: colors.primary.foreground }]}>{t("common.continue")}</Text>
           </Pressable>
 
           <View style={styles.signinRow}>
-            <Text style={{ color: colors.foreground.primary }}>Remember your PIN?</Text>
+            <Text style={{ color: colors.foreground.primary }}>{t("auth.forgotPassword.rememberPin")}</Text>
             <Link href="/auth/login">
-              <Text style={[styles.signinLink, { color: colors.primary.default }]}>Sign In</Text>
+              <Text style={[styles.signinLink, { color: colors.primary.default }]}>{t("auth.register.signIn")}</Text>
             </Link>
           </View>
         </View>

@@ -60,7 +60,7 @@ export const ChangePinModal: React.FC<ChangePinModalProps> = ({ visible, onClose
       if (isValid) {
         setCurrentPin(pin)
         setStep(2)
-        Toast.success("PIN actuel vérifié")
+        Toast.success(t("modals.changePin.currentPinVerified"))
       } else {
         Toast.error(t("modals.changePin.validation.invalidCurrentPin"))
         setResetKey((prev) => prev + 1)

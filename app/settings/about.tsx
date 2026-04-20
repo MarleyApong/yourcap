@@ -6,7 +6,7 @@ import { Toast } from "@/lib/toast-global"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
 import { useState } from "react"
-import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
+import { Linking, Platform, Pressable, ScrollView, Share, StyleSheet, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const TERMS_ICONS = {
@@ -28,6 +28,21 @@ export default function AboutSettings() {
   const [termsVisible, setTermsVisible] = useState(false)
   const [privacyVisible, setPrivacyVisible] = useState(false)
   const [helpVisible, setHelpVisible] = useState(false)
+
+  const STORE_URL = Platform.OS === "ios"
+    ? "https://apps.apple.com/app/id0000000000"
+    : "https://play.google.com/store/apps/details?id=com.mlya.yourcap"
+
+  const handleRateApp = () => Linking.openURL(STORE_URL).catch(() => Toast.error(t("common.error")))
+
+  const handleShareApp = () => Share.share({
+    message: `${t("settings.shareApp")} — ${STORE_URL}`,
+    url: STORE_URL,
+  }).catch(() => {})
+
+  const handleReportBug = () => Linking.openURL(
+    `mailto:marlexapong90@gmail.com?subject=${encodeURIComponent("YourCap Bug Report")}&body=${encodeURIComponent("Describe the bug:\n\n")}`
+  ).catch(() => Toast.error(t("common.error")))
 
   const Row = ({ icon, title, onPress }: { icon: string; title: string; onPress: () => void }) => (
     <Pressable onPress={onPress} style={[styles.row, { borderTopColor: colors.border }]}>
@@ -139,10 +154,34 @@ export default function AboutSettings() {
             <Text style={[sheetSectionStyles.sectionContent, { color: colors.primary.default, textDecorationLine: "underline" }]}>{t("settings.developerPortfolio")}</Text>
           </Pressable>
         </View>
+
+        <View style={[helpActionsStyles.container, { borderTopColor: colors.border }]}>
+          <Pressable onPress={handleRateApp} style={[helpActionsStyles.action, { borderColor: colors.border }]}>
+            <Feather name="star" size={16} color={colors.primary.default} />
+            <Text style={[helpActionsStyles.actionText, { color: colors.foreground.primary }]}>{t("settings.rateApp")}</Text>
+            <Feather name="chevron-right" size={14} color={colors.muted.foreground} />
+          </Pressable>
+          <Pressable onPress={handleShareApp} style={[helpActionsStyles.action, { borderColor: colors.border }]}>
+            <Feather name="share-2" size={16} color={colors.primary.default} />
+            <Text style={[helpActionsStyles.actionText, { color: colors.foreground.primary }]}>{t("settings.shareApp")}</Text>
+            <Feather name="chevron-right" size={14} color={colors.muted.foreground} />
+          </Pressable>
+          <Pressable onPress={handleReportBug} style={[helpActionsStyles.action, { borderColor: colors.border }]}>
+            <Feather name="alert-circle" size={16} color={colors.status.destructive} />
+            <Text style={[helpActionsStyles.actionText, { color: colors.foreground.primary }]}>{t("settings.reportBug")}</Text>
+            <Feather name="chevron-right" size={14} color={colors.muted.foreground} />
+          </Pressable>
+        </View>
       </SheetModal>
     </>
   )
 }
+
+const helpActionsStyles = StyleSheet.create({
+  container: { borderTopWidth: StyleSheet.hairlineWidth, paddingTop: 12, gap: 2 },
+  action: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 11, borderBottomWidth: StyleSheet.hairlineWidth },
+  actionText: { flex: 1, fontSize: 14 },
+})
 
 const styles = StyleSheet.create({
   scroll: { flex: 1 },

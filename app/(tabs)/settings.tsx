@@ -64,7 +64,7 @@ export default function Settings() {
   if (loading) {
     return (
       <View style={[styles.loadingContainer, { backgroundColor: colors.background.primary }]}>
-        <LoadingState message="Loading settings..." />
+        <LoadingState message={t("common.loading")} />
       </View>
     )
   }
