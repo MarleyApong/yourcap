@@ -30,6 +30,7 @@ export const getSettings = async (user_id: string): Promise<Settings | null> => 
         email_notifications: Boolean(settings.email_notifications),
         sms_notifications: Boolean(settings.sms_notifications),
         summary_notifications: settings.summary_notifications !== undefined ? Boolean(settings.summary_notifications) : true,
+        shuffle_pin_keypad: Boolean(settings.shuffle_pin_keypad),
         notification_times: notificationTimes,
         summary_frequency: (settings.summary_frequency as 'daily' | 'weekly' | 'none') || 'daily',
       }

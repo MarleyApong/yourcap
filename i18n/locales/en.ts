@@ -95,6 +95,7 @@ export const en = {
       confirmPin: "Confirm PIN",
       confirmPinSub: "Enter your new 6-digit PIN again to confirm",
       resetting: "Resetting PIN...",
+      link: "Forgot PIN?",
       rememberPin: "Remember your PIN?",
       identifierRequired: "Full name and email/phone are required",
       resetFailed: "Failed to reset PIN. Try again.",
@@ -395,6 +396,8 @@ export const en = {
     lockThirtySeconds: "30 seconds",
     lockOneMinute: "1 minute",
     backgroundLockDelayUpdated: "Lock delay updated",
+    shufflePin: "Shuffle PIN keypad",
+    shufflePinDesc: "Randomize digit order on the PIN keypad",
 
     // Modal texts
     termsOfService: "Terms of Service",

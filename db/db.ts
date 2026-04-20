@@ -174,6 +174,10 @@ export const initDb = async (): Promise<void> => {
 
     // Interest columns on debts
     try {
+      await db.execAsync(`ALTER TABLE settings ADD COLUMN shuffle_pin_keypad INTEGER DEFAULT 0;`)
+    } catch (_) {}
+
+    try {
       await db.execAsync(`ALTER TABLE debts ADD COLUMN interest_rate REAL DEFAULT 0;`)
     } catch (_) {}
     try {

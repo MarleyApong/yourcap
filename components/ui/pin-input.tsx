@@ -11,6 +11,9 @@ interface PinInputProps {
   subtitle?: string
   showBiometric?: boolean
   length?: number
+  shuffle?: boolean
+  onForgotPin?: () => void
+  forgotPinLabel?: string
 }
 
 export const PinInput: React.FC<PinInputProps> = ({
@@ -21,22 +24,33 @@ export const PinInput: React.FC<PinInputProps> = ({
   subtitle = "Enter your PIN",
   showBiometric = true,
   length = 6,
+  shuffle = false,
+  onForgotPin,
+  forgotPinLabel,
 }) => {
   const [pin, setPin] = useState("")
   const [error, setError] = useState("")
   const { colors } = useTheme()
 
-  const shuffledDigits = useMemo(() => {
-    const digits = Array.from({ length: 10 }, (_, i) => i.toString())
-    return digits.sort(() => Math.random() - 0.5)
-  }, [])
+  const digits = useMemo(() => {
+    const base = Array.from({ length: 10 }, (_, i) => i.toString())
+    if (!shuffle) return base
+    return [...base].sort(() => Math.random() - 0.5)
+  }, [shuffle])
 
-  const keys = [
-    shuffledDigits.slice(0, 3),
-    shuffledDigits.slice(3, 6),
-    shuffledDigits.slice(6, 9),
-    ["clear", shuffledDigits[9], "delete"],
-  ]
+  const keys = shuffle
+    ? [
+        digits.slice(0, 3),
+        digits.slice(3, 6),
+        digits.slice(6, 9),
+        ["clear", digits[9], "delete"],
+      ]
+    : [
+        ["1", "2", "3"],
+        ["4", "5", "6"],
+        ["7", "8", "9"],
+        ["clear", "0", "delete"],
+      ]
 
   const handleKeyPress = (key: string) => {
     if (pin.length < length) {
@@ -134,6 +148,12 @@ export const PinInput: React.FC<PinInputProps> = ({
           <Text style={[styles.biometricText, { color: colors.primary.default }]}>Use Biometric</Text>
         </TouchableOpacity>
       )}
+
+      {onForgotPin && (
+        <TouchableOpacity onPress={onForgotPin} activeOpacity={0.7} style={styles.forgotPin}>
+          <Text style={[styles.forgotPinText, { color: colors.muted.foreground }]}>{forgotPinLabel}</Text>
+        </TouchableOpacity>
+      )}
     </View>
   )
 }
@@ -204,6 +224,14 @@ const styles = StyleSheet.create({
   },
   biometricText: {
     fontWeight: "600",
+    fontSize: 14,
+  },
+  forgotPin: {
+    marginTop: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  forgotPinText: {
     fontSize: 14,
   },
 })

@@ -4,6 +4,7 @@ import PinInput from "@/components/ui/pin-input"
 import { useTheme } from "@/core/theme"
 import { useTranslation } from "@/i18n"
 import { hasValidSessionForQuickAuth, setAppLocked } from "@/lib/auth"
+import { useSettings } from "@/hooks/useSettings"
 import { useAuthStore } from "@/stores/authStore"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { Feather } from "@expo/vector-icons"
@@ -35,6 +36,7 @@ export default function Login() {
   const { login, loginWithBiometric, biometricCapabilities, checkBiometricCapabilities } = useAuthStore()
   const { colors } = useTheme()
   const { t } = useTranslation()
+  const { settings } = useSettings()
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const identifierRef = useRef<TextInput>(null)
@@ -171,6 +173,9 @@ export default function Login() {
           onBiometric={handleBiometric}
           biometricAvailable={biometricCapabilities?.isAvailable && shouldShowBiometric}
           showBiometric={shouldShowBiometric}
+          shuffle={!!settings?.shuffle_pin_keypad}
+          onForgotPin={() => router.push("/auth/forgot-password")}
+          forgotPinLabel={t("auth.forgotPassword.link")}
         />
 
         {loading && (

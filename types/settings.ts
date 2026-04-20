@@ -17,6 +17,7 @@ export interface Settings {
   summary_notification_time?: string // When to send summary notifications
   summary_frequency?: 'daily' | 'weekly' | 'none' // How often to send summaries
   summary_day_of_week?: number // 1=Sun, 2=Mon, 3=Tue, 4=Wed, 5=Thu, 6=Fri, 7=Sat
+  shuffle_pin_keypad?: boolean
   created_at: string
   updated_at: string
 }

@@ -195,6 +195,27 @@ export default function SecuritySettings() {
                 }}
               />
             </View>
+
+            {/* Shuffle PIN keypad */}
+            <View style={[styles.switchRow, { borderTopWidth: 1, borderTopColor: colors.border, opacity: dimmed ? 0.4 : 1 }]} pointerEvents={dimmed ? "none" : "auto"}>
+              <View style={styles.switchLeft}>
+                <View style={[styles.iconBox, { backgroundColor: colors.primary.default }]}>
+                  <Feather name="shuffle" size={18} color={colors.primary.foreground} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: colors.foreground.primary }}>{t("settings.shufflePin")}</Text>
+                  <Text style={[styles.desc, { color: colors.muted.foreground }]}>{t("settings.shufflePinDesc")}</Text>
+                </View>
+              </View>
+              <View style={{ borderRadius: 999, borderWidth: 1.5, borderColor: settings.shuffle_pin_keypad ? colors.primary.default : colors.border }}>
+                <Switch
+                  value={!!settings.shuffle_pin_keypad}
+                  onValueChange={(v) => updateSetting("shuffle_pin_keypad", v)}
+                  trackColor={{ false: colors.muted.default, true: colors.primary.default }}
+                  thumbColor={colors.card.background}
+                />
+              </View>
+            </View>
           </View>
         </View>
       </ScrollView>

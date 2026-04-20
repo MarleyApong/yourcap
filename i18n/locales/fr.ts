@@ -95,6 +95,7 @@ export const fr = {
       confirmPin: "Confirmer le PIN",
       confirmPinSub: "Saisissez à nouveau votre nouveau PIN pour confirmer",
       resetting: "Réinitialisation du PIN...",
+      link: "PIN oublié ?",
       rememberPin: "Vous souvenez-vous de votre PIN ?",
       identifierRequired: "Le nom complet et l'email/téléphone sont requis",
       resetFailed: "Échec de la réinitialisation du PIN. Réessayez.",
@@ -395,6 +396,8 @@ export const fr = {
     lockThirtySeconds: "30 secondes",
     lockOneMinute: "1 minute",
     backgroundLockDelayUpdated: "Délai de verrouillage mis à jour",
+    shufflePin: "Mélanger le clavier PIN",
+    shufflePinDesc: "Afficher les chiffres dans un ordre aléatoire",
 
     // Modal texts
     termsOfService: "Conditions d'utilisation",
