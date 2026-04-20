@@ -5,9 +5,10 @@ import { useTheme } from "@/core/theme"
 import { useTranslation } from "@/i18n"
 import { formatCurrency, formatDate } from "@/lib/utils"
 import { deleteDebt, getContacts, getDebtById, SavedContact, updateDebt } from "@/services/debtServices"
+import { addPayment, deletePayment, getPayments } from "@/services/paymentServices"
 import { scheduleAllDebtReminders } from "@/services/notificationService"
 import { useAuthStore } from "@/stores/authStore"
-import { Debt, DebtStatus } from "@/types/debt"
+import { calcTotalDue, Debt, DebtStatus, Payment } from "@/types/debt"
 import { Feather } from "@expo/vector-icons"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
@@ -25,6 +26,12 @@ export default function DebtDetails() {
 
   const [debt, setDebt] = useState<Debt | null>(null)
   const [loading, setLoading] = useState(true)
+  const [payments, setPayments] = useState<Payment[]>([])
+  const [paymentModalVisible, setPaymentModalVisible] = useState(false)
+  const [paymentAmount, setPaymentAmount] = useState("")
+  const [paymentDate, setPaymentDate] = useState(new Date())
+  const [paymentNote, setPaymentNote] = useState("")
+  const [paymentLoading, setPaymentLoading] = useState(false)
   const [editModalVisible, setEditModalVisible] = useState(false)
   const [editLoading, setEditLoading] = useState(false)
   const [editForm, setEditForm] = useState({
@@ -58,7 +65,11 @@ export default function DebtDetails() {
     if (!user) return
     try {
       setLoading(true)
-      const data = await getDebtById(id as string)
+      const [data, pdata] = await Promise.all([
+        getDebtById(id as string),
+        getPayments(id as string),
+      ])
+      setPayments(pdata)
       if (data && data.user_id === user.user_id) {
         setDebt(data)
         setEditForm({
@@ -164,7 +175,35 @@ export default function DebtDetails() {
     finally { setEditLoading(false) }
   }
 
-  const statusColor = debt?.status === "PAID" ? colors.status.success : debt?.status === "OVERDUE" ? colors.status.destructive : colors.status.warning
+  const handleRecordPayment = async () => {
+    const amount = parseFloat(paymentAmount.replace(",", "."))
+    if (!debt || isNaN(amount) || amount <= 0) { Toast.error(t("debt.payments.invalidAmount")); return }
+    setPaymentLoading(true)
+    try {
+      await addPayment({ debt_id: debt.debt_id, amount, payment_date: paymentDate.toISOString(), note: paymentNote.trim() || undefined })
+      Toast.success(t("debt.payments.added"))
+      setPaymentModalVisible(false)
+      setPaymentAmount(""); setPaymentNote(""); setPaymentDate(new Date())
+      loadDebt()
+    } catch (e: any) {
+      Toast.error(e.message === "exceeds_remaining" ? t("debt.payments.exceedsRemaining") : t("debt.payments.invalidAmount"))
+    } finally { setPaymentLoading(false) }
+  }
+
+  const handleDeletePayment = (payment: Payment) => {
+    Toast.confirm(t("debt.payments.deleteConfirm"), async () => {
+      try {
+        await deletePayment(payment.payment_id, payment.debt_id)
+        Toast.success(t("debt.payments.deleted"))
+        loadDebt()
+      } catch { Toast.error(t("common.error")) }
+    })
+  }
+
+  const statusColor = debt?.status === "PAID" ? colors.status.success
+    : debt?.status === "OVERDUE" ? colors.status.destructive
+    : debt?.status === "PARTIALLY_PAID" ? colors.primary.default
+    : colors.status.warning
   const typeColor = debt?.debt_type === "OWING" ? colors.status.success : colors.status.destructive
   const initials = debt?.contact_name.split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase() ?? "?"
 
@@ -190,7 +229,9 @@ export default function DebtDetails() {
           <Text style={[styles.heroAvatarText, { color: colors.primary.foreground }]}>{initials}</Text>
         </View>
         <Text style={[styles.heroName, { color: colors.primary.foreground }]}>{debt.contact_name}</Text>
-        <Text style={[styles.heroAmount, { color: colors.primary.foreground }]}>{formatCurrency(debt.amount, debt.currency || "XAF")}</Text>
+        <Text style={[styles.heroAmount, { color: colors.primary.foreground }]}>
+          {formatCurrency(calcTotalDue(debt.amount, debt.interest_rate, debt.interest_type, debt.loan_date), debt.currency || "XAF")}
+        </Text>
         <Text style={[styles.heroType, { color: colors.primary.foreground + "CC" }]}>
           {debt.debt_type === "OWING" ? t("history.debtType.owesYou") : t("history.debtType.youOwe")}
         </Text>
@@ -198,7 +239,10 @@ export default function DebtDetails() {
         <View style={[styles.statusBadge, { backgroundColor: statusColor + "30", borderColor: statusColor + "60" }]}>
           <View style={[styles.statusDot, { backgroundColor: statusColor }]} />
           <Text style={[styles.statusText, { color: colors.primary.foreground }]}>
-            {debt.status === "PAID" ? t("debt.status.paid") : debt.status === "OVERDUE" ? t("debt.status.overdue") : t("debt.status.pending")}
+            {debt.status === "PAID" ? t("debt.status.paid")
+              : debt.status === "OVERDUE" ? t("debt.status.overdue")
+              : debt.status === "PARTIALLY_PAID" ? t("debt.status.partiallyPaid")
+              : t("debt.status.pending")}
           </Text>
         </View>
       </View>
@@ -245,6 +289,70 @@ export default function DebtDetails() {
           <InfoRow label={t("debt.details.createdOn")} value={formatDate(debt.created_at)} colors={colors} last />
         </View>
 
+        {/* Payments section */}
+        {(() => {
+          const totalDue = calcTotalDue(debt.amount, debt.interest_rate, debt.interest_type, debt.loan_date)
+          const paidAmount = debt.paid_amount ?? 0
+          const remaining = Math.max(0, totalDue - paidAmount)
+          const progress = totalDue > 0 ? Math.min(1, paidAmount / totalDue) : 0
+          return (
+            <View style={[styles.paymentsCard, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+              <View style={styles.paymentsSectionHeader}>
+                <Text style={[styles.paymentsSectionTitle, { color: colors.foreground.primary }]}>{t("debt.payments.title")}</Text>
+                {debt.status !== "PAID" && (
+                  <Pressable onPress={() => setPaymentModalVisible(true)} style={[styles.recordBtn, { backgroundColor: colors.primary.default + "18", borderColor: colors.primary.default + "40" }]}>
+                    <Feather name="plus" size={13} color={colors.primary.default} />
+                    <Text style={[styles.recordBtnText, { color: colors.primary.default }]}>{t("debt.payments.record")}</Text>
+                  </Pressable>
+                )}
+              </View>
+
+              {/* Progress bar */}
+              <View style={[styles.progressTrack, { backgroundColor: colors.border }]}>
+                <View style={[styles.progressFill, { width: `${progress * 100}%` as any, backgroundColor: progress >= 1 ? colors.status.success : colors.primary.default }]} />
+              </View>
+              <View style={styles.progressLabels}>
+                <Text style={[styles.progressLabel, { color: colors.muted.foreground }]}>
+                  {t("debt.payments.paid")}: {formatCurrency(paidAmount, debt.currency)}
+                </Text>
+                <Text style={[styles.progressLabel, { color: colors.muted.foreground }]}>
+                  {t("debt.payments.remaining")}: {formatCurrency(remaining, debt.currency)}
+                </Text>
+              </View>
+
+              {/* Interest row */}
+              {debt.interest_rate > 0 && debt.interest_type !== "none" && (
+                <View style={[styles.interestRow, { borderTopColor: colors.border }]}>
+                  <Feather name="percent" size={12} color={colors.muted.foreground} />
+                  <Text style={[styles.interestText, { color: colors.muted.foreground }]}>
+                    {debt.interest_rate}% {debt.interest_type === "flat" ? t("debt.interest.flat") : t("debt.interest.monthly")}
+                    {" — "}{t("debt.interest.totalDue")}: {formatCurrency(totalDue, debt.currency)}
+                  </Text>
+                </View>
+              )}
+
+              {/* Payment list */}
+              {payments.length === 0 ? (
+                <Text style={[styles.paymentsEmpty, { color: colors.muted.foreground }]}>{t("debt.payments.empty")}</Text>
+              ) : (
+                payments.map((p, i) => (
+                  <View key={p.payment_id} style={[styles.paymentRow, i === 0 && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.border }]}>
+                    <View style={[styles.paymentDot, { backgroundColor: colors.status.success }]} />
+                    <View style={{ flex: 1 }}>
+                      <Text style={[styles.paymentAmount, { color: colors.foreground.primary }]}>{formatCurrency(p.amount, debt.currency)}</Text>
+                      {p.note ? <Text style={[styles.paymentNote, { color: colors.muted.foreground }]}>{p.note}</Text> : null}
+                    </View>
+                    <Text style={[styles.paymentDate, { color: colors.muted.foreground }]}>{formatDate(p.payment_date)}</Text>
+                    <Pressable onPress={() => handleDeletePayment(p)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                      <Feather name="trash-2" size={14} color={colors.status.destructive} />
+                    </Pressable>
+                  </View>
+                ))
+              )}
+            </View>
+          )
+        })()}
+
         {/* Actions */}
         <View style={styles.actions}>
           {debt.status !== "PAID" && (
@@ -277,6 +385,60 @@ export default function DebtDetails() {
           </Pressable>
         </View>
       </ScrollView>
+
+      {/* Payment Modal */}
+      <Modal animationType="slide" transparent visible={paymentModalVisible} onRequestClose={() => setPaymentModalVisible(false)}>
+        <Pressable style={styles.paymentOverlay} onPress={() => setPaymentModalVisible(false)}>
+          <Pressable style={[styles.paymentSheet, { backgroundColor: colors.background.primary }]} onPress={() => {}}>
+            <View style={styles.sheetHandle} />
+            <Text style={[styles.paymentSheetTitle, { color: colors.foreground.primary }]}>{t("debt.payments.record")}</Text>
+
+            <View style={styles.field}>
+              <Text style={[styles.fieldLabel, { color: colors.muted.foreground }]}>{t("debt.payments.amount")}</Text>
+              <View style={[styles.inputRow, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+                <Feather name="credit-card" size={16} color={colors.muted.foreground} />
+                <TextInput
+                  style={[styles.inputText, { color: colors.foreground.primary }]}
+                  placeholder="0"
+                  placeholderTextColor={colors.muted.foreground}
+                  value={paymentAmount}
+                  onChangeText={setPaymentAmount}
+                  keyboardType="numeric"
+                  autoFocus
+                />
+              </View>
+            </View>
+
+            <View style={styles.field}>
+              <Text style={[styles.fieldLabel, { color: colors.muted.foreground }]}>{t("debt.payments.date")}</Text>
+              <DateInput value={paymentDate} onChange={setPaymentDate} maximumDate={new Date()} />
+            </View>
+
+            <View style={styles.field}>
+              <Text style={[styles.fieldLabel, { color: colors.muted.foreground }]}>{t("debt.payments.note")}</Text>
+              <View style={[styles.inputRow, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+                <Feather name="file-text" size={16} color={colors.muted.foreground} />
+                <TextInput
+                  style={[styles.inputText, { color: colors.foreground.primary }]}
+                  placeholder="..."
+                  placeholderTextColor={colors.muted.foreground}
+                  value={paymentNote}
+                  onChangeText={setPaymentNote}
+                />
+              </View>
+            </View>
+
+            <Pressable
+              onPress={handleRecordPayment}
+              disabled={paymentLoading}
+              style={[styles.saveBtn, { backgroundColor: colors.primary.default, opacity: paymentLoading ? 0.7 : 1 }]}
+            >
+              {paymentLoading ? <Loader color={colors.primary.foreground} /> : <Feather name="check" size={18} color={colors.primary.foreground} />}
+              <Text style={[styles.saveBtnText, { color: colors.primary.foreground }]}>{t("debt.payments.record")}</Text>
+            </Pressable>
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       {/* Edit Modal */}
       <Modal animationType="slide" transparent={false} visible={editModalVisible} onRequestClose={() => setEditModalVisible(false)}>
@@ -504,7 +666,7 @@ const styles = StyleSheet.create({
   inputText: { flex: 1, fontSize: 14 },
   textarea: { minHeight: 72 },
   saveBtn: { flexDirection: "row", gap: 8, justifyContent: "center", alignItems: "center", padding: 15, borderRadius: 14, marginTop: 8 },
-  saveBtnText: { color: "#fff", fontWeight: "600", fontSize: 16 },
+  saveBtnText: { fontWeight: "600", fontSize: 16 },
   contactsHint: { fontSize: 11, marginBottom: 10 },
   chipsRow: { gap: 10, paddingRight: 4 },
   chip: { alignItems: "center", gap: 5, width: 52 },
@@ -522,4 +684,24 @@ const styles = StyleSheet.create({
   pickerAvatarText: { fontSize: 14, fontWeight: "700" },
   pickerName: { fontSize: 14, fontWeight: "600" },
   pickerPhone: { fontSize: 12, marginTop: 1 },
+  paymentsCard: { borderRadius: 12, borderWidth: 1, padding: 14, marginBottom: 20 },
+  paymentsSectionHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 12 },
+  paymentsSectionTitle: { fontSize: 15, fontWeight: "700" },
+  recordBtn: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 8, borderWidth: 1 },
+  recordBtnText: { fontSize: 12, fontWeight: "600" },
+  progressTrack: { height: 6, borderRadius: 3, overflow: "hidden", marginBottom: 8 },
+  progressFill: { height: 6, borderRadius: 3 },
+  progressLabels: { flexDirection: "row", justifyContent: "space-between", marginBottom: 4 },
+  progressLabel: { fontSize: 11 },
+  interestRow: { flexDirection: "row", alignItems: "center", gap: 6, borderTopWidth: StyleSheet.hairlineWidth, paddingTop: 8, marginTop: 4 },
+  interestText: { fontSize: 11, flex: 1 },
+  paymentsEmpty: { fontSize: 13, textAlign: "center", paddingVertical: 12 },
+  paymentRow: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth },
+  paymentDot: { width: 8, height: 8, borderRadius: 4 },
+  paymentAmount: { fontSize: 14, fontWeight: "600" },
+  paymentNote: { fontSize: 11, marginTop: 1 },
+  paymentDate: { fontSize: 11 },
+  paymentOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "flex-end" },
+  paymentSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40 },
+  paymentSheetTitle: { fontSize: 18, fontWeight: "700", marginBottom: 20 },
 })

@@ -107,12 +107,14 @@ export const getDebtById = async (debt_id: string): Promise<Debt | null> => {
   try {
     const db = getDb()
     const debt = await db.getFirstAsync<Debt>(
-      `SELECT 
-        debt_id, user_id, contact_name, contact_phone, contact_email,
-        amount, description, loan_date, due_date, status, debt_type,
-        created_at, updated_at
-        FROM debts 
-        WHERE debt_id = ?`,
+      `SELECT
+        d.debt_id, d.user_id, d.contact_name, d.contact_phone, d.contact_email,
+        d.amount, d.currency, d.description, d.loan_date, d.due_date, d.status, d.debt_type,
+        d.interest_rate, d.interest_type,
+        d.created_at, d.updated_at,
+        COALESCE((SELECT SUM(p.amount) FROM payments p WHERE p.debt_id = d.debt_id), 0) as paid_amount
+        FROM debts d
+        WHERE d.debt_id = ?`,
       [debt_id],
     )
     return debt || null
@@ -126,15 +128,17 @@ export const getUserDebts = async (user_id: string): Promise<Debt[]> => {
   try {
     const db = getDb()
     const debts = await db.getAllAsync<Debt>(
-      `SELECT 
-        debt_id, user_id, contact_name, contact_phone, contact_email,
-        amount, description, loan_date, due_date, status, debt_type,
-        created_at, updated_at
-        FROM debts 
-        WHERE user_id = ? 
-        ORDER BY 
-        CASE WHEN status = 'PENDING' THEN 1 ELSE 2 END,
-        due_date ASC`,
+      `SELECT
+        d.debt_id, d.user_id, d.contact_name, d.contact_phone, d.contact_email,
+        d.amount, d.currency, d.description, d.loan_date, d.due_date, d.status, d.debt_type,
+        d.interest_rate, d.interest_type,
+        d.created_at, d.updated_at,
+        COALESCE((SELECT SUM(p.amount) FROM payments p WHERE p.debt_id = d.debt_id), 0) as paid_amount
+        FROM debts d
+        WHERE d.user_id = ?
+        ORDER BY
+        CASE WHEN d.status IN ('PENDING','PARTIALLY_PAID') THEN 1 ELSE 2 END,
+        d.due_date ASC`,
       [user_id],
     )
     return debts || []
@@ -175,13 +179,13 @@ export const getDebtsSummary = async (user_id: string) => {
       owing: number
       owed: number
     }>(
-      `
-      SELECT 
-        COALESCE(SUM(CASE WHEN debt_type = 'OWING' AND status = 'PENDING' THEN amount ELSE 0 END), 0) as owing,
-        COALESCE(SUM(CASE WHEN debt_type = 'OWED' AND status = 'PENDING' THEN amount ELSE 0 END), 0) as owed
-      FROM debts
-      WHERE user_id = ?
-    `,
+      `SELECT
+        COALESCE(SUM(CASE WHEN d.debt_type = 'OWING' AND d.status IN ('PENDING','PARTIALLY_PAID','OVERDUE')
+          THEN d.amount - COALESCE((SELECT SUM(p.amount) FROM payments p WHERE p.debt_id = d.debt_id), 0) ELSE 0 END), 0) as owing,
+        COALESCE(SUM(CASE WHEN d.debt_type = 'OWED' AND d.status IN ('PENDING','PARTIALLY_PAID','OVERDUE')
+          THEN d.amount - COALESCE((SELECT SUM(p.amount) FROM payments p WHERE p.debt_id = d.debt_id), 0) ELSE 0 END), 0) as owed
+      FROM debts d
+      WHERE d.user_id = ?`,
       [user_id],
     )
 

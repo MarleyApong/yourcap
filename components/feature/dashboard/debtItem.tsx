@@ -17,12 +17,10 @@ export const DebtItem = ({ debt, currency, onPress, showBorder }: DebtItemProps)
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "PAID":
-        return colors.status.success
-      case "OVERDUE":
-        return colors.status.destructive
-      default:
-        return colors.status.warning
+      case "PAID": return colors.status.success
+      case "OVERDUE": return colors.status.destructive
+      case "PARTIALLY_PAID": return colors.primary.default
+      default: return colors.status.warning
     }
   }
 
@@ -49,7 +47,10 @@ export const DebtItem = ({ debt, currency, onPress, showBorder }: DebtItemProps)
           <View style={[styles.dot, { backgroundColor: getStatusColor(debt.status) }]} />
           <View style={[styles.badge, { backgroundColor: getStatusBadgeColor(debt.status) }]}>
             <Text style={[styles.badgeText, { color: getStatusTextColor(debt.status) }]}>
-              {debt.status === "PAID" ? t("debt.status.paid") : debt.status === "OVERDUE" ? t("debt.status.overdue") : t("debt.status.pending")}
+              {debt.status === "PAID" ? t("debt.status.paid")
+                : debt.status === "OVERDUE" ? t("debt.status.overdue")
+                : debt.status === "PARTIALLY_PAID" ? t("debt.status.partiallyPaid")
+                : t("debt.status.pending")}
             </Text>
           </View>
         </View>

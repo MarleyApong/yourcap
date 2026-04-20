@@ -120,6 +120,7 @@ export default function History() {
     switch (status) {
       case "PAID": return colors.status.success
       case "OVERDUE": return colors.status.destructive
+      case "PARTIALLY_PAID": return colors.primary.default
       default: return colors.status.warning
     }
   }
@@ -165,10 +166,9 @@ export default function History() {
         <View style={styles.debtStatus}>
           <View style={[styles.statusDot, { backgroundColor: getStatusColor(debt.status) }]} />
           <Text style={[styles.statusText, { color: colors.muted.foreground }]}>
-            {debt.status === "PAID"
-              ? t("debt.status.paid")
-              : debt.status === "OVERDUE"
-              ? t("debt.status.overdue")
+            {debt.status === "PAID" ? t("debt.status.paid")
+              : debt.status === "OVERDUE" ? t("debt.status.overdue")
+              : debt.status === "PARTIALLY_PAID" ? t("debt.status.partiallyPaid")
               : t("debt.status.pending")}
           </Text>
         </View>

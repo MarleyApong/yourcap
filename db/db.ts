@@ -158,6 +158,28 @@ export const initDb = async (): Promise<void> => {
       // Column might already exist, ignore
     }
 
+    // Payments table
+    await db.execAsync(`
+      CREATE TABLE IF NOT EXISTS payments (
+        payment_id TEXT PRIMARY KEY NOT NULL,
+        debt_id TEXT NOT NULL,
+        amount REAL NOT NULL,
+        payment_date TEXT NOT NULL,
+        note TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (debt_id) REFERENCES debts(debt_id) ON DELETE CASCADE
+      );
+      CREATE INDEX IF NOT EXISTS idx_payments_debt_id ON payments(debt_id);
+    `)
+
+    // Interest columns on debts
+    try {
+      await db.execAsync(`ALTER TABLE debts ADD COLUMN interest_rate REAL DEFAULT 0;`)
+    } catch (_) {}
+    try {
+      await db.execAsync(`ALTER TABLE debts ADD COLUMN interest_type TEXT DEFAULT 'none';`)
+    } catch (_) {}
+
     console.log("✅ Schema executed successfully")
     console.log("✅ Database initialized successfully")
   } catch (error) {
@@ -186,6 +208,7 @@ export const resetDatabase = async (): Promise<boolean> => {
     const database = getDb()
 
     await database.execAsync(`
+      DROP TABLE IF EXISTS payments;
       DROP TABLE IF EXISTS notifications;
       DROP TABLE IF EXISTS settings;
       DROP TABLE IF EXISTS debts;
