@@ -14,6 +14,53 @@ type ChangelogEntries = {
 // Key = app version (must match app.json "version").
 // Do NOT add an entry for the initial release version.
 export const CHANGELOG: Record<string, ChangelogEntries> = {
+  "1.5.0": {
+    en: [
+      "Partial payments — record multiple payments on a single debt and track progress",
+      "Interest rates — configure flat or monthly interest when adding a debt",
+      "Faster login — PIN verification is now near-instant (migrated to expo-crypto)",
+      "PIN keypad ordered by default — enable shuffle in Security settings for extra privacy",
+      "Forgot PIN? — reset your PIN directly from the login screen",
+      "Security settings — reorganized into clear sections (Protection, Auto-lock, PIN keypad)",
+      "Language selection at first launch — auto-detected from your device",
+    ],
+    fr: [
+      "Paiements partiels — enregistrez plusieurs paiements sur une dette et suivez la progression",
+      "Taux d'intérêt — configurez un intérêt fixe ou mensuel à l'ajout d'une dette",
+      "Connexion plus rapide — la vérification du PIN est désormais quasi instantanée",
+      "Clavier PIN en ordre par défaut — activez le mélange dans Sécurité pour plus de confidentialité",
+      "PIN oublié ? — réinitialisez votre PIN directement depuis l'écran de connexion",
+      "Paramètres Sécurité — réorganisés en sections claires (Protection, Verrouillage, Clavier PIN)",
+      "Sélection de langue au premier lancement — détectée automatiquement depuis votre appareil",
+    ],
+    es: [
+      "Pagos parciales — registra varios pagos en una deuda y sigue el progreso",
+      "Tasas de interés — configura interés fijo o mensual al agregar una deuda",
+      "Inicio de sesión más rápido — la verificación del PIN es ahora casi instantánea",
+      "Teclado PIN ordenado por defecto — activa el orden aleatorio en Seguridad para más privacidad",
+      "¿PIN olvidado? — restablece tu PIN directamente desde la pantalla de inicio",
+      "Ajustes de seguridad — reorganizados en secciones claras (Protección, Bloqueo, Teclado PIN)",
+      "Selección de idioma al primer inicio — detectado automáticamente desde tu dispositivo",
+    ],
+    de: [
+      "Teilzahlungen — mehrere Zahlungen für eine Schuld erfassen und Fortschritt verfolgen",
+      "Zinssätze — festen oder monatlichen Zins beim Hinzufügen einer Schuld festlegen",
+      "Schnellere Anmeldung — PIN-Prüfung ist jetzt nahezu sofort (auf expo-crypto migriert)",
+      "PIN-Tastatur standardmäßig sortiert — Mischen in den Sicherheitseinstellungen aktivierbar",
+      "PIN vergessen? — PIN direkt vom Anmeldebildschirm zurücksetzen",
+      "Sicherheitseinstellungen — in klare Abschnitte unterteilt (Schutz, Sperre, PIN-Tastatur)",
+      "Sprachauswahl beim ersten Start — automatisch vom Gerät erkannt",
+    ],
+    pt: [
+      "Pagamentos parciais — registre vários pagamentos em uma dívida e acompanhe o progresso",
+      "Taxas de juros — configure juros fixos ou mensais ao adicionar uma dívida",
+      "Login mais rápido — a verificação do PIN agora é quase instantânea",
+      "Teclado PIN em ordem por padrão — ative o embaralhamento em Segurança para mais privacidade",
+      "PIN esquecido? — redefina seu PIN diretamente da tela de login",
+      "Configurações de segurança — reorganizadas em seções claras (Proteção, Bloqueio, Teclado PIN)",
+      "Seleção de idioma no primeiro acesso — detectado automaticamente do seu dispositivo",
+    ],
+  },
   "1.4.0": {
     en: [
       "Dashboard redesigned — overdue & due-soon alerts plus a recent debts section",
