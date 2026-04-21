@@ -1,5 +1,5 @@
 import { getDb } from "@/db/db"
-import { hashPin, verifyPin, isBcryptHash } from "@/lib/pin-hash"
+import { hashPin, verifyPin as verifyPinHash, isBcryptHash } from "@/lib/pin-hash"
 import { CreateUserInput, User } from "@/types/user"
 import { v4 as uuidv4 } from "uuid"
 
@@ -112,7 +112,7 @@ export const loginUser = async (
 
     // Vérification normale du PIN
     console.log("🔐 Verifying PIN...")
-    const isValid = await verifyPin(pin, result.pin)
+    const isValid = await verifyPinHash(pin, result.pin)
     console.log("🔐 PIN valid:", isValid)
 
     if (!isValid) {
@@ -188,7 +188,7 @@ export const verifyPin = async (user_id: string, pin: string): Promise<boolean> 
 
     if (!result) return false
 
-    return await verifyPin(pin, result.pin)
+    return await verifyPinHash(pin, result.pin)
   } catch (error) {
     console.error("Verify PIN error:", error)
     return false
@@ -258,7 +258,7 @@ export const verifyUserPin = async (user_id: string, pin: string): Promise<boole
     
     if (!result) return false
     
-    return await verifyPin(pin, result.pin)
+    return await verifyPinHash(pin, result.pin)
   } catch (error) {
     console.error("Verify user PIN error:", error)
     return false
