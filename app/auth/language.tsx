@@ -1,41 +1,26 @@
+import { FBackButton } from "@/components/ui/fback-button"
 import { useTheme } from "@/core/theme"
 import { useTranslation } from "@/i18n"
 import { SupportedLanguage, supportedLanguages } from "@/i18n/locales"
 import { useLanguageStore } from "@/stores/languageStore"
 import { Feather } from "@expo/vector-icons"
-import * as Localization from "expo-localization"
 import { useRouter } from "expo-router"
-import { useEffect, useState } from "react"
-import { Image, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native"
+import { useState } from "react"
+import { Image, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const SUPPORTED_CODES = Object.keys(supportedLanguages) as SupportedLanguage[]
 
-function detectSystemLanguage(): SupportedLanguage {
-  const locales = Localization.getLocales()
-  for (const locale of locales) {
-    const code = locale.languageCode?.toLowerCase()
-    if (code && SUPPORTED_CODES.includes(code as SupportedLanguage)) {
-      return code as SupportedLanguage
-    }
-  }
-  return "en"
-}
-
 export default function LanguageScreen() {
   const { colors } = useTheme()
   const { t } = useTranslation()
-  const { setAppLanguage } = useLanguageStore()
+  const { appLanguage, setAppLanguage } = useLanguageStore()
   const router = useRouter()
   const insets = useSafeAreaInsets()
 
-  const [selected, setSelected] = useState<SupportedLanguage>(() => detectSystemLanguage())
-  const [autoDetected] = useState<SupportedLanguage>(() => detectSystemLanguage())
-
-  useEffect(() => {
-    // Pre-apply detected language so labels on this screen are already translated
-    setAppLanguage(selected)
-  }, [selected])
+  // Pre-selected = whatever was detected on the welcome screen
+  const [selected, setSelected] = useState<SupportedLanguage>(appLanguage)
+  const autoDetected = appLanguage
 
   const handleContinue = async () => {
     await setAppLanguage(selected)
@@ -51,7 +36,10 @@ export default function LanguageScreen() {
     >
       <View style={styles.overlay} />
 
-      <View style={[styles.inner, { paddingTop: insets.top + 32, paddingBottom: insets.bottom + 32 }]}>
+      <View style={[styles.inner, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 32 }]}>
+
+        <FBackButton path="/" isAbsolute={false} />
+
         <Image
           source={require("@/assets/images/logo/logo.png")}
           style={styles.logo}

@@ -7,10 +7,10 @@ const { glob } = require('glob');
 // Configuration par défaut
 const DEFAULT_CONFIG = {
   srcDir: './app',
-  additionalDirs: ['./features', './shared'],
-  i18nPath: './shared/i18n',
-  localesPath: './shared/i18n/locales',
-  supportedLanguages: ['fr', 'en', 'es'], // Langues par défaut
+  additionalDirs: ['./components', './stores', './hooks', './services', './constants', './core'],
+  i18nPath: './i18n',
+  localesPath: './i18n/locales',
+  supportedLanguages: ['fr', 'en', 'es', 'de', 'pt'],
   filePatterns: ['**/*.{ts,tsx,js,jsx}'],
   excludePatterns: ['**/*.d.ts', '**/node_modules/**', '**/.git/**'],
   translationFunction: 't',
@@ -154,22 +154,16 @@ class I18nParser {
   // Parser simple pour extraire les traductions existantes
   parseExistingTranslations(content) {
     try {
-      // Extraire l'objet d'export en utilisant une approche plus robuste
-      const match = content.match(/export const \w+ = (\{[\s\S]*?\});[\s]*$/m);
+      const match = content.match(/export const \w+ = (\{[\s\S]*\})/);
       if (match) {
-        const objectString = match[1];
-        
-        // Créer une fonction qui évalue l'objet de façon sécurisée
-        const evalFunction = new Function('return ' + objectString);
+        const evalFunction = new Function('return ' + match[1]);
         const result = evalFunction();
-        
         this.log(`✅ Traductions existantes chargées`, true);
         return result;
       }
     } catch (error) {
       this.log(`⚠️  Erreur parsing: ${error.message}`, true);
     }
-    
     return {};
   }
 
@@ -240,7 +234,9 @@ class I18nParser {
     const languageNames = {
       fr: 'Traductions françaises',
       en: 'English translations',
-      es: 'Traducciones en español'
+      es: 'Traducciones en español',
+      de: 'Deutsche Übersetzungen',
+      pt: 'Traduções em português',
     };
 
     const content = `// ${languageNames[language] || `${language.toUpperCase()} translations`}
@@ -269,7 +265,7 @@ ${this.formatTranslationsObject(translations, 1)}};`;
         result += this.formatTranslationsObject(value, indent + 1);
         result += `${spaces}}${i < entries.length - 1 ? ',' : ''}\n`;
       } else {
-        result += `${spaces}${key}: "${value}"${i < entries.length - 1 ? ',' : ''}\n`;
+        result += `${spaces}${key}: ${JSON.stringify(value)}${i < entries.length - 1 ? ',' : ''}\n`;
       }
     }
 
@@ -306,14 +302,18 @@ ${this.formatTranslationsObject(translations, 1)}};`;
 
     const languageNames = {
       fr: 'Français',
-      en: 'English', 
-      es: 'Español'
+      en: 'English',
+      es: 'Español',
+      de: 'Deutsch',
+      pt: 'Português',
     };
 
     const flags = {
       fr: '🇫🇷',
       en: '🇺🇸',
-      es: '🇪🇸'
+      es: '🇪🇸',
+      de: '🇩🇪',
+      pt: '🇧🇷',
     };
 
     const supportedLanguagesObj = this.config.supportedLanguages

@@ -1,4 +1,4 @@
-// Traducciones en español para YourCap
+// Traducciones en español
 export const es = {
   common: {
     loading: "Cargando...",
@@ -30,9 +30,8 @@ export const es = {
     add: "Añadir",
     remove: "Eliminar",
     required: "Requerido",
-    optional: "Opcional",
+    optional: "Opcional"
   },
-
   welcome: {
     title: "Nunca olvides quién te debe",
     subtitle: "Controla tus deudas fácilmente y de forma segura.",
@@ -42,9 +41,8 @@ export const es = {
     chooseLanguage: "Elige tu idioma",
     chooseLanguageSubtitle: "Puedes cambiarlo más tarde en Ajustes",
     detectedFromDevice: "Detectado desde tu dispositivo",
-    continueWith: "Continuar",
+    continueWith: "Continuar"
   },
-
   auth: {
     login: {
       title: "Bienvenido de nuevo",
@@ -61,7 +59,7 @@ export const es = {
       dontHaveAccount: "¿No tienes una cuenta?",
       signUp: "Registrarse",
       useDifferentAccount: "Usar otra cuenta",
-      invalidPin: "PIN incorrecto. Por favor inténtalo de nuevo.",
+      invalidPin: "PIN incorrecto. Por favor inténtalo de nuevo."
     },
     register: {
       title: "Registrarse",
@@ -76,7 +74,7 @@ export const es = {
       creatingAccount: "Creando tu cuenta...",
       accountCreated: "¡Cuenta creada con éxito!",
       alreadyHaveAccount: "¿Ya tienes una cuenta?",
-      signIn: "Iniciar sesión",
+      signIn: "Iniciar sesión"
     },
     forgotPassword: {
       title: "PIN olvidado",
@@ -91,7 +89,7 @@ export const es = {
       link: "¿Olvidaste tu PIN?",
       rememberPin: "¿Recuerdas tu PIN?",
       identifierRequired: "Se requiere el nombre completo y el email/teléfono",
-      resetFailed: "Error al restablecer el PIN. Inténtalo de nuevo.",
+      resetFailed: "Error al restablecer el PIN. Inténtalo de nuevo."
     },
     validation: {
       fullNameRequired: "El nombre completo es requerido",
@@ -101,51 +99,62 @@ export const es = {
       pinLength: "El PIN debe tener 6 dígitos",
       pinMismatch: "Los PINs no coinciden",
       invalidCredentials: "Credenciales inválidas. Inténtalo de nuevo.",
-      pleaseEnterEmailOrPhone: "Introduce tu email o número de teléfono",
+      pleaseEnterEmailOrPhone: "Introduce tu email o número de teléfono"
     },
     errors: {
       registrationFailed: "Error en el registro. Inténtalo de nuevo.",
       unexpectedError: "Ocurrió un error inesperado. Inténtalo más tarde.",
       biometricFailed: "Error en la autenticación biométrica",
-      biometricError: "Error de autenticación biométrica",
+      biometricError: "Error de autenticación biométrica"
     },
     biometricPrompt: "Autentícate para acceder a tu cuenta",
     biometricCancel: "Cancelar",
-    biometricFallback: "Usar PIN",
+    biometricFallback: "Usar PIN"
   },
-
   tabs: {
     dashboard: "Panel",
     history: "Historial",
-    settings: "Configuración",
+    settings: "Configuración"
   },
-
   dashboard: {
     title: "Panel",
-    greeting: { morning: "Buenos días", afternoon: "Buenas tardes", evening: "Buenas noches" },
-    balance: { net: "Saldo neto", toReceive: "Por cobrar", toPay: "Por pagar" },
+    greeting: {
+      morning: "Buenos días",
+      afternoon: "Buenas tardes",
+      evening: "Buenas noches"
+    },
+    balance: {
+      net: "Saldo neto",
+      toReceive: "Por cobrar",
+      toPay: "Por pagar"
+    },
     attention: {
       title: "Requiere atención",
       empty: "Todo en orden",
       emptyDesc: "Sin deudas vencidas ni próximas",
       overdue: "Vencida",
       dueToday: "Hoy",
-      dueSoon: "En {days}d",
+      dueSoon: "En {days}d"
     },
-    recent: { title: "Reciente", seeAll: "Ver todo" },
+    recent: {
+      title: "Reciente",
+      seeAll: "Ver todo"
+    },
     errors: {
       databaseNotReady: "Base de datos no lista. Reinicia la aplicación.",
       failedToLoad: "Error al cargar los datos. Inténtalo de nuevo.",
-      tapToRetry: "Toca para reintentar",
+      tapToRetry: "Toca para reintentar"
     },
     empty: {
       title: "No hay deudas registradas",
       subtitle: "Comienza añadiendo tu primera deuda o crédito",
-      addFirst: "Añadir la primera",
+      addFirst: "Añadir la primera"
     },
-    debt: { owes: "debe", owed: "te debe" },
+    debt: {
+      owes: "debe",
+      owed: "te debe"
+    }
   },
-
   debt: {
     add: {
       title: "Añadir deuda",
@@ -157,7 +166,14 @@ export const es = {
       description: "Descripción",
       descriptionPlaceholder: "Ej: Préstamo para emergencia médica",
       descriptionOptional: "Descripción (Opcional)",
-      steps: { who: "¿Quién?", whoSub: "Contacto y tipo de deuda", amount: "¿Cuánto?", amountSub: "Monto y divisa", when: "¿Cuándo?", whenSub: "Fechas y notas" },
+      steps: {
+        who: "¿Quién?",
+        whoSub: "Contacto y tipo de deuda",
+        amount: "¿Cuánto?",
+        amountSub: "Monto y divisa",
+        when: "¿Cuándo?",
+        whenSub: "Fechas y notas"
+      },
       savedContacts: {
         title: "Contactos guardados",
         recent: "Contactos recientes",
@@ -165,7 +181,7 @@ export const es = {
         autoFilled: "Rellenado desde {name}",
         pick: "Elegir un contacto guardado",
         search: "Buscar por nombre o teléfono...",
-        more: "Más",
+        more: "Más"
       },
       type: "Tipo",
       typeIOwed: "Me deben (alguien me debe)",
@@ -177,7 +193,7 @@ export const es = {
         owing: "Alguien me debe",
         owed: "Debo a alguien",
         owingDescription: "Registra dinero que alguien te debe - sigue cuándo prestaste y cuándo debe devolverse.",
-        owedDescription: "Registra dinero que debes a alguien - controla tus obligaciones y fechas de vencimiento.",
+        owedDescription: "Registra dinero que debes a alguien - controla tus obligaciones y fechas de vencimiento."
       },
       contact: {
         title: "Información de contacto",
@@ -186,14 +202,14 @@ export const es = {
         phone: "Número de teléfono",
         phonePlaceholder: "6XX XXX XXX",
         email: "Email (Opcional)",
-        emailPlaceholder: "xxx@xxx.xx",
+        emailPlaceholder: "xxx@xxx.xx"
       },
       financial: {
         title: "Detalles financieros",
         subtitle: "Especifica el monto, la moneda y las fechas importantes.",
         currency: "Moneda",
         loanDate: "Fecha del préstamo",
-        dueDate: "Fecha de vencimiento",
+        dueDate: "Fecha de vencimiento"
       },
       validation: {
         nameRequired: "El nombre del contacto es requerido",
@@ -206,7 +222,7 @@ export const es = {
         phoneConflict: "Este número ya está asociado a {name}. ¿Continuar de todas formas?"
       },
       success: "¡Deuda registrada con éxito!",
-      error: "Error al crear la deuda. Inténtalo de nuevo.",
+      error: "Error al crear la deuda. Inténtalo de nuevo."
     },
     list: {
       filterAll: "Todos",
@@ -214,13 +230,13 @@ export const es = {
       filterIowe: "Debo",
       searchPlaceholder: "Buscar por nombre...",
       empty: "No se encontraron deudas",
-      emptyFilter: "No se encontraron deudas para este filtro",
+      emptyFilter: "No se encontraron deudas para este filtro"
     },
     item: {
       you: "Tú",
       owes: "debe",
       owed: "te debe",
-      viewDetails: "Ver detalles",
+      viewDetails: "Ver detalles"
     },
     details: {
       title: "Detalles de la deuda",
@@ -253,7 +269,7 @@ export const es = {
         emailSubjectOwing: "Recordatorio de pago - {amount}",
         emailSubjectOwed: "Confirmación de pago - {amount}",
         emailBodyOwing: "Estimado/a {name},\n\nEste es un recordatorio sobre el préstamo de {amount} del {loanDate}.\n\nFecha de vencimiento: {dueDate}. Por favor, infórmame tu plan de pago.\n\nAtentamente",
-        emailBodyOwed: "Estimado/a {name},\n\nQuería confirmar que te debo {amount} desde el {loanDate}.\n\nPlaneo liquidar esto antes del {dueDate}. Avísame si necesitas hablar sobre los arreglos de pago.\n\nAtentamente",
+        emailBodyOwed: "Estimado/a {name},\n\nQuería confirmar que te debo {amount} desde el {loanDate}.\n\nPlaneo liquidar esto antes del {dueDate}. Avísame si necesitas hablar sobre los arreglos de pago.\n\nAtentamente"
       },
       loanDate: "Fecha del préstamo",
       phoneNumber: "Número de teléfono",
@@ -263,13 +279,13 @@ export const es = {
       createdAt: "Creado el",
       updatedAt: "Actualizado el",
       edit: "Editar",
-      delete: "Eliminar",
+      delete: "Eliminar"
     },
     status: {
       paid: "Pagado",
       pending: "Pendiente",
       overdue: "Vencido",
-      partiallyPaid: "Parcial",
+      partiallyPaid: "Parcial"
     },
     payments: {
       title: "Pagos",
@@ -286,7 +302,7 @@ export const es = {
       deleteConfirm: "¿Eliminar este pago?",
       invalidAmount: "Ingresa un monto válido",
       exceedsRemaining: "El monto supera el saldo restante",
-      progress: "{paid} de {total}",
+      progress: "{paid} de {total}"
     },
     interest: {
       title: "Intereses",
@@ -295,17 +311,16 @@ export const es = {
       none: "Ninguno",
       flat: "Único",
       monthly: "Mensual",
-      totalDue: "Total con intereses",
+      totalDue: "Total con intereses"
     },
     delete: {
       title: "¿Eliminar registro?",
       confirmMessage: "Esta acción no se puede deshacer. El registro de la deuda será eliminado permanentemente.",
       message: "¿Estás seguro de que quieres eliminar esta deuda? Esta acción no se puede deshacer.",
       confirm: "Eliminar",
-      cancel: "Cancelar",
-    },
+      cancel: "Cancelar"
+    }
   },
-
   settings: {
     title: "Configuración",
     profile: "Perfil",
@@ -514,9 +529,8 @@ export const es = {
     rateApp: "Calificar la aplicación",
     shareApp: "Compartir la aplicación",
     reportBug: "Reportar un error",
-    debtsImported: "deudas importadas!",
+    debtsImported: "deudas importadas!"
   },
-
   profile: {
     edit: {
       title: "Editar perfil",
@@ -532,8 +546,8 @@ export const es = {
         fullNameRequired: "El nombre completo es requerido",
         phoneRequired: "El número de teléfono es requerido",
         invalidPhone: "Introduce un número de teléfono camerunés válido",
-        invalidEmail: "Introduce una dirección de email válida",
-      },
+        invalidEmail: "Introduce una dirección de email válida"
+      }
     },
     changePin: {
       title: "Cambiar PIN",
@@ -543,7 +557,11 @@ export const es = {
       newPinSubtitle: "Crea tu nuevo PIN de 6 dígitos",
       confirmPin: "Confirmar PIN",
       confirmPinSubtitle: "Confirma tu nuevo PIN",
-      steps: { current: "Actual", new: "Nuevo", confirm: "Confirmar" },
+      steps: {
+        current: "Actual",
+        new: "Nuevo",
+        confirm: "Confirmar"
+      },
       currentPinVerified: "PIN actual verificado",
       verifying: "Verificando...",
       updating: "Actualizando...",
@@ -552,21 +570,20 @@ export const es = {
       validation: {
         incorrectPin: "El PIN actual es incorrecto",
         pinMustBeDifferent: "El nuevo PIN debe ser diferente al actual",
-        pinMismatch: "Los PINs no coinciden",
+        pinMismatch: "Los PINs no coinciden"
       },
       errors: {
         updateFailed: "Error al cambiar el PIN",
-        unexpectedError: "Ocurrió un error inesperado",
-      },
-    },
+        unexpectedError: "Ocurrió un error inesperado"
+      }
+    }
   },
-
   notifications: {
     permission: {
       title: "Activar notificaciones",
       message: "Permite las notificaciones para recibir recordatorios de deudas.",
       allow: "Permitir",
-      later: "Más tarde",
+      later: "Más tarde"
     },
     summary: {
       title: "Resumen de deudas",
@@ -582,7 +599,7 @@ export const es = {
       owingFormatSingular: "💰 1 persona te debe {amount} {currency}",
       owingFormatPlural: "💰 {count} personas te deben {amount} {currency}",
       owedFormatSingular: "Debes {amount} {currency} a 1 persona",
-      owedFormatPlural: "Debes {amount} {currency} a {count} personas",
+      owedFormatPlural: "Debes {amount} {currency} a {count} personas"
     },
     reminder: {
       title: "Recordatorio de deuda",
@@ -590,10 +607,9 @@ export const es = {
       owingTitle: "💰 Recordatorio de deuda",
       owedTitle: "⚠️ Recordatorio de pago",
       owingBody: "{contactName} te debe {amount} {currency}. Vence en {days} día{plural}.",
-      owedBody: "No olvides: Le debes {amount} {currency} a {contactName}. Vence en {days} día{plural}.",
-    },
+      owedBody: "No olvides: Le debes {amount} {currency} a {contactName}. Vence en {days} día{plural}."
+    }
   },
-
   importExport: {
     title: "Gestión de datos",
     export: {
@@ -604,7 +620,7 @@ export const es = {
       buttonAlt: "Exportar a CSV",
       success: "¡Datos exportados con éxito!",
       error: "Error al exportar",
-      dataError: "Error al exportar los datos",
+      dataError: "Error al exportar los datos"
     },
     import: {
       title: "Importar",
@@ -648,25 +664,33 @@ export const es = {
         invalidFormat: "Formato de archivo inválido",
         invalidCSVFormat: "Formato CSV inválido",
         parseError: "Error al analizar el archivo",
-        validationError: "Error de validación de datos",
-      },
+        validationError: "Error de validación de datos"
+      }
     },
     dataStructure: {
       title: "Estructura de datos CSV",
       description: "Formato requerido para importar deudas:",
       example: "Ejemplo:",
-      fields: { name: "nombre", amount: "monto", type: "tipo", description: "descripción", date: "fecha" },
-      typeValues: { owed: "owed (te deben)", owe: "owe (debes)" },
+      fields: {
+        name: "nombre",
+        amount: "monto",
+        type: "tipo",
+        description: "descripción",
+        date: "fecha"
+      },
+      typeValues: {
+        owed: "owed (te deben)",
+        owe: "owe (debes)"
+      },
       rules: {
         title: "Reglas de validación:",
         nameRequired: "El nombre es obligatorio",
         amountPositive: "El monto debe ser un número positivo",
         typeValid: "El tipo debe ser 'owed' u 'owe'",
-        dateFormat: "La fecha debe estar en formato YYYY-MM-DD (opcional)",
-      },
-    },
+        dateFormat: "La fecha debe estar en formato YYYY-MM-DD (opcional)"
+      }
+    }
   },
-
   modals: {
     editProfile: {
       title: "Editar perfil",
@@ -683,11 +707,11 @@ export const es = {
         fullNameRequired: "El nombre completo es requerido",
         phoneRequired: "El número de teléfono es requerido",
         invalidPhone: "Introduce un número de teléfono camerunés válido",
-        invalidEmail: "Introduce una dirección de email válida",
+        invalidEmail: "Introduce una dirección de email válida"
       },
       success: "¡Perfil actualizado con éxito!",
       error: "Error al actualizar el perfil",
-      unexpectedError: "Ocurrió un error inesperado",
+      unexpectedError: "Ocurrió un error inesperado"
     },
     changePin: {
       title: "Cambiar código PIN",
@@ -702,7 +726,7 @@ export const es = {
         confirm: "Confirmar PIN",
         currentSubtitle: "Introduce tu PIN actual para continuar",
         newSubtitle: "Crea tu nuevo PIN de 6 dígitos",
-        confirmSubtitle: "Confirma tu nuevo PIN",
+        confirmSubtitle: "Confirma tu nuevo PIN"
       },
       validation: {
         currentPinRequired: "El PIN actual es requerido",
@@ -710,16 +734,16 @@ export const es = {
         confirmPinRequired: "La confirmación del PIN es requerida",
         pinMismatch: "Los PINs no coinciden",
         invalidCurrentPin: "El PIN actual es incorrecto",
-        pinMustBeDifferent: "El nuevo PIN debe ser diferente al actual",
+        pinMustBeDifferent: "El nuevo PIN debe ser diferente al actual"
       },
       success: "¡PIN cambiado con éxito!",
       error: "Error al cambiar el PIN",
       verifying: "Verificando...",
       updating: "Actualizando...",
       processing: "Procesando...",
-    },
+      currentPinVerified: "modals.changePin.currentPinVerified"
+    }
   },
-
   history: {
     title: "Historial",
     addDebt: "Añadir deuda",
@@ -729,7 +753,7 @@ export const es = {
       owed: "Me deben",
       iOwe: "Debo",
       pending: "Pendiente",
-      paid: "Pagado",
+      paid: "Pagado"
     },
     search: "Buscar por nombre o número...",
     advancedFilters: "Filtros",
@@ -742,22 +766,23 @@ export const es = {
     empty: {
       title: "No se encontraron deudas",
       description: "Ajusta los filtros o añade tu primera deuda para empezar.",
-      buttonText: "Añadir nueva deuda",
+      buttonText: "Añadir nueva deuda"
     },
     debtType: {
       owesYou: "Te debe",
-      youOwe: "Debes",
+      youOwe: "Debes"
     },
-    dateLabels: { loan: "Préstamo", due: "Vencimiento" },
-    error: "Error al cargar las deudas. Inténtalo de nuevo.",
+    dateLabels: {
+      loan: "Préstamo",
+      due: "Vencimiento"
+    },
+    error: "Error al cargar las deudas. Inténtalo de nuevo."
   },
-
   changelog: {
     title: "¿Qué hay de nuevo? 🎉",
     subtitle: "Esto es lo que cambió en esta versión",
-    gotIt: "¡Entendido!",
+    gotIt: "¡Entendido!"
   },
-
   termsUpdate: {
     title: "Términos actualizados",
     message: "Hemos actualizado nuestros términos y condiciones. Lee los cambios a continuación antes de continuar.",
@@ -765,9 +790,8 @@ export const es = {
     deleteAccount: "Eliminar mi cuenta",
     deleteConfirmTitle: "Eliminar cuenta",
     deleteConfirmMessage: "Todos tus datos (deudas, configuración) se eliminarán permanentemente. Esta acción no se puede deshacer.",
-    deleteConfirm: "Eliminar",
+    deleteConfirm: "Eliminar"
   },
-
   terms: {
     title: "Términos y Condiciones",
     lastUpdated: "Última actualización: Abril 2026",
@@ -775,27 +799,46 @@ export const es = {
     link: "términos y condiciones",
     required: "Debes aceptar los términos y condiciones para continuar",
     sections: {
-      storage: { title: "Almacenamiento local", content: "Todos tus datos se almacenan exclusivamente en tu dispositivo. YourCap no tiene servidores de sincronización actualmente. Tus datos nunca salen de tu teléfono." },
-      responsibility: { title: "Responsabilidad de tus datos", content: "Sin sincronización en la nube, eres el único responsable de hacer copias de seguridad. Desinstalar la app o resetear tu teléfono resultará en la pérdida permanente de todos tus datos." },
-      security: { title: "Seguridad", content: "YourCap protege el acceso mediante un PIN de 6 dígitos y/o autenticación biométrica. Eres responsable de la confidencialidad de tu PIN." },
-      usage: { title: "Uso aceptable", content: "YourCap es una herramienta de seguimiento de deudas personales. Te comprometes a usarla respetando las leyes aplicables. Cualquier uso fraudulento o ilegal está estrictamente prohibido." },
-      privacy: { title: "Privacidad", content: "Tus datos permanecen en tu teléfono. YourCap no recopila, transmite ni vende tus datos personales o financieros a terceros." },
-      limitation: { title: "Limitación de responsabilidad", content: "YourCap se proporciona tal cual, sin garantías. No somos responsables de pérdidas de datos o decisiones financieras tomadas en base a la información mostrada." },
-      evolution: { title: "Evolución del servicio", content: "YourCap está en desarrollo activo. Se podrían introducir funciones de sincronización en la nube. Serás notificado antes de cualquier cambio importante." },
-    },
+      storage: {
+        title: "Almacenamiento local",
+        content: "Todos tus datos se almacenan exclusivamente en tu dispositivo. YourCap no tiene servidores de sincronización actualmente. Tus datos nunca salen de tu teléfono."
+      },
+      responsibility: {
+        title: "Responsabilidad de tus datos",
+        content: "Sin sincronización en la nube, eres el único responsable de hacer copias de seguridad. Desinstalar la app o resetear tu teléfono resultará en la pérdida permanente de todos tus datos."
+      },
+      security: {
+        title: "Seguridad",
+        content: "YourCap protege el acceso mediante un PIN de 6 dígitos y/o autenticación biométrica. Eres responsable de la confidencialidad de tu PIN."
+      },
+      usage: {
+        title: "Uso aceptable",
+        content: "YourCap es una herramienta de seguimiento de deudas personales. Te comprometes a usarla respetando las leyes aplicables. Cualquier uso fraudulento o ilegal está estrictamente prohibido."
+      },
+      privacy: {
+        title: "Privacidad",
+        content: "Tus datos permanecen en tu teléfono. YourCap no recopila, transmite ni vende tus datos personales o financieros a terceros."
+      },
+      limitation: {
+        title: "Limitación de responsabilidad",
+        content: "YourCap se proporciona tal cual, sin garantías. No somos responsables de pérdidas de datos o decisiones financieras tomadas en base a la información mostrada."
+      },
+      evolution: {
+        title: "Evolución del servicio",
+        content: "YourCap está en desarrollo activo. Se podrían introducir funciones de sincronización en la nube. Serás notificado antes de cualquier cambio importante."
+      }
+    }
   },
-
   errors: {
     network: "Error de red. Verifica tu conexión a internet.",
     server: "Error del servidor. Inténtalo más tarde.",
     unknown: "Ocurrió un error inesperado.",
-    validation: "Error de validación de datos.",
+    validation: "Error de validación de datos."
   },
-
   success: {
     saved: "¡Guardado con éxito!",
     updated: "¡Actualizado con éxito!",
     deleted: "¡Eliminado con éxito!",
-    created: "¡Creado con éxito!",
-  },
-}
+    created: "¡Creado con éxito!"
+  }
+};

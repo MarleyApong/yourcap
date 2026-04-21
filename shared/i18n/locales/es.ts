@@ -4,7 +4,12 @@ export const es = {
     title: "welcome.title",
     subtitle: "welcome.subtitle",
     signIn: "welcome.signIn",
-    createAccount: "welcome.createAccount"
+    createAccount: "welcome.createAccount",
+    getStarted: "welcome.getStarted",
+    chooseLanguage: "welcome.chooseLanguage",
+    chooseLanguageSubtitle: "welcome.chooseLanguageSubtitle",
+    detectedFromDevice: "welcome.detectedFromDevice",
+    continueWith: "welcome.continueWith"
   },
   debt: {
     add: {
@@ -13,7 +18,8 @@ export const es = {
         phoneRequired: "debt.add.validation.phoneRequired",
         amountRequired: "debt.add.validation.amountRequired",
         invalidAmount: "debt.add.validation.invalidAmount",
-        invalidDueDate: "debt.add.validation.invalidDueDate"
+        invalidDueDate: "debt.add.validation.invalidDueDate",
+        phoneConflictTitle: "debt.add.validation.phoneConflictTitle"
       },
       success: "debt.add.success",
       error: "debt.add.error",
@@ -48,7 +54,22 @@ export const es = {
       description: "debt.add.description",
       descriptionPlaceholder: "debt.add.descriptionPlaceholder",
       save: "debt.add.save",
-      descriptionOptional: "debt.add.descriptionOptional"
+      descriptionOptional: "debt.add.descriptionOptional",
+      savedContacts: {
+        recent: "debt.add.savedContacts.recent",
+        hint: "debt.add.savedContacts.hint",
+        more: "debt.add.savedContacts.more",
+        title: "debt.add.savedContacts.title",
+        search: "debt.add.savedContacts.search"
+      },
+      steps: {
+        who: "debt.add.steps.who",
+        whoSub: "debt.add.steps.whoSub",
+        amount: "debt.add.steps.amount",
+        amountSub: "debt.add.steps.amountSub",
+        when: "debt.add.steps.when",
+        whenSub: "debt.add.steps.whenSub"
+      }
     },
     details: {
       notFound: "debt.details.notFound",
@@ -89,7 +110,31 @@ export const es = {
     status: {
       paid: "debt.status.paid",
       overdue: "debt.status.overdue",
-      pending: "debt.status.pending"
+      pending: "debt.status.pending",
+      partiallyPaid: "debt.status.partiallyPaid"
+    },
+    payments: {
+      invalidAmount: "debt.payments.invalidAmount",
+      added: "debt.payments.added",
+      exceedsRemaining: "debt.payments.exceedsRemaining",
+      deleteConfirm: "debt.payments.deleteConfirm",
+      deleted: "debt.payments.deleted",
+      title: "debt.payments.title",
+      record: "debt.payments.record",
+      paid: "debt.payments.paid",
+      remaining: "debt.payments.remaining",
+      empty: "debt.payments.empty",
+      amount: "debt.payments.amount",
+      date: "debt.payments.date",
+      note: "debt.payments.note"
+    },
+    interest: {
+      flat: "debt.interest.flat",
+      monthly: "debt.interest.monthly",
+      totalDue: "debt.interest.totalDue",
+      title: "debt.interest.title",
+      none: "debt.interest.none",
+      rate: "debt.interest.rate"
     }
   },
   common: {
@@ -131,7 +176,9 @@ export const es = {
       dontHaveAccount: "auth.login.dontHaveAccount",
       welcomeBackUser: "auth.login.welcomeBackUser",
       signUp: "auth.login.signUp",
-      invalidPin: "auth.login.invalidPin"
+      invalidPin: "auth.login.invalidPin",
+      phoneOrEmail: "auth.login.phoneOrEmail",
+      recentAccounts: "auth.login.recentAccounts"
     },
     validation: {
       fullNameRequired: "auth.validation.fullNameRequired",
@@ -151,7 +198,18 @@ export const es = {
     },
     forgotPassword: {
       identifierRequired: "auth.forgotPassword.identifierRequired",
-      resetFailed: "auth.forgotPassword.resetFailed"
+      resetFailed: "auth.forgotPassword.resetFailed",
+      link: "auth.forgotPassword.link",
+      newPin: "auth.forgotPassword.newPin",
+      newPinSub: "auth.forgotPassword.newPinSub",
+      confirmPin: "auth.forgotPassword.confirmPin",
+      confirmPinSub: "auth.forgotPassword.confirmPinSub",
+      resetting: "auth.forgotPassword.resetting",
+      title: "auth.forgotPassword.title",
+      subtitle: "auth.forgotPassword.subtitle",
+      fullName: "auth.forgotPassword.fullName",
+      identifier: "auth.forgotPassword.identifier",
+      rememberPin: "auth.forgotPassword.rememberPin"
     }
   },
   tabs: {
@@ -336,7 +394,19 @@ export const es = {
     developerName: "settings.developerName",
     developerPortfolio: "settings.developerPortfolio",
     protected: "settings.protected",
-    disabled: "settings.disabled"
+    disabled: "settings.disabled",
+    biometricNotAvailable: "settings.biometricNotAvailable",
+    sectionProtection: "settings.sectionProtection",
+    sectionAutoLock: "settings.sectionAutoLock",
+    autoLock: "settings.autoLock",
+    autoLockDesc: "settings.autoLockDesc",
+    backgroundLockDelayDesc: "settings.backgroundLockDelayDesc",
+    sectionPinKeypad: "settings.sectionPinKeypad",
+    shufflePin: "settings.shufflePin",
+    shufflePinDesc: "settings.shufflePinDesc",
+    shareApp: "settings.shareApp",
+    rateApp: "settings.rateApp",
+    reportBug: "settings.reportBug"
   },
   history: {
     error: "history.error",
@@ -388,6 +458,27 @@ export const es = {
       databaseNotReady: "dashboard.errors.databaseNotReady",
       failedToLoad: "dashboard.errors.failedToLoad",
       tapToRetry: "dashboard.errors.tapToRetry"
+    },
+    greeting: {
+      morning: "dashboard.greeting.morning",
+      afternoon: "dashboard.greeting.afternoon",
+      evening: "dashboard.greeting.evening"
+    },
+    balance: {
+      net: "dashboard.balance.net",
+      toReceive: "dashboard.balance.toReceive",
+      toPay: "dashboard.balance.toPay"
+    },
+    attention: {
+      title: "dashboard.attention.title",
+      empty: "dashboard.attention.empty",
+      emptyDesc: "dashboard.attention.emptyDesc",
+      overdue: "dashboard.attention.overdue",
+      dueToday: "dashboard.attention.dueToday"
+    },
+    recent: {
+      title: "dashboard.recent.title",
+      seeAll: "dashboard.recent.seeAll"
     }
   },
   terms: {
