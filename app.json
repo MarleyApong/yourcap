@@ -13,7 +13,9 @@
         "NSFaceIDUsageDescription": "Yourcap utilise Face ID pour vous authentifier de manière sécurisée.",
         "NSLocalAuthenticationUsageDescription": "Yourcap utilise la biométrie pour sécuriser l'accès à vos données.",
         "NSDocumentsFolderUsageDescription": "Yourcap accède à vos documents pour l'import/export de données.",
-        "UIBackgroundModes": ["remote-notification"]
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
       }
     },
     "android": {
@@ -77,7 +79,8 @@
           "faceIDPermission": "Yourcap utilise Face ID pour sécuriser vos données stockées."
         }
       ],
-      "expo-document-picker"
+      "expo-document-picker",
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true

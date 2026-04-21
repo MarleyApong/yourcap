@@ -7,22 +7,20 @@ export default function AuthLayout() {
       <StatusBar hidden />
       <Stack>
         <Stack.Screen
+          name="language"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
           name="login"
-          options={{
-            headerShown: false,
-          }}
+          options={{ headerShown: false, gestureEnabled: false }}
         />
         <Stack.Screen
           name="register"
-          options={{
-            headerShown: false,
-          }}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="forgot-password"
-          options={{
-            headerShown: false,
-          }}
+          options={{ headerShown: false }}
         />
       </Stack>
     </>

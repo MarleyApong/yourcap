@@ -39,6 +39,11 @@ export const fr = {
     subtitle: "Suivez vos dettes facilement et en toute sécurité.",
     signIn: "Se connecter",
     createAccount: "Créer un compte",
+    getStarted: "Commencer",
+    chooseLanguage: "Choisissez votre langue",
+    chooseLanguageSubtitle: "Vous pourrez modifier cela dans les Paramètres",
+    detectedFromDevice: "Détectée depuis votre appareil",
+    continueWith: "Continuer",
   },
 
   // Authentification

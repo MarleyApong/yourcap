@@ -39,6 +39,11 @@ export const en = {
     subtitle: "Keep track of debts easily and securely.",
     signIn: "Sign in",
     createAccount: "Create an account",
+    getStarted: "Get started",
+    chooseLanguage: "Choose your language",
+    chooseLanguageSubtitle: "You can change this later in Settings",
+    detectedFromDevice: "Detected from your device",
+    continueWith: "Continue",
   },
 
   // Authentication

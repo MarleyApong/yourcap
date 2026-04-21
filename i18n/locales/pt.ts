@@ -38,6 +38,11 @@ export const pt = {
     subtitle: "Controle suas dívidas de forma fácil e segura.",
     signIn: "Entrar",
     createAccount: "Criar uma conta",
+    getStarted: "Começar",
+    chooseLanguage: "Escolha seu idioma",
+    chooseLanguageSubtitle: "Você pode alterar isso depois nas Configurações",
+    detectedFromDevice: "Detectado do seu dispositivo",
+    continueWith: "Continuar",
   },
 
   auth: {

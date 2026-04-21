@@ -38,6 +38,11 @@ export const de = {
     subtitle: "Verwalte deine Schulden einfach und sicher.",
     signIn: "Anmelden",
     createAccount: "Konto erstellen",
+    getStarted: "Loslegen",
+    chooseLanguage: "Sprache wählen",
+    chooseLanguageSubtitle: "Du kannst dies später in den Einstellungen ändern",
+    detectedFromDevice: "Von deinem Gerät erkannt",
+    continueWith: "Weiter",
   },
 
   auth: {
