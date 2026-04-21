@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/MarleyApong/yourcap/compare/v1.4.0...v1.5.0) (2026-04-21)
+
+
+### Features
+
+* add language selection screen with system language detection and localization support ([67210f4](https://github.com/MarleyApong/yourcap/commit/67210f49ff7194774b4d145559255baa24616705))
+* **debt:** add interest type and rate fields to debt creation and management ([856fc1e](https://github.com/MarleyApong/yourcap/commit/856fc1e8feb3771c8b7643bade116bb4837e58ca))
+* **payments:** implement payment management with add, delete, and retrieval functionalities; update debt status accordingly ([c4b8d4f](https://github.com/MarleyApong/yourcap/commit/c4b8d4fa0c396ddcfa3de4a48f21a43a463508d6))
+* **security:** add shuffle PIN keypad option in settings and update related components ([a069c20](https://github.com/MarleyApong/yourcap/commit/a069c206ca044e49d407357cc92c7ee297a4d6e5))
+* **security:** enhance security settings UI and add localization for new features ([c0f422e](https://github.com/MarleyApong/yourcap/commit/c0f422e0dd583ce86f0e490af6d167b58c9ae66b))
+* **security:** implement expo-crypto for PIN hashing and verification; migrate legacy bcrypt hashes ([e26c66f](https://github.com/MarleyApong/yourcap/commit/e26c66fb752a881ef920b2ab07a718d8fed20384))
+* **ui:** simplify terms update modal by removing account deletion functionality ([b297858](https://github.com/MarleyApong/yourcap/commit/b297858e50e3070601efc16463f15c3b68c36d7a))
+
 ## [1.4.0](https://github.com/MarleyApong/yourcap/compare/v1.1.0...v1.4.0) (2026-04-20)
 
 
