@@ -59,7 +59,7 @@ class I18nParser {
       const content = fs.readFileSync(filePath, 'utf8');
       // Regex plus précise pour éviter les faux positifs
       // Cherche: t('key') ou t("key") ou t(`key`) avec des espaces optionnels
-      const regex = new RegExp(`\\b${this.config.translationFunction}\\s*\\(\\s*["'\`]([a-zA-Z][a-zA-Z0-9._-]*)["'\`]\\s*\\)`, 'g');
+      const regex = new RegExp(`\\b${this.config.translationFunction}\\s*\\(\\s*["'\`]([a-zA-Z][a-zA-Z0-9._-]*)["'\`]`, 'g');
       const keys = [];
       let match;
 

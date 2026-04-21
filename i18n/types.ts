@@ -1,5 +1,5 @@
 // Types générés automatiquement - NE PAS MODIFIER MANUELLEMENT
-// Généré le 21/04/2026 22:37:56
+// Généré le 21/04/2026 22:45:04
 export interface TranslationKeys {
   'welcome.title': string;
   'welcome.subtitle': string;
@@ -173,6 +173,12 @@ export interface TranslationKeys {
   'debt.delete.title': string;
   'debt.delete.confirm': string;
   'debt.delete.cancel': string;
+  'debt.details.messages.smsOwing': string;
+  'debt.details.messages.smsOwed': string;
+  'debt.details.messages.emailSubjectOwing': string;
+  'debt.details.messages.emailSubjectOwed': string;
+  'debt.details.messages.emailBodyOwing': string;
+  'debt.details.messages.emailBodyOwed': string;
   'debt.add.validation.nameRequired': string;
   'debt.add.validation.phoneRequired': string;
   'debt.add.validation.invalidAmount': string;
@@ -216,6 +222,7 @@ export interface TranslationKeys {
   'debt.payments.note': string;
   'debt.details.editTitle': string;
   'debt.add.savedContacts.recent': string;
+  'debt.add.savedContacts.autoFilled': string;
   'debt.add.savedContacts.hint': string;
   'debt.add.savedContacts.more': string;
   'debt.add.name': string;
@@ -237,6 +244,7 @@ export interface TranslationKeys {
   'debt.add.savedContacts.search': string;
   'debt.add.success': string;
   'debt.add.error': string;
+  'debt.add.validation.phoneConflict': string;
   'debt.add.validation.phoneConflictTitle': string;
   'common.continue': string;
   'debt.add.steps.who': string;
@@ -307,6 +315,7 @@ export interface TranslationKeys {
   'dashboard.attention.emptyDesc': string;
   'dashboard.attention.overdue': string;
   'dashboard.attention.dueToday': string;
+  'dashboard.attention.dueSoon': string;
   'dashboard.recent.title': string;
   'dashboard.recent.seeAll': string;
   'dashboard.empty.title': string;
@@ -340,6 +349,7 @@ export interface TranslationKeys {
   'auth.errors.unexpectedError': string;
   'auth.errors.biometricFailed': string;
   'auth.login.useDifferentAccount': string;
+  'auth.login.welcomeBackUser': string;
   'auth.login.verifyIdentity': string;
   'auth.login.pinTitle': string;
   'auth.login.biometricSubtitle': string;
@@ -446,6 +456,8 @@ export interface TranslationKeys {
   'termsUpdate.accept': string;
   'notifications.reminder.owingTitle': string;
   'notifications.reminder.owedTitle': string;
+  'notifications.reminder.owingBody': string;
+  'notifications.reminder.owedBody': string;
   'auth.biometricPrompt': string;
   'auth.biometricCancel': string;
   'auth.biometricFallback': string;
