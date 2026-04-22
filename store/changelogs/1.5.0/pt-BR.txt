@@ -1,0 +1,7 @@
+• Pagamentos parciais — registre vários pagamentos em uma dívida e acompanhe o progresso
+• Taxas de juros — configure juros fixos ou mensais ao adicionar uma dívida
+• Login mais rápido — a verificação do PIN agora é quase instantânea
+• Teclado PIN em ordem por padrão — ative o embaralhamento em Segurança para mais privacidade
+• PIN esquecido? — redefina seu PIN diretamente da tela de login
+• Configurações de segurança — reorganizadas em seções claras (Proteção, Bloqueio, Teclado PIN)
+• Seleção de idioma no primeiro acesso — detectado automaticamente do seu dispositivo

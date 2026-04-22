@@ -8,11 +8,11 @@ import { useTranslation } from "@/i18n"
 import { Toast } from "@/lib/toast-global"
 import { formatCurrency } from "@/lib/utils"
 import { getDebtsSummary, getUserDebts } from "@/services/debtServices"
+import * as Notifications from "expo-notifications"
 import { requestNotificationPermissions } from "@/services/notificationService"
-import { updateSettings } from "@/services/settingsService"
+import { getSettings, updateSettings } from "@/services/settingsService"
 import { useAuthStore } from "@/stores/authStore"
 import { Debt } from "@/types/debt"
-import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useFocusEffect } from "@react-navigation/core"
 import { Feather } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
@@ -21,7 +21,6 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
 import Animated, { FadeInDown, FadeInRight } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
-const NOTIF_PERMISSION_KEY = "notification_permission_asked"
 
 function getDaysUntil(dateString: string): number {
   const today = new Date()
@@ -49,17 +48,25 @@ export default function Dashboard() {
   const insets = useSafeAreaInsets()
 
   useEffect(() => {
-    const askNotificationPermission = async () => {
+    const syncNotificationPermission = async () => {
       if (!user) return
-      const asked = await AsyncStorage.getItem(NOTIF_PERMISSION_KEY)
-      if (asked) return
-      await AsyncStorage.setItem(NOTIF_PERMISSION_KEY, "true")
-      const granted = await requestNotificationPermissions()
-      if (granted) {
-        await updateSettings(user.user_id, { notification_enabled: true, system_notifications: true })
+      const { status } = await Notifications.getPermissionsAsync()
+      if (status === "undetermined") {
+        // Never asked — request and enable if granted
+        const granted = await requestNotificationPermissions()
+        if (granted) {
+          await updateSettings(user.user_id, { notification_enabled: true, system_notifications: true })
+        }
+      } else if (status === "granted") {
+        // OS permission granted — ensure DB is in sync
+        const settings = await getSettings(user.user_id)
+        if (!settings?.notification_enabled) {
+          await updateSettings(user.user_id, { notification_enabled: true, system_notifications: true })
+        }
       }
+      // status === "denied" → do nothing, user explicitly refused
     }
-    askNotificationPermission()
+    syncNotificationPermission()
   }, [user])
 
   const loadData = useCallback(async () => {

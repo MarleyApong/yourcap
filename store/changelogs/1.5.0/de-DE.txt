@@ -1,0 +1,7 @@
+• Teilzahlungen — mehrere Zahlungen für eine Schuld erfassen und Fortschritt verfolgen
+• Zinssätze — festen oder monatlichen Zins beim Hinzufügen einer Schuld festlegen
+• Schnellere Anmeldung — PIN-Prüfung ist jetzt nahezu sofort (auf expo-crypto migriert)
+• PIN-Tastatur standardmäßig sortiert — Mischen in den Sicherheitseinstellungen aktivierbar
+• PIN vergessen? — PIN direkt vom Anmeldebildschirm zurücksetzen
+• Sicherheitseinstellungen — in klare Abschnitte unterteilt (Schutz, Sperre, PIN-Tastatur)
+• Sprachauswahl beim ersten Start — automatisch vom Gerät erkannt

@@ -16,6 +16,7 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
     "release:dev": "standard-version --prerelease dev",
     "release:prod": "node scripts/release-check.js",
+    "play:notes": "node scripts/generate-play-notes.js",
     "build:android": "eas build --platform android --profile production",
     "build:android:local": "eas build --platform android --profile production --local",
     "build:android:preview": "eas build --platform android --profile preview",

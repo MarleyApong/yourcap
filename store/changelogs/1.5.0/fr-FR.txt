@@ -1,0 +1,7 @@
+• Paiements partiels — enregistrez plusieurs paiements sur une dette et suivez la progression
+• Taux d'intérêt — configurez un intérêt fixe ou mensuel à l'ajout d'une dette
+• Connexion plus rapide — la vérification du PIN est désormais quasi instantanée
+• Clavier PIN en ordre par défaut — activez le mélange dans Sécurité pour plus de confidentialité
+• PIN oublié ? — réinitialisez votre PIN directement depuis l'écran de connexion
+• Paramètres Sécurité — réorganisés en sections claires (Protection, Verrouillage, Clavier PIN)
+• Sélection de langue au premier lancement — détectée automatiquement depuis votre appareil

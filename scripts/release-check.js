@@ -64,6 +64,11 @@ rl.question(`  ${BOLD}Continuer le release ? (o/N) :${RESET} `, (answer) => {
     } catch (e) {
       process.exit(1)
     }
+
+    // Generate Play Store release notes from CHANGELOG
+    const newVersion = JSON.parse(fs.readFileSync(path.join(__dirname, "../app.json"), "utf8")).expo.version
+    const { generateNotes } = require("./generate-play-notes")
+    generateNotes(newVersion)
   } else {
     console.log("")
     console.log(`  ${RED}✖ Release annulé.${RESET}`)
