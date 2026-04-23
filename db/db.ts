@@ -194,7 +194,7 @@ export const initDb = async (): Promise<void> => {
 
 export const resetDatabase = async (): Promise<boolean> => {
   try {
-    // Clear all AsyncStorage keys
+    // 1. AsyncStorage — all known keys including zustand persist store
     const AsyncStorage = (await import("@react-native-async-storage/async-storage")).default
     await AsyncStorage.multiRemove([
       "auth_token",
@@ -203,8 +203,18 @@ export const resetDatabase = async (): Promise<boolean> => {
       "session_expiry",
       "last_seen_app_version",
       "terms_accepted_version",
+      "yourcap-app-store",
     ])
 
+    // 2. SecureStore — language preference
+    const SecureStore = await import("expo-secure-store")
+    await SecureStore.deleteItemAsync("app_language")
+
+    // 3. Cancel all scheduled notifications
+    const Notifications = await import("expo-notifications")
+    await Notifications.cancelAllScheduledNotificationsAsync()
+
+    // 4. Drop and recreate SQLite tables
     if (!db) {
       await initDb()
     }
@@ -224,10 +234,10 @@ export const resetDatabase = async (): Promise<boolean> => {
     db = null
     await initDb()
 
-    console.log("🔄 Database reset successfully")
+    console.log("🔄 Full app reset successfully")
     return true
   } catch (error) {
-    console.error("❌ Error resetting database:", error)
+    console.error("❌ Error resetting app:", error)
     throw error
   }
 }
