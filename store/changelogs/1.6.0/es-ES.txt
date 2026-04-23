@@ -1,0 +1,3 @@
+• Resumen de saldo rediseñado — saldo neto destacado con tarjetas separadas para cobros y pagos
+• Bloqueo por inactividad corregido — la pantalla se bloquea tras el tiempo configurado
+• Ajustes de seguridad — confirmación toast tras cada cambio

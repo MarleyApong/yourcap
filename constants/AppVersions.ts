@@ -14,6 +14,33 @@ type ChangelogEntries = {
 // Key = app version (must match app.json "version").
 // Do NOT add an entry for the initial release version.
 export const CHANGELOG: Record<string, ChangelogEntries> = {
+  "1.6.0": {
+    en: [
+      "Redesigned balance summary — net balance headline with separate receivable and payable cards",
+      "Inactivity lock fixed — screen now locks after the configured idle time",
+      "Security settings — confirmation toast after every change",
+    ],
+    fr: [
+      "Résumé du solde repensé — solde net en titre avec cartes séparées pour créances et dettes",
+      "Verrouillage par inactivité corrigé — l'écran se verrouille après le délai configuré",
+      "Paramètres de sécurité — confirmation toast après chaque modification",
+    ],
+    es: [
+      "Resumen de saldo rediseñado — saldo neto destacado con tarjetas separadas para cobros y pagos",
+      "Bloqueo por inactividad corregido — la pantalla se bloquea tras el tiempo configurado",
+      "Ajustes de seguridad — confirmación toast tras cada cambio",
+    ],
+    de: [
+      "Neu gestaltete Saldoübersicht — Nettosaldo als Überschrift mit getrennten Karten für Forderungen und Schulden",
+      "Inaktivitätssperre behoben — Bildschirm sperrt nach der eingestellten Leerlaufzeit",
+      "Sicherheitseinstellungen — Bestätigung nach jeder Änderung",
+    ],
+    pt: [
+      "Resumo de saldo redesenhado — saldo líquido em destaque com cartões separados para recebíveis e pagáveis",
+      "Bloqueio por inatividade corrigido — tela bloqueia após o tempo de inatividade configurado",
+      "Configurações de segurança — confirmação toast após cada alteração",
+    ],
+  },
   "1.5.0": {
     en: [
       "Partial payments — record multiple payments per debt and track progress",
