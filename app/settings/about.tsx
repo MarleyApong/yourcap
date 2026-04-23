@@ -140,6 +140,14 @@ export default function AboutSettings() {
           <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.howToAddDebtAnswer")}</Text>
           <Text style={[sheetSectionStyles.sectionTitle, { color: colors.foreground.primary, marginTop: 12, marginBottom: 4, fontWeight: "600" }]}>{t("settings.howToChangePin")}</Text>
           <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.howToChangePinAnswer")}</Text>
+          <Text style={[sheetSectionStyles.sectionTitle, { color: colors.foreground.primary, marginTop: 12, marginBottom: 4, fontWeight: "600" }]}>{t("settings.howToAddPayment")}</Text>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.howToAddPaymentAnswer")}</Text>
+          <Text style={[sheetSectionStyles.sectionTitle, { color: colors.foreground.primary, marginTop: 12, marginBottom: 4, fontWeight: "600" }]}>{t("settings.howToAddInterest")}</Text>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.howToAddInterestAnswer")}</Text>
+          <Text style={[sheetSectionStyles.sectionTitle, { color: colors.foreground.primary, marginTop: 12, marginBottom: 4, fontWeight: "600" }]}>{t("settings.howToResetPin")}</Text>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.howToResetPinAnswer")}</Text>
+          <Text style={[sheetSectionStyles.sectionTitle, { color: colors.foreground.primary, marginTop: 12, marginBottom: 4, fontWeight: "600" }]}>{t("settings.howToDebtStatus")}</Text>
+          <Text style={[sheetSectionStyles.sectionContent, { color: colors.foreground.primary }]}>{t("settings.howToDebtStatusAnswer")}</Text>
         </View>
         <View style={sheetSectionStyles.section}>
           <View style={sheetSectionStyles.sectionHeader}>

@@ -1,6 +1,7 @@
 import { DebtItem } from "@/components/feature/dashboard/debtItem"
 import { EmptyState } from "@/components/feature/empty-state"
 import { LoadingState } from "@/components/feature/loading-state"
+import { NotificationBanner } from "@/components/feature/notification-banner"
 import { Fab } from "@/components/ui/fab"
 import { useTheme } from "@/core/theme"
 import { isDatabaseReady } from "@/db/db"
@@ -123,6 +124,9 @@ export default function Dashboard() {
         </View>
 
         <View style={styles.content}>
+
+          {/* Notification prompt banner */}
+          <NotificationBanner />
 
           {/* Balance section */}
           <Animated.View entering={FadeInDown.duration(350).delay(50)} style={styles.balanceSection}>

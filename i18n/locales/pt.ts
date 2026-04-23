@@ -439,6 +439,14 @@ export const pt = {
     howToAddDebtAnswer: "Vá para a aba Painel e toque no botão \"+\" para adicionar um novo registro.",
     howToChangePin: "• Como alterar meu PIN?",
     howToChangePinAnswer: "Vá em Configurações → Perfil → Alterar PIN.",
+    howToAddPayment: "• Como registrar um pagamento parcial?",
+    howToAddPaymentAnswer: "Abra uma dívida e toque em «Adicionar pagamento». Insira o valor e a data. O status é atualizado automaticamente.",
+    howToAddInterest: "• Como adicionar juros a uma dívida?",
+    howToAddInterestAnswer: "Ao adicionar ou editar uma dívida, expanda a seção «Juros» e escolha taxa fixa ou mensal.",
+    howToResetPin: "• Esqueci meu PIN — como redefinir?",
+    howToResetPinAnswer: "Na tela de login, toque em «PIN esquecido?» e siga os passos.",
+    howToDebtStatus: "• O que significam os status das dívidas?",
+    howToDebtStatusAnswer: "PENDENTE: ativa e não vencida. VENCIDA: prazo ultrapassado com saldo restante. PAGA: totalmente quitada.",
     contactSupport: "Desenvolvedor & Contato:",
     supportEmail: "marlexapong90@gmail.com",
     supportEmailLabel: "Precisa de orçamento, opinião ou mais? Escreva-me aqui:",
@@ -831,6 +839,12 @@ export const pt = {
         content: "O YourCap está em desenvolvimento ativo. Recursos de sincronização na nuvem poderão ser introduzidos. Você será notificado antes de qualquer mudança importante."
       }
     }
+  },
+  notifBanner: {
+    title: "Notificações desativadas",
+    desc: "Ative as notificações para receber lembretes antes do vencimento das suas dívidas.",
+    enable: "Ativar",
+    dismiss: "Não mostrar novamente"
   },
   errors: {
     network: "Erro de rede. Verifique sua conexão com a internet.",

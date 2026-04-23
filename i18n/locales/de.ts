@@ -439,6 +439,14 @@ export const de = {
     howToAddDebtAnswer: "Gehe zum Dashboard-Tab und tippe auf \"+\", um einen neuen Eintrag hinzuzufügen.",
     howToChangePin: "• Wie ändere ich meinen PIN?",
     howToChangePinAnswer: "Gehe zu Einstellungen → Profil → PIN ändern.",
+    howToAddPayment: "• Wie erfasse ich eine Teilzahlung?",
+    howToAddPaymentAnswer: "Öffne eine Schuld und tippe auf «Zahlung hinzufügen». Betrag und Datum eingeben — der Status aktualisiert sich automatisch.",
+    howToAddInterest: "• Wie füge ich Zinsen zu einer Schuld hinzu?",
+    howToAddInterestAnswer: "Beim Hinzufügen oder Bearbeiten einer Schuld den Abschnitt «Zinsen» ausklappen und festen oder monatlichen Zinssatz wählen.",
+    howToResetPin: "• Ich habe meinen PIN vergessen — wie zurücksetzen?",
+    howToResetPinAnswer: "Auf dem Anmeldebildschirm auf «PIN vergessen?» tippen und den Anweisungen folgen.",
+    howToDebtStatus: "• Was bedeuten die Schulden-Status?",
+    howToDebtStatusAnswer: "AUSSTEHEND: aktiv, noch nicht fällig. ÜBERFÄLLIG: Fälligkeitsdatum überschritten. BEZAHLT: vollständig beglichen.",
     contactSupport: "Entwickler & Kontakt:",
     supportEmail: "marlexapong90@gmail.com",
     supportEmailLabel: "Angebot, Feedback oder mehr? Schreib mir hier:",
@@ -831,6 +839,12 @@ export const de = {
         content: "YourCap befindet sich in aktiver Entwicklung. Cloud-Synchronisierungsfunktionen könnten eingeführt werden. Du wirst vor wesentlichen Änderungen benachrichtigt."
       }
     }
+  },
+  notifBanner: {
+    title: "Benachrichtigungen deaktiviert",
+    desc: "Aktiviere Benachrichtigungen, um Erinnerungen vor Fälligkeitsterminen zu erhalten.",
+    enable: "Aktivieren",
+    dismiss: "Nicht mehr anzeigen"
   },
   errors: {
     network: "Netzwerkfehler. Überprüfe deine Internetverbindung.",

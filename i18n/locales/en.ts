@@ -442,6 +442,14 @@ export const en = {
     howToAddDebtAnswer: "Go to the Dashboard tab and tap the \"+\" button to add a new debt record.",
     howToChangePin: "• How to change my PIN?",
     howToChangePinAnswer: "Navigate to Settings → Profile → Change PIN to update your security PIN.",
+    howToAddPayment: "• How to record a partial payment?",
+    howToAddPaymentAnswer: "Open a debt, then tap \"Add payment\". Enter the amount and date. The debt status updates automatically based on your payments.",
+    howToAddInterest: "• How to add interest to a debt?",
+    howToAddInterestAnswer: "When adding or editing a debt, expand the \"Interest\" section and choose flat or monthly rate.",
+    howToResetPin: "• I forgot my PIN — how do I reset it?",
+    howToResetPinAnswer: "On the login screen, tap \"Forgot PIN?\" and follow the steps to reset it.",
+    howToDebtStatus: "• What do the debt statuses mean?",
+    howToDebtStatusAnswer: "PENDING: debt is active and not yet due. OVERDUE: past the due date with a remaining balance. PAID: fully settled.",
     contactSupport: "Developer & Contact:",
     supportEmail: "marlexapong90@gmail.com",
     supportEmailLabel: "Need a quote, feedback, or more? Write to me here:",
@@ -831,6 +839,12 @@ export const en = {
         content: "YourCap is under active development. Cloud synchronization features and new options may be introduced. You will be notified before any major change affecting the processing of your data. Continued use of the application constitutes acceptance of the new conditions."
       }
     }
+  },
+  notifBanner: {
+    title: "Notifications are off",
+    desc: "Enable notifications to get reminders before debts are due.",
+    enable: "Enable",
+    dismiss: "Don't show again"
   },
   errors: {
     network: "Network error. Check your internet connection.",

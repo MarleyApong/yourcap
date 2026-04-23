@@ -439,6 +439,14 @@ export const fr = {
     howToAddDebtAnswer: "Allez à l'onglet Tableau de bord et appuyez sur le bouton \"+\" pour ajouter un nouvel enregistrement de dette.",
     howToChangePin: "• Comment changer mon PIN ?",
     howToChangePinAnswer: "Naviguez vers Paramètres → Profil → Changer PIN pour mettre à jour votre PIN de sécurité.",
+    howToAddPayment: "• Comment enregistrer un paiement partiel ?",
+    howToAddPaymentAnswer: "Ouvrez une dette, puis appuyez sur « Ajouter un paiement ». Saisissez le montant et la date. Le statut se met à jour automatiquement.",
+    howToAddInterest: "• Comment ajouter des intérêts à une dette ?",
+    howToAddInterestAnswer: "Lors de l'ajout ou de la modification d'une dette, développez la section « Intérêts » et choisissez le taux fixe ou mensuel.",
+    howToResetPin: "• J'ai oublié mon PIN — comment le réinitialiser ?",
+    howToResetPinAnswer: "Sur l'écran de connexion, appuyez sur « PIN oublié ? » et suivez les étapes.",
+    howToDebtStatus: "• Que signifient les statuts des dettes ?",
+    howToDebtStatusAnswer: "EN ATTENTE : dette active non échue. EN RETARD : échéance dépassée avec solde restant. PAYÉE : entièrement soldée.",
     contactSupport: "Développeur & Contact :",
     supportEmail: "marlexapong90@gmail.com",
     supportEmailLabel: "Besoin d'un devis, d'un avis, ou plus ? Écrivez-moi ici :",
@@ -831,6 +839,12 @@ export const fr = {
         content: "YourCap est en développement actif. Des fonctionnalités de synchronisation cloud et de nouvelles options pourraient être introduites. Vous serez informé avant tout changement majeur affectant le traitement de vos données. L'utilisation continue de l'application vaut acceptation des nouvelles conditions."
       }
     }
+  },
+  notifBanner: {
+    title: "Notifications désactivées",
+    desc: "Activez les notifications pour recevoir des rappels avant l'échéance de vos dettes.",
+    enable: "Activer",
+    dismiss: "Ne plus afficher"
   },
   errors: {
     network: "Erreur de connexion. Vérifiez votre connexion internet.",
