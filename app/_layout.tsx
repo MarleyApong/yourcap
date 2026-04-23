@@ -13,6 +13,7 @@ import { useFonts } from "expo-font"
 import { Stack } from "expo-router"
 import * as SplashScreen from "expo-splash-screen"
 import { useEffect, useState } from "react"
+import { View } from "react-native"
 import "react-native-get-random-values"
 
 function NavigationStack() {
@@ -50,7 +51,7 @@ export default function RootLayout() {
   // Use hooks - l'ordre est important
   useNotificationHandler()
   useAppStartup()
-  useInactivityTimeout()
+  const { resetInactivityTimer } = useInactivityTimeout()
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -106,12 +107,14 @@ export default function RootLayout() {
   return (
     <ThemeProvider>
       <ToastProvider>
-        <NavigationStack />
+        <View style={{ flex: 1 }} onTouchStart={resetInactivityTimer}>
+          <NavigationStack />
 
-        {/* App Lock Screen - s'affiche par-dessus tout quand nécessaire */}
-        <AppLockScreen />
-        {/* Changelog + T&C update modals - s'affiche après connexion si nécessaire */}
-        <AppUpdateModals />
+          {/* App Lock Screen - s'affiche par-dessus tout quand nécessaire */}
+          <AppLockScreen />
+          {/* Changelog + T&C update modals - s'affiche après connexion si nécessaire */}
+          <AppUpdateModals />
+        </View>
       </ToastProvider>
     </ThemeProvider>
   )

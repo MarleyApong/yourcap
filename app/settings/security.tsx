@@ -205,7 +205,10 @@ export default function SecuritySettings() {
                   { value: 120, label: t("settings.oneHundredTwentyMin") },
                 ]}
                 selectedValue={settings.inactivity_timeout}
-                onSelect={(minutes) => updateSetting("inactivity_timeout", minutes)}
+                onSelect={async (minutes) => {
+                  await updateSetting("inactivity_timeout", minutes)
+                  Toast.success(t("settings.autoLockUpdated"))
+                }}
               />
             </View>
 
@@ -248,7 +251,10 @@ export default function SecuritySettings() {
               <View style={{ borderRadius: 999, borderWidth: 1.5, borderColor: settings.shuffle_pin_keypad ? colors.primary.default : colors.border }}>
                 <Switch
                   value={!!settings.shuffle_pin_keypad}
-                  onValueChange={(v) => updateSetting("shuffle_pin_keypad", v)}
+                  onValueChange={async (v) => {
+                    await updateSetting("shuffle_pin_keypad", v)
+                    Toast.success(v ? t("settings.shufflePinEnabled") : t("settings.shufflePinDisabled"))
+                  }}
                   trackColor={{ false: colors.muted.default, true: colors.primary.default }}
                   thumbColor={colors.card.background}
                 />
