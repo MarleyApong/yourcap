@@ -1,7 +1,7 @@
 • Pagos parciales — registra varios pagos en una deuda y sigue el progreso
-• Tasas de interés — configura interés fijo o mensual al agregar una deuda
-• Inicio de sesión más rápido — la verificación del PIN es ahora casi instantánea
-• Teclado PIN ordenado por defecto — activa el orden aleatorio en Seguridad para más privacidad
-• ¿PIN olvidado? — restablece tu PIN directamente desde la pantalla de inicio
-• Ajustes de seguridad — reorganizados en secciones claras (Protección, Bloqueo, Teclado PIN)
-• Selección de idioma al primer inicio — detectado automáticamente desde tu dispositivo
+• Tasas de interés — interés fijo o mensual al agregar una deuda
+• Inicio de sesión más rápido — verificación del PIN casi instantánea
+• Teclado PIN ordenado por defecto — activa aleatorio en Seguridad
+• ¿PIN olvidado? — restablécelo desde la pantalla de inicio
+• Ajustes de seguridad — reorganizados en 3 secciones claras
+• Selección de idioma al primer inicio — detectado automáticamente

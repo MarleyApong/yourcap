@@ -124,30 +124,26 @@ export default function Dashboard() {
 
         <View style={styles.content}>
 
-          {/* Balance card */}
-          <Animated.View entering={FadeInDown.duration(350).delay(50)}>
-            <View style={[styles.balanceCard, { backgroundColor: colors.primary.default }]}>
-              <Text style={[styles.balanceLabel, { color: colors.primary.foreground + "A6" }]}>{t("dashboard.balance.net")}</Text>
-              <Text style={[styles.balanceAmount, { color: colors.primary.foreground }]}>
-                {summary.balance >= 0 ? "+" : ""}{formatCurrency(summary.balance, "XAF")}
-              </Text>
-              <View style={[styles.balanceDividerH, { backgroundColor: colors.primary.foreground + "26" }]} />
-              <View style={styles.balanceRow}>
-                <View style={styles.balanceSub}>
-                  <Feather name="arrow-down-circle" size={14} color={colors.primary.foreground + "99"} />
-                  <View>
-                    <Text style={[styles.balanceSubLabel, { color: colors.primary.foreground + "99" }]}>{t("dashboard.balance.toReceive")}</Text>
-                    <Text style={[styles.balanceSubAmount, { color: colors.primary.foreground }]}>{formatCurrency(summary.owing, "XAF")}</Text>
-                  </View>
+          {/* Balance section */}
+          <Animated.View entering={FadeInDown.duration(350).delay(50)} style={styles.balanceSection}>
+            <Text style={[styles.balanceNetLabel, { color: colors.muted.foreground }]}>{t("dashboard.balance.net")}</Text>
+            <Text style={[styles.balanceNetAmount, { color: summary.balance >= 0 ? colors.status.success : colors.status.destructive }]}>
+              {summary.balance >= 0 ? "+" : ""}{formatCurrency(summary.balance, "XAF")}
+            </Text>
+            <View style={styles.statRow}>
+              <View style={[styles.statCard, { backgroundColor: colors.status.success + "14", borderColor: colors.status.success + "30" }]}>
+                <View style={[styles.statIcon, { backgroundColor: colors.status.success + "22" }]}>
+                  <Feather name="arrow-down-left" size={16} color={colors.status.success} />
                 </View>
-                <View style={[styles.balanceDividerV, { backgroundColor: colors.primary.foreground + "33" }]} />
-                <View style={styles.balanceSub}>
-                  <Feather name="arrow-up-circle" size={14} color={colors.primary.foreground + "99"} />
-                  <View>
-                    <Text style={[styles.balanceSubLabel, { color: colors.primary.foreground + "99" }]}>{t("dashboard.balance.toPay")}</Text>
-                    <Text style={[styles.balanceSubAmount, { color: colors.primary.foreground }]}>{formatCurrency(summary.owed, "XAF")}</Text>
-                  </View>
+                <Text style={[styles.statLabel, { color: colors.muted.foreground }]}>{t("dashboard.balance.toReceive")}</Text>
+                <Text style={[styles.statAmount, { color: colors.status.success }]}>{formatCurrency(summary.owing, "XAF")}</Text>
+              </View>
+              <View style={[styles.statCard, { backgroundColor: colors.status.destructive + "14", borderColor: colors.status.destructive + "30" }]}>
+                <View style={[styles.statIcon, { backgroundColor: colors.status.destructive + "22" }]}>
+                  <Feather name="arrow-up-right" size={16} color={colors.status.destructive} />
                 </View>
+                <Text style={[styles.statLabel, { color: colors.muted.foreground }]}>{t("dashboard.balance.toPay")}</Text>
+                <Text style={[styles.statAmount, { color: colors.status.destructive }]}>{formatCurrency(summary.owed, "XAF")}</Text>
               </View>
             </View>
           </Animated.View>
@@ -281,15 +277,14 @@ const styles = StyleSheet.create({
   greeting: { fontSize: 22, fontWeight: "700" },
   dateText: { fontSize: 13, marginTop: 3, textTransform: "capitalize" },
   content: { paddingHorizontal: 20 },
-  balanceCard: { borderRadius: 20, padding: 22, marginBottom: 24 },
-  balanceLabel: { fontSize: 11, fontWeight: "600", textTransform: "uppercase", letterSpacing: 0.6 },
-  balanceAmount: { fontSize: 38, fontWeight: "800", marginTop: 4, marginBottom: 18 },
-  balanceDividerH: { height: 1, marginBottom: 16 },
-  balanceRow: { flexDirection: "row", alignItems: "center" },
-  balanceSub: { flex: 1, flexDirection: "row", alignItems: "center", gap: 8 },
-  balanceSubLabel: { fontSize: 11, marginBottom: 2 },
-  balanceSubAmount: { fontSize: 13, fontWeight: "700" },
-  balanceDividerV: { width: 1, height: 30, marginHorizontal: 16 },
+  balanceSection: { marginBottom: 24 },
+  balanceNetLabel: { fontSize: 11, fontWeight: "600", textTransform: "uppercase", letterSpacing: 0.6, marginBottom: 4 },
+  balanceNetAmount: { fontSize: 38, fontWeight: "800", marginBottom: 16 },
+  statRow: { flexDirection: "row", gap: 12 },
+  statCard: { flex: 1, borderRadius: 16, borderWidth: 1, padding: 16 },
+  statIcon: { width: 34, height: 34, borderRadius: 10, alignItems: "center", justifyContent: "center", marginBottom: 10 },
+  statLabel: { fontSize: 11, fontWeight: "500", marginBottom: 4 },
+  statAmount: { fontSize: 16, fontWeight: "700" },
   section: { marginBottom: 24 },
   sectionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
   sectionTitleRow: { flexDirection: "row", alignItems: "center", gap: 6 },

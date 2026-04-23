@@ -1,7 +1,7 @@
-• Partial payments — record multiple payments on a single debt and track progress
-• Interest rates — configure flat or monthly interest when adding a debt
-• Faster login — PIN verification is now near-instant (migrated to expo-crypto)
-• PIN keypad ordered by default — enable shuffle in Security settings for extra privacy
-• Forgot PIN? — reset your PIN directly from the login screen
-• Security settings — reorganized into clear sections (Protection, Auto-lock, PIN keypad)
+• Partial payments — record multiple payments per debt and track progress
+• Interest rates — add flat or monthly interest to a debt
+• Faster login — PIN verification is now near-instant
+• PIN keypad in order by default — enable shuffle in Security settings
+• Forgot PIN? — reset it directly from the login screen
+• Security settings — reorganized into 3 clear sections
 • Language selection at first launch — auto-detected from your device
