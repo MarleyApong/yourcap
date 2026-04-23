@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/MarleyApong/yourcap/compare/v1.5.0...v1.6.0) (2026-04-23)
+
+
+### Features
+
+* add changelog entries for version 1.5.0 with multi-language support ([416762d](https://github.com/MarleyApong/yourcap/commit/416762d025fa40ffdef8df3e68e986a75a7c461c))
+* add multi-language support for Play Store release notes and update notification permissions handling ([78fe305](https://github.com/MarleyApong/yourcap/commit/78fe305cde67661f1c480b315b12358782cdf2d0))
+* enhance resetDatabase function to clear AsyncStorage, SecureStore, and scheduled notifications; update log messages for clarity ([14cc5e2](https://github.com/MarleyApong/yourcap/commit/14cc5e2312b311c85b421b862dc1fbaf76f4256b))
+* **i18n:** update translation keys and add new languages ([03fa1e4](https://github.com/MarleyApong/yourcap/commit/03fa1e4453da50afec4c9ace10c207cedf369d2b))
+* **i18n:** update translation keys and add new messages for debt and notifications ([d9e8e76](https://github.com/MarleyApong/yourcap/commit/d9e8e76915e48416eef6974f51194afb35137b59))
+* implement inactivity timer reset on user interaction; enhance security settings feedback messages and update translations ([915ba6e](https://github.com/MarleyApong/yourcap/commit/915ba6ef66c3f1fc7fc22416686a206e1ca0a44c))
+* update dashboard layout and improve balance display; enhance changelog entries for version 1.5.0 ([6c0bfc6](https://github.com/MarleyApong/yourcap/commit/6c0bfc63bfde7c0186bf0c3996ca08c5161b1456))
+
 ## [1.5.0](https://github.com/MarleyApong/yourcap/compare/v1.4.0...v1.5.0) (2026-04-21)
 
 
