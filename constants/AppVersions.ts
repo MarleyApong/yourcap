@@ -14,7 +14,7 @@ type ChangelogEntries = {
 // Key = app version (must match app.json "version").
 // Do NOT add an entry for the initial release version.
 export const CHANGELOG: Record<string, ChangelogEntries> = {
-  "1.6.0": {
+  "1.7.0": {
     en: [
       "Redesigned balance summary — net balance headline with separate receivable and payable cards",
       "Inactivity lock fixed — screen now locks after the configured idle time",

@@ -1,0 +1,3 @@
+• Résumé du solde repensé — solde net en titre avec cartes séparées pour créances et dettes
+• Verrouillage par inactivité corrigé — l'écran se verrouille après le délai configuré
+• Paramètres de sécurité — confirmation toast après chaque modification

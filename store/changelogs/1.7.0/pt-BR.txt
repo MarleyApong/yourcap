@@ -1,0 +1,3 @@
+• Resumo de saldo redesenhado — saldo líquido em destaque com cartões separados para recebíveis e pagáveis
+• Bloqueio por inatividade corrigido — tela bloqueia após o tempo de inatividade configurado
+• Configurações de segurança — confirmação toast após cada alteração

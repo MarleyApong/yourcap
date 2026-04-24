@@ -1,0 +1,3 @@
+• Redesigned balance summary — net balance headline with separate receivable and payable cards
+• Inactivity lock fixed — screen now locks after the configured idle time
+• Security settings — confirmation toast after every change

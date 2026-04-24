@@ -1,0 +1,3 @@
+• Neu gestaltete Saldoübersicht — Nettosaldo als Überschrift mit getrennten Karten für Forderungen und Schulden
+• Inaktivitätssperre behoben — Bildschirm sperrt nach der eingestellten Leerlaufzeit
+• Sicherheitseinstellungen — Bestätigung nach jeder Änderung
