@@ -115,7 +115,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
             {/* Avatar */}
             <View style={styles.avatarSection}>
               <View style={[styles.avatar, { backgroundColor: colors.primary.default }]}>
-                <Feather name="user" size={40} color={colors.primary.foreground} />
+                <Feather name="user" size={28} color={colors.primary.foreground} />
               </View>
               <Text style={[styles.avatarTitle, { color: colors.foreground.primary }]}>
                 {t("modals.editProfile.title")}
@@ -128,8 +128,8 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
             {/* Fields */}
             <View style={styles.fields}>
               {/* Full Name */}
-              <View style={[styles.field, { borderColor: colors.primary.default }]}>
-                <Feather name="user" size={24} color={colors.primary.default} />
+              <View style={[styles.field, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+                <Feather name="user" size={18} color={colors.muted.foreground} />
                 <TextInput
                   style={[styles.input, { color: colors.foreground.primary }]}
                   placeholder={t("modals.editProfile.fullNamePlaceholder")}
@@ -142,8 +142,8 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
               </View>
 
               {/* Phone */}
-              <View style={[styles.field, { borderColor: colors.primary.default }]}>
-                <Feather name="phone" size={24} color={colors.primary.default} />
+              <View style={[styles.field, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+                <Feather name="phone" size={18} color={colors.muted.foreground} />
                 <TextInput
                   ref={phoneRef}
                   style={[styles.input, { color: colors.foreground.primary }]}
@@ -158,8 +158,8 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
               </View>
 
               {/* Email */}
-              <View style={[styles.field, { borderColor: colors.primary.default }]}>
-                <Feather name="mail" size={24} color={colors.primary.default} />
+              <View style={[styles.field, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+                <Feather name="mail" size={18} color={colors.muted.foreground} />
                 <TextInput
                   ref={emailRef}
                   style={[styles.input, { color: colors.foreground.primary }]}
@@ -197,7 +197,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
                 <Loader color={colors.primary.foreground} />
               ) : (
                 <>
-                  <Feather name="check" size={18} color={colors.primary.foreground} />
+                  <Feather name="check" size={16} color={colors.primary.foreground} />
                   <Text style={[styles.saveText, { color: colors.primary.foreground }]}>
                     {t("modals.editProfile.save")}
                   </Text>
@@ -215,61 +215,62 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   header: {
     paddingHorizontal: 24,
-    paddingBottom: 16,
-    paddingTop: 56,
+    paddingBottom: 14,
+    paddingTop: 20,
     borderBottomWidth: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
   closeBtn: { padding: 8 },
-  headerTitle: { fontSize: 20, fontWeight: "700" },
+  headerTitle: { fontSize: 17, fontWeight: "700" },
   spacer: { width: 32 },
-  content: { flex: 1, paddingHorizontal: 32, paddingVertical: 32 },
-  avatarSection: { alignItems: "center", marginBottom: 32 },
+  content: { flex: 1, paddingHorizontal: 24, paddingVertical: 24 },
+  avatarSection: { alignItems: "center", marginBottom: 24 },
   avatar: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 16,
+    marginBottom: 12,
   },
-  avatarTitle: { fontSize: 24, fontWeight: "700" },
-  avatarSubtitle: { fontSize: 16, marginTop: 8 },
-  fields: { gap: 16 },
+  avatarTitle: { fontSize: 18, fontWeight: "700" },
+  avatarSubtitle: { fontSize: 13, marginTop: 4 },
+  fields: { gap: 14 },
   field: {
     borderWidth: 1,
     borderRadius: 12,
     flexDirection: "row",
-    gap: 8,
+    gap: 10,
     alignItems: "center",
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
     paddingVertical: 12,
   },
-  input: { fontSize: 20, flex: 1 },
+  input: { fontSize: 15, flex: 1 },
   actions: {
-    paddingHorizontal: 32,
-    paddingBottom: 32,
-    paddingTop: 24,
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+    paddingTop: 16,
     borderTopWidth: 1,
     flexDirection: "row",
     gap: 12,
   },
   cancelBtn: {
     flex: 1,
-    padding: 16,
+    padding: 13,
     borderRadius: 12,
     borderWidth: 1,
   },
-  cancelText: { textAlign: "center", fontWeight: "600", fontSize: 18 },
+  cancelText: { textAlign: "center", fontWeight: "600", fontSize: 14 },
   saveBtn: {
     flex: 1,
-    padding: 16,
+    padding: 13,
     borderRadius: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    gap: 6,
   },
-  saveText: { textAlign: "center", fontWeight: "600", fontSize: 18, marginLeft: 8 },
+  saveText: { textAlign: "center", fontWeight: "600", fontSize: 14 },
 })
