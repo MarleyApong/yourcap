@@ -2,7 +2,7 @@
   "expo": {
     "name": "YourCap",
     "slug": "yourcap-slug",
-    "version": "1.6.0",
+    "version": "1.7.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo/logo.png",
     "scheme": "yourcap",
@@ -24,7 +24,7 @@
         "backgroundColor": "#562d8f"
       },
       "package": "com.marleyapong.yourcap",
-      "versionCode": 5,
+      "versionCode": 6,
       "permissions": [
         "android.permission.USE_BIOMETRIC",
         "android.permission.USE_FINGERPRINT",

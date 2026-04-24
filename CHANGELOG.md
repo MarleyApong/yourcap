@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/MarleyApong/yourcap/compare/v1.6.0...v1.7.0) (2026-04-24)
+
+
+### Features
+
+* add changelog entries for version 1.6.0 in multiple languages ([1be62bc](https://github.com/MarleyApong/yourcap/commit/1be62bc3d7850bd6f9452435cd7a6bad7180fdf2))
+* add notification banner component and enhance settings translations for payment, interest, and debt status ([7c34e3a](https://github.com/MarleyApong/yourcap/commit/7c34e3a68e70eb5e645daee14572fedd5ea512a6))
+* update EditProfileModal styles and adjust icon sizes for improved UI consistency ([ff70649](https://github.com/MarleyApong/yourcap/commit/ff70649ae234ad78af3dcb93223636790de7fb5b))
+
 ## [1.6.0](https://github.com/MarleyApong/yourcap/compare/v1.5.0...v1.6.0) (2026-04-23)
 
 
