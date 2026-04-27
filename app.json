@@ -13,6 +13,7 @@
         "NSFaceIDUsageDescription": "Yourcap utilise Face ID pour vous authentifier de manière sécurisée.",
         "NSLocalAuthenticationUsageDescription": "Yourcap utilise la biométrie pour sécuriser l'accès à vos données.",
         "NSDocumentsFolderUsageDescription": "Yourcap accède à vos documents pour l'import/export de données.",
+        "NSContactsUsageDescription": "Yourcap accède à vos contacts pour faciliter l'ajout de dettes.",
         "UIBackgroundModes": [
           "remote-notification"
         ]
@@ -33,7 +34,8 @@
         "android.permission.POST_NOTIFICATIONS",
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.SCHEDULE_EXACT_ALARM"
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.READ_CONTACTS"
       ]
     },
     "web": {
@@ -80,7 +82,8 @@
         }
       ],
       "expo-document-picker",
-      "expo-localization"
+      "expo-localization",
+      "expo-contacts"
     ],
     "experiments": {
       "typedRoutes": true

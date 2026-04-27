@@ -221,6 +221,16 @@ export const fr = {
         search: "Rechercher par nom ou téléphone...",
         more: "Plus"
       },
+      phoneBook: {
+        button: "Depuis le répertoire",
+        title: "Répertoire téléphonique",
+        search: "Rechercher un contact...",
+        permissionDenied: "Accès aux contacts refusé. Autorisez l'accès dans les paramètres de l'appli.",
+        error: "Impossible de lire le répertoire.",
+        loading: "Chargement des contacts...",
+        empty: "Aucun contact avec numéro trouvé.",
+        selectPhone: "Choisir un numéro",
+      },
       success: "Enregistrement de dette créé avec succès !",
       error: "Échec de la création de la dette. Veuillez réessayer."
     },

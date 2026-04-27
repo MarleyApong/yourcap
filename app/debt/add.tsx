@@ -7,6 +7,7 @@ import { createDebt, getContacts, SavedContact } from "@/services/debtServices"
 import { scheduleAllDebtReminders } from "@/services/notificationService"
 import { useAuthStore } from "@/stores/authStore"
 import { Feather } from "@expo/vector-icons"
+import * as Contacts from "expo-contacts"
 import { useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
 import { Animated, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
@@ -38,6 +39,12 @@ export default function AddDebt() {
   const [savedContacts, setSavedContacts] = useState<SavedContact[]>([])
   const [showContactPicker, setShowContactPicker] = useState(false)
   const [contactSearch, setContactSearch] = useState("")
+  const [showPhoneBookPicker, setShowPhoneBookPicker] = useState(false)
+  const [phoneBookSearch, setPhoneBookSearch] = useState("")
+  const [phoneBookContacts, setPhoneBookContacts] = useState<Contacts.Contact[]>([])
+  const [phoneBookLoading, setPhoneBookLoading] = useState(false)
+  const [pendingContact, setPendingContact] = useState<Contacts.Contact | null>(null)
+  const [showPhoneSelect, setShowPhoneSelect] = useState(false)
 
   const chipsTranslateY = useRef(new Animated.Value(-10)).current
   const chipsOpacity = useRef(new Animated.Value(0)).current
@@ -72,6 +79,69 @@ export default function AddDebt() {
     }))
     setShowContactPicker(false)
     setContactSearch("")
+  }
+
+  const pickFromPhoneBook = async () => {
+    setPhoneBookLoading(true)
+    setShowPhoneBookPicker(true)
+    try {
+      const { status } = await Contacts.requestPermissionsAsync()
+      if (status !== "granted") {
+        setShowPhoneBookPicker(false)
+        Toast.error(t("debt.add.phoneBook.permissionDenied"))
+        return
+      }
+      const { data } = await Contacts.getContactsAsync({
+        fields: [Contacts.Fields.PhoneNumbers, Contacts.Fields.Emails],
+      })
+      const withPhone = data
+        .filter(c => c.name && c.phoneNumbers && c.phoneNumbers.length > 0)
+        .sort((a, b) => (a.name || "").localeCompare(b.name || ""))
+      setPhoneBookContacts(withPhone)
+    } catch {
+      Toast.error(t("debt.add.phoneBook.error"))
+      setShowPhoneBookPicker(false)
+    } finally {
+      setPhoneBookLoading(false)
+    }
+  }
+
+  const applyPhoneBookContact = (contact: Contacts.Contact) => {
+    if (!contact.phoneNumbers || contact.phoneNumbers.length === 0) return
+    const seen = new Set<string>()
+    const uniquePhones = contact.phoneNumbers.filter(p => {
+      const norm = (p.number || "").replace(/[\s\-().+]/g, "")
+      if (!norm || seen.has(norm)) return false
+      seen.add(norm)
+      return true
+    })
+    if (uniquePhones.length === 1) {
+      setForm(prev => ({
+        ...prev,
+        contact_name: contact.name || "",
+        contact_phone: uniquePhones[0].number || "",
+        contact_email: contact.emails?.[0]?.email || prev.contact_email,
+      }))
+      setShowPhoneBookPicker(false)
+      setPhoneBookSearch("")
+    } else {
+      setPendingContact({ ...contact, phoneNumbers: uniquePhones })
+      setShowPhoneSelect(true)
+    }
+  }
+
+  const applyPhoneNumber = (number: string) => {
+    if (!pendingContact) return
+    setForm(prev => ({
+      ...prev,
+      contact_name: pendingContact.name || "",
+      contact_phone: number,
+      contact_email: pendingContact.emails?.[0]?.email || prev.contact_email,
+    }))
+    setShowPhoneSelect(false)
+    setShowPhoneBookPicker(false)
+    setPhoneBookSearch("")
+    setPendingContact(null)
   }
 
   const handleDateChange = (field: "loan_date" | "due_date") => (date: Date) =>
@@ -240,6 +310,13 @@ export default function AddDebt() {
               </View>
             </Field>
 
+            <Pressable onPress={pickFromPhoneBook} style={[styles.phoneBookBtn, { borderColor: colors.border, backgroundColor: colors.card.background }]}>
+              <Feather name="book-open" size={14} color={colors.primary.default} />
+              <Text style={[styles.phoneBookBtnText, { color: colors.primary.default }]}>
+                {t("debt.add.phoneBook.button")}
+              </Text>
+            </Pressable>
+
             <Field label={t("debt.add.name")} required colors={colors}>
               <InputRow icon="user" colors={colors}>
                 <TextInput
@@ -392,6 +469,143 @@ export default function AddDebt() {
         </Pressable>
       </KeyboardAwareScrollView>
 
+      {/* Phone Book Picker Modal */}
+      <Modal
+        visible={showPhoneBookPicker}
+        animationType="slide"
+        transparent
+        onRequestClose={() => { setShowPhoneBookPicker(false); setPhoneBookSearch(""); setPhoneBookLoading(false) }}
+      >
+        <View style={styles.pickerOverlay}>
+          <View style={[styles.pickerSheet, { backgroundColor: colors.background.primary }]}>
+            <View style={[styles.pickerHeader, { borderBottomColor: colors.border }]}>
+              <Text style={[styles.pickerTitle, { color: colors.foreground.primary }]}>
+                {t("debt.add.phoneBook.title")}
+              </Text>
+              <Pressable onPress={() => { setShowPhoneBookPicker(false); setPhoneBookSearch(""); setPhoneBookLoading(false) }}>
+                <Feather name="x" size={20} color={colors.foreground.primary} />
+              </Pressable>
+            </View>
+
+            {phoneBookLoading ? (
+              <View style={styles.pickerCenter}>
+                <Loader color={colors.primary.default} />
+                <Text style={[styles.pickerEmptyText, { color: colors.muted.foreground, marginTop: 12 }]}>
+                  {t("debt.add.phoneBook.loading")}
+                </Text>
+              </View>
+            ) : phoneBookContacts.length === 0 ? (
+              <View style={styles.pickerCenter}>
+                <Feather name="users" size={32} color={colors.muted.foreground} />
+                <Text style={[styles.pickerEmptyText, { color: colors.muted.foreground, marginTop: 10 }]}>
+                  {t("debt.add.phoneBook.empty")}
+                </Text>
+              </View>
+            ) : (
+              <>
+                <View style={[styles.pickerSearch, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
+                  <Feather name="search" size={14} color={colors.muted.foreground} />
+                  <TextInput
+                    style={[styles.pickerSearchInput, { color: colors.foreground.primary }]}
+                    placeholder={t("debt.add.phoneBook.search")}
+                    placeholderTextColor={colors.muted.foreground}
+                    value={phoneBookSearch}
+                    onChangeText={setPhoneBookSearch}
+                    autoFocus
+                  />
+                </View>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                  {phoneBookContacts
+                    .filter(c =>
+                      !phoneBookSearch ||
+                      (c.name || "").toLowerCase().includes(phoneBookSearch.toLowerCase()) ||
+                      c.phoneNumbers?.some(p => (p.number || "").includes(phoneBookSearch))
+                    )
+                    .map((contact, i) => {
+                      const initials = (contact.name || "?").split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase()
+                      const seen = new Set<string>()
+                      const uniquePhones = (contact.phoneNumbers || []).filter(p => {
+                        const norm = (p.number || "").replace(/[\s\-().+]/g, "")
+                        if (!norm || seen.has(norm)) return false
+                        seen.add(norm); return true
+                      })
+                      return (
+                        <Pressable
+                          key={i}
+                          onPress={() => applyPhoneBookContact(contact)}
+                          style={[styles.pickerItem, { borderBottomColor: colors.border }]}
+                        >
+                          <View style={[styles.pickerAvatar, { backgroundColor: colors.primary.default + "20" }]}>
+                            <Text style={[styles.pickerAvatarText, { color: colors.primary.default }]}>{initials}</Text>
+                          </View>
+                          <View style={{ flex: 1 }}>
+                            <Text style={[styles.pickerName, { color: colors.foreground.primary }]}>{contact.name}</Text>
+                            {uniquePhones.length === 1 ? (
+                              <Text style={[styles.pickerPhone, { color: colors.muted.foreground }]}>
+                                {uniquePhones[0].number}
+                              </Text>
+                            ) : (
+                              <Text style={[styles.pickerPhone, { color: colors.primary.default }]}>
+                                {uniquePhones.length} numéros
+                              </Text>
+                            )}
+                          </View>
+                          <Feather name="chevron-right" size={16} color={colors.muted.foreground} />
+                        </Pressable>
+                      )
+                    })
+                  }
+                </ScrollView>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
+
+      {/* Phone Number Selection Modal */}
+      <Modal
+        visible={showPhoneSelect}
+        animationType="fade"
+        transparent
+        onRequestClose={() => setShowPhoneSelect(false)}
+      >
+        <View style={styles.pickerOverlay}>
+          <View style={[styles.phoneSelectSheet, { backgroundColor: colors.background.primary }]}>
+            <View style={[styles.pickerHeader, { borderBottomColor: colors.border }]}>
+              <View>
+                <Text style={[styles.pickerTitle, { color: colors.foreground.primary }]}>
+                  {t("debt.add.phoneBook.selectPhone")}
+                </Text>
+                {pendingContact?.name && (
+                  <Text style={[styles.pickerPhone, { color: colors.muted.foreground, marginTop: 2 }]}>
+                    {pendingContact.name}
+                  </Text>
+                )}
+              </View>
+              <Pressable onPress={() => setShowPhoneSelect(false)}>
+                <Feather name="x" size={20} color={colors.foreground.primary} />
+              </Pressable>
+            </View>
+            {pendingContact?.phoneNumbers?.map((p, i) => (
+              <Pressable
+                key={i}
+                onPress={() => applyPhoneNumber(p.number || "")}
+                style={[styles.phoneSelectItem, { borderBottomColor: colors.border }]}
+              >
+                <Feather name="phone" size={16} color={colors.primary.default} />
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.pickerName, { color: colors.foreground.primary }]}>{p.number}</Text>
+                  {p.label && (
+                    <Text style={[styles.pickerPhone, { color: colors.muted.foreground }]}>{p.label}</Text>
+                  )}
+                </View>
+                <Feather name="chevron-right" size={16} color={colors.muted.foreground} />
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      </Modal>
+
       {/* Contact Picker Modal */}
       <Modal
         visible={showContactPicker}
@@ -527,6 +741,25 @@ const styles = StyleSheet.create({
   chipAvatar: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center" },
   chipInitials: { fontSize: 15, fontWeight: "700" },
   chipName: { fontSize: 11, fontWeight: "500", textAlign: "center" },
+  phoneBookBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    marginBottom: 18,
+  },
+  phoneBookBtnText: { fontSize: 13, fontWeight: "600" },
+  pickerCenter: { flex: 1, alignItems: "center", justifyContent: "center", paddingVertical: 48 },
+  pickerEmptyText: { fontSize: 13, textAlign: "center" },
+  phoneSelectSheet: { borderTopLeftRadius: 20, borderTopRightRadius: 20, paddingBottom: 32 },
+  phoneSelectItem: {
+    flexDirection: "row", alignItems: "center", gap: 12,
+    paddingHorizontal: 20, paddingVertical: 14, borderBottomWidth: StyleSheet.hairlineWidth,
+  },
   pickerOverlay: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.4)" },
   pickerSheet: { borderTopLeftRadius: 20, borderTopRightRadius: 20, maxHeight: "80%", paddingBottom: 32 },
   pickerHeader: {

@@ -183,6 +183,16 @@ export const de = {
         search: "Nach Name oder Telefon suchen...",
         more: "Mehr"
       },
+      phoneBook: {
+        button: "Aus dem Telefonbuch",
+        title: "Telefonbuch",
+        search: "Kontakt suchen...",
+        permissionDenied: "Zugriff auf Kontakte verweigert. Bitte in den App-Einstellungen erlauben.",
+        error: "Telefonbuch konnte nicht gelesen werden.",
+        loading: "Kontakte werden geladen...",
+        empty: "Kein Kontakt mit Telefonnummer gefunden.",
+        selectPhone: "Nummer auswählen",
+      },
       type: "Typ",
       typeIOwed: "Mir wird geschuldet (jemand schuldet mir)",
       typeIOwe: "Ich schulde (ich schulde jemandem)",

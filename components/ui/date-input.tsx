@@ -6,7 +6,7 @@ import { useState } from "react"
 import { Pressable, StyleSheet, Text, View } from "react-native"
 
 interface DateInputProps {
-  label: string
+  label?: string
   value: Date
   onChange: (date: Date) => void
   minimumDate?: Date
@@ -27,10 +27,12 @@ export const DateInput = ({ label, value, onChange, minimumDate, maximumDate, re
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.label, { color: colors.foreground.primary }]}>
-        {label}
-        {required ? <Text style={{ color: colors.status.destructive }}> *</Text> : ""}
-      </Text>
+      {(label || required) && (
+        <Text style={[styles.label, { color: colors.foreground.primary }]}>
+          {label}
+          {required ? <Text style={{ color: colors.status.destructive }}> *</Text> : ""}
+        </Text>
+      )}
       <Pressable
         onPress={() => setShowPicker(true)}
         style={[styles.field, { borderBottomColor: colors.primary.default }]}

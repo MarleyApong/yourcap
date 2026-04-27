@@ -183,6 +183,16 @@ export const es = {
         search: "Buscar por nombre o teléfono...",
         more: "Más"
       },
+      phoneBook: {
+        button: "Desde el directorio",
+        title: "Directorio telefónico",
+        search: "Buscar un contacto...",
+        permissionDenied: "Acceso a contactos denegado. Permite el acceso en la configuración de la app.",
+        error: "No se puede leer el directorio.",
+        loading: "Cargando contactos...",
+        empty: "No se encontró ningún contacto con número.",
+        selectPhone: "Seleccionar un número",
+      },
       type: "Tipo",
       typeIOwed: "Me deben (alguien me debe)",
       typeIOwe: "Debo (debo a alguien)",

@@ -183,6 +183,16 @@ export const pt = {
         search: "Buscar por nome ou telefone...",
         more: "Mais"
       },
+      phoneBook: {
+        button: "Do diretório",
+        title: "Diretório telefônico",
+        search: "Buscar um contato...",
+        permissionDenied: "Acesso aos contatos negado. Permita o acesso nas configurações do app.",
+        error: "Não foi possível ler o diretório.",
+        loading: "Carregando contatos...",
+        empty: "Nenhum contato com número encontrado.",
+        selectPhone: "Selecionar um número",
+      },
       type: "Tipo",
       typeIOwed: "Me devem (alguém me deve)",
       typeIOwe: "Devo (devo a alguém)",

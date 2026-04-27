@@ -221,6 +221,16 @@ export const en = {
         search: "Search by name or phone...",
         more: "More"
       },
+      phoneBook: {
+        button: "From phone book",
+        title: "Phone book",
+        search: "Search a contact...",
+        permissionDenied: "Contact access denied. Please allow it in app settings.",
+        error: "Unable to read the phone book.",
+        loading: "Loading contacts...",
+        empty: "No contact with a phone number found.",
+        selectPhone: "Select a number",
+      },
       success: "Debt record created successfully!",
       error: "Failed to create debt. Please try again."
     },

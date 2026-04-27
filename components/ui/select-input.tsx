@@ -9,7 +9,7 @@ interface Option {
 }
 
 interface SelectInputProps {
-  label: string
+  label?: string
   value: string
   onChange: (value: string) => void
   options: Option[]
@@ -24,10 +24,12 @@ export const SelectInput = ({ label, value, onChange, options, required = false 
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.label, { color: colors.foreground.primary }]}>
-        {label}
-        {required ? <Text style={{ color: colors.status.destructive }}> *</Text> : ""}
-      </Text>
+      {(label || required) && (
+        <Text style={[styles.label, { color: colors.foreground.primary }]}>
+          {label}
+          {required ? <Text style={{ color: colors.status.destructive }}> *</Text> : ""}
+        </Text>
+      )}
 
       <Pressable
         onPress={() => setOpen(true)}

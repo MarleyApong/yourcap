@@ -253,6 +253,14 @@ export interface TranslationKeys {
   'debt.details.saveChanges': string;
   'debt.add.savedContacts.title': string;
   'debt.add.savedContacts.search': string;
+  'debt.add.phoneBook.button': string;
+  'debt.add.phoneBook.title': string;
+  'debt.add.phoneBook.search': string;
+  'debt.add.phoneBook.permissionDenied': string;
+  'debt.add.phoneBook.error': string;
+  'debt.add.phoneBook.loading': string;
+  'debt.add.phoneBook.empty': string;
+  'debt.add.phoneBook.selectPhone': string;
   'debt.add.success': string;
   'debt.add.error': string;
   'debt.add.validation.phoneConflict': string;
