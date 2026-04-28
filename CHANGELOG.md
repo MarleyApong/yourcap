@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/MarleyApong/yourcap/compare/v1.7.0...v1.8.0) (2026-04-28)
+
+
+### Features
+
+* add changelog entries for version 1.7.0 in multiple languages ([cb418c0](https://github.com/MarleyApong/yourcap/commit/cb418c064f22ca794e1bc7b859a2b35eeb6cb875))
+* add phone book integration for debt addition and update translations ([b42cba3](https://github.com/MarleyApong/yourcap/commit/b42cba3412b24e05a200b7764b75f16517ec9c5d))
+
 ## [1.7.0](https://github.com/MarleyApong/yourcap/compare/v1.6.0...v1.7.0) (2026-04-24)
 
 
