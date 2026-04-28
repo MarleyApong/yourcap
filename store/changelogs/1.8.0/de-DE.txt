@@ -1,0 +1,2 @@
+• Auswahl aus dem Telefonbuch — wähle einen Kontakt direkt vom Telefon, um Name und Nummer automatisch auszufüllen
+• Doppelte Nummern gefiltert — Formatduplikate (Leerzeichen, Bindestriche) werden bei der Kontaktauswahl automatisch entfernt

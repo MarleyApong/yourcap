@@ -14,6 +14,28 @@ type ChangelogEntries = {
 // Key = app version (must match app.json "version").
 // Do NOT add an entry for the initial release version.
 export const CHANGELOG: Record<string, ChangelogEntries> = {
+  "1.8.0": {
+    en: [
+      "Pick from phone book — select a contact directly from your phone to auto-fill name and number",
+      "Duplicate numbers filtered — format duplicates (spaces, dashes) are automatically removed when selecting a contact",
+    ],
+    fr: [
+      "Sélection depuis le répertoire — choisissez un contact directement depuis votre téléphone pour pré-remplir le nom et le numéro",
+      "Numéros dupliqués filtrés — les doublons de format (espaces, tirets) sont automatiquement ignorés lors de la sélection",
+    ],
+    es: [
+      "Selección desde el directorio — elige un contacto directamente desde tu teléfono para rellenar nombre y número automáticamente",
+      "Números duplicados filtrados — los duplicados de formato (espacios, guiones) se eliminan automáticamente al seleccionar un contacto",
+    ],
+    de: [
+      "Auswahl aus dem Telefonbuch — wähle einen Kontakt direkt vom Telefon, um Name und Nummer automatisch auszufüllen",
+      "Doppelte Nummern gefiltert — Formatduplikate (Leerzeichen, Bindestriche) werden bei der Kontaktauswahl automatisch entfernt",
+    ],
+    pt: [
+      "Seleção do catálogo — escolha um contato diretamente do telefone para preencher nome e número automaticamente",
+      "Números duplicados filtrados — duplicatas de formato (espaços, hífens) são removidas automaticamente ao selecionar um contato",
+    ],
+  },
   "1.7.0": {
     en: [
       "Redesigned balance summary — net balance headline with separate receivable and payable cards",

@@ -1,0 +1,2 @@
+• Selección desde el directorio — elige un contacto directamente desde tu teléfono para rellenar nombre y número automáticamente
+• Números duplicados filtrados — los duplicados de formato (espacios, guiones) se eliminan automáticamente al seleccionar un contacto

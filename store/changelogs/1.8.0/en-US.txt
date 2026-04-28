@@ -1,0 +1,2 @@
+• Pick from phone book — select a contact directly from your phone to auto-fill name and number
+• Duplicate numbers filtered — format duplicates (spaces, dashes) are automatically removed when selecting a contact

@@ -1,0 +1,2 @@
+• Seleção do catálogo — escolha um contato diretamente do telefone para preencher nome e número automaticamente
+• Números duplicados filtrados — duplicatas de formato (espaços, hífens) são removidas automaticamente ao selecionar um contato

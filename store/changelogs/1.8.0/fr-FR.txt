@@ -1,0 +1,2 @@
+• Sélection depuis le répertoire — choisissez un contact directement depuis votre téléphone pour pré-remplir le nom et le numéro
+• Numéros dupliqués filtrés — les doublons de format (espaces, tirets) sont automatiquement ignorés lors de la sélection
