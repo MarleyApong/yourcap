@@ -7,6 +7,7 @@ import { Feather } from "@expo/vector-icons"
 import React, { useRef, useState } from "react"
 import { Modal, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 interface EditProfileModalProps {
   visible: boolean
@@ -17,6 +18,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
   const { user, updateProfile } = useAuthStore()
   const { colors } = useTheme()
   const { t } = useTranslation()
+  const insets = useSafeAreaInsets()
 
   const phoneRef = useRef<TextInput>(null)
   const emailRef = useRef<TextInput>(null)
@@ -100,7 +102,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ visible, onC
           contentContainerStyle={{ flexGrow: 1 }}
         >
           {/* Header */}
-          <View style={[styles.header, { borderBottomColor: colors.border }]}>
+          <View style={[styles.header, { borderBottomColor: colors.border, paddingTop: Math.max(insets.top, 20) }]}>
             <Pressable onPress={handleCancel} style={styles.closeBtn}>
               <Feather name="x" size={24} color={colors.foreground.primary} />
             </Pressable>
@@ -216,7 +218,6 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 24,
     paddingBottom: 14,
-    paddingTop: 20,
     borderBottomWidth: 1,
     flexDirection: "row",
     alignItems: "center",

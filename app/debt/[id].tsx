@@ -463,7 +463,7 @@ export default function DebtDetails() {
           {/* Modal form */}
           <KeyboardAwareScrollView
             style={[styles.sheet, { backgroundColor: colors.background.primary }]}
-            contentContainerStyle={[styles.sheetContent, { paddingBottom: Math.max(insets.bottom + 32, 80) }]}
+            contentContainerStyle={[styles.sheetContent, { paddingBottom: Math.max(insets.bottom + 48, 120) }]}
             enableOnAndroid
             extraScrollHeight={80}
             keyboardShouldPersistTaps="handled"
