@@ -257,6 +257,8 @@ export interface TranslationKeys {
   'debt.add.phoneBook.title': string;
   'debt.add.phoneBook.search': string;
   'debt.add.phoneBook.permissionDenied': string;
+  'debt.add.phoneBook.permissionDeniedTitle': string;
+  'debt.add.phoneBook.openSettings': string;
   'debt.add.phoneBook.error': string;
   'debt.add.phoneBook.loading': string;
   'debt.add.phoneBook.empty': string;

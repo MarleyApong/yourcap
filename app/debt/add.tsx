@@ -10,7 +10,7 @@ import { Feather } from "@expo/vector-icons"
 import * as Contacts from "expo-contacts"
 import { useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
-import { Animated, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
+import { Animated, Linking, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
@@ -85,10 +85,18 @@ export default function AddDebt() {
     setPhoneBookLoading(true)
     setShowPhoneBookPicker(true)
     try {
-      const { status } = await Contacts.requestPermissionsAsync()
+      const { status, canAskAgain } = await Contacts.requestPermissionsAsync()
       if (status !== "granted") {
         setShowPhoneBookPicker(false)
-        Toast.error(t("debt.add.phoneBook.permissionDenied"))
+        if (!canAskAgain) {
+          Toast.confirm(
+            t("debt.add.phoneBook.permissionDenied"),
+            () => Linking.openSettings(),
+            { title: t("debt.add.phoneBook.permissionDeniedTitle"), confirmText: t("debt.add.phoneBook.openSettings"), cancelText: t("common.cancel") }
+          )
+        } else {
+          Toast.error(t("debt.add.phoneBook.permissionDenied"))
+        }
         return
       }
       const { data } = await Contacts.getContactsAsync({
