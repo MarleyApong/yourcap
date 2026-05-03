@@ -1,0 +1,4 @@
+• Penalización por retraso — establece una tasa diaria o mensual aplicada automáticamente si una deuda no se paga a tiempo
+• Nuevo tema Marino — color predeterminado actualizado, más 6 opciones de acento incluyendo Verde y Turquesa
+• Bloqueo por inactividad y fondo corregido — el bloqueo se activa correctamente tras el tiempo configurado
+• Espaciado del encabezado de perfil corregido — ya no se superpone a la barra de estado en Android

@@ -372,6 +372,7 @@ export const en = {
     themeDark: "Dark",
     themeSystem: "System",
     accentColor: "Accent Color",
+    accentNavy: "Navy",
     accentPurple: "Purple",
     accentBlue: "Blue",
     accentGreen: "Green",

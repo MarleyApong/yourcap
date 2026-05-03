@@ -372,6 +372,7 @@ export const fr = {
     themeDark: "Sombre",
     themeSystem: "Système",
     accentColor: "Couleur d'accent",
+    accentNavy: "Marine",
     accentPurple: "Violet",
     accentBlue: "Bleu",
     accentGreen: "Vert",

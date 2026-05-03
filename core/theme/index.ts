@@ -12,7 +12,7 @@ export const useTheme = () => {
   const theme = resolved as ColorScheme
 
   const base = colors[theme]
-  const accent = ACCENT_PRESETS[accentColor ?? "purple"][theme]
+  const accent = ACCENT_PRESETS[accentColor ?? "navy"][theme]
 
   const themedColors = {
     ...base,
@@ -42,13 +42,19 @@ export const useTheme = () => {
       primaryForeground: accent.primary,
       accentForeground: accent.secondaryFg,
     },
+    sidebar: {
+      ...base.sidebar,
+      primary: accent.secondary,
+      primaryForeground: accent.primary,
+      accentForeground: accent.secondaryFg,
+    },
   }
 
   return {
     isDark: theme === "dark",
     colors: themedColors,
     theme,
-    accentColor: accentColor ?? "purple",
+    accentColor: accentColor ?? "navy",
     spacing,
     typography,
     borderRadius,

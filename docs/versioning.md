@@ -55,6 +55,48 @@ Ne pas toucher à `TERMS_VERSION` et ne pas ajouter d'entrée dans `CHANGELOG` p
 
 ---
 
+## Migrations du store Zustand (`core/stores/appStore.ts`)
+
+Le store de préférences (thème, accent) utilise un système de migration versionné via Zustand persist.
+
+**Version actuelle : `1`** (introduite en 1.9.0)
+
+### Quand bumper la version du store
+
+À chaque fois qu'un changement nécessite de modifier des données déjà sauvegardées dans AsyncStorage :
+- Valeur par défaut d'un champ qui change
+- Nouveau champ obligatoire à initialiser
+- Clé renommée ou supprimée
+
+### Procédure
+
+1. Bumper `version` dans les options `persist` de `appStore.ts` (ex: `1` → `2`)
+2. Ajouter la logique dans `migrate` :
+
+```ts
+migrate: (persisted: any, fromVersion: number) => {
+  if (fromVersion < 1) {
+    // migration v0 → v1 : reset purple → navy
+    if (persisted?.accentColor === "purple") persisted.accentColor = "navy"
+  }
+  if (fromVersion < 2) {
+    // migration v1 → v2 : exemple futur
+  }
+  return persisted
+},
+```
+
+`migrate` run **une seule fois** au premier lancement après mise à jour, puis Zustand sauvegarde la nouvelle version dans AsyncStorage — la migration ne tourne jamais deux fois.
+
+### Historique des migrations
+
+| Version store | App version | Changement |
+|:---:|:---:|---|
+| 0 | < 1.9.0 | Pas de versioning (violet par défaut) |
+| 1 | 1.9.0 | Reset accent `purple` → `navy` (nouveau thème par défaut) |
+
+---
+
 ## Déploiement Android (build local)
 
 ### Prérequis

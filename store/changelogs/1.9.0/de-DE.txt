@@ -1,0 +1,4 @@
+• Verzugszinsen — lege einen täglichen oder monatlichen Strafzins fest, der automatisch bei überfälligen Schulden gilt
+• Neues Marine-Thema — neue Standardfarbe und 6 Akzentoptionen, darunter Grün und Türkis
+• Inaktivitäts- und Hintergrundsperrung behoben — Sperre wird nun zuverlässig nach der eingestellten Zeit ausgelöst
+• Header-Abstand im Profil behoben — überlappt die Statusleiste auf Android nicht mehr

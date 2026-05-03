@@ -1,0 +1,4 @@
+• Multa por atraso — defina uma taxa diária ou mensal aplicada automaticamente quando uma dívida não é paga no prazo
+• Novo tema Marinho — cor padrão atualizada, mais 6 opções de destaque incluindo Verde e Azul-petróleo
+• Bloqueio por inatividade e fundo corrigido — o bloqueio agora é acionado corretamente após o tempo configurado
+• Espaçamento do cabeçalho do perfil corrigido — não sobrepõe mais a barra de status no Android

@@ -1,0 +1,4 @@
+• Late payment penalty — set a daily or monthly penalty rate applied automatically when a debt is overdue
+• New Navy theme — fresh default color, plus 6 accent choices including Green and Teal now available
+• Inactivity & background lock fixed — lock now triggers reliably after the configured delay on all devices
+• Edit profile header spacing fixed — no longer overlaps the status bar on Android

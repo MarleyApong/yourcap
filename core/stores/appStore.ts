@@ -16,12 +16,18 @@ export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
       themeMode: "system",
-      accentColor: "purple",
+      accentColor: "navy",
       setThemeMode: (mode) => set({ themeMode: mode }),
       setAccentColor: (accent) => set({ accentColor: accent }),
     }),
     {
       name: "yourcap-app-store",
+      version: 1,
+      migrate: (persisted: any) => ({
+        ...persisted,
+        // Reset purple (old default) → navy on first launch of 1.9.0
+        accentColor: persisted?.accentColor === "purple" ? "navy" : (persisted?.accentColor ?? "navy"),
+      }),
       storage: createJSONStorage(() => AsyncStorage),
     }
   )

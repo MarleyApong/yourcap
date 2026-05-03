@@ -372,6 +372,7 @@ export const es = {
     themeDark: "Oscuro",
     themeSystem: "Sistema",
     accentColor: "Color de acento",
+    accentNavy: "Marino",
     accentPurple: "Morado",
     accentBlue: "Azul",
     accentGreen: "Verde",

@@ -41,14 +41,14 @@ export default function AppearanceSettings() {
           <View style={[styles.section, { borderTopWidth: 1, borderTopColor: colors.border }]}>
             <Text style={[styles.sectionLabel, { color: colors.foreground.primary }]}>{t("settings.accentColor")}</Text>
             <View style={styles.accentRow}>
-              {(["purple", "blue", /* "green", */ "orange" /*, "rose", "teal" */] as const).map((accent) => {
+              {(["navy", "blue", "green", "orange", "teal", "purple"] as const).map((accent) => {
                 const accentNames = {
-                  purple: t("settings.accentPurple"),
+                  navy: t("settings.accentNavy"),
                   blue: t("settings.accentBlue"),
-                  // green: t("settings.accentGreen"),
+                  green: t("settings.accentGreen"),
                   orange: t("settings.accentOrange"),
-                  // rose: t("settings.accentRose"),
-                  // teal: t("settings.accentTeal"),
+                  teal: t("settings.accentTeal"),
+                  purple: t("settings.accentPurple"),
                 }
                 const dotColor = ACCENT_PRESETS[accent][isDark ? "dark" : "light"].primary
                 const selected = accentColor === accent

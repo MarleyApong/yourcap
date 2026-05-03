@@ -123,6 +123,7 @@ export interface TranslationKeys {
   'settings.themeSystem': string;
   'settings.themeDark': string;
   'settings.accentColor': string;
+  'settings.accentNavy': string;
   'settings.accentPurple': string;
   'settings.accentBlue': string;
   'settings.accentGreen': string;

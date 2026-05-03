@@ -14,6 +14,38 @@ type ChangelogEntries = {
 // Key = app version (must match app.json "version").
 // Do NOT add an entry for the initial release version.
 export const CHANGELOG: Record<string, ChangelogEntries> = {
+  "1.9.0": {
+    en: [
+      "Late payment penalty — set a daily or monthly penalty rate applied automatically when a debt is overdue",
+      "New Navy theme — fresh default color, plus 6 accent choices including Green and Teal now available",
+      "Inactivity & background lock fixed — lock now triggers reliably after the configured delay on all devices",
+      "Edit profile header spacing fixed — no longer overlaps the status bar on Android",
+    ],
+    fr: [
+      "Pénalité de retard — définissez un taux journalier ou mensuel appliqué automatiquement si une dette n'est pas remboursée à temps",
+      "Nouveau thème Marine — couleur par défaut rafraîchie, plus 6 choix d'accent dont Vert et Turquoise désormais disponibles",
+      "Verrouillage par inactivité et arrière-plan corrigé — le verrou se déclenche maintenant correctement après le délai configuré",
+      "Espacement du header profil corrigé — ne chevauche plus la barre de statut sur Android",
+    ],
+    es: [
+      "Penalización por retraso — establece una tasa diaria o mensual aplicada automáticamente si una deuda no se paga a tiempo",
+      "Nuevo tema Marino — color predeterminado actualizado, más 6 opciones de acento incluyendo Verde y Turquesa",
+      "Bloqueo por inactividad y fondo corregido — el bloqueo se activa correctamente tras el tiempo configurado",
+      "Espaciado del encabezado de perfil corregido — ya no se superpone a la barra de estado en Android",
+    ],
+    de: [
+      "Verzugszinsen — lege einen täglichen oder monatlichen Strafzins fest, der automatisch bei überfälligen Schulden gilt",
+      "Neues Marine-Thema — neue Standardfarbe und 6 Akzentoptionen, darunter Grün und Türkis",
+      "Inaktivitäts- und Hintergrundsperrung behoben — Sperre wird nun zuverlässig nach der eingestellten Zeit ausgelöst",
+      "Header-Abstand im Profil behoben — überlappt die Statusleiste auf Android nicht mehr",
+    ],
+    pt: [
+      "Multa por atraso — defina uma taxa diária ou mensal aplicada automaticamente quando uma dívida não é paga no prazo",
+      "Novo tema Marinho — cor padrão atualizada, mais 6 opções de destaque incluindo Verde e Azul-petróleo",
+      "Bloqueio por inatividade e fundo corrigido — o bloqueio agora é acionado corretamente após o tempo configurado",
+      "Espaçamento do cabeçalho do perfil corrigido — não sobrepõe mais a barra de status no Android",
+    ],
+  },
   "1.8.0": {
     en: [
       "Pick from phone book — select a contact directly from your phone to auto-fill name and number",

@@ -1,0 +1,4 @@
+• Pénalité de retard — définissez un taux journalier ou mensuel appliqué automatiquement si une dette n'est pas remboursée à temps
+• Nouveau thème Marine — couleur par défaut rafraîchie, plus 6 choix d'accent dont Vert et Turquoise désormais disponibles
+• Verrouillage par inactivité et arrière-plan corrigé — le verrou se déclenche maintenant correctement après le délai configuré
+• Espacement du header profil corrigé — ne chevauche plus la barre de statut sur Android
