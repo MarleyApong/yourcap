@@ -34,6 +34,8 @@ export default function SecuritySettings() {
   const handleRequireAuthToggle = async (enabled: boolean) => {
     if (enabled) {
       await updateSetting("require_auth", true)
+      // Clear any stale lock so the user isn't immediately locked out after re-enabling
+      await useAuthStore.getState().setAppLocked(false)
       Toast.success(t("settings.protectionEnabled"))
       return
     }
@@ -79,6 +81,7 @@ export default function SecuritySettings() {
       if (success) {
         setDisableAuthModalVisible(false)
         await updateSetting("require_auth", false)
+        await useAuthStore.getState().setAppLocked(false)
         Toast.success(t("settings.protectionDisabled"))
       } else {
         Toast.error(t("auth.login.invalidPin"))
@@ -99,6 +102,7 @@ export default function SecuritySettings() {
       if (result.success) {
         setDisableAuthModalVisible(false)
         await updateSetting("require_auth", false)
+        await useAuthStore.getState().setAppLocked(false)
         Toast.success(t("settings.protectionDisabled"))
       }
     } finally {

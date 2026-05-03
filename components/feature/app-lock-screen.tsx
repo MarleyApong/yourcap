@@ -31,7 +31,7 @@ export default function AppLockScreen() {
       }
     }
     checkLockStatus()
-  }, [user, appState, settings?.require_auth])
+  }, [user, appState, settings?.require_auth, appLocked])
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
