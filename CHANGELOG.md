@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/MarleyApong/yourcap/compare/v1.8.1...v1.9.0) (2026-05-03)
+
+
+### Features
+
+* add changelog entries for version 1.8.0 in multiple languages ([2050d3e](https://github.com/MarleyApong/yourcap/commit/2050d3ee6989e7df96476c90d87e09305765a395))
+* add late interest handling and update debt calculations ([68828ac](https://github.com/MarleyApong/yourcap/commit/68828ac617f1f20aa2a8fa2c66a611cb3d669097))
+* adjust padding in DebtDetails and EditProfileModal for better layout ([44d6eec](https://github.com/MarleyApong/yourcap/commit/44d6eeca33f4a6e1f47d8622b466ab80e2d49eee))
+* enhance phone book permission handling and update translations ([e84b0a7](https://github.com/MarleyApong/yourcap/commit/e84b0a79fc9d7696d3b9927f1b43d9bdb2632358))
+* improve app lock handling and update inactivity timeout logic ([8f86038](https://github.com/MarleyApong/yourcap/commit/8f86038af1e813bcfb2825e667ff800225d18576))
+
 ### [1.8.1](https://github.com/MarleyApong/yourcap/compare/v1.8.0...v1.8.1) (2026-04-28)
 
 ## [1.8.0](https://github.com/MarleyApong/yourcap/compare/v1.7.0...v1.8.0) (2026-04-28)
