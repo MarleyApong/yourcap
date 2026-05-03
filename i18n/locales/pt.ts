@@ -325,6 +325,22 @@ export const pt = {
       monthly: "Mensal",
       totalDue: "Total com juros"
     },
+    lateInterest: {
+      title: "Multa por atraso",
+      desc: "Taxa aplicada ao valor devido se a dívida não for paga no prazo",
+      none: "Nenhuma",
+      daily: "Diária",
+      monthly: "Mensal",
+      rate: "Taxa de multa (%)",
+      daysOverdue: "{n} dia(s) de atraso",
+      monthsOverdue: "{n} mês(es) de atraso",
+      applied: "Multa ativa",
+      breakdown: {
+        base: "Base + juros",
+        late: "Multa por atraso",
+        total: "Total devido"
+      }
+    },
     delete: {
       title: "Excluir registro?",
       confirmMessage: "Esta ação não pode ser desfeita. O registro da dívida será excluído permanentemente.",

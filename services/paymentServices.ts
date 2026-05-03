@@ -1,5 +1,5 @@
 import { getDb } from "@/db/db"
-import { calcTotalDue, Payment, PaymentInput } from "@/types/debt"
+import { calcTotalDue, calcLateInterestAmount, Payment, PaymentInput } from "@/types/debt"
 import { v4 as uuidv4 } from "uuid"
 import { getDebtById, updateDebt } from "./debtServices"
 
@@ -11,7 +11,7 @@ export const addPayment = async (input: PaymentInput): Promise<Payment> => {
   const debt = await getDebtById(input.debt_id)
   if (!debt) throw new Error("Debt not found")
 
-  const totalDue = calcTotalDue(debt.amount, debt.interest_rate, debt.interest_type, debt.loan_date)
+  const totalDue = calcTotalDue(debt.amount, debt.interest_rate, debt.interest_type, debt.loan_date, debt.due_date, debt.late_interest_rate, debt.late_interest_type)
   const currentPaid = debt.paid_amount ?? 0
   const newPaid = currentPaid + input.amount
 
@@ -47,7 +47,7 @@ export const deletePayment = async (payment_id: string, debt_id: string): Promis
   const debt = await getDebtById(debt_id)
   if (!debt) return
 
-  const totalDue = calcTotalDue(debt.amount, debt.interest_rate, debt.interest_type, debt.loan_date)
+  const totalDue = calcTotalDue(debt.amount, debt.interest_rate, debt.interest_type, debt.loan_date, debt.due_date, debt.late_interest_rate, debt.late_interest_type)
   const newPaid = debt.paid_amount ?? 0
 
   const newStatus = newPaid <= 0 ? (debt.status === "OVERDUE" ? "OVERDUE" : "PENDING") : newPaid >= totalDue ? "PAID" : "PARTIALLY_PAID"

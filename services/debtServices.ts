@@ -16,8 +16,9 @@ export const createDebt = async (debt: DebtInput): Promise<Debt> => {
       `INSERT INTO debts
       (debt_id, user_id, contact_name, contact_phone, contact_email,
        amount, currency, description, loan_date, due_date, status, debt_type,
-       interest_rate, interest_type, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       interest_rate, interest_type, late_interest_rate, late_interest_type,
+       created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         debt_id,
         debt.user_id,
@@ -33,6 +34,8 @@ export const createDebt = async (debt: DebtInput): Promise<Debt> => {
         debt.debt_type,
         debt.interest_rate ?? 0,
         debt.interest_type ?? "none",
+        debt.late_interest_rate ?? 0,
+        debt.late_interest_type ?? "none",
         now,
         now,
       ],
@@ -114,6 +117,7 @@ export const getDebtById = async (debt_id: string): Promise<Debt | null> => {
         d.debt_id, d.user_id, d.contact_name, d.contact_phone, d.contact_email,
         d.amount, d.currency, d.description, d.loan_date, d.due_date, d.status, d.debt_type,
         d.interest_rate, d.interest_type,
+        d.late_interest_rate, d.late_interest_type,
         d.created_at, d.updated_at,
         COALESCE((SELECT SUM(p.amount) FROM payments p WHERE p.debt_id = d.debt_id), 0) as paid_amount
         FROM debts d
@@ -135,6 +139,7 @@ export const getUserDebts = async (user_id: string): Promise<Debt[]> => {
         d.debt_id, d.user_id, d.contact_name, d.contact_phone, d.contact_email,
         d.amount, d.currency, d.description, d.loan_date, d.due_date, d.status, d.debt_type,
         d.interest_rate, d.interest_type,
+        d.late_interest_rate, d.late_interest_type,
         d.created_at, d.updated_at,
         COALESCE((SELECT SUM(p.amount) FROM payments p WHERE p.debt_id = d.debt_id), 0) as paid_amount
         FROM debts d

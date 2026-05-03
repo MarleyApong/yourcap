@@ -34,6 +34,8 @@ export default function AddDebt() {
     debt_type: "OWING",
     interest_type: "none" as "none" | "flat" | "monthly",
     interest_rate: "",
+    late_interest_type: "none" as "none" | "daily" | "monthly",
+    late_interest_rate: "",
   })
   const [loading, setLoading] = useState(false)
   const [savedContacts, setSavedContacts] = useState<SavedContact[]>([])
@@ -186,6 +188,8 @@ export default function AddDebt() {
         status: "PENDING",
         interest_type: form.interest_type,
         interest_rate: form.interest_type !== "none" ? Number(form.interest_rate) || 0 : 0,
+        late_interest_type: form.late_interest_type,
+        late_interest_rate: form.late_interest_type !== "none" ? Number(form.late_interest_rate) || 0 : 0,
       })
       Toast.success(t("debt.add.success"))
       scheduleAllDebtReminders(user!.user_id)
@@ -426,6 +430,36 @@ export default function AddDebt() {
                     placeholderTextColor={colors.muted.foreground}
                     value={form.interest_rate}
                     onChangeText={v => handleChange("interest_rate", v)}
+                    keyboardType="numeric"
+                  />
+                </InputRow>
+              </Field>
+            )}
+
+            <Field label={t("debt.lateInterest.title")} colors={colors}>
+              <Text style={[styles.fieldHint, { color: colors.muted.foreground }]}>
+                {t("debt.lateInterest.desc")}
+              </Text>
+              <SelectInput
+                value={form.late_interest_type}
+                onChange={v => handleChange("late_interest_type", v)}
+                options={[
+                  { label: t("debt.lateInterest.none"), value: "none" },
+                  { label: t("debt.lateInterest.daily"), value: "daily" },
+                  { label: t("debt.lateInterest.monthly"), value: "monthly" },
+                ]}
+              />
+            </Field>
+
+            {form.late_interest_type !== "none" && (
+              <Field label={t("debt.lateInterest.rate")} colors={colors}>
+                <InputRow icon="alert-circle" colors={colors}>
+                  <TextInput
+                    style={[styles.inputText, { color: colors.foreground.primary }]}
+                    placeholder="0"
+                    placeholderTextColor={colors.muted.foreground}
+                    value={form.late_interest_rate}
+                    onChangeText={v => handleChange("late_interest_rate", v)}
                     keyboardType="numeric"
                   />
                 </InputRow>
@@ -744,6 +778,7 @@ const styles = StyleSheet.create({
   },
   nextBtnText: { fontWeight: "600", fontSize: 16 },
   contactsHint: { fontSize: 11, marginBottom: 10 },
+  fieldHint: { fontSize: 11, marginBottom: 8, lineHeight: 16 },
   chipsRow: { gap: 10, paddingRight: 4 },
   chip: { alignItems: "center", gap: 5, width: 52 },
   chipAvatar: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center" },

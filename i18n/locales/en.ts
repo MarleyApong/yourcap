@@ -325,6 +325,22 @@ export const en = {
       monthly: "Monthly",
       totalDue: "Total with interest"
     },
+    lateInterest: {
+      title: "Late penalty",
+      desc: "Rate applied to the amount due if the debt is not repaid on time",
+      none: "None",
+      daily: "Daily",
+      monthly: "Monthly",
+      rate: "Penalty rate (%)",
+      daysOverdue: "{n} day(s) overdue",
+      monthsOverdue: "{n} month(s) overdue",
+      applied: "Penalty active",
+      breakdown: {
+        base: "Base + interest",
+        late: "Late penalty",
+        total: "Total due"
+      }
+    },
     delete: {
       title: "Delete Debt Record?",
       confirmMessage: "This action cannot be undone. The debt record will be permanently deleted.",

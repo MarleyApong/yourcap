@@ -8,7 +8,7 @@ import { deleteDebt, getContacts, getDebtById, SavedContact, updateDebt } from "
 import { addPayment, deletePayment, getPayments } from "@/services/paymentServices"
 import { scheduleAllDebtReminders } from "@/services/notificationService"
 import { useAuthStore } from "@/stores/authStore"
-import { calcTotalDue, Debt, DebtStatus, Payment } from "@/types/debt"
+import { calcBaseWithInterest, calcLateInterestAmount, calcTotalDue, Debt, DebtStatus, LateInterestType, Payment } from "@/types/debt"
 import { Feather } from "@expo/vector-icons"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
@@ -41,6 +41,8 @@ export default function DebtDetails() {
     debt_type: "OWING" as "OWING" | "OWED",
     interest_type: "none" as "none" | "flat" | "monthly",
     interest_rate: "",
+    late_interest_type: "none" as LateInterestType,
+    late_interest_rate: "",
   })
   const [savedContacts, setSavedContacts] = useState<SavedContact[]>([])
   const [showContactPicker, setShowContactPicker] = useState(false)
@@ -86,6 +88,8 @@ export default function DebtDetails() {
           debt_type: data.debt_type,
           interest_type: data.interest_type ?? "none",
           interest_rate: data.interest_rate > 0 ? data.interest_rate.toString() : "",
+          late_interest_type: data.late_interest_type ?? "none",
+          late_interest_rate: data.late_interest_rate > 0 ? data.late_interest_rate.toString() : "",
         })
       } else {
         Toast.error(t("debt.details.notFound")); router.back()
@@ -172,6 +176,8 @@ export default function DebtDetails() {
         debt_type: editForm.debt_type,
         interest_type: editForm.interest_type,
         interest_rate: editForm.interest_type !== "none" ? Number(editForm.interest_rate) || 0 : 0,
+        late_interest_type: editForm.late_interest_type,
+        late_interest_rate: editForm.late_interest_type !== "none" ? Number(editForm.late_interest_rate) || 0 : 0,
       })
       Toast.success(t("debt.details.updateSuccess"))
       setEditModalVisible(false)
@@ -297,10 +303,15 @@ export default function DebtDetails() {
 
         {/* Payments section */}
         {(() => {
-          const totalDue = calcTotalDue(debt.amount, debt.interest_rate, debt.interest_type, debt.loan_date)
+          const base = calcBaseWithInterest(debt.amount, debt.interest_rate, debt.interest_type, debt.loan_date)
+          const lateAmt = calcLateInterestAmount(base, debt.due_date, debt.late_interest_rate ?? 0, debt.late_interest_type ?? "none")
+          const totalDue = base + lateAmt
           const paidAmount = debt.paid_amount ?? 0
           const remaining = Math.max(0, totalDue - paidAmount)
           const progress = totalDue > 0 ? Math.min(1, paidAmount / totalDue) : 0
+          const msOverdue = lateAmt > 0 ? Date.now() - new Date(debt.due_date).getTime() : 0
+          const daysOverdue = Math.ceil(msOverdue / (1000 * 60 * 60 * 24))
+          const monthsOverdue = Math.max(1, Math.ceil(msOverdue / (1000 * 60 * 60 * 24 * 30)))
           return (
             <View style={[styles.paymentsCard, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
               <View style={styles.paymentsSectionHeader}>
@@ -326,16 +337,38 @@ export default function DebtDetails() {
                 </Text>
               </View>
 
-              {/* Interest row */}
-              {debt.interest_rate > 0 && debt.interest_type !== "none" && (
+              {/* Interest / late penalty breakdown */}
+              {(debt.interest_rate > 0 && debt.interest_type !== "none") || lateAmt > 0 ? (
                 <View style={[styles.interestRow, { borderTopColor: colors.border }]}>
-                  <Feather name="percent" size={12} color={colors.muted.foreground} />
-                  <Text style={[styles.interestText, { color: colors.muted.foreground }]}>
-                    {debt.interest_rate}% {debt.interest_type === "flat" ? t("debt.interest.flat") : t("debt.interest.monthly")}
-                    {" — "}{t("debt.interest.totalDue")}: {formatCurrency(totalDue, debt.currency)}
-                  </Text>
+                  {debt.interest_rate > 0 && debt.interest_type !== "none" && (
+                    <View style={styles.breakdownLine}>
+                      <Feather name="percent" size={11} color={colors.muted.foreground} />
+                      <Text style={[styles.interestText, { color: colors.muted.foreground }]}>
+                        {t("debt.lateInterest.breakdown.base")}: {formatCurrency(base, debt.currency)}
+                        {"  "}({debt.interest_rate}% {debt.interest_type === "flat" ? t("debt.interest.flat") : t("debt.interest.monthly")})
+                      </Text>
+                    </View>
+                  )}
+                  {lateAmt > 0 && (
+                    <View style={styles.breakdownLine}>
+                      <Feather name="alert-circle" size={11} color={colors.status.destructive} />
+                      <Text style={[styles.interestText, { color: colors.status.destructive }]}>
+                        {t("debt.lateInterest.breakdown.late")}: +{formatCurrency(lateAmt, debt.currency)}
+                        {"  "}({debt.late_interest_rate}%/{debt.late_interest_type === "daily" ? t("debt.lateInterest.daily") : t("debt.lateInterest.monthly")}
+                        {" · "}{debt.late_interest_type === "daily"
+                          ? t("debt.lateInterest.daysOverdue").replace("{n}", String(daysOverdue))
+                          : t("debt.lateInterest.monthsOverdue").replace("{n}", String(monthsOverdue))})
+                      </Text>
+                    </View>
+                  )}
+                  <View style={styles.breakdownLine}>
+                    <Feather name="arrow-right" size={11} color={colors.foreground.primary} />
+                    <Text style={[styles.interestText, { color: colors.foreground.primary, fontWeight: "600" }]}>
+                      {t("debt.lateInterest.breakdown.total")}: {formatCurrency(totalDue, debt.currency)}
+                    </Text>
+                  </View>
                 </View>
-              )}
+              ) : null}
 
               {/* Payment list */}
               {payments.length === 0 ? (
@@ -559,6 +592,22 @@ export default function DebtDetails() {
               </EField>
             )}
 
+            <EField label={t("debt.lateInterest.title")} colors={colors}>
+              <SelectInput value={editForm.late_interest_type} onChange={v => handleEditChange("late_interest_type", v)} options={[
+                { label: t("debt.lateInterest.none"), value: "none" },
+                { label: t("debt.lateInterest.daily"), value: "daily" },
+                { label: t("debt.lateInterest.monthly"), value: "monthly" },
+              ]} />
+            </EField>
+
+            {editForm.late_interest_type !== "none" && (
+              <EField label={t("debt.lateInterest.rate")} colors={colors}>
+                <EInput icon="alert-circle" colors={colors}>
+                  <TextInput style={[styles.inputText, { color: colors.foreground.primary }]} placeholder="0" placeholderTextColor={colors.muted.foreground} value={editForm.late_interest_rate} onChangeText={v => handleEditChange("late_interest_rate", v)} keyboardType="numeric" />
+                </EInput>
+              </EField>
+            )}
+
             <EField label={t("debt.add.financial.loanDate")} required colors={colors}>
               <DateInput value={editForm.loan_date} onChange={handleEditDateChange("loan_date")} maximumDate={new Date()} />
             </EField>
@@ -715,7 +764,8 @@ const styles = StyleSheet.create({
   progressFill: { height: 6, borderRadius: 3 },
   progressLabels: { flexDirection: "row", justifyContent: "space-between", marginBottom: 4 },
   progressLabel: { fontSize: 11 },
-  interestRow: { flexDirection: "row", alignItems: "center", gap: 6, borderTopWidth: StyleSheet.hairlineWidth, paddingTop: 8, marginTop: 4 },
+  interestRow: { borderTopWidth: StyleSheet.hairlineWidth, paddingTop: 8, marginTop: 4, gap: 4 },
+  breakdownLine: { flexDirection: "row", alignItems: "center", gap: 6 },
   interestText: { fontSize: 11, flex: 1 },
   paymentsEmpty: { fontSize: 13, textAlign: "center", paddingVertical: 12 },
   paymentRow: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth },

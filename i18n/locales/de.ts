@@ -325,6 +325,22 @@ export const de = {
       monthly: "Monatlich",
       totalDue: "Gesamt mit Zinsen"
     },
+    lateInterest: {
+      title: "Verzugszinsen",
+      desc: "Satz, der auf den fälligen Betrag angewendet wird, wenn die Schuld nicht pünktlich beglichen wird",
+      none: "Keine",
+      daily: "Täglich",
+      monthly: "Monatlich",
+      rate: "Strafzinssatz (%)",
+      daysOverdue: "{n} Tag(e) Verzug",
+      monthsOverdue: "{n} Monat(e) Verzug",
+      applied: "Verzugszinsen aktiv",
+      breakdown: {
+        base: "Basis + Zinsen",
+        late: "Verzugszinsen",
+        total: "Gesamtbetrag fällig"
+      }
+    },
     delete: {
       title: "Eintrag löschen?",
       confirmMessage: "Diese Aktion kann nicht rückgängig gemacht werden. Der Schuldeneintrag wird dauerhaft gelöscht.",

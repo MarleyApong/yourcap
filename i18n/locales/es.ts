@@ -325,6 +325,22 @@ export const es = {
       monthly: "Mensual",
       totalDue: "Total con intereses"
     },
+    lateInterest: {
+      title: "Penalización por retraso",
+      desc: "Tasa aplicada al monto adeudado si la deuda no se paga a tiempo",
+      none: "Ninguna",
+      daily: "Diaria",
+      monthly: "Mensual",
+      rate: "Tasa de penalización (%)",
+      daysOverdue: "{n} día(s) de retraso",
+      monthsOverdue: "{n} mes(es) de retraso",
+      applied: "Penalización activa",
+      breakdown: {
+        base: "Base + intereses",
+        late: "Penalización por retraso",
+        total: "Total adeudado"
+      }
+    },
     delete: {
       title: "¿Eliminar registro?",
       confirmMessage: "Esta acción no se puede deshacer. El registro de la deuda será eliminado permanentemente.",

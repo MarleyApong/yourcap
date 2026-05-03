@@ -245,6 +245,18 @@ export interface TranslationKeys {
   'debt.interest.title': string;
   'debt.interest.none': string;
   'debt.interest.rate': string;
+  'debt.lateInterest.title': string;
+  'debt.lateInterest.desc': string;
+  'debt.lateInterest.none': string;
+  'debt.lateInterest.daily': string;
+  'debt.lateInterest.monthly': string;
+  'debt.lateInterest.rate': string;
+  'debt.lateInterest.daysOverdue': string;
+  'debt.lateInterest.monthsOverdue': string;
+  'debt.lateInterest.applied': string;
+  'debt.lateInterest.breakdown.base': string;
+  'debt.lateInterest.breakdown.late': string;
+  'debt.lateInterest.breakdown.total': string;
   'debt.add.financial.loanDate': string;
   'debt.add.financial.dueDate': string;
   'debt.add.description': string;

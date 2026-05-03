@@ -325,6 +325,22 @@ export const fr = {
       monthly: "Mensuel",
       totalDue: "Total avec intérêts"
     },
+    lateInterest: {
+      title: "Pénalité de retard",
+      desc: "Taux appliqué au montant dû si la dette n'est pas remboursée à temps",
+      none: "Aucune",
+      daily: "Journalière",
+      monthly: "Mensuelle",
+      rate: "Taux de pénalité (%)",
+      daysOverdue: "{n} jour(s) de retard",
+      monthsOverdue: "{n} mois de retard",
+      applied: "Pénalité active",
+      breakdown: {
+        base: "Base + intérêts",
+        late: "Pénalité retard",
+        total: "Total dû"
+      }
+    },
     delete: {
       title: "Supprimer l'enregistrement ?",
       confirmMessage: "Cette action ne peut pas être annulée. L'enregistrement de la dette sera définitivement supprimé.",

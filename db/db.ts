@@ -183,6 +183,12 @@ export const initDb = async (): Promise<void> => {
     try {
       await db.execAsync(`ALTER TABLE debts ADD COLUMN interest_type TEXT DEFAULT 'none';`)
     } catch (_) {}
+    try {
+      await db.execAsync(`ALTER TABLE debts ADD COLUMN late_interest_rate REAL DEFAULT 0;`)
+    } catch (_) {}
+    try {
+      await db.execAsync(`ALTER TABLE debts ADD COLUMN late_interest_type TEXT DEFAULT 'none';`)
+    } catch (_) {}
 
     console.log("✅ Schema executed successfully")
     console.log("✅ Database initialized successfully")
