@@ -149,21 +149,28 @@ export default function Dashboard() {
 
         {/* ── Hero ── */}
         <View style={[styles.hero, { backgroundColor: colors.primary.default, paddingTop: insets.top + 12 }]}>
+          {/* Motifs géométriques */}
+          <View style={[styles.heroBubble1, { borderColor: colors.primary.foreground + "12" }]} />
+          <View style={[styles.heroBubble2, { borderColor: colors.primary.foreground + "0A" }]} />
+          <View style={[styles.heroBubble3, { borderColor: colors.primary.foreground + "08" }]} />
+          <View style={[styles.heroDot1, { backgroundColor: colors.primary.foreground + "10" }]} />
+          <View style={[styles.heroDot2, { backgroundColor: colors.primary.foreground + "08" }]} />
+
           <View style={styles.heroTopRow}>
             <View>
-              <Text style={styles.heroGreeting}>{getGreeting(t)}{firstName ? `, ${firstName}` : ""} 👋</Text>
-              <Text style={styles.heroDate}>
+              <Text style={[styles.heroGreeting, { color: colors.primary.foreground }]}>{getGreeting(t)}{firstName ? `, ${firstName}` : ""} 👋</Text>
+              <Text style={[styles.heroDate, { color: colors.primary.foreground + "99" }]}>
                 {new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" })}
               </Text>
             </View>
-            <Pressable onPress={() => router.push("/(tabs)/settings")} style={[styles.avatar, { backgroundColor: "rgba(255,255,255,0.18)" }]}>
-              <Text style={styles.avatarText}>{initials}</Text>
+            <Pressable onPress={() => router.push("/(tabs)/settings")} style={[styles.avatar, { backgroundColor: colors.primary.foreground + "25" }]}>
+              <Text style={[styles.avatarText, { color: colors.primary.foreground }]}>{initials}</Text>
             </Pressable>
           </View>
 
           <View style={styles.heroBalance}>
-            <Text style={styles.heroBalanceLabel}>{t("dashboard.balance.net")}</Text>
-            <Text style={[styles.heroBalanceAmount, { color: summary.balance >= 0 ? "#6EE7B7" : "#FCA5A5" }]}>
+            <Text style={[styles.heroBalanceLabel, { color: colors.primary.foreground + "90" }]}>{t("dashboard.balance.net")}</Text>
+            <Text style={[styles.heroBalanceAmount, { color: colors.primary.foreground }]}>
               {summary.balance >= 0 ? "+" : ""}{formatCurrency(summary.balance, "XAF")}
             </Text>
           </View>
@@ -173,13 +180,12 @@ export default function Dashboard() {
               { icon: "arrow-up-right", label: t("debt.add.debtType.owing"), onPress: () => router.push("/debt/add") },
               { icon: "arrow-down-left", label: t("debt.add.debtType.owed"), onPress: () => router.push("/debt/add") },
               { icon: "list", label: t("dashboard.recent.seeAll"), onPress: () => router.push("/(tabs)/history") },
-              { icon: "settings", label: t("settings.title"), onPress: () => router.push("/(tabs)/settings") },
             ].map((item, i) => (
-              <Pressable key={i} onPress={item.onPress} style={[styles.quickBtn, { backgroundColor: "rgba(255,255,255,0.15)" }]}>
-                <View style={styles.quickBtnIcon}>
-                  <Feather name={item.icon as any} size={16} color="#fff" />
+              <Pressable key={i} onPress={item.onPress} style={[styles.quickBtn, { backgroundColor: colors.primary.foreground + "18" }]}>
+                <View style={[styles.quickBtnIcon, { backgroundColor: colors.primary.foreground + "22" }]}>
+                  <Feather name={item.icon as any} size={16} color={colors.primary.foreground} />
                 </View>
-                <Text style={styles.quickBtnLabel}>{item.label}</Text>
+                <Text style={[styles.quickBtnLabel, { color: colors.primary.foreground + "CC" }]}>{item.label}</Text>
               </Pressable>
             ))}
           </View>
@@ -197,7 +203,7 @@ export default function Dashboard() {
               <View style={[styles.statTileIcon, { backgroundColor: tile.color + "18" }]}>
                 <Feather name={tile.icon as any} size={15} color={tile.color} />
               </View>
-              <Text style={[styles.statTileAmount, { color: tile.color }]} numberOfLines={1}>{tile.amount}</Text>
+              <Text style={[styles.statTileAmount, { color: colors.foreground.primary }]} numberOfLines={1}>{tile.amount}</Text>
               <Text style={[styles.statTileLabel, { color: colors.muted.foreground }]}>{tile.label}</Text>
             </View>
           ))}
@@ -431,19 +437,24 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
 
   // Hero
-  hero: { paddingHorizontal: 24, paddingBottom: 28, borderBottomLeftRadius: 28, borderBottomRightRadius: 28 },
+  hero: { paddingHorizontal: 24, paddingBottom: 28, borderBottomLeftRadius: 28, borderBottomRightRadius: 28, overflow: "hidden" },
+  heroBubble1: { position: "absolute", width: 220, height: 220, borderRadius: 110, borderWidth: 30, top: -60, right: -60 },
+  heroBubble2: { position: "absolute", width: 300, height: 300, borderRadius: 150, borderWidth: 25, top: -100, right: -80 },
+  heroBubble3: { position: "absolute", width: 160, height: 160, borderRadius: 80, borderWidth: 20, bottom: -40, left: -40 },
+  heroDot1:   { position: "absolute", width: 80,  height: 80,  borderRadius: 40,  bottom: 20, right: 30 },
+  heroDot2:   { position: "absolute", width: 40,  height: 40,  borderRadius: 20,  top: 40, left: 80 },
   heroTopRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 24 },
-  heroGreeting: { fontSize: 18, fontWeight: "700", color: "#fff" },
-  heroDate: { fontSize: 12, color: "rgba(255,255,255,0.65)", marginTop: 2, textTransform: "capitalize" },
+  heroGreeting: { fontSize: 18, fontWeight: "700" },
+  heroDate: { fontSize: 12, marginTop: 2, textTransform: "capitalize" },
   avatar: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center" },
-  avatarText: { color: "#fff", fontWeight: "700", fontSize: 14 },
+  avatarText: { fontWeight: "700", fontSize: 14 },
   heroBalance: { marginBottom: 24 },
-  heroBalanceLabel: { fontSize: 11, fontWeight: "600", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 6 },
+  heroBalanceLabel: { fontSize: 11, fontWeight: "600", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 6 },
   heroBalanceAmount: { fontSize: 36, fontWeight: "800", letterSpacing: -0.5 },
   quickActions: { flexDirection: "row", gap: 10 },
   quickBtn: { flex: 1, alignItems: "center", gap: 8, paddingVertical: 12, borderRadius: 14 },
-  quickBtnIcon: { width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(255,255,255,0.2)", alignItems: "center", justifyContent: "center" },
-  quickBtnLabel: { fontSize: 10, fontWeight: "600", color: "rgba(255,255,255,0.85)", textAlign: "center" },
+  quickBtnIcon: { width: 36, height: 36, borderRadius: 10, alignItems: "center", justifyContent: "center" },
+  quickBtnLabel: { fontSize: 10, fontWeight: "600", textAlign: "center" },
 
   // Stats grid
   statsGrid: { flexDirection: "row", flexWrap: "wrap", gap: 12, paddingHorizontal: 20, marginTop: 20, marginBottom: 4 },
