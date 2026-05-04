@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.0](https://github.com/MarleyApong/yourcap/compare/v1.9.0...v1.10.0) (2026-05-04)
+
+
+### Features
+
+* add monthly activity, recovery, and top contacts translations in multiple languages ([8310324](https://github.com/MarleyApong/yourcap/commit/8310324e2a2979ab5591afad67d7661403b6c799))
+* enhance dashboard and appearance settings with new color themes and accent options ([0cfff36](https://github.com/MarleyApong/yourcap/commit/0cfff36698bbb060edabb9fbb3b8b72685d13701))
+* update baseline-browser-mapping to version 2.10.27 in package.json and package-lock.json ([cd730c4](https://github.com/MarleyApong/yourcap/commit/cd730c488cfaeeb117a312894f9ea3d943c2c45c))
+
+
+### Bug Fixes
+
+* correct primary foreground colors for dark accent presets in color scheme ([368b95b](https://github.com/MarleyApong/yourcap/commit/368b95bcf871b0c44184b5d29b0958a0edc2aa46))
+
 ## [1.9.0](https://github.com/MarleyApong/yourcap/compare/v1.8.1...v1.9.0) (2026-05-03)
 
 
