@@ -140,6 +140,17 @@ export const es = {
       title: "Reciente",
       seeAll: "Ver todo"
     },
+    monthly: {
+      title: "Actividad 6 meses",
+    },
+    recovery: {
+      title: "Recuperación global",
+    },
+    topContacts: {
+      title: "Top contactos",
+      debt: "deuda activa",
+      debts: "deudas activas",
+    },
     errors: {
       databaseNotReady: "Base de datos no lista. Reinicia la aplicación.",
       failedToLoad: "Error al cargar los datos. Inténtalo de nuevo.",

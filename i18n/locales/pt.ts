@@ -140,6 +140,17 @@ export const pt = {
       title: "Recente",
       seeAll: "Ver tudo"
     },
+    monthly: {
+      title: "Atividade 6 meses",
+    },
+    recovery: {
+      title: "Recuperação global",
+    },
+    topContacts: {
+      title: "Top contatos",
+      debt: "dívida ativa",
+      debts: "dívidas ativas",
+    },
     errors: {
       databaseNotReady: "Banco de dados não pronto. Reinicie o aplicativo.",
       failedToLoad: "Falha ao carregar dados. Tente novamente.",

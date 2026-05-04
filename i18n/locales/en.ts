@@ -140,6 +140,17 @@ export const en = {
       title: "Recent",
       seeAll: "See all"
     },
+    monthly: {
+      title: "6-month activity",
+    },
+    recovery: {
+      title: "Overall recovery",
+    },
+    topContacts: {
+      title: "Top contacts",
+      debt: "active debt",
+      debts: "active debts",
+    },
     errors: {
       databaseNotReady: "Database not ready. Please restart the app.",
       failedToLoad: "Failed to load data. Please try again.",

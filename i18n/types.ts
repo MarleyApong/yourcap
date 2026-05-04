@@ -352,6 +352,11 @@ export interface TranslationKeys {
   'dashboard.attention.dueSoon': string;
   'dashboard.recent.title': string;
   'dashboard.recent.seeAll': string;
+  'dashboard.monthly.title': string;
+  'dashboard.recovery.title': string;
+  'dashboard.topContacts.title': string;
+  'dashboard.topContacts.debt': string;
+  'dashboard.topContacts.debts': string;
   'dashboard.empty.title': string;
   'dashboard.empty.subtitle': string;
   'dashboard.empty.addFirst': string;

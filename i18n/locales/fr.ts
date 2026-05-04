@@ -140,6 +140,17 @@ export const fr = {
       title: "Récent",
       seeAll: "Voir tout"
     },
+    monthly: {
+      title: "Activité 6 mois",
+    },
+    recovery: {
+      title: "Recouvrement global",
+    },
+    topContacts: {
+      title: "Top contacts",
+      debt: "dette active",
+      debts: "dettes actives",
+    },
     errors: {
       databaseNotReady: "Base de données non prête. Veuillez redémarrer l'application.",
       failedToLoad: "Échec du chargement des données. Veuillez réessayer.",

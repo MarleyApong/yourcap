@@ -140,6 +140,17 @@ export const de = {
       title: "Zuletzt",
       seeAll: "Alle anzeigen"
     },
+    monthly: {
+      title: "6-Monats-Aktivität",
+    },
+    recovery: {
+      title: "Gesamteinzugsquote",
+    },
+    topContacts: {
+      title: "Top-Kontakte",
+      debt: "aktive Schuld",
+      debts: "aktive Schulden",
+    },
     errors: {
       databaseNotReady: "Datenbank nicht bereit. Bitte App neu starten.",
       failedToLoad: "Daten konnten nicht geladen werden. Bitte erneut versuchen.",
