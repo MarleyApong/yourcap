@@ -662,85 +662,23 @@ export const fr = {
     }
   },
   importExport: {
-    title: "Gestion des données",
     export: {
-      title: "Exporter",
-      sectionTitle: "📤 Exporter vos données",
-      description: "Sauvegardez toutes vos dettes au format CSV",
-      button: "Exporter mes dettes",
-      buttonAlt: "Exporter en CSV",
-      success: "Données exportées avec succès !",
+      sectionTitle: "Sauvegarder",
+      description: "Exportez toutes vos dettes et paiements dans un fichier JSON",
+      button: "Exporter la sauvegarde",
+      success: "Sauvegarde exportée avec succès !",
       error: "Erreur lors de l'export",
-      dataError: "Erreur lors de l'export des données"
     },
     import: {
-      title: "Importer",
-      sectionTitle: "📥 Importer des données",
-      description: "Importez des dettes depuis un fichier CSV",
-      fromText: "Depuis le texte",
-      fromFile: "Depuis un fichier",
-      pasteCSV: "Coller CSV",
-      fileButton: "Fichier",
-      structureButton: "Structure",
-      templateButton: "Template",
-      templateSuccess: "Template téléchargé!",
-      templateError: "Erreur lors du téléchargement du template",
-      textPlaceholder: "Collez votre contenu CSV ici...",
-      selectFile: "Sélectionner un fichier CSV",
-      success: "Données importées avec succès !",
-      importedSuccess: "dettes importées avec succès!",
-      importedFromFile: "dettes importées depuis le fichier!",
-      validation: "Validation des données...",
-      pleaseEnterCSV: "Veuillez coller le contenu CSV",
-      modalTitle: "Importer CSV",
-      modalDescription: "Collez le contenu de votre fichier CSV ci-dessous :",
-      modalPlaceholder: "contact_name,contact_phone,amount,currency,loan_date,due_date,status,debt_type\\nKamga Marie,+237699123456,50000,XAF,2024-01-15,2024-02-15,PENDING,OWING",
-      modalCancel: "Annuler",
-      modalImport: "Importer",
-      importFileError: "Aucune dette n'a pu être importée depuis le fichier",
-      importFileGeneralError: "Erreur lors de l'import du fichier",
-      importTextError: "Aucune dette n'a pu être importée",
-      importGeneralError: "Erreur lors de l'import",
-      importCompletedWarnings: "Import terminé avec des avertissements",
-      importErrors: "Erreurs d'import",
-      errorsEncountered: "Erreurs rencontrées:",
-      validationErrors: "Erreurs de validation",
-      validationMessage: "ligne(s) contiennent des erreurs:",
-      continueWithValid: "Voulez-vous continuer avec les",
-      validLines: "lignes valides?",
-      continueButton: "Continuer",
-      cancelButton: "Annuler",
-      line: "Ligne",
-      errors: {
-        invalidFormat: "Format de fichier invalide",
-        invalidCSVFormat: "Format CSV invalide",
-        parseError: "Erreur lors de l'analyse du fichier",
-        validationError: "Erreur de validation des données"
-      }
+      sectionTitle: "Restaurer",
+      description: "Importez une sauvegarde YourCap (.json) pour restaurer vos dettes",
+      fileButton: "Importer un fichier",
+      importedSuccess: "dettes importées",
+      errorsEncountered: "erreur(s) rencontrée(s)",
+      importFileError: "Aucune dette importée — vérifiez le fichier",
+      importFileGeneralError: "Erreur lors de la lecture du fichier",
     },
-    dataStructure: {
-      title: "Structure des données CSV",
-      description: "Format requis pour l'import des dettes :",
-      example: "Exemple :",
-      fields: {
-        name: "nom",
-        amount: "montant",
-        type: "type",
-        description: "description",
-        date: "date"
-      },
-      typeValues: {
-        owed: "owed (on vous doit)",
-        owe: "owe (vous devez)"
-      },
-      rules: {
-        title: "Règles de validation :",
-        nameRequired: "Le nom est obligatoire",
-        amountPositive: "Le montant doit être un nombre positif",
-        typeValid: "Le type doit être 'owed' ou 'owe'",
-        dateFormat: "La date doit être au format YYYY-MM-DD (optionnel)"
-      }
-    }
+    notice: "Le fichier de sauvegarde inclut les dettes et leurs paiements. Utilisez-le pour transférer vos données vers un nouvel appareil.",
   },
   modals: {
     editProfile: {

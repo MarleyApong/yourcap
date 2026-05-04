@@ -662,85 +662,23 @@ export const de = {
     }
   },
   importExport: {
-    title: "Datenverwaltung",
     export: {
-      title: "Exportieren",
-      sectionTitle: "📤 Daten exportieren",
-      description: "Speichere alle deine Schulden im CSV-Format",
-      button: "Meine Schulden exportieren",
-      buttonAlt: "Als CSV exportieren",
-      success: "Daten erfolgreich exportiert!",
+      sectionTitle: "Sicherung",
+      description: "Exportiere alle Schulden und Zahlungen in eine JSON-Datei",
+      button: "Sicherung exportieren",
+      success: "Sicherung erfolgreich exportiert!",
       error: "Fehler beim Exportieren",
-      dataError: "Fehler beim Exportieren der Daten"
     },
     import: {
-      title: "Importieren",
-      sectionTitle: "📥 Daten importieren",
-      description: "Schulden aus einer CSV-Datei importieren",
-      fromText: "Aus Text",
-      fromFile: "Aus Datei",
-      pasteCSV: "CSV einfügen",
-      fileButton: "Datei",
-      structureButton: "Struktur",
-      templateButton: "Vorlage",
-      templateSuccess: "Vorlage heruntergeladen!",
-      templateError: "Fehler beim Herunterladen der Vorlage",
-      textPlaceholder: "Füge deinen CSV-Inhalt hier ein...",
-      selectFile: "CSV-Datei auswählen",
-      success: "Daten erfolgreich importiert!",
-      importedSuccess: "Schulden erfolgreich importiert!",
-      importedFromFile: "Schulden aus Datei importiert!",
-      validation: "Daten werden validiert...",
-      pleaseEnterCSV: "Bitte CSV-Inhalt einfügen",
-      modalTitle: "CSV importieren",
-      modalDescription: "Füge den Inhalt deiner CSV-Datei hier ein:",
-      modalPlaceholder: "contact_name,contact_phone,amount,currency,loan_date,due_date,status,debt_type",
-      modalCancel: "Abbrechen",
-      modalImport: "Importieren",
-      importFileError: "Keine Schulden aus Datei importierbar",
-      importFileGeneralError: "Fehler beim Importieren der Datei",
-      importTextError: "Keine Schulden importierbar",
-      importGeneralError: "Fehler beim Importieren",
-      importCompletedWarnings: "Import mit Warnungen abgeschlossen",
-      importErrors: "Importfehler",
-      errorsEncountered: "Fehler gefunden:",
-      validationErrors: "Validierungsfehler",
-      validationMessage: "Zeile(n) enthalten Fehler:",
-      continueWithValid: "Möchtest du mit den",
-      validLines: "gültigen Zeilen fortfahren?",
-      continueButton: "Weiter",
-      cancelButton: "Abbrechen",
-      line: "Zeile",
-      errors: {
-        invalidFormat: "Ungültiges Dateiformat",
-        invalidCSVFormat: "Ungültiges CSV-Format",
-        parseError: "Fehler beim Analysieren der Datei",
-        validationError: "Datenvalidierungsfehler"
-      }
+      sectionTitle: "Wiederherstellen",
+      description: "YourCap-Sicherung (.json) importieren, um Schulden wiederherzustellen",
+      fileButton: "Datei importieren",
+      importedSuccess: "Schulden importiert",
+      errorsEncountered: "Fehler aufgetreten",
+      importFileError: "Keine Schulden importiert — Datei prüfen",
+      importFileGeneralError: "Fehler beim Lesen der Datei",
     },
-    dataStructure: {
-      title: "CSV-Datenstruktur",
-      description: "Erforderliches Format zum Importieren von Schulden:",
-      example: "Beispiel:",
-      fields: {
-        name: "Name",
-        amount: "Betrag",
-        type: "Typ",
-        description: "Beschreibung",
-        date: "Datum"
-      },
-      typeValues: {
-        owed: "owed (dir wird geschuldet)",
-        owe: "owe (du schuldest)"
-      },
-      rules: {
-        title: "Validierungsregeln:",
-        nameRequired: "Name ist erforderlich",
-        amountPositive: "Betrag muss eine positive Zahl sein",
-        typeValid: "Typ muss 'owed' oder 'owe' sein",
-        dateFormat: "Datum muss im Format YYYY-MM-DD sein (optional)"
-      }
-    }
+    notice: "Die Sicherungsdatei enthält Schulden und Zahlungen. Nutze sie, um Daten auf ein neues Gerät zu übertragen.",
   },
   modals: {
     editProfile: {

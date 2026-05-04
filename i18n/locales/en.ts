@@ -662,85 +662,23 @@ export const en = {
     }
   },
   importExport: {
-    title: "Data management",
     export: {
-      title: "Export",
-      sectionTitle: "📤 Export your data",
-      description: "Save all your debts in CSV format",
-      button: "Export my debts",
-      buttonAlt: "Export to CSV",
-      success: "Data exported successfully!",
+      sectionTitle: "Backup",
+      description: "Export all your debts and payments to a JSON file",
+      button: "Export backup",
+      success: "Backup exported successfully!",
       error: "Error during export",
-      dataError: "Error exporting data"
     },
     import: {
-      title: "Import",
-      sectionTitle: "📥 Import data",
-      description: "Import debts from a CSV file",
-      fromText: "From text",
-      fromFile: "From file",
-      pasteCSV: "Paste CSV",
-      fileButton: "File",
-      structureButton: "Structure",
-      templateButton: "Template",
-      templateSuccess: "Template downloaded!",
-      templateError: "Error downloading template",
-      textPlaceholder: "Paste your CSV content here...",
-      selectFile: "Select a CSV file",
-      success: "Data imported successfully!",
-      importedSuccess: "debts imported successfully!",
-      importedFromFile: "debts imported from file!",
-      validation: "Validating data...",
-      pleaseEnterCSV: "Please paste CSV content",
-      modalTitle: "Import CSV",
-      modalDescription: "Paste your CSV file content below:",
-      modalPlaceholder: "contact_name,contact_phone,amount,currency,loan_date,due_date,status,debt_type\\nMbarga Paul,+237699123456,50000,XAF,2024-01-15,2024-02-15,PENDING,OWING",
-      modalCancel: "Cancel",
-      modalImport: "Import",
-      importFileError: "No debts could be imported from file",
-      importFileGeneralError: "Error importing file",
-      importTextError: "No debts could be imported",
-      importGeneralError: "Error during import",
-      importCompletedWarnings: "Import completed with warnings",
-      importErrors: "Import errors",
-      errorsEncountered: "Errors encountered:",
-      validationErrors: "Validation errors",
-      validationMessage: "line(s) contain errors:",
-      continueWithValid: "Do you want to continue with the",
-      validLines: "valid lines?",
-      continueButton: "Continue",
-      cancelButton: "Cancel",
-      line: "Line",
-      errors: {
-        invalidFormat: "Invalid file format",
-        invalidCSVFormat: "Invalid CSV format",
-        parseError: "Error parsing file",
-        validationError: "Data validation error"
-      }
+      sectionTitle: "Restore",
+      description: "Import a YourCap backup (.json) to restore your debts",
+      fileButton: "Import a file",
+      importedSuccess: "debts imported",
+      errorsEncountered: "error(s) encountered",
+      importFileError: "No debts imported — check the file",
+      importFileGeneralError: "Error reading the file",
     },
-    dataStructure: {
-      title: "CSV data structure",
-      description: "Required format for importing debts:",
-      example: "Example:",
-      fields: {
-        name: "name",
-        amount: "amount",
-        type: "type",
-        description: "description",
-        date: "date"
-      },
-      typeValues: {
-        owed: "owed (you are owed)",
-        owe: "owe (you owe)"
-      },
-      rules: {
-        title: "Validation rules:",
-        nameRequired: "Name is required",
-        amountPositive: "Amount must be a positive number",
-        typeValid: "Type must be 'owed' or 'owe'",
-        dateFormat: "Date must be in YYYY-MM-DD format (optional)"
-      }
-    }
+    notice: "The backup file includes debts and their payments. Use it to transfer your data to a new device.",
   },
   modals: {
     editProfile: {

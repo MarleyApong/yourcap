@@ -662,85 +662,23 @@ export const pt = {
     }
   },
   importExport: {
-    title: "Gerenciamento de dados",
     export: {
-      title: "Exportar",
-      sectionTitle: "📤 Exportar seus dados",
-      description: "Salve todas as suas dívidas em formato CSV",
-      button: "Exportar minhas dívidas",
-      buttonAlt: "Exportar para CSV",
-      success: "Dados exportados com sucesso!",
+      sectionTitle: "Backup",
+      description: "Exporte todas as dívidas e pagamentos para um arquivo JSON",
+      button: "Exportar backup",
+      success: "Backup exportado com sucesso!",
       error: "Erro ao exportar",
-      dataError: "Erro ao exportar os dados"
     },
     import: {
-      title: "Importar",
-      sectionTitle: "📥 Importar dados",
-      description: "Importe dívidas de um arquivo CSV",
-      fromText: "De texto",
-      fromFile: "De arquivo",
-      pasteCSV: "Colar CSV",
-      fileButton: "Arquivo",
-      structureButton: "Estrutura",
-      templateButton: "Modelo",
-      templateSuccess: "Modelo baixado!",
-      templateError: "Erro ao baixar o modelo",
-      textPlaceholder: "Cole seu conteúdo CSV aqui...",
-      selectFile: "Selecionar arquivo CSV",
-      success: "Dados importados com sucesso!",
-      importedSuccess: "dívidas importadas com sucesso!",
-      importedFromFile: "dívidas importadas do arquivo!",
-      validation: "Validando dados...",
-      pleaseEnterCSV: "Por favor cole o conteúdo CSV",
-      modalTitle: "Importar CSV",
-      modalDescription: "Cole o conteúdo do seu arquivo CSV abaixo:",
-      modalPlaceholder: "contact_name,contact_phone,amount,currency,loan_date,due_date,status,debt_type",
-      modalCancel: "Cancelar",
-      modalImport: "Importar",
-      importFileError: "Nenhuma dívida pôde ser importada do arquivo",
-      importFileGeneralError: "Erro ao importar o arquivo",
-      importTextError: "Nenhuma dívida pôde ser importada",
-      importGeneralError: "Erro ao importar",
-      importCompletedWarnings: "Importação concluída com avisos",
-      importErrors: "Erros de importação",
-      errorsEncountered: "Erros encontrados:",
-      validationErrors: "Erros de validação",
-      validationMessage: "linha(s) contêm erros:",
-      continueWithValid: "Deseja continuar com as",
-      validLines: "linhas válidas?",
-      continueButton: "Continuar",
-      cancelButton: "Cancelar",
-      line: "Linha",
-      errors: {
-        invalidFormat: "Formato de arquivo inválido",
-        invalidCSVFormat: "Formato CSV inválido",
-        parseError: "Erro ao analisar o arquivo",
-        validationError: "Erro de validação de dados"
-      }
+      sectionTitle: "Restaurar",
+      description: "Importe um backup do YourCap (.json) para restaurar suas dívidas",
+      fileButton: "Importar arquivo",
+      importedSuccess: "dívidas importadas",
+      errorsEncountered: "erro(s) encontrado(s)",
+      importFileError: "Nenhuma dívida importada — verifique o arquivo",
+      importFileGeneralError: "Erro ao ler o arquivo",
     },
-    dataStructure: {
-      title: "Estrutura de dados CSV",
-      description: "Formato necessário para importar dívidas:",
-      example: "Exemplo:",
-      fields: {
-        name: "nome",
-        amount: "valor",
-        type: "tipo",
-        description: "descrição",
-        date: "data"
-      },
-      typeValues: {
-        owed: "owed (te devem)",
-        owe: "owe (você deve)"
-      },
-      rules: {
-        title: "Regras de validação:",
-        nameRequired: "O nome é obrigatório",
-        amountPositive: "O valor deve ser um número positivo",
-        typeValid: "O tipo deve ser 'owed' ou 'owe'",
-        dateFormat: "A data deve estar no formato YYYY-MM-DD (opcional)"
-      }
-    }
+    notice: "O arquivo inclui dívidas e seus pagamentos. Use-o para transferir seus dados para um novo dispositivo.",
   },
   modals: {
     editProfile: {
