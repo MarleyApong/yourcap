@@ -9,7 +9,7 @@ export const ACCENT_PRESETS = {
   },
   orange: {
     light: { primary: "#c2410c", primaryFg: "#ffffff", secondary: "#fff7ed", secondaryFg: "#c2410c", ring: "#c2410c" },
-    dark:  { primary: "#fb923c", primaryFg: "#0f172a", secondary: "#431407", secondaryFg: "#fed7aa", ring: "#fb923c" },
+    dark:  { primary: "#fb923c", primaryFg: "#ffffff", secondary: "#431407", secondaryFg: "#fed7aa", ring: "#fb923c" },
   },
   purple: {
     light: { primary: "#562d8f", primaryFg: "#ffffff", secondary: "#faf5ff", secondaryFg: "#7c3aed", ring: "#562d8f" },
@@ -17,7 +17,7 @@ export const ACCENT_PRESETS = {
   },
   rose: {
     light: { primary: "#be123c", primaryFg: "#ffffff", secondary: "#fff1f2", secondaryFg: "#be123c", ring: "#be123c" },
-    dark:  { primary: "#fb7185", primaryFg: "#0f172a", secondary: "#4c0519", secondaryFg: "#fecdd3", ring: "#fb7185" },
+    dark:  { primary: "#fb7185", primaryFg: "#ffffff", secondary: "#4c0519", secondaryFg: "#fecdd3", ring: "#fb7185" },
   },
 } as const satisfies Record<string, Record<ColorScheme, AccentValues>>
 
