@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.11.0](https://github.com/MarleyApong/yourcap/compare/v1.10.0...v1.11.0) (2026-05-05)
+
+
+### Features
+
+* enhance app lock screen with pin input feedback and biometric option ([ac1dc56](https://github.com/MarleyApong/yourcap/commit/ac1dc5663386708c7f222a7a848777dae2df3002))
+
 ## [1.10.0](https://github.com/MarleyApong/yourcap/compare/v1.9.0...v1.10.0) (2026-05-04)
 
 
