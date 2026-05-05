@@ -1,10 +1,11 @@
-import PinInput from "@/components/ui/pin-input"
+import PinInput, { PinInputHandle } from "@/components/ui/pin-input"
 import { useTheme } from "@/core/theme"
 import { useTranslation } from "@/i18n"
 import { useSettings } from "@/hooks/useSettings"
 import { isAppLocked } from "@/lib/auth"
+import { Toast } from "@/lib/toast-global"
 import { useAuthStore } from "@/stores/authStore"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { ActivityIndicator, AppState, AppStateStatus, Modal, StyleSheet, Text, View } from "react-native"
 
 export default function AppLockScreen() {
@@ -15,6 +16,7 @@ export default function AppLockScreen() {
   const [appState, setAppState] = useState(AppState.currentState)
   const { colors } = useTheme()
   const { t } = useTranslation()
+  const pinRef = useRef<PinInputHandle>(null)
 
   useEffect(() => {
     const checkLockStatus = async () => {
@@ -50,9 +52,16 @@ export default function AppLockScreen() {
     try {
       const identifier = user.email || user.phone_number
       const success = await login({ identifier, pin })
-      if (success) setShowLock(false)
-    } catch (error) {
-      console.error("Pin verification error:", error)
+      if (success) {
+        setShowLock(false)
+      } else {
+        pinRef.current?.shake()
+        pinRef.current?.reset()
+        Toast.error(t("auth.login.invalidPin"))
+      }
+    } catch {
+      pinRef.current?.shake()
+      pinRef.current?.reset()
     } finally {
       setLoading(false)
     }
@@ -95,6 +104,7 @@ export default function AppLockScreen() {
         </View>
 
         <PinInput
+          ref={pinRef}
           title={t("auth.login.verifyIdentity")}
           subtitle={t("auth.login.biometricSubtitle")}
           onComplete={handlePinComplete}

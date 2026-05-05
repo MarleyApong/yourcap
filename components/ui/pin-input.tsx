@@ -1,7 +1,12 @@
 import { useTheme } from "@/core/theme"
 import { Feather, MaterialIcons } from "@expo/vector-icons"
-import React, { useState, useMemo } from "react"
-import { StyleSheet, Text, TouchableOpacity, Vibration, View } from "react-native"
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react"
+import { Animated, Easing, StyleSheet, Text, TouchableOpacity, Vibration, View } from "react-native"
+
+export interface PinInputHandle {
+  reset: () => void
+  shake: () => void
+}
 
 interface PinInputProps {
   onComplete: (pin: string) => void
@@ -16,7 +21,7 @@ interface PinInputProps {
   forgotPinLabel?: string
 }
 
-export const PinInput: React.FC<PinInputProps> = ({
+const PinInput = forwardRef<PinInputHandle, PinInputProps>(({
   onComplete,
   onBiometric,
   biometricAvailable = false,
@@ -27,10 +32,49 @@ export const PinInput: React.FC<PinInputProps> = ({
   shuffle = false,
   onForgotPin,
   forgotPinLabel,
-}) => {
+}, ref) => {
   const [pin, setPin] = useState("")
-  const [error, setError] = useState("")
   const { colors } = useTheme()
+  const shakeAnim = useRef(new Animated.Value(0)).current
+  const pulseScale = useRef(new Animated.Value(1)).current
+  const pulseOpacity = useRef(new Animated.Value(0.5)).current
+
+  // Défini tôt pour être utilisé dans useEffect
+  const hasBiometric = showBiometric && biometricAvailable && !!onBiometric
+
+  useImperativeHandle(ref, () => ({
+    reset: () => setPin(""),
+    shake: () => {
+      Vibration.vibrate([0, 60, 60, 60, 60, 60])
+      Animated.sequence([
+        Animated.timing(shakeAnim, { toValue: 10, duration: 60, useNativeDriver: true }),
+        Animated.timing(shakeAnim, { toValue: -10, duration: 60, useNativeDriver: true }),
+        Animated.timing(shakeAnim, { toValue: 8, duration: 50, useNativeDriver: true }),
+        Animated.timing(shakeAnim, { toValue: -8, duration: 50, useNativeDriver: true }),
+        Animated.timing(shakeAnim, { toValue: 0, duration: 40, useNativeDriver: true }),
+      ]).start()
+    },
+  }))
+
+  // Pulse loop sur le bouton biométrie
+  useEffect(() => {
+    if (!hasBiometric) return
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.parallel([
+          Animated.timing(pulseScale, { toValue: 1.55, duration: 900, easing: Easing.out(Easing.ease), useNativeDriver: true }),
+          Animated.timing(pulseOpacity, { toValue: 0, duration: 900, easing: Easing.out(Easing.ease), useNativeDriver: true }),
+        ]),
+        Animated.parallel([
+          Animated.timing(pulseScale, { toValue: 1, duration: 0, useNativeDriver: true }),
+          Animated.timing(pulseOpacity, { toValue: 0.5, duration: 0, useNativeDriver: true }),
+        ]),
+        Animated.delay(400),
+      ])
+    )
+    loop.start()
+    return () => loop.stop()
+  }, [hasBiometric])
 
   const digits = useMemo(() => {
     const base = Array.from({ length: 10 }, (_, i) => i.toString())
@@ -43,13 +87,13 @@ export const PinInput: React.FC<PinInputProps> = ({
         digits.slice(0, 3),
         digits.slice(3, 6),
         digits.slice(6, 9),
-        ["clear", digits[9], "delete"],
+        [hasBiometric ? "biometric" : "clear", digits[9], "delete"],
       ]
     : [
         ["1", "2", "3"],
         ["4", "5", "6"],
         ["7", "8", "9"],
-        ["clear", "0", "delete"],
+        [hasBiometric ? "biometric" : "clear", "0", "delete"],
       ]
 
   const handleKeyPress = (key: string) => {
@@ -57,7 +101,6 @@ export const PinInput: React.FC<PinInputProps> = ({
       Vibration.vibrate(30)
       const newPin = pin + key
       setPin(newPin)
-      setError("")
       if (newPin.length === length) {
         setTimeout(() => onComplete(newPin), 100)
       }
@@ -66,14 +109,12 @@ export const PinInput: React.FC<PinInputProps> = ({
 
   const handleDelete = () => {
     Vibration.vibrate(20)
-    setPin(pin.slice(0, -1))
-    setError("")
+    setPin(prev => prev.slice(0, -1))
   }
 
   const handleClear = () => {
     Vibration.vibrate(20)
     setPin("")
-    setError("")
   }
 
   return (
@@ -81,7 +122,8 @@ export const PinInput: React.FC<PinInputProps> = ({
       <Text style={[styles.title, { color: colors.foreground.primary }]}>{title}</Text>
       <Text style={[styles.subtitle, { color: colors.muted.foreground }]}>{subtitle}</Text>
 
-      <View style={styles.dots}>
+      {/* Dots avec shake */}
+      <Animated.View style={[styles.dots, { transform: [{ translateX: shakeAnim }] }]}>
         {Array.from({ length }).map((_, index) => (
           <View
             key={index}
@@ -89,20 +131,12 @@ export const PinInput: React.FC<PinInputProps> = ({
               styles.dot,
               {
                 backgroundColor: index < pin.length ? colors.primary.default : "transparent",
-                borderColor: error
-                  ? colors.status.destructive
-                  : index < pin.length
-                  ? colors.primary.default
-                  : colors.border,
+                borderColor: index < pin.length ? colors.primary.default : colors.border,
               },
             ]}
           />
         ))}
-      </View>
-
-      {error ? (
-        <Text style={[styles.error, { color: colors.status.destructive }]}>{error}</Text>
-      ) : null}
+      </Animated.View>
 
       <View style={styles.keypad}>
         {keys.map((row, rowIndex) => (
@@ -113,12 +147,15 @@ export const PinInput: React.FC<PinInputProps> = ({
                 onPress={() => {
                   if (key === "delete") handleDelete()
                   else if (key === "clear") handleClear()
+                  else if (key === "biometric") onBiometric?.()
                   else handleKeyPress(key)
                 }}
                 style={[
                   styles.key,
                   key === "delete"
                     ? { backgroundColor: colors.primary.default }
+                    : key === "biometric"
+                    ? { backgroundColor: colors.primary.default + "18", borderWidth: 1.5, borderColor: colors.primary.default + "50" }
                     : key === "clear"
                     ? { backgroundColor: "transparent", borderWidth: 1.5, borderColor: colors.border }
                     : { backgroundColor: colors.card.background, borderWidth: 1.5, borderColor: colors.border },
@@ -127,6 +164,19 @@ export const PinInput: React.FC<PinInputProps> = ({
               >
                 {key === "delete" ? (
                   <Feather name="delete" size={22} color={colors.primary.foreground} />
+                ) : key === "biometric" ? (
+                  <>
+                    {/* Cercle pulse derrière l'icône */}
+                    <Animated.View style={[
+                      styles.pulse,
+                      {
+                        backgroundColor: colors.primary.default,
+                        opacity: pulseOpacity,
+                        transform: [{ scale: pulseScale }],
+                      }
+                    ]} />
+                    <MaterialIcons name="fingerprint" size={28} color={colors.primary.default} />
+                  </>
                 ) : key === "clear" ? (
                   <Feather name="x" size={20} color={colors.muted.foreground} />
                 ) : (
@@ -138,17 +188,6 @@ export const PinInput: React.FC<PinInputProps> = ({
         ))}
       </View>
 
-      {showBiometric && biometricAvailable && onBiometric && (
-        <TouchableOpacity
-          onPress={onBiometric}
-          style={[styles.biometric, { backgroundColor: colors.primary.default + "18", borderColor: colors.primary.default + "40", borderWidth: 1 }]}
-          activeOpacity={0.7}
-        >
-          <MaterialIcons name="fingerprint" size={22} color={colors.primary.default} />
-          <Text style={[styles.biometricText, { color: colors.primary.default }]}>Use Biometric</Text>
-        </TouchableOpacity>
-      )}
-
       {onForgotPin && (
         <TouchableOpacity onPress={onForgotPin} activeOpacity={0.7} style={styles.forgotPin}>
           <Text style={[styles.forgotPinText, { color: colors.muted.foreground }]}>{forgotPinLabel}</Text>
@@ -156,7 +195,9 @@ export const PinInput: React.FC<PinInputProps> = ({
       )}
     </View>
   )
-}
+})
+
+PinInput.displayName = "PinInput"
 
 export default PinInput
 
@@ -189,12 +230,6 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     borderWidth: 2,
   },
-  error: {
-    textAlign: "center",
-    marginBottom: 16,
-    fontSize: 14,
-    fontWeight: "500",
-  },
   keypad: {
     gap: 14,
     marginBottom: 28,
@@ -209,22 +244,17 @@ const styles = StyleSheet.create({
     borderRadius: 39,
     justifyContent: "center",
     alignItems: "center",
+    overflow: "visible",
+  },
+  pulse: {
+    position: "absolute",
+    width: 78,
+    height: 78,
+    borderRadius: 39,
   },
   keyNumber: {
     fontSize: 24,
     fontWeight: "600",
-  },
-  biometric: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 12,
-  },
-  biometricText: {
-    fontWeight: "600",
-    fontSize: 14,
   },
   forgotPin: {
     marginTop: 16,

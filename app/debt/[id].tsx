@@ -12,7 +12,7 @@ import { calcBaseWithInterest, calcLateInterestAmount, calcTotalDue, Debt, DebtS
 import { Feather } from "@expo/vector-icons"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useEffect, useRef, useState } from "react"
-import { Animated, Linking, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
+import { Animated, KeyboardAvoidingView, Linking, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
@@ -427,56 +427,61 @@ export default function DebtDetails() {
 
       {/* Payment Modal */}
       <Modal animationType="slide" transparent visible={paymentModalVisible} onRequestClose={() => setPaymentModalVisible(false)}>
-        <Pressable style={styles.paymentOverlay} onPress={() => setPaymentModalVisible(false)}>
-          <Pressable style={[styles.paymentSheet, { backgroundColor: colors.background.primary }]} onPress={() => {}}>
-            <View style={styles.sheetHandle} />
-            <Text style={[styles.paymentSheetTitle, { color: colors.foreground.primary }]}>{t("debt.payments.record")}</Text>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          <Pressable style={styles.paymentOverlay} onPress={() => setPaymentModalVisible(false)}>
+            <Pressable style={[styles.paymentSheet, { backgroundColor: colors.card.background }]} onPress={() => {}}>
+              <View style={styles.sheetHandle} />
+              <Text style={[styles.paymentSheetTitle, { color: colors.foreground.primary }]}>{t("debt.payments.record")}</Text>
 
-            <View style={styles.field}>
-              <Text style={[styles.fieldLabel, { color: colors.muted.foreground }]}>{t("debt.payments.amount")}</Text>
-              <View style={[styles.inputRow, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
-                <Feather name="credit-card" size={16} color={colors.muted.foreground} />
-                <TextInput
-                  style={[styles.inputText, { color: colors.foreground.primary }]}
-                  placeholder="0"
-                  placeholderTextColor={colors.muted.foreground}
-                  value={paymentAmount}
-                  onChangeText={setPaymentAmount}
-                  keyboardType="numeric"
-                  autoFocus
-                />
+              <View style={styles.field}>
+                <Text style={[styles.fieldLabel, { color: colors.muted.foreground }]}>{t("debt.payments.amount")}</Text>
+                <View style={[styles.inputRow, { backgroundColor: colors.background.primary, borderColor: colors.border }]}>
+                  <Feather name="credit-card" size={16} color={colors.muted.foreground} />
+                  <TextInput
+                    style={[styles.inputText, { color: colors.foreground.primary }]}
+                    placeholder="0"
+                    placeholderTextColor={colors.muted.foreground}
+                    value={paymentAmount}
+                    onChangeText={setPaymentAmount}
+                    keyboardType="numeric"
+                    autoFocus
+                  />
+                </View>
               </View>
-            </View>
 
-            <View style={styles.field}>
-              <Text style={[styles.fieldLabel, { color: colors.muted.foreground }]}>{t("debt.payments.date")}</Text>
-              <DateInput value={paymentDate} onChange={setPaymentDate} maximumDate={new Date()} />
-            </View>
-
-            <View style={styles.field}>
-              <Text style={[styles.fieldLabel, { color: colors.muted.foreground }]}>{t("debt.payments.note")}</Text>
-              <View style={[styles.inputRow, { backgroundColor: colors.card.background, borderColor: colors.border }]}>
-                <Feather name="file-text" size={16} color={colors.muted.foreground} />
-                <TextInput
-                  style={[styles.inputText, { color: colors.foreground.primary }]}
-                  placeholder="..."
-                  placeholderTextColor={colors.muted.foreground}
-                  value={paymentNote}
-                  onChangeText={setPaymentNote}
-                />
+              <View style={styles.field}>
+                <Text style={[styles.fieldLabel, { color: colors.muted.foreground }]}>{t("debt.payments.date")}</Text>
+                <DateInput value={paymentDate} onChange={setPaymentDate} maximumDate={new Date()} />
               </View>
-            </View>
 
-            <Pressable
-              onPress={handleRecordPayment}
-              disabled={paymentLoading}
-              style={[styles.saveBtn, { backgroundColor: colors.primary.default, opacity: paymentLoading ? 0.7 : 1 }]}
-            >
-              {paymentLoading ? <Loader color={colors.primary.foreground} /> : <Feather name="check" size={18} color={colors.primary.foreground} />}
-              <Text style={[styles.saveBtnText, { color: colors.primary.foreground }]}>{t("debt.payments.record")}</Text>
+              <View style={styles.field}>
+                <Text style={[styles.fieldLabel, { color: colors.muted.foreground }]}>{t("debt.payments.note")}</Text>
+                <View style={[styles.inputRow, { backgroundColor: colors.background.primary, borderColor: colors.border }]}>
+                  <Feather name="file-text" size={16} color={colors.muted.foreground} />
+                  <TextInput
+                    style={[styles.inputText, { color: colors.foreground.primary }]}
+                    placeholder="..."
+                    placeholderTextColor={colors.muted.foreground}
+                    value={paymentNote}
+                    onChangeText={setPaymentNote}
+                  />
+                </View>
+              </View>
+
+              <Pressable
+                onPress={handleRecordPayment}
+                disabled={paymentLoading}
+                style={[styles.saveBtn, { backgroundColor: colors.status.success, opacity: paymentLoading ? 0.7 : 1 }]}
+              >
+                {paymentLoading ? <Loader color="#fff" /> : <Feather name="check" size={18} color="#fff" />}
+                <Text style={[styles.saveBtnText, { color: "#fff" }]}>{t("debt.payments.record")}</Text>
+              </Pressable>
             </Pressable>
           </Pressable>
-        </Pressable>
+        </KeyboardAvoidingView>
       </Modal>
 
       {/* Edit Modal */}
@@ -496,7 +501,7 @@ export default function DebtDetails() {
           {/* Modal form */}
           <KeyboardAwareScrollView
             style={[styles.sheet, { backgroundColor: colors.background.primary }]}
-            contentContainerStyle={[styles.sheetContent, { paddingBottom: Math.max(insets.bottom + 48, 120) }]}
+            contentContainerStyle={[styles.sheetContent, { paddingBottom: 16 }]}
             enableOnAndroid
             extraScrollHeight={80}
             keyboardShouldPersistTaps="handled"
@@ -622,11 +627,15 @@ export default function DebtDetails() {
               </EInput>
             </EField>
 
-            <Pressable onPress={handleEditSubmit} disabled={editLoading} style={[styles.saveBtn, { backgroundColor: colors.primary.default, opacity: editLoading ? 0.7 : 1 }]}>
-              {editLoading ? <Loader color={colors.primary.foreground} /> : <Feather name="check" size={18} color={colors.primary.foreground} />}
-              <Text style={styles.saveBtnText}>{editLoading ? t("debt.details.saving") : t("debt.details.saveChanges")}</Text>
-            </Pressable>
           </KeyboardAwareScrollView>
+
+          {/* Footer fixe — bouton hors du scroll pour éviter le chevauchement avec la nav bar */}
+          <View style={[styles.editFooter, { backgroundColor: colors.background.primary, borderTopColor: colors.border, paddingBottom: Math.max(insets.bottom, 24) }]}>
+            <Pressable onPress={handleEditSubmit} disabled={editLoading} style={[styles.saveBtn, { backgroundColor: colors.status.success, opacity: editLoading ? 0.7 : 1 }]}>
+              {editLoading ? <Loader color="#fff" /> : <Feather name="check" size={18} color="#fff" />}
+              <Text style={[styles.saveBtnText, { color: "#fff" }]}>{editLoading ? t("debt.details.saving") : t("debt.details.saveChanges")}</Text>
+            </Pressable>
+          </View>
 
           {/* Contact Picker */}
           <Modal visible={showContactPicker} animationType="slide" transparent onRequestClose={() => { setShowContactPicker(false); setContactSearch("") }}>
@@ -736,7 +745,8 @@ const styles = StyleSheet.create({
   inputRow: { flexDirection: "row", gap: 10, borderWidth: 1, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10 },
   inputText: { flex: 1, fontSize: 14 },
   textarea: { minHeight: 72 },
-  saveBtn: { flexDirection: "row", gap: 8, justifyContent: "center", alignItems: "center", padding: 15, borderRadius: 14, marginTop: 8 },
+  editFooter: { paddingHorizontal: 24, paddingTop: 12, borderTopWidth: StyleSheet.hairlineWidth },
+  saveBtn: { flexDirection: "row", gap: 8, justifyContent: "center", alignItems: "center", padding: 15, borderRadius: 14 },
   saveBtnText: { fontWeight: "600", fontSize: 16 },
   contactsHint: { fontSize: 11, marginBottom: 10 },
   chipsRow: { gap: 10, paddingRight: 4 },
