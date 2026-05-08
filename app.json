@@ -83,7 +83,9 @@
       ],
       "expo-document-picker",
       "expo-localization",
-      "expo-contacts"
+      ["expo-contacts", {
+        "contactsPermission": "Yourcap accède à vos contacts pour faciliter l'ajout de débiteurs."
+      }]
     ],
     "experiments": {
       "typedRoutes": true

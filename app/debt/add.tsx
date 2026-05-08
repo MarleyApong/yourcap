@@ -85,11 +85,9 @@ export default function AddDebt() {
 
   const pickFromPhoneBook = async () => {
     setPhoneBookLoading(true)
-    setShowPhoneBookPicker(true)
     try {
       const { status, canAskAgain } = await Contacts.requestPermissionsAsync()
       if (status !== "granted") {
-        setShowPhoneBookPicker(false)
         if (!canAskAgain) {
           Toast.confirm(
             t("debt.add.phoneBook.permissionDenied"),
@@ -101,6 +99,7 @@ export default function AddDebt() {
         }
         return
       }
+      setShowPhoneBookPicker(true)
       const { data } = await Contacts.getContactsAsync({
         fields: [Contacts.Fields.PhoneNumbers, Contacts.Fields.Emails],
       })
