@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.12.0](https://github.com/MarleyApong/yourcap/compare/v1.11.0...v1.12.0) (2026-05-08)
+
+
+### Features
+
+* add contacts permission message and improve phone book picker logic ([e8bcbd5](https://github.com/MarleyApong/yourcap/commit/e8bcbd561e1d0e4b1aaa7256fe681127c7958df5))
+
 ## [1.11.0](https://github.com/MarleyApong/yourcap/compare/v1.10.0...v1.11.0) (2026-05-05)
 
 
